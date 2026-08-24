@@ -48,6 +48,7 @@ dependencies:
   # Truncating a place name on a grapheme boundary rather than a code unit, so
   # a long name is shortened rather than left with half an emoji at the end.
   characters: ^1.4.0
+  in_app_review: ^2.0.12
 
 dev_dependencies:
   flutter_test:

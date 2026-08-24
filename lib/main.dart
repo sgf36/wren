@@ -18,6 +18,7 @@ import 'src/place_search_sheet.dart';
 import 'src/place_share.dart';
 import 'src/region_hint.dart';
 import 'src/resolver.dart';
+import 'src/review_prompt.dart';
 import 'src/share_inbox.dart';
 import 'src/admin_sheet.dart';
 import 'src/comp_unlock.dart' as comp;
@@ -162,6 +163,7 @@ class CapturePage extends StatefulWidget {
     this.expander,
     this.shareInbox,
     this.sharer,
+    this.reviewPrompt,
     this.initialPending,
     this.initialGuideName,
     this.initialOverlay = ScreenshotOverlay.none,
@@ -208,6 +210,11 @@ class CapturePage extends StatefulWidget {
   /// Injectable so sending to another map app can be tested without a device.
   final PlaceSharer? sharer;
 
+  /// Injectable so the rating prompt can be tested without the App Store.
+  /// Apple reports neither whether its prompt appeared nor what was said, so
+  /// the only thing that can be asserted anywhere is when Wren asks for it.
+  final ReviewPrompt? reviewPrompt;
+
   @visibleForTesting
   final List<Pending>? initialPending;
 
@@ -239,6 +246,11 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       widget.shareInbox ?? const MethodChannelShareInbox();
   late final PlaceSharer _sharer =
       widget.sharer ?? const MethodChannelPlaceSharer();
+  // Tied to whether this build publishes guides at all, because that is the
+  // only event worth asking about. See [NoReviewPrompt].
+  late final ReviewPrompt _reviewPrompt =
+      widget.reviewPrompt ??
+      (_makesGuides ? const StoreReviewPrompt() : const NoReviewPrompt());
 
   /// Whether guides -- and therefore the purchase that sells bigger ones --
   /// exist on this platform at all. See [CapturePage.canMakeGuides].
@@ -559,14 +571,21 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     return _resolver.locate(answer);
   }
 
-  Future<void> _importScreenshots() async {
+  /// Reads screenshots and turns them into places.
+  ///
+  /// [paths] arrive from the iOS share sheet, where the user has already chosen
+  /// the images — so the picker is skipped rather than asking them to choose
+  /// again what they just shared. Everything after the choosing is identical,
+  /// deliberately: the reading, ranking and city-confirmation are the part that
+  /// took the longest to get right and there is no second copy of it.
+  Future<void> _importScreenshots({List<String>? paths}) async {
     final l = L.of(context);
     setState(() {
       _busy = true;
       _status = null;
     });
     try {
-      final files = await _picker.pickMultiImage();
+      final files = paths ?? [for (final f in await _picker.pickMultiImage()) f.path];
       if (files.isEmpty) {
         setState(() {
           _busy = false;
@@ -589,8 +608,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       // places do not. That works in any language and in any app, which a list
       // of English button labels cannot.
       final perShot = <List<TextLine>>[];
-      for (final f in files) {
-        perShot.add(await Ocr.recognise(f.path));
+      for (final path in files) {
+        perShot.add(await Ocr.recognise(path));
         if (mounted) setState(() => _readCount++);
       }
       final furniture = repeatedLines(perShot);
@@ -748,6 +767,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // A phone that is never restarted would otherwise go a fortnight without
     // asking, and lapse while in daily use.
     _refreshCompAccess();
+    // Coming back from Maps having just published is the one moment worth
+    // asking for a rating, and it is only reachable from here: publishing
+    // backgrounds the app, so nothing raised at that point would be seen.
+    _reviewPrompt.maybeAsk();
   }
 
   /// Re-establishes what this device's complimentary token grants.
@@ -774,16 +797,30 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     });
   }
 
-  /// Collects a link the share extension left, and imports it.
+  /// Collects whatever the share extension left, and imports it.
   ///
-  /// Guarded against running twice over the same link: the native side deletes
-  /// the file as it hands it over, and [_busy] keeps a resume that lands mid
+  /// Guarded against running twice over the same share: the native side removes
+  /// each item as it hands it over, and [_busy] keeps a resume that lands mid
   /// import from starting a second one.
+  ///
+  /// Screenshots are taken before a link. Both in one share is unusual, and if
+  /// it happens the screenshots are the part that would be lost — a link can be
+  /// shared again from Maps in two taps, whereas the extension has already
+  /// consumed the images and there is nowhere to get them back from.
   Future<void> _takeSharedGuide() async {
     if (_busy) return;
-    final link = await _shareInbox.take();
-    if (link == null || link.isEmpty || !mounted) return;
-    await _importGuide(shared: link);
+    final shared = await _shareInbox.take();
+    if (shared == null || shared.isEmpty || !mounted) return;
+
+    if (shared.imagePaths.isNotEmpty) {
+      await _importScreenshots(paths: shared.imagePaths);
+      if (!mounted) return;
+    }
+
+    final link = shared.link;
+    if (link != null && link.isNotEmpty && mounted) {
+      await _importGuide(shared: link);
+    }
   }
 
   /// [shared] arrives from the iOS share sheet, where the user has already
@@ -1681,6 +1718,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       );
     } else {
       _queuedTotal = 0;
+      // The guide is in Maps, whole. Only arms the ask — the user is looking at
+      // Maps right now, so the prompt itself waits for them to come back.
+      await _reviewPrompt.recordSuccess();
     }
   }
 
