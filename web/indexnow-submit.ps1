@@ -36,14 +36,17 @@ $host_    = "wren.spencerfields.com"
 $key      = "9afd96aa193dc3e072bdd49fb071c0d3"
 $keyUrl   = "https://$host_/$key.txt"
 
-# Default to the full indexable set (mirrors web/sitemap.xml).
+# Default to the full indexable set, READ FROM sitemap.xml rather than repeated
+# here. The list used to be hardcoded, and it went stale exactly as the sitemap
+# it was copied from did: four URLs against a site serving 96, with fifteen
+# translations submitted to nobody. A second copy of a list is a second thing to
+# forget, so there is now only one — regenerate it with `python web/sitemap.py`.
 if (-not $Urls -or $Urls.Count -eq 0) {
-    $Urls = @(
-        "https://$host_/",
-        "https://$host_/support.html",
-        "https://$host_/privacy.html",
-        "https://$host_/terms.html"
-    )
+    $sitemap = Join-Path $PSScriptRoot "sitemap.xml"
+    if (-not (Test-Path $sitemap)) {
+        throw "No $sitemap. Run: python web/sitemap.py"
+    }
+    $Urls = ([xml](Get-Content $sitemap -Raw)).urlset.url.loc
 }
 
 $body = @{
