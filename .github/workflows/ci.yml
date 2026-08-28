@@ -266,8 +266,9 @@ jobs:
       # INTERNET is now genuinely needed -- the system geocoder turns a name
       # read off a screenshot into a coordinate, and it answers over the
       # network -- so it is declared deliberately in the app manifest rather
-      # than inherited. The other two are removed: Android sells nothing, and
-      # nothing here reads the network state.
+      # than inherited. BILLING is wanted too, since 2026-08-28: Android sells
+      # the same unlock as iOS, so it is declared and asserted present below.
+      # Only ACCESS_NETWORK_STATE is removed -- nothing here reads it.
       #
       # This reads what was BUILT, for both variants, because the source
       # manifest cannot show what a dependency added.
@@ -281,7 +282,7 @@ jobs:
           fail=0
           for perm in android.permission.ACCESS_NETWORK_STATE; do
             if grep -q "\"$perm\"" "$R"; then
-              echo "::error::the release manifest declares $perm, which nothing in Wren uses. It came from a dependency — restore the matching tools:node=\"remove\" line in android/app/src/main/AndroidManifest.xml. BILLING in particular makes Play advertise in-app purchases on a listing that cannot take a payment."
+              echo "::error::the release manifest declares $perm, which nothing in Wren uses. It came from a dependency — restore the matching tools:node=\"remove\" line in android/app/src/main/AndroidManifest.xml."
               fail=1
             fi
           done
@@ -306,7 +307,7 @@ jobs:
               fail=1
             fi
           done
-          [ "$fail" = 0 ] && echo "asks for INTERNET and nothing else"
+          [ "$fail" = 0 ] && echo "asks for INTERNET and BILLING, and nothing else"
           exit $fail
 
       - name: Report APK size

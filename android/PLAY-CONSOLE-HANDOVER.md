@@ -63,35 +63,47 @@ is documented by their vendors but has **not** been seen here.
 explains why the code looks the way it does, and because a later change could
 undo any of them without a test noticing.
 
-### 2.1 The purchase — resolved: Android is free, and sells nothing
+### 2.1 The purchase — resolved: Android sells the same unlock, at the same price
 
-`lib/src/store_unlock.dart` uses `in_app_purchase`, which on Android talks to
-Play Billing and asks for `com.spencerfields.littlebird.unlimited` — a product
-that exists in App Store Connect and not in Play Console. `price()` returned
-null, the sheet fell back to a hardcoded figure and `buy()` could not succeed.
+**Superseded 2026-08-28.** This section used to say Android was free and sold
+nothing. That was true for about a week and is worth keeping visible, because
+the reasoning was sound and the conclusion still got overturned: the argument
+was that the unlock sells *guides of any size*, and Android makes no guides, so
+there was nothing to sell. What it missed is that the cap is the product, not
+the guide — sending three places at a time instead of all of them is the same
+restriction whichever button the user pressed to get there.
 
-The unlock sells guides of any size. There are no guides here, so there is
-nothing to sell, and Android is now free with no purchase at all: no paywall,
-no restore item, no unlock item in the overflow menu, no complimentary-access
-dialog, and **no free cap** — `freePlaceLimit` counts places in a guide, and
-handing a list to another map app makes no guide.
+Price parity across the two stores is a requirement, not a nicety, so Android
+now sells `com.spencerfields.littlebird.unlimited` for the same USD 4.99 base
+price as iOS. The product has been **active** in Play Console since
+2026-08-28, with purchase option `unlimited`, type Buy, available in all
+regions.
 
-One flag decides all of it: `CapturePage.canMakeGuides`, null meaning
-"decide from the platform", which is `!Platform.isAndroid`. It also decides
-which `UnlockStore` is built, so no `BillingClient` is ever constructed.
+Two flags decide the behaviour, and they are deliberately separate:
 
-The old `canSendElsewhere` flag is folded into it. Two fields that must always
-disagree is a bug waiting to be written.
+* `CapturePage.canMakeGuides` — null meaning "decide from the platform", which
+  is `!Platform.isAndroid`. Whether this build *makes guides*.
+* `CapturePage.sellsUnlock` — null meaning true. Whether the unlock is *for
+  sale here*. True on both stores.
 
-**And the permission.** The app manifest asks for nothing and the APK shipped
-`com.android.vending.BILLING` anyway, because the billing library's own
-manifest declares it and Play reads the merged result. The same route brought
-`INTERNET` and `ACCESS_NETWORK_STATE`, from the Google datatransport that
-billing depends on. All three are removed with `tools:node="remove"`, so **the
-released app declares no permissions at all** — which is true, and worth
-saying on the listing. `android/app/src/debug/AndroidManifest.xml` adds
-`INTERNET` back for debug and profile builds, where the Dart VM service needs
-it.
+They were one flag and could not stay one: "makes no guides" and "sells
+nothing" turned out to be different questions, and collapsing them is precisely
+the mistake this section records. `_sellsUnlock` decides which `UnlockStore` is
+built, so a `BillingClient` is now constructed for real on Android.
+
+The cap applies on the hand-off path too. `_sendPlacesElsewhere` runs the same
+`_entitlement.check(places.length)` as `_publish`, offering buy, restore,
+send-the-first-three, or cancel. Paywall copy switches on `canMakeGuides`, so
+Android reads "any number of places" rather than "guides of any size".
+
+**And the permission.** The app manifest asks for `INTERNET` and
+`com.android.vending.BILLING`, both deliberately. BILLING used to carry
+`tools:node="remove"` with a comment saying to delete that line first if
+Android ever sold something; that line is gone. `ACCESS_NETWORK_STATE` is still
+removed — it arrives from the Google datatransport the billing library depends
+on, for its own telemetry, and nothing here reads it. CI asserts all three
+facts against the **merged** manifest, because the app manifest saying
+something is not evidence that the bundle says it.
 
 ### 2.2 "Make a guide" — resolved: the button is the hand-off
 
@@ -168,9 +180,17 @@ before acting:
   unlike Apple there is no separate trader-address field. The business address
   is Lytchett House, 13 Freeland Park, Wareham Road, Lytchett Matravers, Poole,
   BH16 6FA (UK Postbox, ref 171196). **The home address at 1A Wroughton Road
-  must never be published.** Before going live, check what the listing actually
-  shows — a free app with no purchases may not publish an address at all, which
-  is another argument for §2.1's free-for-v1 option.
+  must never be published.**
+
+  This stopped being hypothetical on 2026-08-28. The escape route this note
+  used to offer — ship free, publish no address — died with §2.1: Wren sells an
+  active one-time product now, so the listing *is* monetised and Google *will*
+  print whatever the payments profile holds. **Read the payments profile and
+  confirm it carries the Lytchett House address before the first public
+  release**, not after. Nothing in Play warns you which address it is about to
+  publish, and a wrong one cannot be unpublished from the copies that scrape
+  it. The payments profile currently reports an unresolved issue, so it has to
+  be opened anyway — check the address in the same visit.
 
 ---
 

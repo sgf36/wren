@@ -121,11 +121,12 @@ app to function rather than optional.
 model inside the bundle. Say this plainly on the listing; it is the question
 anybody will actually have.
 
-The app declares exactly one permission, INTERNET, and CI proves that against
-the built manifest rather than the source. It is needed twice over now: the
-geocoder, and the code server. There is deliberately **no location
-permission**: Wren never asks where the phone is, only where a place named in a
-screenshot is.
+The app declares two permissions, INTERNET and `com.android.vending.BILLING`,
+and CI proves both against the built manifest rather than the source. INTERNET
+is needed twice over: the geocoder, and the code server. BILLING is needed
+because Android now sells the same unlock as iOS. There is deliberately **no
+location permission**: Wren never asks where the phone is, only where a place
+named in a screenshot is.
 
 The Google Maps route is worth a note if the form allows one: the app saves a
 file through the system's own save dialog, then asks Android to open
@@ -133,7 +134,11 @@ file through the system's own save dialog, then asks Android to open
 in the user's own session, and Wren uploads nothing.
 
 **Content rating.** IARC questionnaire. No violence, no user-generated content,
-no communication features, no gambling, no purchases. A utility.
+no communication features, no gambling. A utility — but it **does** offer a
+digital purchase, and the questionnaire asks. Say yes: the unlock,
+`com.spencerfields.littlebird.unlimited`, has been an active one-time product
+since 2026-08-28. Answering no was correct only while Android sold nothing, and
+a rating obtained on a false answer is void.
 
 **Target audience.** Not directed at children.
 

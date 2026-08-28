@@ -66,6 +66,8 @@ def main():
                     help="prove the credential works and can see this app")
     ap.add_argument("--share", action="store_true",
                     help="Internal app sharing: an install link, no track, no review")
+    ap.add_argument("--draft", action="store_true",
+                    help="Upload and attach, but do NOT roll out or send for review")
     args = ap.parse_args()
 
     h = {"Authorization": "Bearer " + access_token(credentials())}
@@ -120,7 +122,13 @@ def main():
     version_code = r.json()["versionCode"]
     print("  uploaded, versionCode %s" % version_code)
 
-    release = {"status": "completed", "versionCodes": [str(version_code)]}
+    # "completed" is a rollout AND a submission for review; "draft" uploads the
+    # bundle, attaches it to the track, and stops. The difference matters for
+    # more than caution: Play reads the BILLING permission out of an *uploaded*
+    # bundle before it will let you create a one-time product, so a draft is
+    # enough to unblock the product and does not commit to shipping anything.
+    release = {"status": "draft" if args.draft else "completed",
+               "versionCodes": [str(version_code)]}
     if args.notes:
         release["releaseNotes"] = [{"language": "en-GB", "text": args.notes}]
     r = requests.put("%s/applications/%s/edits/%s/tracks/%s" % (BASE, PACKAGE, edit, args.track),
@@ -128,7 +136,7 @@ def main():
                      json={"track": args.track, "releases": [release]}, timeout=120)
     if r.status_code >= 400:
         fail(edit, h, "track assignment", r)
-    print("  assigned to %s" % args.track)
+    print("  assigned to %s%s" % (args.track, " (draft, not rolled out)" if args.draft else ""))
 
     r = requests.post("%s/applications/%s/edits/%s:commit" % (BASE, PACKAGE, edit),
                       headers=h, timeout=300)

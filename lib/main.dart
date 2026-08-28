@@ -188,16 +188,20 @@ class CapturePage extends StatefulWidget {
   /// nobody asked for. Where it is false the main button hands the list to
   /// another map app instead, which is the whole Android product.
   ///
-  /// One flag rather than two. "Makes guides" and "sends places elsewhere" are
-  /// exact opposites on every platform Wren runs on, and a pair of fields that
-  /// must always disagree is a bug waiting to be written.
+  /// One flag rather than two for the *button*. "Makes guides" and "sends
+  /// places elsewhere" are exact opposites on every platform Wren runs on, and
+  /// a pair of fields that must always disagree is a bug waiting to be written.
   ///
-  /// It gates the purchase as well as the button. The unlock sells guides of
-  /// any size, so where there are no guides there is nothing to sell -- and
-  /// [unlimitedProductId] exists in App Store Connect and not in Play Console,
-  /// so a paywall raised here would quote [unlimitedFallbackPrice] and then be
-  /// unable to take the money. Free, with no purchase, is the honest answer on
-  /// Android rather than a temporary one.
+  /// It does **not** gate the purchase; [sellsUnlock] does. It briefly did,
+  /// on the argument that the unlock sells guides of any size so where there
+  /// are no guides there is nothing to sell. That was wrong: the cap is the
+  /// product, and sending three places at a time rather than all of them is
+  /// the same restriction whichever button reached it. Collapsing the two
+  /// questions into this flag is the specific mistake to avoid here.
+  ///
+  /// What it does still decide is the paywall's *wording* -- "guides of any
+  /// size" against "any number of places" -- because the sheet has to describe
+  /// the button the user actually pressed.
   ///
   /// A test sets it either way, so both products can be exercised on whatever
   /// machine the tests run on -- otherwise the one path that hands a file to
