@@ -129,8 +129,16 @@ class LNo extends L {
   String get guidesOfAnySize => 'Guider uten størrelsesgrense';
 
   @override
+  String get anyNumberOfPlaces => 'Så mange steder du vil';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren lagrer inntil $limit steder i en guide gratis. Du har valgt $selected — $over flere enn det.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren sender inntil $limit steder om gangen gratis. Du har valgt $selected — $over flere enn det.';
   }
 
   @override
@@ -222,7 +230,7 @@ class LNo extends L {
   String get couldNotOpenMaps => 'Kart kunne ikke åpnes';
 
   @override
-  String get checkingAppleAccount => 'Sjekker Apple-kontoen din…';
+  String get checkingAppleAccount => 'Sjekker kontoen din…';
 
   @override
   String get restoredUnlocked =>
@@ -230,7 +238,7 @@ class LNo extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Fant ingen tidligere kjøp på denne Apple-kontoen.';
+      'Fant ingen tidligere kjøp på denne kontoen.';
 
   @override
   String get purchaseDidNotComplete =>

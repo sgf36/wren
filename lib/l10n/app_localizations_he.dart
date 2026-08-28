@@ -132,8 +132,16 @@ class LHe extends L {
   String get guidesOfAnySize => 'מדריכים בכל גודל';
 
   @override
+  String get anyNumberOfPlaces => 'כל מספר של מקומות';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return '‏Wren שומר עד $limit מקומות במדריך בחינם. סימנת $selected — $over יותר מזה.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return '‏Wren שולח עד $limit מקומות בכל פעם בחינם. סימנת $selected — $over יותר מזה.';
   }
 
   @override
@@ -235,13 +243,13 @@ class LHe extends L {
   String get couldNotOpenMaps => 'לא ניתן לפתוח את המפות';
 
   @override
-  String get checkingAppleAccount => 'בודק את חשבון Apple שלך…';
+  String get checkingAppleAccount => 'בודק את החשבון שלך…';
 
   @override
   String get restoredUnlocked => 'שוחזר. מדריכים בכל גודל נפתחו.';
 
   @override
-  String get noPreviousPurchase => 'לא נמצאה רכישה קודמת בחשבון Apple הזה.';
+  String get noPreviousPurchase => 'לא נמצאה רכישה קודמת בחשבון הזה.';
 
   @override
   String get purchaseDidNotComplete => 'הרכישה לא הושלמה, ולכן לא חויבת בדבר.';

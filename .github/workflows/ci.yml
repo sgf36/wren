@@ -266,8 +266,9 @@ jobs:
       # INTERNET is now genuinely needed -- the system geocoder turns a name
       # read off a screenshot into a coordinate, and it answers over the
       # network -- so it is declared deliberately in the app manifest rather
-      # than inherited. The other two are removed: Android sells nothing, and
-      # nothing here reads the network state.
+      # than inherited. BILLING is wanted too, since 2026-08-28: Android sells
+      # the same unlock as iOS, so it is declared and asserted present below.
+      # Only ACCESS_NETWORK_STATE is removed -- nothing here reads it.
       #
       # This reads what was BUILT, for both variants, because the source
       # manifest cannot show what a dependency added.
@@ -279,9 +280,9 @@ jobs:
           [ -f "$R" ] || { echo "::error::no release manifest at $R — the checks below would pass by finding nothing"; exit 1; }
           echo "release: $R"; grep -o 'uses-permission android:name="[^"]*"' "$R" || echo "  (none)"
           fail=0
-          for perm in com.android.vending.BILLING android.permission.ACCESS_NETWORK_STATE; do
+          for perm in android.permission.ACCESS_NETWORK_STATE; do
             if grep -q "\"$perm\"" "$R"; then
-              echo "::error::the release manifest declares $perm, which nothing in Wren uses. It came from a dependency — restore the matching tools:node=\"remove\" line in android/app/src/main/AndroidManifest.xml. BILLING in particular makes Play advertise in-app purchases on a listing that cannot take a payment."
+              echo "::error::the release manifest declares $perm, which nothing in Wren uses. It came from a dependency — restore the matching tools:node=\"remove\" line in android/app/src/main/AndroidManifest.xml."
               fail=1
             fi
           done
@@ -291,6 +292,14 @@ jobs:
             echo "::error::the release manifest has no INTERNET. The geocoder needs it; without it every place lookup fails on a device and no test here would notice."
             fail=1
           }
+          # And the one that used to be forbidden. Android sells the same
+          # unlock as iOS now, so a BillingClient is constructed for real and
+          # the permission must survive the merge. Without it billing fails
+          # when a user taps Unlock, not when CI builds.
+          grep -q '"com.android.vending.BILLING"' "$R" || {
+            echo "::error::the release manifest has no BILLING. Android sells the unlock, so in_app_purchase needs it — a billing call without the permission fails at connection time on a device, silently, for every buyer."
+            fail=1
+          }
           # A place name is looked up; the phone's own position never is.
           for perm in ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION; do
             if grep -q "$perm" "$R"; then
@@ -298,7 +307,7 @@ jobs:
               fail=1
             fi
           done
-          [ "$fail" = 0 ] && echo "asks for INTERNET and nothing else"
+          [ "$fail" = 0 ] && echo "asks for INTERNET and BILLING, and nothing else"
           exit $fail
 
       - name: Report APK size

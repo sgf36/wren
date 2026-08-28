@@ -130,8 +130,16 @@ class LKn extends L {
   String get guidesOfAnySize => 'ಯಾವುದೇ ಗಾತ್ರದ ಮಾರ್ಗದರ್ಶಿಗಳು';
 
   @override
+  String get anyNumberOfPlaces => 'ಎಷ್ಟು ಸ್ಥಳಗಳಾದರೂ';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren ಒಂದು ಮಾರ್ಗದರ್ಶಿಯಲ್ಲಿ ಉಚಿತವಾಗಿ $limit ಸ್ಥಳಗಳವರೆಗೆ ಉಳಿಸುತ್ತದೆ. ನೀವು $selected ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ — $over ಹೆಚ್ಚು.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ಒಂದೇ ಬಾರಿಗೆ ಉಚಿತವಾಗಿ $limit ಸ್ಥಳಗಳವರೆಗೆ ಕಳುಹಿಸುತ್ತದೆ. ನೀವು $selected ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ — $over ಹೆಚ್ಚು.';
   }
 
   @override
@@ -224,14 +232,14 @@ class LKn extends L {
   String get couldNotOpenMaps => 'Maps ತೆರೆಯಲಾಗಲಿಲ್ಲ';
 
   @override
-  String get checkingAppleAccount => 'ನಿಮ್ಮ Apple ಖಾತೆಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದೆ…';
+  String get checkingAppleAccount => 'ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…';
 
   @override
   String get restoredUnlocked =>
       'ಮರಳಿ ಪಡೆಯಲಾಗಿದೆ. ಯಾವುದೇ ಗಾತ್ರದ ಮಾರ್ಗದರ್ಶಿಗಳು ಅನ್‌ಲಾಕ್ ಆಗಿವೆ.';
 
   @override
-  String get noPreviousPurchase => 'ಈ Apple ಖಾತೆಯಲ್ಲಿ ಹಿಂದಿನ ಖರೀದಿ ಸಿಗಲಿಲ್ಲ.';
+  String get noPreviousPurchase => 'ಈ ಖಾತೆಯಲ್ಲಿ ಹಿಂದಿನ ಖರೀದಿ ಕಂಡುಬಂದಿಲ್ಲ.';
 
   @override
   String get purchaseDidNotComplete =>

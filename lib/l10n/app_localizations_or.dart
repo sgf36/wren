@@ -128,8 +128,16 @@ class LOr extends L {
   String get guidesOfAnySize => 'ଯେକୌଣସି ଆକାରର ଗାଇଡ୍';
 
   @override
+  String get anyNumberOfPlaces => 'ଯେକୌଣସି ସଂଖ୍ୟାର ସ୍ଥାନ';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren ଗୋଟିଏ ଗାଇଡ୍‌ରେ ମାଗଣାରେ $limitଟି ପର୍ଯ୍ୟନ୍ତ ସ୍ଥାନ ସାଇତେ। ଆପଣ $selectedଟି ବାଛିଛନ୍ତି — $overଟି ଅଧିକ।';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ଏକାଥରେ ମାଗଣାରେ $limitଟି ପର୍ଯ୍ୟନ୍ତ ସ୍ଥାନ ପଠାଏ। ଆପଣ $selectedଟି ବାଛିଛନ୍ତି — $overଟି ଅଧିକ।';
   }
 
   @override
@@ -216,15 +224,14 @@ class LOr extends L {
   String get couldNotOpenMaps => 'Maps ଖୋଲାଗଲା ନାହିଁ';
 
   @override
-  String get checkingAppleAccount => 'ଆପଣଙ୍କ Apple ଖାତା ଯାଞ୍ଚ କରୁଛି…';
+  String get checkingAppleAccount => 'ଆପଣଙ୍କ ଆକାଉଣ୍ଟ ଯାଞ୍ଚ କରାଯାଉଛି…';
 
   @override
   String get restoredUnlocked =>
       'ପୁନରୁଦ୍ଧାର ହେଲା। ଯେକୌଣସି ଆକାରର ଗାଇଡ୍ ଅନଲକ୍ ହୋଇଛି।';
 
   @override
-  String get noPreviousPurchase =>
-      'ଏହି Apple ଖାତାରେ ପୂର୍ବ କୌଣସି କ୍ରୟ ମିଳିଲା ନାହିଁ।';
+  String get noPreviousPurchase => 'ଏହି ଆକାଉଣ୍ଟରେ ପୂର୍ବ କ୍ରୟ ମିଳିଲା ନାହିଁ।';
 
   @override
   String get purchaseDidNotComplete =>

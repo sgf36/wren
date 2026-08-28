@@ -1,24 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
-    <!-- Wren asks for no permissions of its own. This one arrives anyway:
-         `in_app_purchase` pulls in com.android.billingclient:billing, whose
-         own manifest declares BILLING, and the merged manifest is what Play
-         reads. Verified in
-         build/app/intermediates/merged_manifest/.../AndroidManifest.xml —
-         the app manifest saying nothing is not evidence that the APK says
-         nothing.
+    <!-- BILLING arrives from `in_app_purchase`, which pulls in
+         com.android.billingclient:billing, and it is now wanted.
+         Android sells the same unlock as iOS at the same price, so a
+         BillingClient really is constructed here and the permission has to be
+         present: a billing call without it fails at connection time, not at
+         build, which is the kind of failure that reaches a user rather than a
+         developer.
 
-         It has to go. The unlock sells Apple Maps guides of any size, there
-         is no such product in Play Console, and nothing on Android can now
-         reach a paywall. Left in, Play would advertise "In-app purchases"
-         on a listing that cannot take a payment.
-
-         Safe because no BillingClient is ever constructed here: CapturePage
-         builds an UnavailableUnlockStore when it cannot make guides, so the
-         plugin attaches its channel and is never called. If Android ever
-         does sell something, delete this line first — a billing call
-         without the permission fails at connection time, not at build. -->
-    <uses-permission android:name="com.android.vending.BILLING" tools:node="remove" />
+         This line used to carry tools:node="remove" and a comment explaining
+         that Android sold nothing. It sells something now. Declared
+         explicitly rather than left to the merge, so the intent is visible in
+         the file a person reads — and CI asserts it survives into the merged
+         manifest, because the app manifest saying something is not evidence
+         that the bundle says it. -->
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <!-- Reading a screenshot happens on the phone: the text recogniser runs
          from a model inside the bundle and asks nothing of the network.

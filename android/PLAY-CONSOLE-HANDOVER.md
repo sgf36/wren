@@ -63,35 +63,47 @@ is documented by their vendors but has **not** been seen here.
 explains why the code looks the way it does, and because a later change could
 undo any of them without a test noticing.
 
-### 2.1 The purchase — resolved: Android is free, and sells nothing
+### 2.1 The purchase — resolved: Android sells the same unlock, at the same price
 
-`lib/src/store_unlock.dart` uses `in_app_purchase`, which on Android talks to
-Play Billing and asks for `com.spencerfields.littlebird.unlimited` — a product
-that exists in App Store Connect and not in Play Console. `price()` returned
-null, the sheet fell back to a hardcoded figure and `buy()` could not succeed.
+**Superseded 2026-08-28.** This section used to say Android was free and sold
+nothing. That was true for about a week and is worth keeping visible, because
+the reasoning was sound and the conclusion still got overturned: the argument
+was that the unlock sells *guides of any size*, and Android makes no guides, so
+there was nothing to sell. What it missed is that the cap is the product, not
+the guide — sending three places at a time instead of all of them is the same
+restriction whichever button the user pressed to get there.
 
-The unlock sells guides of any size. There are no guides here, so there is
-nothing to sell, and Android is now free with no purchase at all: no paywall,
-no restore item, no unlock item in the overflow menu, no complimentary-access
-dialog, and **no free cap** — `freePlaceLimit` counts places in a guide, and
-handing a list to another map app makes no guide.
+Price parity across the two stores is a requirement, not a nicety, so Android
+now sells `com.spencerfields.littlebird.unlimited` for the same USD 4.99 base
+price as iOS. The product has been **active** in Play Console since
+2026-08-28, with purchase option `unlimited`, type Buy, available in all
+regions.
 
-One flag decides all of it: `CapturePage.canMakeGuides`, null meaning
-"decide from the platform", which is `!Platform.isAndroid`. It also decides
-which `UnlockStore` is built, so no `BillingClient` is ever constructed.
+Two flags decide the behaviour, and they are deliberately separate:
 
-The old `canSendElsewhere` flag is folded into it. Two fields that must always
-disagree is a bug waiting to be written.
+* `CapturePage.canMakeGuides` — null meaning "decide from the platform", which
+  is `!Platform.isAndroid`. Whether this build *makes guides*.
+* `CapturePage.sellsUnlock` — null meaning true. Whether the unlock is *for
+  sale here*. True on both stores.
 
-**And the permission.** The app manifest asks for nothing and the APK shipped
-`com.android.vending.BILLING` anyway, because the billing library's own
-manifest declares it and Play reads the merged result. The same route brought
-`INTERNET` and `ACCESS_NETWORK_STATE`, from the Google datatransport that
-billing depends on. All three are removed with `tools:node="remove"`, so **the
-released app declares no permissions at all** — which is true, and worth
-saying on the listing. `android/app/src/debug/AndroidManifest.xml` adds
-`INTERNET` back for debug and profile builds, where the Dart VM service needs
-it.
+They were one flag and could not stay one: "makes no guides" and "sells
+nothing" turned out to be different questions, and collapsing them is precisely
+the mistake this section records. `_sellsUnlock` decides which `UnlockStore` is
+built, so a `BillingClient` is now constructed for real on Android.
+
+The cap applies on the hand-off path too. `_sendPlacesElsewhere` runs the same
+`_entitlement.check(places.length)` as `_publish`, offering buy, restore,
+send-the-first-three, or cancel. Paywall copy switches on `canMakeGuides`, so
+Android reads "any number of places" rather than "guides of any size".
+
+**And the permission.** The app manifest asks for `INTERNET` and
+`com.android.vending.BILLING`, both deliberately. BILLING used to carry
+`tools:node="remove"` with a comment saying to delete that line first if
+Android ever sold something; that line is gone. `ACCESS_NETWORK_STATE` is still
+removed — it arrives from the Google datatransport the billing library depends
+on, for its own telemetry, and nothing here reads it. CI asserts all three
+facts against the **merged** manifest, because the app manifest saying
+something is not evidence that the bundle says it.
 
 ### 2.2 "Make a guide" — resolved: the button is the hand-off
 
@@ -129,8 +141,18 @@ dead ends. None of it could be screenshotted for Play.
 * An unmatched row offered a magnifying glass that opened a search sheet
   captioned "Search Apple Maps", which could only ever fail.
 
-So on Android **a file is the only way in**, and "Add" opens the picker
-directly rather than offering one working source beside two dead ones. A row
+**CORRECTED 2026-08-28 — the sentence that stood here said a file was the only
+way in, and it is wrong.** Settled against the shipping package, not this file:
+
+* `_addPlaces()` builds the sheet with **"Add screenshots" and "From a file"
+  ungated**. Only `_AddSource.guide` sits behind `if (_makesGuides)`, so Android
+  offers **two** sources and hides only the guide import.
+* `OcrPlugin.kt` exists, `com.google.mlkit:text-recognition:16.0.1` is declared,
+  and the release AAB carries **28 ML Kit OCR model assets** under
+  `base/assets/mlkit-google-ocr-models/`. `littlebird/ocr` is in the dex.
+
+§1 was right and this section went stale behind it, which is the hazard of
+describing one behaviour in two places. Believe the package. A row
 carries no search icon, and the "read as" caption is shown only where it
 differs from the name above it — otherwise every row of an imported file was
 captioned with its own name.
@@ -158,9 +180,17 @@ before acting:
   unlike Apple there is no separate trader-address field. The business address
   is Lytchett House, 13 Freeland Park, Wareham Road, Lytchett Matravers, Poole,
   BH16 6FA (UK Postbox, ref 171196). **The home address at 1A Wroughton Road
-  must never be published.** Before going live, check what the listing actually
-  shows — a free app with no purchases may not publish an address at all, which
-  is another argument for §2.1's free-for-v1 option.
+  must never be published.**
+
+  This stopped being hypothetical on 2026-08-28. The escape route this note
+  used to offer — ship free, publish no address — died with §2.1: Wren sells an
+  active one-time product now, so the listing *is* monetised and Google *will*
+  print whatever the payments profile holds. **Read the payments profile and
+  confirm it carries the Lytchett House address before the first public
+  release**, not after. Nothing in Play warns you which address it is about to
+  publish, and a wrong one cannot be unpublished from the copies that scrape
+  it. The payments profile currently reports an unresolved issue, so it has to
+  be opened anyway — check the address in the same visit.
 
 ---
 
@@ -345,32 +375,58 @@ machine blamed the wrong thing entirely.
 
 ## 8. Play Console work list
 
-Everything in the repository is done. What is left needs the Play Console, a
-physical device, or a decision.
+**Rewritten 2026-08-28, when most of it stopped being true.** The original
+list is gone rather than ticked, because a work list of eight done items is
+read as a work list, and someone will do them again.
 
-1. **Finish account verification** on the Galaxy A15 (§3). Nothing can be
-   submitted until this is done, and nothing here can do it — the individual
-   developer route rejects an emulator.
-2. **Start closed testing with twelve testers the moment there is a track.**
-   Fourteen continuous days, and the clock does not start until the track is
-   running. This is the long pole; it is not the build.
-3. **Rewrite the privacy policy** at
-   <https://wren.spencerfields.com/privacy.html>. It describes the iOS app —
-   Apple Maps lookups and the App Store privacy label — and it does not say
-   that this build collects nothing at all. See `store/play/LISTING.md`.
-4. **Set the GitHub secrets** if CI is to build a signed release (§4).
-5. **Enter the listing** from `store/play/LISTING.md` and upload the four
-   screenshots from `store/play/screenshots/en-GB/`.
-6. **Answer the content declarations**, also in `store/play/LISTING.md`. Data
-   safety is now "nothing collected, nothing shared", which is stronger than
-   this document originally expected and is why §10 was rewritten.
-7. **Upload the AAB to an internal track**, install from Play rather than
-   `adb install`, and confirm the hand-off still works. CI re-signs every debug
-   APK, so uninstall before installing.
-8. Promote to production when the fourteen days are served.
+### The links, which did not exist until the first publication
+
+    opt-in    https://play.google.com/apps/testing/com.spencerfields.littlebird
+    listing   https://play.google.com/store/apps/details?id=com.spencerfields.littlebird
+    group     https://groups.google.com/g/wren-android-testers
+
+The opt-in link is what a tester follows; it works only for members of the
+Google Group, and joining that group is self-service. **Neither Play link
+existed while the app was unpublished** — the Console said links would appear
+once the app is published, which is why every earlier version of this section
+could not name them. Read the opt-in URL off the Copy-link button's
+`aria-label` rather than guessing it.
+
+### Done
+
+* Account and identity verification.
+* Signing, and the GitHub secrets behind CI's signed release build.
+* The whole listing — title, descriptions, contact details, four screenshots,
+  **icon and feature graphic** — pushed by `store/play_listing.py`.
+* Every App content declaration, including a content rating resubmitted to say
+  the app sells digital goods, and sign-in details carrying a reviewer unlock
+  code.
+* Category: Travel and local, matching the iOS `TRAVEL` category.
+* The one-time product, active at USD 4.99, the same base price as iOS.
+* Closed testing track Alpha: release 1.2.0 / versionCode 4, 177 countries,
+  testers managed by the Google Group above. Sent for review 2026-08-28.
+
+### Left
+
+1. **The payments account.** Google flagged an urgent issue on 2026-08-28.
+   Nothing can be bought until it is cleared, and it is an account-level
+   setting rather than anything in this repository.
+2. **License testing.** Add the testers' Google accounts under the developer
+   account's licence-testing list **before recruiting anyone**. Without it a
+   tester who taps unlock is charged the real 4.99, and there is no way to
+   discover that except by charging someone.
+3. **Twelve testers for fourteen continuous days.** The long pole, and the
+   clock starts when they are in, not when the track went live.
+4. **Exercise the purchase on a physical device.** The cap, the sheet quoting
+   a real store price, buying, and restoring. None of it has ever run on a
+   phone — it is unit-tested and the product exists, which is not the same
+   thing. Install from Play rather than `adb install`; CI re-signs every debug
+   APK, so uninstall first.
+5. **Promote to production** once the fourteen days are served, and only after
+   checking what address the listing publishes (§3).
 
 **Bump `versionCode` for every upload.** It comes from `pubspec.yaml`
-(`version: 1.0.0+1`), and Play refuses a reused one.
+(`version: 1.2.0+4`), and Play refuses a reused one.
 
 ## 9 and 10. Listing copy and content declarations
 

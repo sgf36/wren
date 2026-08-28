@@ -18,6 +18,7 @@ import 'src/place_search_sheet.dart';
 import 'src/place_share.dart';
 import 'src/region_hint.dart';
 import 'src/resolver.dart';
+import 'src/review_prompt.dart';
 import 'src/share_inbox.dart';
 import 'src/admin_sheet.dart';
 import 'src/comp_unlock.dart' as comp;
@@ -157,11 +158,13 @@ class CapturePage extends StatefulWidget {
     this.store,
     this.saver,
     this.canMakeGuides,
+    this.sellsUnlock,
     this.resolver,
     this.files,
     this.expander,
     this.shareInbox,
     this.sharer,
+    this.reviewPrompt,
     this.initialPending,
     this.initialGuideName,
     this.initialOverlay = ScreenshotOverlay.none,
@@ -185,21 +188,41 @@ class CapturePage extends StatefulWidget {
   /// nobody asked for. Where it is false the main button hands the list to
   /// another map app instead, which is the whole Android product.
   ///
-  /// One flag rather than two. "Makes guides" and "sends places elsewhere" are
-  /// exact opposites on every platform Wren runs on, and a pair of fields that
-  /// must always disagree is a bug waiting to be written.
+  /// One flag rather than two for the *button*. "Makes guides" and "sends
+  /// places elsewhere" are exact opposites on every platform Wren runs on, and
+  /// a pair of fields that must always disagree is a bug waiting to be written.
   ///
-  /// It gates the purchase as well as the button. The unlock sells guides of
-  /// any size, so where there are no guides there is nothing to sell -- and
-  /// [unlimitedProductId] exists in App Store Connect and not in Play Console,
-  /// so a paywall raised here would quote [unlimitedFallbackPrice] and then be
-  /// unable to take the money. Free, with no purchase, is the honest answer on
-  /// Android rather than a temporary one.
+  /// It does **not** gate the purchase; [sellsUnlock] does. It briefly did,
+  /// on the argument that the unlock sells guides of any size so where there
+  /// are no guides there is nothing to sell. That was wrong: the cap is the
+  /// product, and sending three places at a time rather than all of them is
+  /// the same restriction whichever button reached it. Collapsing the two
+  /// questions into this flag is the specific mistake to avoid here.
+  ///
+  /// What it does still decide is the paywall's *wording* -- "guides of any
+  /// size" against "any number of places" -- because the sheet has to describe
+  /// the button the user actually pressed.
   ///
   /// A test sets it either way, so both products can be exercised on whatever
   /// machine the tests run on -- otherwise the one path that hands a file to
   /// another app could only ever be checked by hand, on a phone.
   final bool? canMakeGuides;
+
+  /// Whether this platform sells the unlock at all.
+  ///
+  /// Deliberately NOT the same question as [canMakeGuides], and the two must be
+  /// allowed to disagree. "Does this build Apple Maps guides?" is false on
+  /// Android. "Does this sell the unlock?" is true everywhere, because the two
+  /// stores carry the same product at the same price and a cap that existed on
+  /// one platform and not the other would be a different app wearing the same
+  /// name.
+  ///
+  /// An earlier version folded these together and the comment on that flag said
+  /// two fields that must always disagree is a bug waiting to be written. That
+  /// was right about *always*: these two agree on iOS and part company only on
+  /// Android, because each answers its own question. Do not re-collapse them.
+  final bool? sellsUnlock;
+
   final LinkExpander? expander;
 
   /// Injectable so the share-sheet handoff can be tested without an extension.
@@ -207,6 +230,11 @@ class CapturePage extends StatefulWidget {
 
   /// Injectable so sending to another map app can be tested without a device.
   final PlaceSharer? sharer;
+
+  /// Injectable so the rating prompt can be tested without the App Store.
+  /// Apple reports neither whether its prompt appeared nor what was said, so
+  /// the only thing that can be asserted anywhere is when Wren asks for it.
+  final ReviewPrompt? reviewPrompt;
 
   @visibleForTesting
   final List<Pending>? initialPending;
@@ -231,7 +259,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   late final PlaceResolver _resolver = widget.resolver ?? MapKitResolver();
   late final UnlockStore _store =
       widget.store ??
-      (_makesGuides ? StoreUnlockStore() : UnavailableUnlockStore());
+      (_sellsUnlock ? StoreUnlockStore() : UnavailableUnlockStore());
   late final FileSource _files = widget.files ?? DocumentFileSource();
   late final FileSaver _saver = widget.saver ?? const DocumentFileSaver();
   late final LinkExpander _expander = widget.expander ?? HttpLinkExpander();
@@ -239,10 +267,21 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       widget.shareInbox ?? const MethodChannelShareInbox();
   late final PlaceSharer _sharer =
       widget.sharer ?? const MethodChannelPlaceSharer();
+  // Real on both platforms, and deliberately not tied to [_makesGuides]. Every
+  // build has a moment worth asking about: on iPhone a guide reaching Apple
+  // Maps, on Android a list reaching whichever map app the user chose. Both are
+  // armed below and asked for on the next resume. [NoReviewPrompt] records why
+  // Android briefly had nothing.
+  late final ReviewPrompt _reviewPrompt =
+      widget.reviewPrompt ?? (const StoreReviewPrompt());
 
   /// Whether guides -- and therefore the purchase that sells bigger ones --
   /// exist on this platform at all. See [CapturePage.canMakeGuides].
   bool get _makesGuides => widget.canMakeGuides ?? !Platform.isAndroid;
+
+  /// Whether the unlock is for sale here. True on both stores — see
+  /// [CapturePage.sellsUnlock] for why this is a separate question.
+  bool get _sellsUnlock => widget.sellsUnlock ?? true;
 
   /// Set once a lookup has reported that this platform has no map at all.
   ///
@@ -362,10 +401,19 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// It used to return immediately on Android, because `littlebird/identity`
   /// had no implementation there and a code could not be redeemed against a
   /// device that could not name itself. That is implemented now, so the box
-  /// opens and codes work — with one asymmetry worth knowing: Android has no
-  /// paid feature, so an ordinary unlock code is accepted and grants nothing
-  /// anybody can see. Admin codes are the reason this exists here, and the
-  /// console is what they open.
+  /// opens and codes work.
+  ///
+  /// There is no longer an asymmetry between the platforms here. This comment
+  /// used to warn that an ordinary unlock code on Android was accepted and
+  /// granted nothing anybody could see, because Android had no paid feature.
+  /// It has one now, and [_refreshCompAccess] turns any role other than
+  /// [comp.CompRole.none] into [Entitlement.unlocked] without asking which
+  /// platform it is on — so an unlock code lifts the three-place cap on
+  /// Android exactly as it does on iPhone.
+  ///
+  /// That is not a detail: it is the route a store reviewer takes. Google will
+  /// not buy the product to review it, so the Play "Sign-in details"
+  /// declaration hands over a comp code and this is what redeems it.
   Future<void> _compUnlock() async {
     if (_role == comp.CompRole.admin) {
       final token = await comp.heldToken();
@@ -559,14 +607,22 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     return _resolver.locate(answer);
   }
 
-  Future<void> _importScreenshots() async {
+  /// Reads screenshots and turns them into places.
+  ///
+  /// [paths] arrive from the iOS share sheet, where the user has already chosen
+  /// the images — so the picker is skipped rather than asking them to choose
+  /// again what they just shared. Everything after the choosing is identical,
+  /// deliberately: the reading, ranking and city-confirmation are the part that
+  /// took the longest to get right and there is no second copy of it.
+  Future<void> _importScreenshots({List<String>? paths}) async {
     final l = L.of(context);
     setState(() {
       _busy = true;
       _status = null;
     });
     try {
-      final files = await _picker.pickMultiImage();
+      final files =
+          paths ?? [for (final f in await _picker.pickMultiImage()) f.path];
       if (files.isEmpty) {
         setState(() {
           _busy = false;
@@ -589,8 +645,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       // places do not. That works in any language and in any app, which a list
       // of English button labels cannot.
       final perShot = <List<TextLine>>[];
-      for (final f in files) {
-        perShot.add(await Ocr.recognise(f.path));
+      for (final path in files) {
+        perShot.add(await Ocr.recognise(path));
         if (mounted) setState(() => _readCount++);
       }
       final furniture = repeatedLines(perShot);
@@ -748,6 +804,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // A phone that is never restarted would otherwise go a fortnight without
     // asking, and lapse while in daily use.
     _refreshCompAccess();
+    // Coming back from Maps having just published is the one moment worth
+    // asking for a rating, and it is only reachable from here: publishing
+    // backgrounds the app, so nothing raised at that point would be seen.
+    _reviewPrompt.maybeAsk();
   }
 
   /// Re-establishes what this device's complimentary token grants.
@@ -774,16 +834,30 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     });
   }
 
-  /// Collects a link the share extension left, and imports it.
+  /// Collects whatever the share extension left, and imports it.
   ///
-  /// Guarded against running twice over the same link: the native side deletes
-  /// the file as it hands it over, and [_busy] keeps a resume that lands mid
+  /// Guarded against running twice over the same share: the native side removes
+  /// each item as it hands it over, and [_busy] keeps a resume that lands mid
   /// import from starting a second one.
+  ///
+  /// Screenshots are taken before a link. Both in one share is unusual, and if
+  /// it happens the screenshots are the part that would be lost — a link can be
+  /// shared again from Maps in two taps, whereas the extension has already
+  /// consumed the images and there is nowhere to get them back from.
   Future<void> _takeSharedGuide() async {
     if (_busy) return;
-    final link = await _shareInbox.take();
-    if (link == null || link.isEmpty || !mounted) return;
-    await _importGuide(shared: link);
+    final shared = await _shareInbox.take();
+    if (shared == null || shared.isEmpty || !mounted) return;
+
+    if (shared.imagePaths.isNotEmpty) {
+      await _importScreenshots(paths: shared.imagePaths);
+      if (!mounted) return;
+    }
+
+    final link = shared.link;
+    if (link != null && link.isNotEmpty && mounted) {
+      await _importGuide(shared: link);
+    }
   }
 
   /// [shared] arrives from the iOS share sheet, where the user has already
@@ -1236,7 +1310,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               const WrenMark(size: 44),
               const SizedBox(height: 16),
               Text(
-                combining ? l.unlockCombineTitle : l.guidesOfAnySize,
+                combining
+                    ? l.unlockCombineTitle
+                    : (_makesGuides ? l.guidesOfAnySize : l.anyNumberOfPlaces),
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 10),
@@ -1248,7 +1324,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                 Text(
                   combining
                       ? l.unlockCombineBody(carried)
-                      : l.unlockExplain(freePlaceLimit, selected, over),
+                      : (_makesGuides
+                            ? l.unlockExplain(freePlaceLimit, selected, over)
+                            : l.unlockExplainAndroid(
+                                freePlaceLimit,
+                                selected,
+                                over,
+                              )),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 6),
@@ -1413,10 +1495,19 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// Android only in practice: on iOS the destination is Apple Maps and that is
   /// what [_publish] already does.
   ///
-  /// Nothing here is capped, deliberately. [freePlaceLimit] limits the places
-  /// in one guide, and this makes no guide -- it writes a file and hands it
-  /// over. Counting these against a cap that sells an Apple Maps feature would
-  /// be charging for something the platform does not have.
+  /// Capped, at [freePlaceLimit], exactly as publishing a guide is.
+  ///
+  /// This used to be free at any size, on the reasoning that the cap sold an
+  /// Apple Maps feature and Android has no guides. That reasoning was sound
+  /// about the *mechanism* and wrong about the *product*: the two stores carry
+  /// one product at one price, and a free tier that differed by platform would
+  /// make them two different apps sharing a name. The unit being sold is
+  /// "more than three places at once", which both platforms have.
+  ///
+  /// What the unlock buys here is one thing, not two. There is no guide to
+  /// combine with, so the combining half of the iOS purchase has no Android
+  /// equivalent — which is why the sheet is opened with `carried: 0` and shows
+  /// the size copy rather than the combining copy.
   ///
   /// Named apps are listed first, but only if they are actually installed —
   /// and "installed" here means installed AND declared in the manifest's
@@ -1424,10 +1515,40 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// chooser, so the long tail works without Wren claiming to have tested it.
   Future<void> _sendPlacesElsewhere() async {
     final l = L.of(context);
-    final places = [
+    var places = [
       for (final p in _pending.where((p) => p.exportable)) p.forExport,
     ].whereType<ExportPlace>().toList();
     if (places.isEmpty) return;
+
+    // The same gate publishing uses, so the two platforms cannot drift.
+    switch (_entitlement.check(places.length)) {
+      case PublishBlock.nothingSelected:
+        return;
+      case PublishBlock.needsUnlock:
+        switch (await _offerUnlock(places.length)) {
+          case _UnlockChoice.buy:
+            if (await _store.buy()) {
+              setState(() => _entitlement = const Entitlement.unlocked());
+            } else {
+              setState(() => _status = l.purchaseDidNotComplete);
+              return;
+            }
+          case _UnlockChoice.restore:
+            if (await _store.restore()) {
+              setState(() => _entitlement = const Entitlement.unlocked());
+            } else {
+              setState(() => _status = l.noPreviousPurchase);
+              return;
+            }
+          case _UnlockChoice.publishFree:
+            places = places.take(freePlaceLimit).toList();
+          case _UnlockChoice.cancel:
+            return;
+        }
+      case PublishBlock.none:
+        break;
+    }
+    if (!mounted) return;
 
     // Ask the platform which of the named apps are really there. One call per
     // app, all at once, before the sheet is drawn.
@@ -1525,6 +1646,11 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         ShareOutcome.unavailable => l.sendPlacesFailed,
       };
     });
+
+    // Handing the file over is this platform's "it worked" moment, the same
+    // way a guide opening in Maps is on iOS. Only arms the rating ask; the
+    // prompt itself waits for the user to come back from the other app.
+    if (outcome == ShareOutcome.sent) await _reviewPrompt.recordSuccess();
   }
 
   /// The Google Maps route: save a CSV, then open My Maps in a Custom Tab.
@@ -1681,6 +1807,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       );
     } else {
       _queuedTotal = 0;
+      // The guide is in Maps, whole. Only arms the ask — the user is looking at
+      // Maps right now, so the prompt itself waits for them to come back.
+      await _reviewPrompt.recordSuccess();
     }
   }
 
@@ -1836,8 +1965,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               // then fail to take the money. Restoring is worse still, since
               // its own copy says "Apple Account". Fixing one rejection must
               // not manufacture another.
-              if (_makesGuides && !_entitlement.unlimited) ...[
-                PopupMenuItem(value: 'unlock', child: Text(l.guidesOfAnySize)),
+              if (_sellsUnlock && !_entitlement.unlimited) ...[
+                PopupMenuItem(
+                  value: 'unlock',
+                  child: Text(
+                    _makesGuides ? l.guidesOfAnySize : l.anyNumberOfPlaces,
+                  ),
+                ),
                 PopupMenuItem(value: 'restore', child: Text(l.restorePurchase)),
               ],
             ],
@@ -1899,7 +2033,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
-          if (_makesGuides && over > 0)
+          if (_sellsUnlock && over > 0)
             _Banner(
               accent: Wren.clay,
               child: Text(

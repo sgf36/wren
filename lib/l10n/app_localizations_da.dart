@@ -129,8 +129,16 @@ class LDa extends L {
   String get guidesOfAnySize => 'Guider uden størrelsesgrænse';
 
   @override
+  String get anyNumberOfPlaces => 'Et vilkårligt antal steder';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren gemmer op til $limit steder i en guide gratis. Du har valgt $selected — $over flere end det.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren sender op til $limit steder ad gangen gratis. Du har valgt $selected — $over flere end det.';
   }
 
   @override
@@ -222,15 +230,14 @@ class LDa extends L {
   String get couldNotOpenMaps => 'Kort kunne ikke åbnes';
 
   @override
-  String get checkingAppleAccount => 'Tjekker din Apple-konto…';
+  String get checkingAppleAccount => 'Tjekker din konto…';
 
   @override
   String get restoredUnlocked =>
       'Gendannet. Guider uden størrelsesgrænse er låst op.';
 
   @override
-  String get noPreviousPurchase =>
-      'Der blev ikke fundet et tidligere køb på denne Apple-konto.';
+  String get noPreviousPurchase => 'Ingen tidligere køb fundet på denne konto.';
 
   @override
   String get purchaseDidNotComplete =>

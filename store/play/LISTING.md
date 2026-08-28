@@ -68,13 +68,17 @@ Wren writes one file and passes it to whichever app you choose. Only the apps ac
 
 Google Maps works differently, because Google offers no way for an app to write into a saved list. Wren saves the places as a spreadsheet, then opens Google My Maps so you can import it there yourself.
 
+THREE AT A TIME, OR ALL OF THEM
+
+Wren is free, and sends three places at a time. One payment removes that limit for good: no subscription, nothing recurring, and nothing that expires. It is the same unlock at the same price on iPhone.
+
 WHAT LEAVES YOUR PHONE, AND WHAT DOES NOT
 
 The screenshot does not. The reading is done on the device.
 
 A place name does, when Wren looks it up, because finding where a place is means asking a map. That is the only thing sent, and it is sent to the map service your phone already uses.
 
-There is no account, no advertising and no analytics. Wren asks for one permission, to reach the network for that lookup, and none at all for your location: it never asks where you are, only where a place named in a screenshot is.
+There is no account, no advertising and no analytics. Wren reaches the network for that lookup and for the purchase above, and asks nothing at all about your location: it never asks where you are, only where a place named in a screenshot is.
 
 Organic Maps, OsmAnd, Locus Map, Gaia GPS, Mapy.com and Google Maps are the trademarks of their respective owners. Wren works with them; it is not affiliated with, endorsed by or connected to any of them.
 ```
@@ -121,11 +125,12 @@ app to function rather than optional.
 model inside the bundle. Say this plainly on the listing; it is the question
 anybody will actually have.
 
-The app declares exactly one permission, INTERNET, and CI proves that against
-the built manifest rather than the source. It is needed twice over now: the
-geocoder, and the code server. There is deliberately **no location
-permission**: Wren never asks where the phone is, only where a place named in a
-screenshot is.
+The app declares two permissions, INTERNET and `com.android.vending.BILLING`,
+and CI proves both against the built manifest rather than the source. INTERNET
+is needed twice over: the geocoder, and the code server. BILLING is needed
+because Android now sells the same unlock as iOS. There is deliberately **no
+location permission**: Wren never asks where the phone is, only where a place
+named in a screenshot is.
 
 The Google Maps route is worth a note if the form allows one: the app saves a
 file through the system's own save dialog, then asks Android to open
@@ -133,7 +138,11 @@ file through the system's own save dialog, then asks Android to open
 in the user's own session, and Wren uploads nothing.
 
 **Content rating.** IARC questionnaire. No violence, no user-generated content,
-no communication features, no gambling, no purchases. A utility.
+no communication features, no gambling. A utility — but it **does** offer a
+digital purchase, and the questionnaire asks. Say yes: the unlock,
+`com.spencerfields.littlebird.unlimited`, has been an active one-time product
+since 2026-08-28. Answering no was correct only while Android sold nothing, and
+a rating obtained on a false answer is void.
 
 **Target audience.** Not directed at children.
 

@@ -128,8 +128,16 @@ class LTr extends L {
   String get guidesOfAnySize => 'Her boyutta rehber';
 
   @override
+  String get anyNumberOfPlaces => 'İstediğin kadar mekân';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren bir rehbere ücretsiz olarak en fazla $limit mekân kaydeder. $selected tane seçtin — $over tane fazla.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren bir seferde ücretsiz olarak en fazla $limit mekân gönderir. $selected tane seçtin — $over tane fazla.';
   }
 
   @override
@@ -215,14 +223,14 @@ class LTr extends L {
   String get couldNotOpenMaps => 'Harita açılamadı';
 
   @override
-  String get checkingAppleAccount => 'Apple Hesabın kontrol ediliyor…';
+  String get checkingAppleAccount => 'Hesabın kontrol ediliyor…';
 
   @override
   String get restoredUnlocked => 'Geri yüklendi. Her boyutta rehber açıldı.';
 
   @override
   String get noPreviousPurchase =>
-      'Bu Apple Hesabında önceki bir satın alım bulunamadı.';
+      'Bu hesapta önceki bir satın alma bulunamadı.';
 
   @override
   String get purchaseDidNotComplete =>

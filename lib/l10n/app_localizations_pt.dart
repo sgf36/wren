@@ -128,8 +128,16 @@ class LPt extends L {
   String get guidesOfAnySize => 'Guias de qualquer tamanho';
 
   @override
+  String get anyNumberOfPlaces => 'Qualquer número de lugares';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'O Wren salva até $limit lugares por guia de graça. Você selecionou $selected: $over a mais.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'O Wren envia até $limit lugares por vez de graça. Você selecionou $selected: $over a mais.';
   }
 
   @override
@@ -222,7 +230,7 @@ class LPt extends L {
   String get couldNotOpenMaps => 'Não foi possível abrir o Mapas';
 
   @override
-  String get checkingAppleAccount => 'Verificando sua Conta Apple…';
+  String get checkingAppleAccount => 'Verificando sua conta…';
 
   @override
   String get restoredUnlocked =>
@@ -230,7 +238,7 @@ class LPt extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Nenhuma compra anterior encontrada nesta Conta Apple.';
+      'Nenhuma compra anterior encontrada nesta conta.';
 
   @override
   String get purchaseDidNotComplete =>
@@ -654,8 +662,16 @@ class LPtPt extends LPt {
   String get guidesOfAnySize => 'Guias de qualquer tamanho';
 
   @override
+  String get anyNumberOfPlaces => 'Qualquer número de lugares';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'O Wren guarda até $limit lugares por guia gratuitamente. Selecionou $selected: $over a mais.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'O Wren envia até $limit lugares de cada vez gratuitamente. Selecionou $selected: $over a mais.';
   }
 
   @override
@@ -748,7 +764,7 @@ class LPtPt extends LPt {
   String get couldNotOpenMaps => 'Não foi possível abrir o Mapas';
 
   @override
-  String get checkingAppleAccount => 'A verificar a sua Conta Apple…';
+  String get checkingAppleAccount => 'A verificar a sua conta…';
 
   @override
   String get restoredUnlocked =>
@@ -756,7 +772,7 @@ class LPtPt extends LPt {
 
   @override
   String get noPreviousPurchase =>
-      'Não foi encontrada nenhuma compra anterior nesta Conta Apple.';
+      'Não foi encontrada nenhuma compra anterior nesta conta.';
 
   @override
   String get purchaseDidNotComplete =>

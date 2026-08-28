@@ -123,8 +123,16 @@ class LZh extends L {
   String get guidesOfAnySize => '不限数量的指南';
 
   @override
+  String get anyNumberOfPlaces => '不限数量的发送';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren 免费为一个指南保存最多 $limit 个地点。你选了 $selected 个，多出 $over 个。';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren 每次免费发送最多 $limit 个地点。你选了 $selected 个，多出 $over 个。';
   }
 
   @override
@@ -208,13 +216,13 @@ class LZh extends L {
   String get couldNotOpenMaps => '无法打开地图';
 
   @override
-  String get checkingAppleAccount => '正在检查你的 Apple 账户…';
+  String get checkingAppleAccount => '正在检查你的账户…';
 
   @override
   String get restoredUnlocked => '已恢复。不限数量的指南已解锁。';
 
   @override
-  String get noPreviousPurchase => '这个 Apple 账户上没有找到以前的购买。';
+  String get noPreviousPurchase => '此账户没有找到以前的购买记录。';
 
   @override
   String get purchaseDidNotComplete => '购买没有完成，所以没有扣款。';
@@ -602,8 +610,16 @@ class LZhHant extends LZh {
   String get guidesOfAnySize => '不限數量的指南';
 
   @override
+  String get anyNumberOfPlaces => '不限數量的傳送';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren 免費為一個指南儲存最多 $limit 個地點。你選了 $selected 個，多出 $over 個。';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren 每次免費傳送最多 $limit 個地點。你選了 $selected 個，多出 $over 個。';
   }
 
   @override
@@ -687,13 +703,13 @@ class LZhHant extends LZh {
   String get couldNotOpenMaps => '無法打開地圖';
 
   @override
-  String get checkingAppleAccount => '正在檢查你的 Apple 帳號…';
+  String get checkingAppleAccount => '正在檢查你的帳戶…';
 
   @override
   String get restoredUnlocked => '已回復。不限數量的指南已解鎖。';
 
   @override
-  String get noPreviousPurchase => '這個 Apple 帳號上找不到先前的購買項目。';
+  String get noPreviousPurchase => '此帳戶找不到先前的購買紀錄。';
 
   @override
   String get purchaseDidNotComplete => '購買沒有完成，所以沒有扣款。';

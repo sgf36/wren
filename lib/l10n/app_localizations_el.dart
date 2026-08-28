@@ -131,8 +131,16 @@ class LEl extends L {
   String get guidesOfAnySize => 'Οδηγοί χωρίς όριο';
 
   @override
+  String get anyNumberOfPlaces => 'Όσα μέρη θέλεις';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Το Wren αποθηκεύει δωρεάν έως $limit μέρη σε έναν οδηγό. Έχεις επιλέξει $selected — $over παραπάνω.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Το Wren στέλνει δωρεάν έως $limit μέρη τη φορά. Έχεις επιλέξει $selected — $over παραπάνω.';
   }
 
   @override
@@ -231,7 +239,7 @@ class LEl extends L {
   String get couldNotOpenMaps => 'Δεν ήταν δυνατό το άνοιγμα των Χαρτών';
 
   @override
-  String get checkingAppleAccount => 'Έλεγχος του Apple Account σου…';
+  String get checkingAppleAccount => 'Έλεγχος του λογαριασμού σου…';
 
   @override
   String get restoredUnlocked =>
@@ -239,7 +247,7 @@ class LEl extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Δεν βρέθηκε προηγούμενη αγορά σε αυτό το Apple Account.';
+      'Δεν βρέθηκε προηγούμενη αγορά σε αυτόν τον λογαριασμό.';
 
   @override
   String get purchaseDidNotComplete =>

@@ -128,8 +128,16 @@ class LHi extends L {
   String get guidesOfAnySize => 'किसी भी आकार की गाइड';
 
   @override
+  String get anyNumberOfPlaces => 'कितनी भी जगहें';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren एक गाइड में मुफ़्त में $limit जगहें तक सहेजता है। आपने $selected चुनी हैं — $over ज़्यादा।';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren एक बार में मुफ़्त में $limit जगहें तक भेजता है। आपने $selected चुनी हैं — $over ज़्यादा।';
   }
 
   @override
@@ -221,14 +229,13 @@ class LHi extends L {
   String get couldNotOpenMaps => 'Maps नहीं खुल सका';
 
   @override
-  String get checkingAppleAccount => 'आपका Apple खाता जाँचा जा रहा है…';
+  String get checkingAppleAccount => 'आपका खाता जाँचा जा रहा है…';
 
   @override
   String get restoredUnlocked => 'बहाल हो गया। किसी भी आकार की गाइड अनलॉक हैं।';
 
   @override
-  String get noPreviousPurchase =>
-      'इस Apple खाते पर पहले की कोई खरीद नहीं मिली।';
+  String get noPreviousPurchase => 'इस खाते पर पहले की कोई खरीदारी नहीं मिली।';
 
   @override
   String get purchaseDidNotComplete =>

@@ -38,6 +38,22 @@ LIMITS = {"title": 30, "shortDescription": 80, "fullDescription": 4000}
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LISTING_MD = os.path.join(REPO, "store", "play", "LISTING.md")
 SHOTS_DIR = os.path.join(REPO, "store", "play", "screenshots", "en-GB")
+GRAPHICS_DIR = os.path.join(REPO, "store", "play", "graphics")
+
+# Play will not publish a listing without these two, and neither is derivable
+# from the app bundle -- an APK icon is not the store icon. They were missing
+# from this script until 2026-08-28, which is the whole reason Wren reached
+# closed testing with no default store listing and therefore no logo on Play.
+#
+# imageType is the last path segment for upload and for deletion alike, and
+# the names are Play's, not ours.
+GRAPHICS = {
+    "icon": os.path.join(GRAPHICS_DIR, "icon-512.png"),
+    "featureGraphic": os.path.join(GRAPHICS_DIR, "feature-graphic-1024x500.png"),
+}
+
+# What Play requires of each, checked here rather than discovered from a 400.
+GRAPHIC_SIZES = {"icon": (512, 512), "featureGraphic": (1024, 500)}
 
 
 def key_path() -> str:
@@ -123,6 +139,21 @@ def main():
         sys.exit("Play requires at least two phone screenshots; found %d" % len(shots))
     print("screenshots       %4d  %s" % (len(shots), ", ".join(os.path.basename(s) for s in shots)))
 
+    # Verified against the file rather than trusted, because a wrong size here
+    # fails at commit with a message that names the edit and not the image.
+    from PIL import Image
+    for kind, path in GRAPHICS.items():
+        if not os.path.exists(path):
+            sys.exit("%s: no file at %s" % (kind, path))
+        with Image.open(path) as im:
+            size, mode = im.size, im.mode
+        want = GRAPHIC_SIZES[kind]
+        if size != want:
+            sys.exit("%s is %dx%d, Play wants %dx%d" % (kind, size[0], size[1], want[0], want[1]))
+        if mode not in ("RGB", "P"):
+            sys.exit("%s is mode %s; Play renders alpha on an unknown background" % (kind, mode))
+        print("%-17s %4s  %s (%s)" % (kind, "OK", os.path.basename(path), mode))
+
     if not args.apply:
         print("\n--- short description ---\n%s" % short)
         print("\n--- full description ---\n%s" % full)
@@ -171,6 +202,20 @@ def main():
                 headers=h, params={"uploadType": "media"},
                 data=fh.read(), timeout=300), os.path.basename(path))
         print("  uploaded %s" % os.path.basename(path))
+
+    # Same replace-don't-append rule as the screenshots: one icon, not a pile.
+    for kind, path in GRAPHICS.items():
+        check(requests.delete(
+            "%s/applications/%s/edits/%s/listings/%s/%s"
+            % (BASE, PACKAGE, edit, LANGUAGE, kind), headers=h, timeout=120),
+            "clear " + kind)
+        with open(path, "rb") as fh:
+            check(requests.post(
+                "%s/applications/%s/edits/%s/listings/%s/%s"
+                % (UPLOAD, PACKAGE, edit, LANGUAGE, kind),
+                headers=h, params={"uploadType": "media"},
+                data=fh.read(), timeout=300), kind)
+        print("  uploaded %s (%s)" % (os.path.basename(path), kind))
 
     check(requests.post("%s/applications/%s/edits/%s:commit" % (BASE, PACKAGE, edit),
                         headers=h, timeout=120), "commit")

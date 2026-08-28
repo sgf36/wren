@@ -132,8 +132,16 @@ class LSk extends L {
   String get guidesOfAnySize => 'Sprievodcovia bez obmedzenia';
 
   @override
+  String get anyNumberOfPlaces => 'Ľubovoľný počet miest';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren uloží do sprievodcu zadarmo až $limit miest. Máš vybraných $selected — o $over viac.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren odošle zadarmo až $limit miest naraz. Máš vybraných $selected — o $over viac.';
   }
 
   @override
@@ -226,7 +234,7 @@ class LSk extends L {
   String get couldNotOpenMaps => 'Mapy sa nepodarilo otvoriť';
 
   @override
-  String get checkingAppleAccount => 'Kontrola tvojho účtu Apple…';
+  String get checkingAppleAccount => 'Kontrolujem tvoj účet…';
 
   @override
   String get restoredUnlocked =>
@@ -234,7 +242,7 @@ class LSk extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Na tomto účte Apple sa nenašiel žiadny skorší nákup.';
+      'K tomuto účtu sa nenašiel žiadny skorší nákup.';
 
   @override
   String get purchaseDidNotComplete =>

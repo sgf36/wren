@@ -130,8 +130,16 @@ class LNl extends L {
   String get guidesOfAnySize => 'Gidsen van elke omvang';
 
   @override
+  String get anyNumberOfPlaces => 'Zoveel plekken als je wilt';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren bewaart gratis tot $limit plekken in een gids. Je hebt er $selected geselecteerd — $over meer dan dat.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren stuurt gratis tot $limit plekken tegelijk. Je hebt er $selected geselecteerd — $over meer dan dat.';
   }
 
   @override
@@ -224,7 +232,7 @@ class LNl extends L {
   String get couldNotOpenMaps => 'Kaarten kon niet worden geopend';
 
   @override
-  String get checkingAppleAccount => 'Je Apple Account controleren…';
+  String get checkingAppleAccount => 'Je account wordt gecontroleerd…';
 
   @override
   String get restoredUnlocked =>
@@ -232,7 +240,7 @@ class LNl extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Geen eerdere aankoop gevonden op deze Apple Account.';
+      'Geen eerdere aankoop gevonden op dit account.';
 
   @override
   String get purchaseDidNotComplete =>

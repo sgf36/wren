@@ -6,19 +6,22 @@ import UniformTypeIdentifiers
 /// Wren in the iOS share sheet.
 ///
 /// Everything in that sheet's app row is an app shipping a share extension, which
-/// is the only way in: an app cannot volunteer itself for URL sharing any other
-/// way. Apple Maps shares a guide as a `maps.apple/ug/…` short link, and Wren
-/// already expands and decodes exactly that, so this target is plumbing rather
-/// than new capability. It replaces Share → Copy → open Wren → paste.
+/// is the only way in: an app cannot volunteer itself for sharing any other way.
 ///
-/// Deliberately silent. It takes the URL, writes it where the app will find it,
-/// and completes — no interface of its own, because there is nothing to ask and a
-/// sheet that lingers to say "done" is a sheet in the way. The reviewing and
-/// confirming all happens in the app, where it already does.
+/// Two things arrive here. Apple Maps shares a guide as a `maps.apple/ug/…` short
+/// link, and Wren already expands and decodes exactly that. And screenshots —
+/// the reason the app exists. Somebody sends a reel, you screenshot it, and this
+/// replaces screenshot → leave the app → open Wren → Add → picker → choose with
+/// share → Wren.
 ///
-/// Apple Maps only. A shared Google Maps list URL is opaque — no documented
-/// format, nothing to decode — so `Info.plist` does not claim it, and Wren does
-/// not appear in Google's share sheet promising something it cannot do.
+/// Deliberately silent. It takes what it was given, writes it where the app will
+/// find it, and completes — no interface of its own, because there is nothing to
+/// ask and a sheet that lingers to say "done" is a sheet in the way. The
+/// reviewing and confirming all happens in the app, where it already does.
+///
+/// Apple Maps only, for links. A shared Google Maps list URL is opaque — no
+/// documented format, nothing to decode — so `Info.plist` does not claim it, and
+/// Wren does not appear in Google's share sheet promising something it cannot do.
 class ShareViewController: UIViewController {
   /// Shared with the app through the App Group container. App Groups cannot be
   /// created through the App Store Connect API — it answers 404 for the resource
@@ -27,49 +30,95 @@ class ShareViewController: UIViewController {
   static let appGroup = "group.com.spencerfields.littlebird"
 
   /// The app reads and deletes this on launch and on resume. A file rather than
-  /// UserDefaults: a URL arriving while the app is already open has to be
+  /// UserDefaults: a share arriving while the app is already open has to be
   /// noticed, and a file's presence is unambiguous.
   static let handoffName = "shared-guide-link.txt"
+
+  /// Screenshots land in their own directory beside the link, and the app empties
+  /// it as it collects. A directory rather than a manifest file, so there is one
+  /// source of truth about what is waiting: a manifest can disagree with the
+  /// files it lists, a directory listing cannot.
+  static let inboxName = "shared-images"
 
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .clear
 
-    guard let item = (extensionContext?.inputItems as? [NSExtensionItem])?.first,
-          let providers = item.attachments else {
-      return finish()
+    let items = (extensionContext?.inputItems as? [NSExtensionItem]) ?? []
+    let providers = items.flatMap { $0.attachments ?? [] }
+    guard !providers.isEmpty else { return finish() }
+
+    // Every provider is handled, and finish() waits for all of them. Completing
+    // the request tears this process down, so returning after the first would
+    // leave the rest of a multi-image share unwritten — and the sheet would look
+    // exactly as successful as a complete one.
+    let group = DispatchGroup()
+    var imageIndex = 0
+
+    for provider in providers {
+      if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
+        group.enter()
+        provider.loadItem(forTypeIdentifier: UTType.url.identifier) { [weak self] value, _ in
+          if let url = (value as? URL) ?? (value as? String).flatMap(URL.init(string:)) {
+            self?.hand(over: url)
+          }
+          group.leave()
+        }
+      } else if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+        let index = imageIndex
+        imageIndex += 1
+        group.enter()
+        // loadFileRepresentation gives a file on disk that is deleted the moment
+        // the closure returns, so it is copied synchronously inside it. An async
+        // hop here loses the file, and loses it silently.
+        provider.loadFileRepresentation(forTypeIdentifier: UTType.image.identifier) {
+          [weak self] url, _ in
+          if let url = url { self?.copy(image: url, index: index) }
+          group.leave()
+        }
+      }
     }
 
-    let wanted = UTType.url.identifier
-    guard let provider = providers.first(where: {
-      $0.hasItemConformingToTypeIdentifier(wanted)
-    }) else {
-      // Something that is not a URL. Nothing to do, and nothing to complain
-      // about — the activation rule should have kept us out of this sheet.
-      return finish()
-    }
+    group.notify(queue: .main) { [weak self] in self?.finish() }
+  }
 
-    provider.loadItem(forTypeIdentifier: wanted) { [weak self] value, _ in
-      let url = (value as? URL) ?? (value as? String).flatMap(URL.init(string:))
-      if let url = url { self?.hand(over: url) }
-      self?.finish()
-    }
+  /// The App Group container, or nil with a note in the log.
+  ///
+  /// No App Group means no channel to the app. Failing quietly is right: the
+  /// paste and picker routes both still work, and an alert here would be a dead
+  /// end in a sheet the user is trying to dismiss.
+  private func container() -> URL? {
+    let url = FileManager.default.containerURL(
+      forSecurityApplicationGroupIdentifier: Self.appGroup)
+    if url == nil { NSLog("WREN-SHARE no container for \(Self.appGroup)") }
+    return url
   }
 
   private func hand(over url: URL) {
-    guard let container = FileManager.default.containerURL(
-      forSecurityApplicationGroupIdentifier: Self.appGroup) else {
-      // No App Group means no channel to the app. Failing quietly is right: the
-      // paste route still works, and an alert here would be a dead end in a
-      // sheet the user is trying to dismiss.
-      NSLog("WREN-SHARE no container for \(Self.appGroup)")
-      return
-    }
+    guard let container = container() else { return }
     let target = container.appendingPathComponent(Self.handoffName)
     do {
       try url.absoluteString.write(to: target, atomically: true, encoding: .utf8)
     } catch {
       NSLog("WREN-SHARE could not write handoff: \(error.localizedDescription)")
+    }
+  }
+
+  private func copy(image source: URL, index: Int) {
+    guard let container = container() else { return }
+    let inbox = container.appendingPathComponent(Self.inboxName, isDirectory: true)
+    do {
+      try FileManager.default.createDirectory(at: inbox,
+                                              withIntermediateDirectories: true)
+      // Named by position and by when it arrived, because a share sheet hands
+      // over several files that can all be called IMG_0001.PNG and a collision
+      // would drop one of them without saying so.
+      let stamp = Int(Date().timeIntervalSince1970 * 1000)
+      let ext = source.pathExtension.isEmpty ? "png" : source.pathExtension
+      let target = inbox.appendingPathComponent("\(stamp)-\(index).\(ext)")
+      try FileManager.default.copyItem(at: source, to: target)
+    } catch {
+      NSLog("WREN-SHARE could not copy image: \(error.localizedDescription)")
     }
   }
 

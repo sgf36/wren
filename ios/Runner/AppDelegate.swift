@@ -575,6 +575,7 @@ class FilesPlugin: NSObject, FlutterPlugin, UIDocumentPickerDelegate,
 public class ShareInboxPlugin: NSObject, FlutterPlugin {
   private static let appGroup = "group.com.spencerfields.littlebird"
   private static let handoffName = "shared-guide-link.txt"
+  private static let inboxName = "shared-images"
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "littlebird/share",
@@ -593,15 +594,68 @@ public class ShareInboxPlugin: NSObject, FlutterPlugin {
       result(nil)
       return
     }
-    let file = container.appendingPathComponent(Self.handoffName)
-    guard let text = try? String(contentsOf: file, encoding: .utf8) else {
+
+    let link = takeLink(in: container)
+    let images = takeImages(in: container)
+
+    // Nil rather than an empty map when nothing is waiting, which is almost
+    // every call: Dart reads nil as "nothing shared" and never has to know the
+    // difference between no share and an empty one.
+    if link == nil && images.isEmpty {
       result(nil)
       return
     }
-    // Taken, not read: deleted before it is returned, so a failure to import
-    // cannot become an import loop.
+    result(["link": link as Any, "images": images])
+  }
+
+  /// Taken, not read: removed before it is returned, so a failure to import
+  /// cannot become an import loop on every launch.
+  private func takeLink(in container: URL) -> String? {
+    let file = container.appendingPathComponent(Self.handoffName)
+    guard let text = try? String(contentsOf: file, encoding: .utf8) else {
+      return nil
+    }
     try? FileManager.default.removeItem(at: file)
     let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-    result(trimmed.isEmpty ? nil : trimmed)
+    return trimmed.isEmpty ? nil : trimmed
+  }
+
+  /// Moves shared screenshots out of the App Group and into this app's own
+  /// temporary directory, and returns where they landed.
+  ///
+  /// Moved rather than handed over in place, for the same reason the link is
+  /// deleted: the shared inbox has to be empty afterwards or the next launch
+  /// imports the same screenshots again. Into tmp rather than Documents because
+  /// the reader is finished with them within the second and iOS can reclaim the
+  /// space whenever it likes.
+  ///
+  /// Sorted by name, which is chronological — the extension stamps each file
+  /// with the millisecond it arrived and its position in the share, so the order
+  /// the user saw is the order the places come out in.
+  private func takeImages(in container: URL) -> [String] {
+    let fm = FileManager.default
+    let inbox = container.appendingPathComponent(Self.inboxName, isDirectory: true)
+    guard let names = try? fm.contentsOfDirectory(atPath: inbox.path),
+          !names.isEmpty else {
+      return []
+    }
+
+    var moved: [String] = []
+    for name in names.sorted() {
+      let source = inbox.appendingPathComponent(name)
+      let target = fm.temporaryDirectory.appendingPathComponent(name)
+      try? fm.removeItem(at: target)
+      do {
+        try fm.moveItem(at: source, to: target)
+        moved.append(target.path)
+      } catch {
+        // A file that cannot be moved is dropped rather than retried, and is
+        // removed so it cannot be offered again on the next launch. One lost
+        // screenshot beats the same share arriving forever.
+        NSLog("WREN-SHARE could not take \(name): \(error.localizedDescription)")
+        try? fm.removeItem(at: source)
+      }
+    }
+    return moved
   }
 }

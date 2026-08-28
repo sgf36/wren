@@ -129,8 +129,16 @@ class LEs extends L {
   String get guidesOfAnySize => 'Guías de cualquier tamaño';
 
   @override
+  String get anyNumberOfPlaces => 'Cualquier número de lugares';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren guarda gratis hasta $limit lugares por guía. Tienes $selected seleccionados: $over más de la cuenta.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren envía gratis hasta $limit lugares a la vez. Tienes $selected seleccionados: $over más de la cuenta.';
   }
 
   @override
@@ -222,7 +230,7 @@ class LEs extends L {
   String get couldNotOpenMaps => 'No se ha podido abrir Mapas';
 
   @override
-  String get checkingAppleAccount => 'Comprobando tu cuenta de Apple…';
+  String get checkingAppleAccount => 'Comprobando tu cuenta…';
 
   @override
   String get restoredUnlocked =>
@@ -230,7 +238,7 @@ class LEs extends L {
 
   @override
   String get noPreviousPurchase =>
-      'No se ha encontrado ninguna compra anterior en esta cuenta de Apple.';
+      'No se encontró ninguna compra anterior en esta cuenta.';
 
   @override
   String get purchaseDidNotComplete =>
@@ -656,8 +664,16 @@ class LEsMx extends LEs {
   String get guidesOfAnySize => 'Guías de cualquier tamaño';
 
   @override
+  String get anyNumberOfPlaces => 'Cualquier número de lugares';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren guarda gratis hasta $limit lugares por guía. Tienes $selected seleccionados: $over más de la cuenta.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren envía gratis hasta $limit lugares a la vez. Tienes $selected seleccionados: $over más de la cuenta.';
   }
 
   @override
@@ -749,7 +765,7 @@ class LEsMx extends LEs {
   String get couldNotOpenMaps => 'No se pudo abrir Mapas';
 
   @override
-  String get checkingAppleAccount => 'Revisando tu cuenta de Apple…';
+  String get checkingAppleAccount => 'Verificando tu cuenta…';
 
   @override
   String get restoredUnlocked =>
@@ -757,7 +773,7 @@ class LEsMx extends LEs {
 
   @override
   String get noPreviousPurchase =>
-      'No se encontró ninguna compra anterior en esta cuenta de Apple.';
+      'No se encontró ninguna compra anterior en esta cuenta.';
 
   @override
   String get purchaseDidNotComplete =>

@@ -128,8 +128,16 @@ class LMs extends L {
   String get guidesOfAnySize => 'Panduan tanpa had bilangan';
 
   @override
+  String get anyNumberOfPlaces => 'Tempat tanpa had bilangan';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren menyimpan sehingga $limit tempat dalam satu panduan secara percuma. Anda memilih $selected — $over lebih daripada itu.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren menghantar sehingga $limit tempat sekali gus secara percuma. Anda memilih $selected — $over lebih daripada itu.';
   }
 
   @override
@@ -216,7 +224,7 @@ class LMs extends L {
   String get couldNotOpenMaps => 'Maps tidak dapat dibuka';
 
   @override
-  String get checkingAppleAccount => 'Menyemak Akaun Apple anda…';
+  String get checkingAppleAccount => 'Memeriksa akaun anda…';
 
   @override
   String get restoredUnlocked =>
@@ -224,7 +232,7 @@ class LMs extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Tiada pembelian terdahulu dijumpai pada Akaun Apple ini.';
+      'Tiada pembelian terdahulu ditemui pada akaun ini.';
 
   @override
   String get purchaseDidNotComplete =>

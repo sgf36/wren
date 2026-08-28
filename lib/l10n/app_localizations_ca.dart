@@ -129,8 +129,16 @@ class LCa extends L {
   String get guidesOfAnySize => 'Guies de qualsevol mida';
 
   @override
+  String get anyNumberOfPlaces => 'Qualsevol nombre de llocs';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'El Wren desa gratuïtament fins a $limit llocs per guia. N\'has seleccionat $selected: $over més.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'El Wren envia gratuïtament fins a $limit llocs alhora. N\'has seleccionat $selected: $over més.';
   }
 
   @override
@@ -223,8 +231,7 @@ class LCa extends L {
   String get couldNotOpenMaps => 'No s\'ha pogut obrir Mapes';
 
   @override
-  String get checkingAppleAccount =>
-      'S\'està comprovant el teu compte d\'Apple…';
+  String get checkingAppleAccount => 'S\'està comprovant el teu compte…';
 
   @override
   String get restoredUnlocked =>
@@ -232,7 +239,7 @@ class LCa extends L {
 
   @override
   String get noPreviousPurchase =>
-      'No s\'ha trobat cap compra anterior en aquest compte d\'Apple.';
+      'No s\'ha trobat cap compra anterior en aquest compte.';
 
   @override
   String get purchaseDidNotComplete =>

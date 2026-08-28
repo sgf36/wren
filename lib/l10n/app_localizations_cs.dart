@@ -132,8 +132,16 @@ class LCs extends L {
   String get guidesOfAnySize => 'Průvodci bez omezení';
 
   @override
+  String get anyNumberOfPlaces => 'Libovolný počet míst';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren uloží do průvodce zdarma až $limit míst. Máš vybráno $selected — o $over víc.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren odešle zdarma až $limit míst najednou. Máš vybráno $selected — o $over víc.';
   }
 
   @override
@@ -226,7 +234,7 @@ class LCs extends L {
   String get couldNotOpenMaps => 'Mapy se nepodařilo otevřít';
 
   @override
-  String get checkingAppleAccount => 'Kontrola tvého účtu Apple…';
+  String get checkingAppleAccount => 'Kontroluji tvůj účet…';
 
   @override
   String get restoredUnlocked =>
@@ -234,7 +242,7 @@ class LCs extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Na tomto účtu Apple nebyl nalezen žádný dřívější nákup.';
+      'K tomuto účtu nebyl nalezen žádný dřívější nákup.';
 
   @override
   String get purchaseDidNotComplete =>

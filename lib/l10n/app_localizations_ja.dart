@@ -125,8 +125,16 @@ class LJa extends L {
   String get guidesOfAnySize => '件数無制限のガイド';
 
   @override
+  String get anyNumberOfPlaces => '件数無制限の送信';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wrenは1つのガイドに$limit件まで無料で保存できます。現在$selected件を選択中で、$over件超えています。';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wrenは一度に$limit件まで無料で送信できます。現在$selected件を選択中で、$over件超えています。';
   }
 
   @override
@@ -210,13 +218,13 @@ class LJa extends L {
   String get couldNotOpenMaps => 'マップを開けませんでした';
 
   @override
-  String get checkingAppleAccount => 'Appleアカウントを確認中…';
+  String get checkingAppleAccount => 'アカウントを確認しています…';
 
   @override
   String get restoredUnlocked => '復元しました。件数無制限のガイドが使えます。';
 
   @override
-  String get noPreviousPurchase => 'このAppleアカウントに以前の購入は見つかりませんでした。';
+  String get noPreviousPurchase => 'このアカウントに以前の購入は見つかりませんでした。';
 
   @override
   String get purchaseDidNotComplete => '購入は完了しなかったため、料金は発生していません。';

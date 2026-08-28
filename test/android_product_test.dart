@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wren/main.dart';
 import 'package:wren/src/entitlement.dart';
 import 'package:wren/src/guide_link.dart';
@@ -16,14 +17,21 @@ import 'paywall_test.dart' show FakeStore;
 
 /// What Wren is on a phone with no Apple Maps.
 ///
-/// Two things follow from that absence and neither is cosmetic. There is no
-/// guide to publish, so the main button hands the list to another map app
-/// instead. And the purchase sells guides of any size, so where there are no
-/// guides there is nothing to sell — `com.spencerfields.littlebird.unlimited`
-/// exists in App Store Connect and not in Play Console, so a paywall reached
-/// here would quote a price Play never set and then fail to take the money.
-/// Shipping that to Play would be a policy problem as well as a bad first
-/// impression.
+/// One thing follows from that absence: there is no guide to publish, so the
+/// main button hands the list to another map app instead.
+///
+/// What does NOT follow — and this file used to say it did — is that there is
+/// nothing to sell. The two stores carry one product at one price, and the unit
+/// being sold is "more than three places at once", which both platforms have.
+/// A free tier that differed by platform would make these two different apps
+/// wearing one name. So the cap applies to the hand-off exactly as it applies
+/// to publishing, and `com.spencerfields.littlebird.unlimited` must exist in
+/// Play Console as well as App Store Connect.
+///
+/// The complimentary-code path needs no platform work: the box, the device
+/// identifier it redeems against, the admin console and the entitlement
+/// recomposition were all already ungated. What was missing was a cap for a
+/// code to lift, and that is what changed.
 ///
 /// Every test below pins `canMakeGuides` rather than trusting the platform,
 /// because the suite runs on a desktop where neither branch is the default.
@@ -67,6 +75,10 @@ Future<void> pumpAndroid(
 }
 
 void main() {
+  // Mock preferences persist between tests, so an unlock seeded by one test
+  // would silently disable the paywall in the next. Reset first.
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   testWidgets(
     'the main button hands the list over rather than making a guide',
     (tester) async {
@@ -95,23 +107,24 @@ void main() {
     expect(button.onPressed, isNull);
   });
 
-  testWidgets('nothing anywhere offers the purchase', (tester) async {
-    // Well over the free cap, which on iOS would raise a banner and a paywall.
+  testWidgets('the purchase is offered here, at the same cap', (tester) async {
     final store = FakeStore();
     await pumpAndroid(tester, count: freePlaceLimit + 4, store: store);
 
-    // The banner that sells the unlock.
-    expect(find.textContaining('over the free limit'), findsNothing);
+    // The banner that sells the unlock, in the same words as iOS — it names no
+    // guide, so it needed no Android variant.
+    expect(find.textContaining('over the free limit'), findsOne);
 
     await tester.tap(find.byIcon(Icons.more_vert));
     await tester.pumpAndSettle();
     expect(find.text('Clear the list'), findsOne);
-    // Nothing to restore, and the copy behind it says "Apple account".
-    expect(find.text('Restore purchase'), findsNothing);
-    // Added by the App Store rejection fix, gated only on the entitlement.
-    // On Play it would open a paywall that cannot complete.
+    expect(find.text('Restore purchase'), findsOne);
+    // The menu entry says places, not guides. "Guides of any size" would be
+    // selling a thing this platform does not have.
+    expect(find.text('Any number of places'), findsOne);
     expect(find.text('Guides of any size'), findsNothing);
 
+    // Offered is not bought. Nothing is charged by opening a menu.
     expect(store.buyCalls, 0);
     expect(store.restoreCalls, 0);
   });
@@ -153,9 +166,7 @@ void main() {
     expect(find.text('Complimentary access'), findsOne);
   });
 
-  testWidgets('more places than the free cap all go across', (tester) async {
-    // The cap limits the places in one guide. This makes no guide, so counting
-    // against it would be charging for a feature the platform does not have.
+  testWidgets('over the cap, the paywall stands in the way', (tester) async {
     final sharer = StubPlaceSharer();
     final store = FakeStore();
     await pumpAndroid(
@@ -167,14 +178,81 @@ void main() {
 
     await tester.tap(find.widgetWithText(FilledButton, 'Send places to'));
     await tester.pumpAndSettle();
-    // Straight to the system chooser: no paywall stood in the way.
+
+    // The sheet, not the chooser. Nothing has been written yet.
+    expect(find.text('Any number of places'), findsOne);
+    expect(sharer.sent, isEmpty);
+
+    await tester.tap(find.widgetWithText(FilledButton, r'Unlock for $4.99'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Any other app'));
+    await tester.pumpAndSettle();
+
+    expect(store.buyCalls, 1);
+    final file = sharer.sent.single.file;
+    expect(file.written, freePlaceLimit + 4);
+    expect(file.fileName, endsWith('.gpx'));
+  });
+
+  testWidgets('an unlock already held lifts the cap here, as on iOS', (
+    tester,
+  ) async {
+    // The point is that NO Android-specific work was needed. The code box, the
+    // device identifier it redeems against, the admin console and
+    // _refreshCompAccess are all ungated already; what was missing was a cap
+    // for an unlock to lift, and that is what changed.
+    //
+    // Seeded through the purchase cache rather than a complimentary token,
+    // because a token is signed and device-bound — comp_unlock_test has an
+    // explicit test that a hand-written value in storage is NOT an unlock, and
+    // faking one here would either fail or quietly weaken that. Both routes
+    // compose into the same `_entitlement` in _refreshCompAccess
+    // (`bought || role != none`), so this covers the cap and comp_unlock_test
+    // covers which tokens are real.
+    SharedPreferences.setMockInitialValues({'unlimited_unlocked': true});
+    final sharer = StubPlaceSharer();
+    final store = FakeStore();
+    await pumpAndroid(
+      tester,
+      count: freePlaceLimit + 4,
+      store: store,
+      sharer: sharer,
+    );
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Send places to'));
+    await tester.pumpAndSettle();
+    // No sheet: an unlocked device goes straight to the chooser.
+    expect(find.text('Any number of places'), findsNothing);
     await tester.tap(find.text('Any other app'));
     await tester.pumpAndSettle();
 
     expect(store.buyCalls, 0);
-    final file = sharer.sent.single.file;
-    expect(file.written, freePlaceLimit + 4);
-    expect(file.fileName, endsWith('.gpx'));
+    expect(sharer.sent.single.file.written, freePlaceLimit + 4);
+  });
+
+  testWidgets('trimming to the cap sends three and charges nothing', (
+    tester,
+  ) async {
+    final sharer = StubPlaceSharer();
+    final store = FakeStore();
+    await pumpAndroid(
+      tester,
+      count: freePlaceLimit + 4,
+      store: store,
+      sharer: sharer,
+    );
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Send places to'));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.widgetWithText(OutlinedButton, 'Save the first 3 instead'),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Any other app'));
+    await tester.pumpAndSettle();
+
+    expect(store.buyCalls, 0);
+    expect(sharer.sent.single.file.written, freePlaceLimit);
   });
 
   testWidgets('a guide-making build is unaffected', (tester) async {
