@@ -375,32 +375,58 @@ machine blamed the wrong thing entirely.
 
 ## 8. Play Console work list
 
-Everything in the repository is done. What is left needs the Play Console, a
-physical device, or a decision.
+**Rewritten 2026-08-28, when most of it stopped being true.** The original
+list is gone rather than ticked, because a work list of eight done items is
+read as a work list, and someone will do them again.
 
-1. **Finish account verification** on the Galaxy A15 (§3). Nothing can be
-   submitted until this is done, and nothing here can do it — the individual
-   developer route rejects an emulator.
-2. **Start closed testing with twelve testers the moment there is a track.**
-   Fourteen continuous days, and the clock does not start until the track is
-   running. This is the long pole; it is not the build.
-3. **Rewrite the privacy policy** at
-   <https://wren.spencerfields.com/privacy.html>. It describes the iOS app —
-   Apple Maps lookups and the App Store privacy label — and it does not say
-   that this build collects nothing at all. See `store/play/LISTING.md`.
-4. **Set the GitHub secrets** if CI is to build a signed release (§4).
-5. **Enter the listing** from `store/play/LISTING.md` and upload the four
-   screenshots from `store/play/screenshots/en-GB/`.
-6. **Answer the content declarations**, also in `store/play/LISTING.md`. Data
-   safety is now "nothing collected, nothing shared", which is stronger than
-   this document originally expected and is why §10 was rewritten.
-7. **Upload the AAB to an internal track**, install from Play rather than
-   `adb install`, and confirm the hand-off still works. CI re-signs every debug
-   APK, so uninstall before installing.
-8. Promote to production when the fourteen days are served.
+### The links, which did not exist until the first publication
+
+    opt-in    https://play.google.com/apps/testing/com.spencerfields.littlebird
+    listing   https://play.google.com/store/apps/details?id=com.spencerfields.littlebird
+    group     https://groups.google.com/g/wren-android-testers
+
+The opt-in link is what a tester follows; it works only for members of the
+Google Group, and joining that group is self-service. **Neither Play link
+existed while the app was unpublished** — the Console said links would appear
+once the app is published, which is why every earlier version of this section
+could not name them. Read the opt-in URL off the Copy-link button's
+`aria-label` rather than guessing it.
+
+### Done
+
+* Account and identity verification.
+* Signing, and the GitHub secrets behind CI's signed release build.
+* The whole listing — title, descriptions, contact details, four screenshots,
+  **icon and feature graphic** — pushed by `store/play_listing.py`.
+* Every App content declaration, including a content rating resubmitted to say
+  the app sells digital goods, and sign-in details carrying a reviewer unlock
+  code.
+* Category: Travel and local, matching the iOS `TRAVEL` category.
+* The one-time product, active at USD 4.99, the same base price as iOS.
+* Closed testing track Alpha: release 1.2.0 / versionCode 4, 177 countries,
+  testers managed by the Google Group above. Sent for review 2026-08-28.
+
+### Left
+
+1. **The payments account.** Google flagged an urgent issue on 2026-08-28.
+   Nothing can be bought until it is cleared, and it is an account-level
+   setting rather than anything in this repository.
+2. **License testing.** Add the testers' Google accounts under the developer
+   account's licence-testing list **before recruiting anyone**. Without it a
+   tester who taps unlock is charged the real 4.99, and there is no way to
+   discover that except by charging someone.
+3. **Twelve testers for fourteen continuous days.** The long pole, and the
+   clock starts when they are in, not when the track went live.
+4. **Exercise the purchase on a physical device.** The cap, the sheet quoting
+   a real store price, buying, and restoring. None of it has ever run on a
+   phone — it is unit-tested and the product exists, which is not the same
+   thing. Install from Play rather than `adb install`; CI re-signs every debug
+   APK, so uninstall first.
+5. **Promote to production** once the fourteen days are served, and only after
+   checking what address the listing publishes (§3).
 
 **Bump `versionCode` for every upload.** It comes from `pubspec.yaml`
-(`version: 1.0.0+1`), and Play refuses a reused one.
+(`version: 1.2.0+4`), and Play refuses a reused one.
 
 ## 9 and 10. Listing copy and content declarations
 
