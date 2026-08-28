@@ -68,13 +68,17 @@ Wren writes one file and passes it to whichever app you choose. Only the apps ac
 
 Google Maps works differently, because Google offers no way for an app to write into a saved list. Wren saves the places as a spreadsheet, then opens Google My Maps so you can import it there yourself.
 
+THREE AT A TIME, OR ALL OF THEM
+
+Wren is free, and sends three places at a time. One payment removes that limit for good: no subscription, nothing recurring, and nothing that expires. It is the same unlock at the same price on iPhone.
+
 WHAT LEAVES YOUR PHONE, AND WHAT DOES NOT
 
 The screenshot does not. The reading is done on the device.
 
 A place name does, when Wren looks it up, because finding where a place is means asking a map. That is the only thing sent, and it is sent to the map service your phone already uses.
 
-There is no account, no advertising and no analytics. Wren asks for one permission, to reach the network for that lookup, and none at all for your location: it never asks where you are, only where a place named in a screenshot is.
+There is no account, no advertising and no analytics. Wren reaches the network for that lookup and for the purchase above, and asks nothing at all about your location: it never asks where you are, only where a place named in a screenshot is.
 
 Organic Maps, OsmAnd, Locus Map, Gaia GPS, Mapy.com and Google Maps are the trademarks of their respective owners. Wren works with them; it is not affiliated with, endorsed by or connected to any of them.
 ```

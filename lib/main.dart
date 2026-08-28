@@ -398,10 +398,19 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// It used to return immediately on Android, because `littlebird/identity`
   /// had no implementation there and a code could not be redeemed against a
   /// device that could not name itself. That is implemented now, so the box
-  /// opens and codes work — with one asymmetry worth knowing: Android has no
-  /// paid feature, so an ordinary unlock code is accepted and grants nothing
-  /// anybody can see. Admin codes are the reason this exists here, and the
-  /// console is what they open.
+  /// opens and codes work.
+  ///
+  /// There is no longer an asymmetry between the platforms here. This comment
+  /// used to warn that an ordinary unlock code on Android was accepted and
+  /// granted nothing anybody could see, because Android had no paid feature.
+  /// It has one now, and [_refreshCompAccess] turns any role other than
+  /// [comp.CompRole.none] into [Entitlement.unlocked] without asking which
+  /// platform it is on — so an unlock code lifts the three-place cap on
+  /// Android exactly as it does on iPhone.
+  ///
+  /// That is not a detail: it is the route a store reviewer takes. Google will
+  /// not buy the product to review it, so the Play "Sign-in details"
+  /// declaration hands over a comp code and this is what redeems it.
   Future<void> _compUnlock() async {
     if (_role == comp.CompRole.admin) {
       final token = await comp.heldToken();
