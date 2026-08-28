@@ -411,10 +411,21 @@ could not name them. Read the opt-in URL off the Copy-link button's
 1. **The payments account.** Google flagged an urgent issue on 2026-08-28.
    Nothing can be bought until it is cleared, and it is an account-level
    setting rather than anything in this repository.
-2. **License testing.** Add the testers' Google accounts under the developer
-   account's licence-testing list **before recruiting anyone**. Without it a
-   tester who taps unlock is charged the real 4.99, and there is no way to
-   discover that except by charging someone.
+2. ~~**Licence testing.**~~ **Done 2026-08-28**, and done in the form that
+   cannot drift: *Settings → Licence testing* is set to **Google Groups** and
+   points at `wren-android-testers@googlegroups.com` — the same group that is
+   the track's tester list. So joining the test *is* becoming a licence
+   tester; there is no second list to keep in step, and nobody can be
+   recruited into the test without also being exempt from paying.
+
+   Two things to know about that page. It is **account-wide** — the save
+   dialog says "These changes will affect all of your apps", so Wren's testers
+   are licence testers for Easy-Post too. That was accepted deliberately:
+   nothing was configured before (an "Internal Testing" email list existed but
+   its checkbox was unticked, so *no* licence testers were active), so this
+   takes nothing away, and the alternative is charging strangers 4.99 to do
+   Spencer a favour. And it is a radio, not a union: choosing Google Groups
+   turns the email-list mode off entirely.
 3. **Twelve testers for fourteen continuous days.** The long pole, and the
    clock starts when they are in, not when the track went live.
 4. **Exercise the purchase on a physical device.** The cap, the sheet quoting
