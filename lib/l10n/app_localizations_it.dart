@@ -129,8 +129,16 @@ class LIt extends L {
   String get guidesOfAnySize => 'Guide di qualsiasi dimensione';
 
   @override
+  String get anyNumberOfPlaces => 'Un numero qualsiasi di luoghi';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren salva gratuitamente fino a $limit luoghi per guida. Ne hai selezionati $selected: $over in più.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren invia gratuitamente fino a $limit luoghi alla volta. Ne hai selezionati $selected: $over in più.';
   }
 
   @override
@@ -223,7 +231,7 @@ class LIt extends L {
   String get couldNotOpenMaps => 'Impossibile aprire Mappe';
 
   @override
-  String get checkingAppleAccount => 'Verifica del tuo account Apple…';
+  String get checkingAppleAccount => 'Verifica del tuo account…';
 
   @override
   String get restoredUnlocked =>
@@ -231,7 +239,7 @@ class LIt extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Nessun acquisto precedente trovato su questo account Apple.';
+      'Nessun acquisto precedente trovato su questo account.';
 
   @override
   String get purchaseDidNotComplete =>

@@ -126,8 +126,16 @@ class LKo extends L {
   String get guidesOfAnySize => '개수 제한 없는 가이드';
 
   @override
+  String get anyNumberOfPlaces => '개수 제한 없는 전송';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren은 가이드 하나에 최대 $limit곳까지 무료로 저장합니다. 지금 $selected곳을 선택해 $over곳 초과했습니다.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren은 한 번에 최대 $limit곳까지 무료로 보냅니다. 지금 $selected곳을 선택해 $over곳 초과했습니다.';
   }
 
   @override
@@ -211,13 +219,13 @@ class LKo extends L {
   String get couldNotOpenMaps => '지도를 열지 못했습니다';
 
   @override
-  String get checkingAppleAccount => 'Apple 계정 확인 중…';
+  String get checkingAppleAccount => '계정을 확인하는 중…';
 
   @override
   String get restoredUnlocked => '복원했습니다. 개수 제한 없는 가이드가 잠금 해제되었습니다.';
 
   @override
-  String get noPreviousPurchase => '이 Apple 계정에서 이전 구입 내역을 찾지 못했습니다.';
+  String get noPreviousPurchase => '이 계정에서 이전 구매를 찾을 수 없습니다.';
 
   @override
   String get purchaseDidNotComplete => '구입이 완료되지 않아 결제된 금액이 없습니다.';

@@ -126,8 +126,16 @@ class LVi extends L {
   String get guidesOfAnySize => 'Hướng dẫn không giới hạn';
 
   @override
+  String get anyNumberOfPlaces => 'Bao nhiêu địa điểm cũng được';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren lưu miễn phí tối đa $limit địa điểm trong một hướng dẫn. Bạn đang chọn $selected — nhiều hơn $over.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren gửi miễn phí tối đa $limit địa điểm mỗi lần. Bạn đang chọn $selected — nhiều hơn $over.';
   }
 
   @override
@@ -214,7 +222,7 @@ class LVi extends L {
   String get couldNotOpenMaps => 'Không mở được Maps';
 
   @override
-  String get checkingAppleAccount => 'Đang kiểm tra Tài khoản Apple của bạn…';
+  String get checkingAppleAccount => 'Đang kiểm tra tài khoản của bạn…';
 
   @override
   String get restoredUnlocked =>
@@ -222,7 +230,7 @@ class LVi extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Không tìm thấy giao dịch trước đây trên Tài khoản Apple này.';
+      'Không tìm thấy giao dịch mua trước đó trên tài khoản này.';
 
   @override
   String get purchaseDidNotComplete =>

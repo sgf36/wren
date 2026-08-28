@@ -130,8 +130,16 @@ class LTa extends L {
   String get guidesOfAnySize => 'எந்த அளவிலும் வழிகாட்டிகள்';
 
   @override
+  String get anyNumberOfPlaces => 'எத்தனை இடங்களும்';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren ஒரு வழிகாட்டியில் இலவசமாக $limit இடங்கள் வரை சேமிக்கும். நீங்கள் $selected தேர்ந்தெடுத்துள்ளீர்கள் — $over அதிகம்.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ஒரே சமயத்தில் இலவசமாக $limit இடங்கள் வரை அனுப்பும். நீங்கள் $selected தேர்ந்தெடுத்துள்ளீர்கள் — $over அதிகம்.';
   }
 
   @override
@@ -225,15 +233,14 @@ class LTa extends L {
   String get couldNotOpenMaps => 'Maps-ஐத் திறக்க முடியவில்லை';
 
   @override
-  String get checkingAppleAccount => 'உங்கள் Apple கணக்கைச் சரிபார்க்கிறது…';
+  String get checkingAppleAccount => 'உங்கள் கணக்கு சரிபார்க்கப்படுகிறது…';
 
   @override
   String get restoredUnlocked =>
       'மீட்டெடுக்கப்பட்டது. எந்த அளவிலும் வழிகாட்டிகள் திறக்கப்பட்டுள்ளன.';
 
   @override
-  String get noPreviousPurchase =>
-      'இந்த Apple கணக்கில் முந்தைய வாங்குதல் எதுவும் கிடைக்கவில்லை.';
+  String get noPreviousPurchase => 'இந்தக் கணக்கில் முந்தைய கொள்முதல் இல்லை.';
 
   @override
   String get purchaseDidNotComplete =>

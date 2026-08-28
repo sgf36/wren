@@ -130,8 +130,16 @@ class LRo extends L {
   String get guidesOfAnySize => 'Ghiduri de orice mărime';
 
   @override
+  String get anyNumberOfPlaces => 'Oricâte locuri';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren salvează gratuit până la $limit locuri într-un ghid. Ai selectat $selected — cu $over mai multe.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren trimite gratuit până la $limit locuri odată. Ai selectat $selected — cu $over mai multe.';
   }
 
   @override
@@ -225,7 +233,7 @@ class LRo extends L {
   String get couldNotOpenMaps => 'Hărți nu a putut fi deschisă';
 
   @override
-  String get checkingAppleAccount => 'Se verifică contul tău Apple…';
+  String get checkingAppleAccount => 'Se verifică contul tău…';
 
   @override
   String get restoredUnlocked =>
@@ -233,7 +241,7 @@ class LRo extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Nu s-a găsit nicio achiziție anterioară pe acest cont Apple.';
+      'Nu s-a găsit nicio achiziție anterioară pe acest cont.';
 
   @override
   String get purchaseDidNotComplete =>

@@ -126,8 +126,16 @@ class LTh extends L {
   String get guidesOfAnySize => 'ไกด์ไม่จำกัดจำนวน';
 
   @override
+  String get anyNumberOfPlaces => 'สถานที่ไม่จำกัดจำนวน';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren บันทึกได้ฟรีสูงสุด $limit ที่ต่อไกด์ คุณเลือกไว้ $selected ที่ เกินมา $over ที่';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ส่งได้ฟรีสูงสุด $limit ที่ต่อครั้ง คุณเลือกไว้ $selected ที่ เกินมา $over ที่';
   }
 
   @override
@@ -213,13 +221,13 @@ class LTh extends L {
   String get couldNotOpenMaps => 'เปิดแผนที่ไม่ได้';
 
   @override
-  String get checkingAppleAccount => 'กำลังตรวจสอบบัญชี Apple ของคุณ…';
+  String get checkingAppleAccount => 'กำลังตรวจสอบบัญชีของคุณ…';
 
   @override
   String get restoredUnlocked => 'กู้คืนแล้ว ไกด์ไม่จำกัดจำนวนถูกปลดล็อกแล้ว';
 
   @override
-  String get noPreviousPurchase => 'ไม่พบการซื้อครั้งก่อนในบัญชี Apple นี้';
+  String get noPreviousPurchase => 'ไม่พบการซื้อก่อนหน้านี้ในบัญชีนี้';
 
   @override
   String get purchaseDidNotComplete =>

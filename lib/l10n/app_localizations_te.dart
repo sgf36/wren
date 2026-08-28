@@ -129,8 +129,16 @@ class LTe extends L {
   String get guidesOfAnySize => 'ఎంత పెద్ద గైడ్‌లైనా';
 
   @override
+  String get anyNumberOfPlaces => 'ఎన్ని ప్రదేశాలైనా';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren ఒక గైడ్‌లో ఉచితంగా $limit ప్రదేశాల వరకు భద్రపరుస్తుంది. మీరు $selected ఎంచుకున్నారు — $over ఎక్కువ.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ఒకేసారి ఉచితంగా $limit ప్రదేశాల వరకు పంపుతుంది. మీరు $selected ఎంచుకున్నారు — $over ఎక్కువ.';
   }
 
   @override
@@ -223,14 +231,14 @@ class LTe extends L {
   String get couldNotOpenMaps => 'Maps తెరవలేకపోయాం';
 
   @override
-  String get checkingAppleAccount => 'మీ Apple ఖాతాను తనిఖీ చేస్తోంది…';
+  String get checkingAppleAccount => 'మీ ఖాతాను తనిఖీ చేస్తోంది…';
 
   @override
   String get restoredUnlocked =>
       'పునరుద్ధరించబడింది. ఎంత పెద్ద గైడ్‌లైనా అన్‌లాక్ అయ్యాయి.';
 
   @override
-  String get noPreviousPurchase => 'ఈ Apple ఖాతాలో గత కొనుగోలు ఏదీ దొరకలేదు.';
+  String get noPreviousPurchase => 'ఈ ఖాతాలో మునుపటి కొనుగోలు కనబడలేదు.';
 
   @override
   String get purchaseDidNotComplete =>

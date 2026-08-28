@@ -130,8 +130,16 @@ class LEn extends L {
   String get guidesOfAnySize => 'Guides of any size';
 
   @override
+  String get anyNumberOfPlaces => 'Any number of places';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren saves up to $limit places in a guide for free. You have $selected selected — $over more than that.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren sends up to $limit places at a time for free. You have $selected selected — $over more than that.';
   }
 
   @override
@@ -229,14 +237,14 @@ class LEn extends L {
   String get couldNotOpenMaps => 'Could not open Maps';
 
   @override
-  String get checkingAppleAccount => 'Checking your Apple Account…';
+  String get checkingAppleAccount => 'Checking your account…';
 
   @override
   String get restoredUnlocked => 'Restored. Guides of any size are unlocked.';
 
   @override
   String get noPreviousPurchase =>
-      'No previous purchase found on this Apple Account.';
+      'No previous purchase found on this account.';
 
   @override
   String get purchaseDidNotComplete =>

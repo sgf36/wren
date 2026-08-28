@@ -130,8 +130,16 @@ class LHr extends L {
   String get guidesOfAnySize => 'Vodiči bilo koje veličine';
 
   @override
+  String get anyNumberOfPlaces => 'Bilo koji broj mjesta';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren besplatno sprema do $limit mjesta u vodič. Odabrao si $selected — $over više od toga.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren besplatno šalje do $limit mjesta odjednom. Odabrao si $selected — $over više od toga.';
   }
 
   @override
@@ -224,7 +232,7 @@ class LHr extends L {
   String get couldNotOpenMaps => 'Karte se nisu mogle otvoriti';
 
   @override
-  String get checkingAppleAccount => 'Provjera tvog Apple računa…';
+  String get checkingAppleAccount => 'Provjera tvojeg računa…';
 
   @override
   String get restoredUnlocked =>
@@ -232,7 +240,7 @@ class LHr extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Na ovom Apple računu nije pronađena prethodna kupnja.';
+      'Na ovom računu nije pronađena prethodna kupnja.';
 
   @override
   String get purchaseDidNotComplete =>

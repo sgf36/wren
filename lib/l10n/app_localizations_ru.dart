@@ -136,8 +136,16 @@ class LRu extends L {
   String get guidesOfAnySize => 'Путеводители без ограничений';
 
   @override
+  String get anyNumberOfPlaces => 'Любое число мест';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren бесплатно сохраняет в путеводителе до $limit мест. Выбрано $selected — на $over больше.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren бесплатно отправляет до $limit мест за раз. Выбрано $selected — на $over больше.';
   }
 
   @override
@@ -231,7 +239,7 @@ class LRu extends L {
   String get couldNotOpenMaps => 'Не удалось открыть Карты';
 
   @override
-  String get checkingAppleAccount => 'Проверяю твой аккаунт Apple…';
+  String get checkingAppleAccount => 'Проверяем ваш аккаунт…';
 
   @override
   String get restoredUnlocked =>
@@ -239,7 +247,7 @@ class LRu extends L {
 
   @override
   String get noPreviousPurchase =>
-      'На этом аккаунте Apple прежних покупок не найдено.';
+      'На этом аккаунте прежних покупок не найдено.';
 
   @override
   String get purchaseDidNotComplete =>

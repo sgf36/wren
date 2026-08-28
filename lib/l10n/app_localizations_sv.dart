@@ -130,8 +130,16 @@ class LSv extends L {
   String get guidesOfAnySize => 'Guider utan storleksgräns';
 
   @override
+  String get anyNumberOfPlaces => 'Hur många platser som helst';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren sparar upp till $limit platser i en guide gratis. Du har valt $selected — $over fler än så.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren skickar upp till $limit platser åt gången gratis. Du har valt $selected — $over fler än så.';
   }
 
   @override
@@ -224,7 +232,7 @@ class LSv extends L {
   String get couldNotOpenMaps => 'Det gick inte att öppna Kartor';
 
   @override
-  String get checkingAppleAccount => 'Kollar ditt Apple-konto…';
+  String get checkingAppleAccount => 'Kontrollerar ditt konto…';
 
   @override
   String get restoredUnlocked =>
@@ -232,7 +240,7 @@ class LSv extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Inget tidigare köp hittades på det här Apple-kontot.';
+      'Inget tidigare köp hittades på det här kontot.';
 
   @override
   String get purchaseDidNotComplete =>

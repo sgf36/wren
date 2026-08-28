@@ -136,8 +136,16 @@ class LAr extends L {
   String get guidesOfAnySize => 'أدلة بأي حجم';
 
   @override
+  String get anyNumberOfPlaces => 'أي عدد من الأماكن';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'يحفظ Wren مجاناً ما يصل إلى $limit أماكن في الدليل. لديك $selected محدداً — أي $over أكثر من ذلك.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'يرسل Wren مجاناً ما يصل إلى $limit أماكن في المرة. لديك $selected محدداً — أي $over أكثر من ذلك.';
   }
 
   @override
@@ -223,14 +231,14 @@ class LAr extends L {
   String get couldNotOpenMaps => 'تعذّر فتح الخرائط';
 
   @override
-  String get checkingAppleAccount => 'جارٍ التحقق من حساب Apple الخاص بك…';
+  String get checkingAppleAccount => 'جارٍ التحقق من حسابك…';
 
   @override
   String get restoredUnlocked => 'تمت الاستعادة. الأدلة بأي حجم مفتوحة الآن.';
 
   @override
   String get noPreviousPurchase =>
-      'لم يُعثر على عملية شراء سابقة على حساب Apple هذا.';
+      'لم يُعثر على عملية شراء سابقة على هذا الحساب.';
 
   @override
   String get purchaseDidNotComplete =>

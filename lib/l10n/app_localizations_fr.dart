@@ -129,8 +129,16 @@ class LFr extends L {
   String get guidesOfAnySize => 'Des guides sans limite';
 
   @override
+  String get anyNumberOfPlaces => 'Autant de lieux que vous voulez';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren enregistre gratuitement jusqu\'à $limit lieux par guide. Vous en avez sélectionné $selected — soit $over de plus.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren envoie gratuitement jusqu\'à $limit lieux à la fois. Vous en avez sélectionné $selected — soit $over de plus.';
   }
 
   @override
@@ -223,7 +231,7 @@ class LFr extends L {
   String get couldNotOpenMaps => 'Impossible d\'ouvrir Plans';
 
   @override
-  String get checkingAppleAccount => 'Vérification de votre compte Apple…';
+  String get checkingAppleAccount => 'Vérification de votre compte…';
 
   @override
   String get restoredUnlocked =>
@@ -231,7 +239,7 @@ class LFr extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Aucun achat précédent trouvé sur ce compte Apple.';
+      'Aucun achat précédent trouvé sur ce compte.';
 
   @override
   String get purchaseDidNotComplete =>
@@ -658,8 +666,16 @@ class LFrCa extends LFr {
   String get guidesOfAnySize => 'Des guides sans limite';
 
   @override
+  String get anyNumberOfPlaces => 'Autant de lieux que vous voulez';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren enregistre gratuitement jusqu\'à $limit lieux par guide. Vous en avez sélectionné $selected — soit $over de plus.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren envoie gratuitement jusqu\'à $limit lieux à la fois. Vous en avez sélectionné $selected — soit $over de plus.';
   }
 
   @override
@@ -752,7 +768,7 @@ class LFrCa extends LFr {
   String get couldNotOpenMaps => 'Impossible d\'ouvrir Plans';
 
   @override
-  String get checkingAppleAccount => 'Vérification de votre compte Apple…';
+  String get checkingAppleAccount => 'Vérification de votre compte…';
 
   @override
   String get restoredUnlocked =>
@@ -760,7 +776,7 @@ class LFrCa extends LFr {
 
   @override
   String get noPreviousPurchase =>
-      'Aucun achat antérieur trouvé sur ce compte Apple.';
+      'Aucun achat précédent trouvé sur ce compte.';
 
   @override
   String get purchaseDidNotComplete =>

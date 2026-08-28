@@ -129,8 +129,16 @@ class LMl extends L {
   String get guidesOfAnySize => 'ഏത് വലുപ്പത്തിലുമുള്ള ഗൈഡുകൾ';
 
   @override
+  String get anyNumberOfPlaces => 'എത്ര സ്ഥലങ്ങളും';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren ഒരു ഗൈഡിൽ സൗജന്യമായി $limit സ്ഥലങ്ങൾ വരെ സൂക്ഷിക്കും. നിങ്ങൾ $selected തിരഞ്ഞെടുത്തു — $over കൂടുതൽ.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ഒരു തവണ സൗജന്യമായി $limit സ്ഥലങ്ങൾ വരെ അയയ്ക്കും. നിങ്ങൾ $selected തിരഞ്ഞെടുത്തു — $over കൂടുതൽ.';
   }
 
   @override
@@ -223,16 +231,14 @@ class LMl extends L {
   String get couldNotOpenMaps => 'Maps തുറക്കാനായില്ല';
 
   @override
-  String get checkingAppleAccount =>
-      'നിങ്ങളുടെ Apple അക്കൗണ്ട് പരിശോധിക്കുന്നു…';
+  String get checkingAppleAccount => 'നിങ്ങളുടെ അക്കൗണ്ട് പരിശോധിക്കുന്നു…';
 
   @override
   String get restoredUnlocked =>
       'വീണ്ടെടുത്തു. ഏത് വലുപ്പത്തിലുമുള്ള ഗൈഡുകൾ അൺലോക്ക് ആയി.';
 
   @override
-  String get noPreviousPurchase =>
-      'ഈ Apple അക്കൗണ്ടിൽ മുൻപത്തെ വാങ്ങൽ കണ്ടെത്തിയില്ല.';
+  String get noPreviousPurchase => 'ഈ അക്കൗണ്ടിൽ മുൻ വാങ്ങൽ കണ്ടെത്തിയില്ല.';
 
   @override
   String get purchaseDidNotComplete =>

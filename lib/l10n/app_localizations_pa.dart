@@ -129,8 +129,16 @@ class LPa extends L {
   String get guidesOfAnySize => 'ਕਿਸੇ ਵੀ ਆਕਾਰ ਦੀਆਂ ਗਾਈਡਾਂ';
 
   @override
+  String get anyNumberOfPlaces => 'ਕਿੰਨੀਆਂ ਵੀ ਥਾਵਾਂ';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren ਇੱਕ ਗਾਈਡ ਵਿੱਚ ਮੁਫ਼ਤ $limit ਥਾਵਾਂ ਤੱਕ ਸੰਭਾਲਦਾ ਹੈ। ਤੁਸੀਂ $selected ਚੁਣੀਆਂ ਹਨ — $over ਵੱਧ।';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ਇੱਕ ਵਾਰ ਵਿੱਚ ਮੁਫ਼ਤ $limit ਥਾਵਾਂ ਤੱਕ ਭੇਜਦਾ ਹੈ। ਤੁਸੀਂ $selected ਚੁਣੀਆਂ ਹਨ — $over ਵੱਧ।';
   }
 
   @override
@@ -228,15 +236,14 @@ class LPa extends L {
   String get couldNotOpenMaps => 'Maps ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕਿਆ';
 
   @override
-  String get checkingAppleAccount => 'ਤੁਹਾਡਾ Apple ਖਾਤਾ ਵੇਖ ਰਿਹਾ ਹੈ…';
+  String get checkingAppleAccount => 'ਤੁਹਾਡਾ ਖਾਤਾ ਜਾਂਚਿਆ ਜਾ ਰਿਹਾ ਹੈ…';
 
   @override
   String get restoredUnlocked =>
       'ਬਹਾਲ ਹੋ ਗਿਆ। ਕਿਸੇ ਵੀ ਆਕਾਰ ਦੀਆਂ ਗਾਈਡਾਂ ਅਨਲਾਕ ਹਨ।';
 
   @override
-  String get noPreviousPurchase =>
-      'ਇਸ Apple ਖਾਤੇ ਉੱਤੇ ਪਹਿਲਾਂ ਦੀ ਕੋਈ ਖ਼ਰੀਦ ਨਹੀਂ ਮਿਲੀ।';
+  String get noPreviousPurchase => 'ਇਸ ਖਾਤੇ ਉੱਤੇ ਪਹਿਲਾਂ ਦੀ ਕੋਈ ਖਰੀਦ ਨਹੀਂ ਮਿਲੀ।';
 
   @override
   String get purchaseDidNotComplete =>

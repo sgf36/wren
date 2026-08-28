@@ -130,8 +130,16 @@ class LDe extends L {
   String get guidesOfAnySize => 'Guides in jeder Größe';
 
   @override
+  String get anyNumberOfPlaces => 'Beliebig viele Orte';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren sichert kostenlos bis zu $limit Orte in einem Guide. Du hast $selected ausgewählt — $over mehr als das.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren sendet kostenlos bis zu $limit Orte auf einmal. Du hast $selected ausgewählt — $over mehr als das.';
   }
 
   @override
@@ -223,7 +231,7 @@ class LDe extends L {
   String get couldNotOpenMaps => 'Karten konnte nicht geöffnet werden';
 
   @override
-  String get checkingAppleAccount => 'Dein Apple-Account wird geprüft…';
+  String get checkingAppleAccount => 'Dein Konto wird geprüft…';
 
   @override
   String get restoredUnlocked =>
@@ -231,7 +239,7 @@ class LDe extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Kein früherer Kauf mit diesem Apple-Account gefunden.';
+      'Auf diesem Konto wurde kein früherer Kauf gefunden.';
 
   @override
   String get purchaseDidNotComplete =>

@@ -128,8 +128,16 @@ class LGu extends L {
   String get guidesOfAnySize => 'કોઈ પણ કદની માર્ગદર્શિકા';
 
   @override
+  String get anyNumberOfPlaces => 'ગમે તેટલી જગ્યાઓ';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren એક માર્ગદર્શિકામાં મફતમાં $limit જગ્યાઓ સુધી સાચવે છે. તમે $selected પસંદ કરી છે — $over વધારે.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren એક સાથે મફતમાં $limit જગ્યાઓ સુધી મોકલે છે. તમે $selected પસંદ કરી છે — $over વધારે.';
   }
 
   @override
@@ -216,14 +224,14 @@ class LGu extends L {
   String get couldNotOpenMaps => 'Maps ખોલી શકાયું નહીં';
 
   @override
-  String get checkingAppleAccount => 'તમારું Apple ખાતું તપાસી રહ્યું છે…';
+  String get checkingAppleAccount => 'તમારું ખાતું તપાસી રહ્યા છીએ…';
 
   @override
   String get restoredUnlocked =>
       'પુનઃસ્થાપિત થયું. કોઈ પણ કદની માર્ગદર્શિકા અનલૉક છે.';
 
   @override
-  String get noPreviousPurchase => 'આ Apple ખાતા પર અગાઉની કોઈ ખરીદી મળી નહીં.';
+  String get noPreviousPurchase => 'આ ખાતા પર અગાઉની કોઈ ખરીદી મળી નથી.';
 
   @override
   String get purchaseDidNotComplete =>

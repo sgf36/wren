@@ -363,11 +363,23 @@ abstract class L {
   /// **'Guides of any size'**
   String get guidesOfAnySize;
 
+  /// The unlock, on a platform that makes no guides. Mirrors guidesOfAnySize, which names the guide; here the unit sold is the number of places sent at once. Same product, same price, different word for the thing it lifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Any number of places'**
+  String get anyNumberOfPlaces;
+
   /// Explains why the purchase is being offered.
   ///
   /// In en, this message translates to:
   /// **'Wren saves up to {limit} places in a guide for free. You have {selected} selected — {over} more than that.'**
   String unlockExplain(int limit, int selected, int over);
+
+  /// Mirrors unlockExplain on a platform with no guides: places are sent to another map app rather than saved into a guide.
+  ///
+  /// In en, this message translates to:
+  /// **'Wren sends up to {limit} places at a time for free. You have {selected} selected — {over} more than that.'**
+  String unlockExplainAndroid(int limit, int selected, int over);
 
   /// Reassurance that nothing recurs.
   ///
@@ -489,10 +501,10 @@ abstract class L {
   /// **'Could not open Maps'**
   String get couldNotOpenMaps;
 
-  /// Shown while restoring a purchase.
+  /// Shown while the store is asked whether this account already owns the unlock. Deliberately does not name Apple or Google: the same string ships to both stores, and naming one of them is wrong half the time.
   ///
   /// In en, this message translates to:
-  /// **'Checking your Apple Account…'**
+  /// **'Checking your account…'**
   String get checkingAppleAccount;
 
   /// A previous purchase was found.
@@ -501,10 +513,10 @@ abstract class L {
   /// **'Restored. Guides of any size are unlocked.'**
   String get restoredUnlocked;
 
-  /// Nothing to restore.
+  /// Restore found nothing. Names no store, for the same reason as checkingAppleAccount.
   ///
   /// In en, this message translates to:
-  /// **'No previous purchase found on this Apple Account.'**
+  /// **'No previous purchase found on this account.'**
   String get noPreviousPurchase;
 
   /// The payment sheet was cancelled or failed.

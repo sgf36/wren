@@ -153,9 +153,28 @@
   "@guidesOfAnySize": {
     "description": "Title of the purchase sheet, and the name of the in-app purchase."
   },
+  "anyNumberOfPlaces": "Any number of places",
+  "@anyNumberOfPlaces": {
+    "description": "The unlock, on a platform that makes no guides. Mirrors guidesOfAnySize, which names the guide; here the unit sold is the number of places sent at once. Same product, same price, different word for the thing it lifts."
+  },
   "unlockExplain": "Wren saves up to {limit} places in a guide for free. You have {selected} selected — {over} more than that.",
   "@unlockExplain": {
     "description": "Explains why the purchase is being offered.",
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      },
+      "selected": {
+        "type": "int"
+      },
+      "over": {
+        "type": "int"
+      }
+    }
+  },
+  "unlockExplainAndroid": "Wren sends up to {limit} places at a time for free. You have {selected} selected — {over} more than that.",
+  "@unlockExplainAndroid": {
+    "description": "Mirrors unlockExplain on a platform with no guides: places are sent to another map app rather than saved into a guide.",
     "placeholders": {
       "limit": {
         "type": "int"
@@ -301,17 +320,17 @@
   "@couldNotOpenMaps": {
     "description": "Opening the Apple Maps link failed."
   },
-  "checkingAppleAccount": "Checking your Apple Account…",
+  "checkingAppleAccount": "Checking your account…",
   "@checkingAppleAccount": {
-    "description": "Shown while restoring a purchase."
+    "description": "Shown while the store is asked whether this account already owns the unlock. Deliberately does not name Apple or Google: the same string ships to both stores, and naming one of them is wrong half the time."
   },
   "restoredUnlocked": "Restored. Guides of any size are unlocked.",
   "@restoredUnlocked": {
     "description": "A previous purchase was found."
   },
-  "noPreviousPurchase": "No previous purchase found on this Apple Account.",
+  "noPreviousPurchase": "No previous purchase found on this account.",
   "@noPreviousPurchase": {
-    "description": "Nothing to restore."
+    "description": "Restore found nothing. Names no store, for the same reason as checkingAppleAccount."
   },
   "purchaseDidNotComplete": "The purchase did not complete, so nothing was charged.",
   "@purchaseDidNotComplete": {

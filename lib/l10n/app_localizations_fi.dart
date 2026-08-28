@@ -130,8 +130,16 @@ class LFi extends L {
   String get guidesOfAnySize => 'Minkä kokoisia oppaita tahansa';
 
   @override
+  String get anyNumberOfPlaces => 'Miten monta paikkaa tahansa';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren tallentaa oppaaseen ilmaiseksi enintään $limit paikkaa. Olet valinnut $selected — $over enemmän.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren lähettää kerralla ilmaiseksi enintään $limit paikkaa. Olet valinnut $selected — $over enemmän.';
   }
 
   @override
@@ -216,15 +224,14 @@ class LFi extends L {
   String get couldNotOpenMaps => 'Karttoja ei voitu avata';
 
   @override
-  String get checkingAppleAccount => 'Tarkistetaan Apple-tiliäsi…';
+  String get checkingAppleAccount => 'Tarkistetaan tiliäsi…';
 
   @override
   String get restoredUnlocked =>
       'Palautettu. Minkä kokoiset oppaat tahansa on avattu.';
 
   @override
-  String get noPreviousPurchase =>
-      'Tältä Apple-tililtä ei löytynyt aiempaa ostoa.';
+  String get noPreviousPurchase => 'Tältä tililtä ei löytynyt aiempaa ostosta.';
 
   @override
   String get purchaseDidNotComplete =>

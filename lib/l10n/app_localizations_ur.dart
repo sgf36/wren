@@ -129,8 +129,16 @@ class LUr extends L {
   String get guidesOfAnySize => 'کسی بھی حجم کی گائیڈز';
 
   @override
+  String get anyNumberOfPlaces => 'کسی بھی تعداد میں جگہیں';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren ایک گائیڈ میں مفت $limit جگہوں تک محفوظ کرتا ہے۔ آپ نے $selected منتخب کی ہیں — $over زیادہ۔';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren ایک وقت میں مفت $limit جگہوں تک بھیجتا ہے۔ آپ نے $selected منتخب کی ہیں — $over زیادہ۔';
   }
 
   @override
@@ -228,7 +236,7 @@ class LUr extends L {
   String get couldNotOpenMaps => 'Maps نہیں کھل سکا';
 
   @override
-  String get checkingAppleAccount => 'آپ کا Apple اکاؤنٹ دیکھا جا رہا ہے…';
+  String get checkingAppleAccount => 'آپ کا اکاؤنٹ جانچا جا رہا ہے…';
 
   @override
   String get restoredUnlocked =>
@@ -236,7 +244,7 @@ class LUr extends L {
 
   @override
   String get noPreviousPurchase =>
-      'اس Apple اکاؤنٹ پر پچھلی کوئی خریداری نہیں ملی۔';
+      'اس اکاؤنٹ پر پہلے کی کوئی خریداری نہیں ملی۔';
 
   @override
   String get purchaseDidNotComplete =>

@@ -128,8 +128,16 @@ class LId extends L {
   String get guidesOfAnySize => 'Panduan tanpa batas jumlah';
 
   @override
+  String get anyNumberOfPlaces => 'Tempat tanpa batas jumlah';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren menyimpan hingga $limit tempat dalam satu panduan secara gratis. Kamu memilih $selected — $over lebih banyak dari itu.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren mengirim hingga $limit tempat sekaligus secara gratis. Kamu memilih $selected — $over lebih banyak dari itu.';
   }
 
   @override
@@ -216,7 +224,7 @@ class LId extends L {
   String get couldNotOpenMaps => 'Maps tidak bisa dibuka';
 
   @override
-  String get checkingAppleAccount => 'Memeriksa Akun Apple kamu…';
+  String get checkingAppleAccount => 'Memeriksa akunmu…';
 
   @override
   String get restoredUnlocked =>
@@ -224,7 +232,7 @@ class LId extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Tidak ada pembelian sebelumnya di Akun Apple ini.';
+      'Tidak ada pembelian sebelumnya pada akun ini.';
 
   @override
   String get purchaseDidNotComplete =>

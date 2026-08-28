@@ -132,8 +132,16 @@ class LPl extends L {
   String get guidesOfAnySize => 'Przewodniki bez ograniczeń';
 
   @override
+  String get anyNumberOfPlaces => 'Dowolna liczba miejsc';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren zapisuje w przewodniku do $limit miejsc za darmo. Masz zaznaczone $selected — o $over za dużo.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren wysyła za darmo do $limit miejsc naraz. Masz zaznaczone $selected — o $over za dużo.';
   }
 
   @override
@@ -227,7 +235,7 @@ class LPl extends L {
   String get couldNotOpenMaps => 'Nie udało się otworzyć Map';
 
   @override
-  String get checkingAppleAccount => 'Sprawdzanie konta Apple…';
+  String get checkingAppleAccount => 'Sprawdzanie twojego konta…';
 
   @override
   String get restoredUnlocked =>
@@ -235,7 +243,7 @@ class LPl extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Nie znaleziono wcześniejszego zakupu na tym koncie Apple.';
+      'Nie znaleziono wcześniejszego zakupu na tym koncie.';
 
   @override
   String get purchaseDidNotComplete =>

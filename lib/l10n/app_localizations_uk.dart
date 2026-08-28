@@ -136,8 +136,16 @@ class LUk extends L {
   String get guidesOfAnySize => 'Путівники без обмежень';
 
   @override
+  String get anyNumberOfPlaces => 'Будь-яка кількість місць';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren безкоштовно зберігає в путівнику до $limit місць. Вибрано $selected — на $over більше.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren безкоштовно надсилає до $limit місць за раз. Вибрано $selected — на $over більше.';
   }
 
   @override
@@ -231,7 +239,7 @@ class LUk extends L {
   String get couldNotOpenMaps => 'Не вдалося відкрити Карти';
 
   @override
-  String get checkingAppleAccount => 'Перевіряю твій обліковий запис Apple…';
+  String get checkingAppleAccount => 'Перевіряємо ваш обліковий запис…';
 
   @override
   String get restoredUnlocked =>
@@ -239,7 +247,7 @@ class LUk extends L {
 
   @override
   String get noPreviousPurchase =>
-      'У цьому обліковому записі Apple попередніх покупок не знайдено.';
+      'У цьому обліковому записі попередніх покупок не знайдено.';
 
   @override
   String get purchaseDidNotComplete =>

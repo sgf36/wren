@@ -129,8 +129,16 @@ class LHu extends L {
   String get guidesOfAnySize => 'Bármekkora útikalauz';
 
   @override
+  String get anyNumberOfPlaces => 'Bármennyi hely';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'A Wren ingyen legfeljebb $limit helyet ment egy útikalauzba. $selected van kijelölve — $over darabbal több.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'A Wren ingyen legfeljebb $limit helyet küld egyszerre. $selected van kijelölve — $over darabbal több.';
   }
 
   @override
@@ -217,7 +225,7 @@ class LHu extends L {
   String get couldNotOpenMaps => 'A Térképek nem nyitható meg';
 
   @override
-  String get checkingAppleAccount => 'Apple-fiókod ellenőrzése…';
+  String get checkingAppleAccount => 'Fiókod ellenőrzése…';
 
   @override
   String get restoredUnlocked =>
@@ -225,7 +233,7 @@ class LHu extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Nem található korábbi vásárlás ezen az Apple-fiókon.';
+      'Ezen a fiókon nem található korábbi vásárlás.';
 
   @override
   String get purchaseDidNotComplete =>

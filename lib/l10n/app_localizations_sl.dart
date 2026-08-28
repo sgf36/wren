@@ -134,8 +134,16 @@ class LSl extends L {
   String get guidesOfAnySize => 'Vodniki poljubne velikosti';
 
   @override
+  String get anyNumberOfPlaces => 'Poljubno število krajev';
+
+  @override
   String unlockExplain(int limit, int selected, int over) {
     return 'Wren brezplačno shrani do $limit krajev v vodnik. Izbral si jih $selected — $over več od tega.';
+  }
+
+  @override
+  String unlockExplainAndroid(int limit, int selected, int over) {
+    return 'Wren brezplačno pošlje do $limit krajev naenkrat. Izbral si jih $selected — $over več od tega.';
   }
 
   @override
@@ -229,7 +237,7 @@ class LSl extends L {
   String get couldNotOpenMaps => 'Zemljevidov ni bilo mogoče odpreti';
 
   @override
-  String get checkingAppleAccount => 'Preverjanje tvojega računa Apple…';
+  String get checkingAppleAccount => 'Preverjanje tvojega računa…';
 
   @override
   String get restoredUnlocked =>
@@ -237,7 +245,7 @@ class LSl extends L {
 
   @override
   String get noPreviousPurchase =>
-      'Na tem računu Apple ni bilo najdenega prejšnjega nakupa.';
+      'Na tem računu ni bilo najdenega prejšnjega nakupa.';
 
   @override
   String get purchaseDidNotComplete =>
