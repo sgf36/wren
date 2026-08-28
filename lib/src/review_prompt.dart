@@ -90,17 +90,29 @@ class StoreReviewPrompt implements ReviewPrompt {
 
 /// Asks for nothing, ever.
 ///
-/// Used on Android, where there is no moment to ask about: the Android edition
+/// **No longer used on either platform**, and kept for the record and for one
+/// test. It used to be Android's, on the argument that the Android edition
 /// hands a file to another map app rather than publishing an Apple Maps guide,
-/// so the success this prompt is built around never happens there. Wiring the
-/// real one up anyway would put a prompt behind a door that does not open.
+/// so the success this prompt is built around never happened there.
 ///
-/// It does **not** remove `in_app_review` from the Android build. That package
-/// pulls in `com.google.android.play:review` and `play-services-base`, whose
-/// manifests merge into the app's — and permissions come from dependencies, not
-/// from the manifest as written. Wren already ships BILLING and INTERNET it
-/// never asked for by this route. Before the Play listing goes live, read the
-/// **built** manifest rather than the source and check nothing new arrived.
+/// That was wrong in the same way the free-on-Android decision was wrong: the
+/// hand-off *is* the Android success. A list reaching Organic Maps is exactly
+/// as much a job finished as a guide reaching Apple Maps, and it is the moment
+/// the user is most pleased with the app. Both platforms now arm on their own
+/// success and ask on the next resume.
+///
+/// **The manifest check this comment used to demand has been done.** The
+/// concern was real: `in_app_review` pulls in `com.google.android.play:review`
+/// and `play-services-base`, whose manifests merge into the app's, and
+/// permissions come from dependencies rather than from the manifest as
+/// written. Measured 2026-08-28 against the built bundle now in Google's
+/// review queue (versionCode 4), the review library contributes a
+/// `PlayCoreDialogWrapperActivity` and **no `uses-permission` at all**. The
+/// bundle asks for three: BILLING, INTERNET, and androidx's own
+/// `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`, which is self-declared and
+/// invisible on a listing. `DUMP` and `BIND_JOB_SERVICE` appear in that
+/// manifest as `android:permission` attributes guarding components — read them
+/// as requests and you will chase a permission the app never asks for.
 class NoReviewPrompt implements ReviewPrompt {
   const NoReviewPrompt();
 

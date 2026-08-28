@@ -267,8 +267,11 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       widget.shareInbox ?? const MethodChannelShareInbox();
   late final PlaceSharer _sharer =
       widget.sharer ?? const MethodChannelPlaceSharer();
-  // Tied to whether this build publishes guides at all, because that is the
-  // only event worth asking about. See [NoReviewPrompt].
+  // Real on both platforms, and deliberately not tied to [_makesGuides]. Every
+  // build has a moment worth asking about: on iPhone a guide reaching Apple
+  // Maps, on Android a list reaching whichever map app the user chose. Both are
+  // armed below and asked for on the next resume. [NoReviewPrompt] records why
+  // Android briefly had nothing.
   late final ReviewPrompt _reviewPrompt =
       widget.reviewPrompt ?? (const StoreReviewPrompt());
 
