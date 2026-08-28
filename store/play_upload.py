@@ -57,6 +57,72 @@ def fail(edit, headers, what, r):
     sys.exit("%s failed: %s\n%s" % (what, r.status_code, r.text[:1000]))
 
 
+def rollout(headers, track, notes):
+    """Flip the draft release already on `track` to completed.
+
+    Separate from the upload path on purpose. Rolling out is the moment the
+    build stops being private, and it should be possible to do it -- or to
+    re-read what is about to happen -- without also having a bundle in hand.
+
+    Done here rather than in the Console because that flow is five clicks
+    across three screens, and the release status is one field.
+    """
+    r = requests.post("%s/applications/%s/edits" % (BASE, PACKAGE),
+                      headers=headers, timeout=60)
+    if r.status_code >= 400:
+        fail(None, headers, "edits.insert", r)
+    edit = r.json()["id"]
+
+    r = requests.get("%s/applications/%s/edits/%s/tracks/%s"
+                     % (BASE, PACKAGE, edit, track), headers=headers, timeout=60)
+    if r.status_code >= 400:
+        fail(edit, headers, "tracks.get", r)
+    releases = r.json().get("releases") or []
+    if not releases:
+        fail(edit, headers, "nothing on track %s to roll out" % track, r)
+
+    rel = releases[0]
+    print("track %s: %s (versionCodes %s) is %s"
+          % (track, rel.get("name"), rel.get("versionCodes"), rel.get("status")))
+    if rel.get("status") == "completed":
+        requests.delete("%s/applications/%s/edits/%s" % (BASE, PACKAGE, edit),
+                        headers=headers, timeout=60)
+        print("already rolled out; nothing to do")
+        return
+
+    rel["status"] = "completed"
+    if notes:
+        rel["releaseNotes"] = [{"language": "en-GB", "text": notes}]
+
+    r = requests.put("%s/applications/%s/edits/%s/tracks/%s"
+                     % (BASE, PACKAGE, edit, track),
+                     headers={**headers, "Content-Type": "application/json"},
+                     json={"track": track, "releases": [rel]}, timeout=120)
+    if r.status_code >= 400:
+        fail(edit, headers, "tracks.update", r)
+
+    r = requests.post("%s/applications/%s/edits/%s:commit" % (BASE, PACKAGE, edit),
+                      headers=headers, timeout=120)
+    if r.status_code >= 400:
+        fail(edit, headers, "commit", r)
+
+    # Read it back through a fresh edit. The commit reports that the edit
+    # applied, not what the track now says.
+    r = requests.post("%s/applications/%s/edits" % (BASE, PACKAGE),
+                      headers=headers, timeout=60)
+    edit2 = r.json()["id"]
+    back = requests.get("%s/applications/%s/edits/%s/tracks/%s"
+                        % (BASE, PACKAGE, edit2, track), headers=headers, timeout=60).json()
+    requests.delete("%s/applications/%s/edits/%s" % (BASE, PACKAGE, edit2),
+                    headers=headers, timeout=60)
+    got = (back.get("releases") or [{}])[0]
+    print("now: %s (versionCodes %s) status=%s"
+          % (got.get("name"), got.get("versionCodes"), got.get("status")))
+    if got.get("status") != "completed":
+        sys.exit("committed, but the release is still %s" % got.get("status"))
+    print("rolled out")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--aab", default=DEFAULT_AAB)
@@ -68,9 +134,16 @@ def main():
                     help="Internal app sharing: an install link, no track, no review")
     ap.add_argument("--draft", action="store_true",
                     help="Upload and attach, but do NOT roll out or send for review")
+    ap.add_argument("--rollout", action="store_true",
+                    help="Roll out the release ALREADY on --track: flips draft to "
+                         "completed and sends it for review. Uploads nothing.")
     args = ap.parse_args()
 
     h = {"Authorization": "Bearer " + access_token(credentials())}
+
+    if args.rollout:
+        rollout(h, args.track, args.notes)
+        return
 
     if args.check:
         r = requests.post("%s/applications/%s/edits" % (BASE, PACKAGE),
