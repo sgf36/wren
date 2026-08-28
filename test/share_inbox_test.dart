@@ -62,7 +62,9 @@ void main() {
       // What the shell returned before screenshots could be shared. Dart and
       // Swift ship in one binary so they cannot normally drift, but a partial
       // local build can, and a crash on launch is a poor way to learn that.
-      final parsed = MethodChannelShareInbox.debugParse('https://maps.apple/ug/x');
+      final parsed = MethodChannelShareInbox.debugParse(
+        'https://maps.apple/ug/x',
+      );
       expect(parsed!.link, 'https://maps.apple/ug/x');
       expect(parsed.imagePaths, isEmpty);
     });
@@ -86,8 +88,10 @@ void main() {
     });
 
     test('an empty map is nothing waiting, not an empty share', () {
-      expect(MethodChannelShareInbox.debugParse({'link': null, 'images': []}),
-          isNull);
+      expect(
+        MethodChannelShareInbox.debugParse({'link': null, 'images': []}),
+        isNull,
+      );
       expect(MethodChannelShareInbox.debugParse({}), isNull);
       expect(MethodChannelShareInbox.debugParse(''), isNull);
       expect(MethodChannelShareInbox.debugParse(null), isNull);

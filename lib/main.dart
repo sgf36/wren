@@ -585,7 +585,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       _status = null;
     });
     try {
-      final files = paths ?? [for (final f in await _picker.pickMultiImage()) f.path];
+      final files =
+          paths ?? [for (final f in await _picker.pickMultiImage()) f.path];
       if (files.isEmpty) {
         setState(() {
           _busy = false;
