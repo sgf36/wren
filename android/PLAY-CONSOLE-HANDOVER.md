@@ -129,8 +129,18 @@ dead ends. None of it could be screenshotted for Play.
 * An unmatched row offered a magnifying glass that opened a search sheet
   captioned "Search Apple Maps", which could only ever fail.
 
-So on Android **a file is the only way in**, and "Add" opens the picker
-directly rather than offering one working source beside two dead ones. A row
+**CORRECTED 2026-08-28 — the sentence that stood here said a file was the only
+way in, and it is wrong.** Settled against the shipping package, not this file:
+
+* `_addPlaces()` builds the sheet with **"Add screenshots" and "From a file"
+  ungated**. Only `_AddSource.guide` sits behind `if (_makesGuides)`, so Android
+  offers **two** sources and hides only the guide import.
+* `OcrPlugin.kt` exists, `com.google.mlkit:text-recognition:16.0.1` is declared,
+  and the release AAB carries **28 ML Kit OCR model assets** under
+  `base/assets/mlkit-google-ocr-models/`. `littlebird/ocr` is in the dex.
+
+§1 was right and this section went stale behind it, which is the hazard of
+describing one behaviour in two places. Believe the package. A row
 carries no search icon, and the "read as" caption is shown only where it
 differs from the name above it — otherwise every row of an imported file was
 captioned with its own name.
