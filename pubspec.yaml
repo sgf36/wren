@@ -54,13 +54,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # Drives real gestures against the real app on a simulator, which is the only
-  # way Flutter offers to record moving footage of the interface. Used solely by
-  # integration_test/advert_test.dart and store/record.py; no shipped code
-  # imports it.
-  integration_test:
-    sdk: flutter
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

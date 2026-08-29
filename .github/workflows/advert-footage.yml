@@ -87,7 +87,7 @@ jobs:
         run: flutter test test/scene_render_test.dart --reporter compact
 
       - name: Check the beats can be performed
-        run: flutter test test/advert_probe_test.dart --reporter compact
+        run: flutter test test/advert_choreography_test.dart --reporter compact
 
       # `-u` so the log arrives as it happens. A previous run of the screenshot
       # pipeline emitted thirty-one minutes of output in a single burst at the
@@ -99,28 +99,29 @@ jobs:
             --locale ${{ inputs.locale || 'en-GB' }} \
             ${{ inputs.verbose && '--verbose' || '' }}
 
-      # Per-clip verdict in the run summary, so a frozen or truncated clip is
-      # visible without downloading anything. `mdls` reads Spotlight's own
-      # metadata; there is no ffmpeg on a fresh runner and installing one to
-      # print a duration is not worth the minutes.
+      # Per-clip verdict in the run summary, so a short or stuttering clip is
+      # visible without downloading anything. Read out of each file's own
+      # QuickTime atoms: the first version asked `mdls`, which reads Spotlight
+      # metadata an ephemeral runner never builds, and it reported 0.0s for a
+      # 402-second file, failing three good clips.
       - name: Measure every clip
         if: always()
         run: |
-          {
-            echo '| clip | seconds | size | kB/s |'
-            echo '| --- | --- | --- | --- |'
-            find store/footage -name '*.mov' -print0 | while IFS= read -r -d '' f; do
-              secs=$(mdls -name kMDItemDurationSeconds -raw "$f" 2>/dev/null)
-              [ "$secs" = "(null)" ] || [ -z "$secs" ] && secs=0
-              bytes=$(stat -f%z "$f")
-              rate=$(awk -v b="$bytes" -v s="$secs" 'BEGIN{printf "%.0f", (s>0)?b/s/1000:0}')
-              printf '| %s | %.1f | %.1f MB | %s |\n' \
-                "${f#store/footage/}" "$secs" "$(awk -v b="$bytes" 'BEGIN{printf "%.1f", b/1000000}')" "$rate"
-            done
-            echo
-            echo '**A high rate is not proof of smoothness.** It only says the'
-            echo 'picture changed. Watch the clips.'
-          } >> "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import pathlib, sys
+          sys.path.insert(0, 'store')
+          from record import probe
+          print('| clip | seconds | frames | fps | size |')
+          print('| --- | --- | --- | --- | --- |')
+          for f in sorted(pathlib.Path('store/footage').rglob('*.mov')):
+              secs, frames, ok = probe(f)
+              fps = frames / secs if secs else 0
+              flag = '' if ok else ' **NOT FINALISED**'
+              print(f'| {f.relative_to("store/footage")}{flag} | {secs:.1f} '
+                    f'| {frames} | {fps:.0f} | {f.stat().st_size / 1e6:.1f} MB |')
+          print()
+          print('**Frame rate is not composition.** Watch the clips.')
+          PY
 
       # Always, including on failure: a half-finished set is the most useful
       # thing to look at when working out why it failed.

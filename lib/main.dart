@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'l10n/app_localizations.dart';
+import 'src/advert.dart';
 import 'src/entitlement.dart';
 import 'src/file_source.dart';
 import 'src/guide_expand.dart';
@@ -44,7 +45,12 @@ void main() {
     // Read back off the device log by shoot.py after every launch, so the log
     // says which route delivered the scene even on a run that succeeds.
     debugPrint(request.logLine);
-    runApp(WrenApp(home: sceneFor(request.name) ?? UnknownScene.from(request)));
+    // Advert beats first: they are scenes with a script played over them, and
+    // their names are prefixed so they cannot collide with a plain scene.
+    runApp(WrenApp(
+        home: advertFor(request.name) ??
+            sceneFor(request.name) ??
+            UnknownScene.from(request)));
     return;
   }
   runApp(const WrenApp());
