@@ -111,16 +111,20 @@ jobs:
           import pathlib, sys
           sys.path.insert(0, 'store')
           from record import probe
-          print('| clip | seconds | frames | fps | size |')
-          print('| --- | --- | --- | --- | --- |')
+          print('| clip | seconds | frames | peak fps | avg fps | size |')
+          print('| --- | --- | --- | --- | --- | --- |')
           for f in sorted(pathlib.Path('store/footage').rglob('*.mov')):
-              secs, frames, ok = probe(f)
-              fps = frames / secs if secs else 0
+              secs, frames, ok, peak = probe(f)
+              avg = frames / secs if secs else 0
               flag = '' if ok else ' **NOT FINALISED**'
               print(f'| {f.relative_to("store/footage")}{flag} | {secs:.1f} '
-                    f'| {frames} | {fps:.0f} | {f.stat().st_size / 1e6:.1f} MB |')
+                    f'| {frames} | {peak:.0f} | {avg:.0f} '
+                    f'| {f.stat().st_size / 1e6:.1f} MB |')
           print()
-          print('**Frame rate is not composition.** Watch the clips.')
+          print('Peak is the busiest two seconds. **Average is meaningless here**')
+          print('-- a beat is mostly deliberate holds, and simctl writes a frame')
+          print('only when the screen changes. Neither number is composition.')
+          print('Watch the clips.')
           PY
 
       # Always, including on failure: a half-finished set is the most useful
