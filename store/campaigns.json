@@ -1,0 +1,58 @@
+{
+  "_comment": [
+    "Source of truth for Wren's App Analytics campaign tokens. Never type a token",
+    "by hand: run `python store/campaign_links.py` and copy what it prints.",
+    "",
+    "Apple matches tokens LITERALLY. 'ig-organic-gone-by-thursday' and",
+    "'IG-Organic-Gone-By-Thursday' become two rows that will never be merged, and",
+    "one typo silently mints a third. That is the whole reason this file exists.",
+    "",
+    "providerToken is NOT invented. Apple generates it when the first campaign",
+    "link is created in App Store Connect (Analytics > Acquisition > Campaigns >",
+    "+), and it is the same six digits for every campaign afterwards. Until it is",
+    "filled in here the generator refuses to print links, because a link missing",
+    "pt= is accepted by the App Store and attributed to nothing.",
+    "",
+    "One token per CREATIVE, not per post. A token per post fragments the volume",
+    "until no row means anything."
+  ],
+  "appId": "6802053382",
+  "providerToken": null,
+  "campaigns": [
+    {
+      "token": "ig-organic-gone-by-thursday",
+      "channel": "Instagram",
+      "surface": "organic",
+      "creative": "Gone by Thursday (15s advert)",
+      "notes": "Reels and stories. One token for the creative across every post of it."
+    },
+    {
+      "token": "tt-organic-gone-by-thursday",
+      "channel": "TikTok",
+      "surface": "organic",
+      "creative": "Gone by Thursday (15s advert)",
+      "notes": "Same creative, different channel, so a separate token."
+    },
+    {
+      "token": "ig-organic-list-scroll",
+      "channel": "Instagram",
+      "surface": "organic",
+      "creative": "List scroll",
+      "notes": null
+    },
+    {
+      "token": "site-wren-hero",
+      "channel": "wren.spencerfields.com",
+      "surface": "site",
+      "creative": "Homepage hero download button",
+      "notes": null
+    },
+    {
+      "token": "site-software-apps-page",
+      "channel": "software.spencerfields.com",
+      "surface": "site",
+      "creative": "Apps page listing",
+      "notes": null
+    }
+  ]
+}
