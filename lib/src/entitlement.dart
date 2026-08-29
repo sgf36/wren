@@ -14,13 +14,13 @@ library;
 const int freePlaceLimit = 3;
 
 /// Non-consumable product, configured in App Store Connect against the Wren
-/// app record. $4.99 USD, one time.
+/// app record. $8.99 USD, one time.
 const String unlimitedProductId = 'com.spencerfields.littlebird.unlimited';
 
 /// Advertised price. Only ever used as a fallback in copy — the real figure
 /// shown to the user must come from the store, because Apple sets the local
 /// price and it is not a currency conversion of the dollar one.
-const String unlimitedFallbackPrice = r'$4.99';
+const String unlimitedFallbackPrice = r'$8.99';
 
 enum PublishBlock {
   /// Nothing selected.

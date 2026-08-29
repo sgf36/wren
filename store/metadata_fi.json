@@ -7,5 +7,5 @@
     "name": "Oppaat ilman rajoituksia",
     "description": "Isommat oppaat ja lisäys olemassa oleviin."
   },
-  "whatsNew": "Enimmäkseen pohjatyötä. Siihen, miten Wren lukee kuvakaappauksen tai tekee oppaan, ei ole tullut muutoksia.\n\nMaksuton käyttöoikeus vahvistetaan nyt aika ajoin uudelleen, joten lahjaksi annettu koodi voidaan peruuttaa. Jos ostit avauksen, mikään tästä ei koske sinua — ostettu on sinun, eikä Wren tarkista sitä koskaan uudelleen."
+  "whatsNew": "Lähetä kuvakaappaus suoraan Wreniin.\n\nJoku lähettää sinulle reelin, jossa on kolme paikkaa. Ota kuvakaappaus, napauta Jaa ja valitse Wren — paikat luetaan heti, kun se avautuu. Ei tarvitse poistua sovelluksesta, jota käytit, eikä palata kuvavalitsimen kautta. Useampikin kuva kerralla toimii.\n\nSiinä koko muutos. Mikään ei ole muuttunut siinä, miten Wren lukee kuvakaappauksen tai luo oppaan."
 }

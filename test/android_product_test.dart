@@ -183,7 +183,7 @@ void main() {
     expect(find.text('Any number of places'), findsOne);
     expect(sharer.sent, isEmpty);
 
-    await tester.tap(find.widgetWithText(FilledButton, r'Unlock for $4.99'));
+    await tester.tap(find.widgetWithText(FilledButton, r'Unlock for $8.99'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Any other app'));
     await tester.pumpAndSettle();

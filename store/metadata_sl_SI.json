@@ -7,5 +7,5 @@
     "name": "Večji in obstoječi vodniki",
     "description": "Večji vodniki in dodajanje v obstoječe."
   },
-  "whatsNew": "Večinoma delo v temeljih. V tem, kako Wren prebere posnetek zaslona ali ustvari vodnik, se ni nič spremenilo.\n\nBrezplačni dostop se zdaj občasno znova potrdi, tako da je mogoče podarjeno kodo preklicati. Če ste odklep kupili, se vas nič od tega ne tiče — kupljeno je vaše in Wren tega nikoli znova ne preverja."
+  "whatsNew": "Pošljite posnetek zaslona neposredno v Wren.\n\nNekdo vam pošlje reel s tremi lokacijami. Naredite posnetek zaslona, tapnite Deli in izberite Wren — lokacije so prebrane v trenutku, ko se odpre. Ni vam treba zapustiti aplikacije, v kateri ste bili, ali se vračati skozi izbirnik fotografij. Deluje tudi z več slikami hkrati.\n\nTo je vsa sprememba. Način, kako Wren prebere posnetek zaslona ali sestavi vodnik, ostaja nespremenjen."
 }

@@ -7,5 +7,5 @@
     "name": "Alla storlekar och dem du har",
     "description": "Större guider, och lägg till i dem du har."
   },
-  "whatsNew": "Mest grundarbete. Ingenting har ändrats i hur Wren läser en skärmbild eller gör en guide.\n\nKostnadsfri åtkomst bekräftar sig nu själv då och då, så att en kod som getts bort kan dras tillbaka. Har du köpt upplåsningen rör inget av detta dig — det köpta är ditt, och Wren kontrollerar det aldrig igen."
+  "whatsNew": "Skicka en skärmdump direkt till Wren.\n\nNågon skickar dig en reel med tre platser i. Ta en skärmdump, tryck på Dela och välj Wren — platserna läses in i samma stund den öppnas. Du behöver inte lämna appen du var i, och inte gå tillbaka genom bildväljaren. Det fungerar även med flera bilder samtidigt.\n\nDet är hela ändringen. Inget om hur Wren läser en skärmdump eller bygger en guide har ändrats."
 }

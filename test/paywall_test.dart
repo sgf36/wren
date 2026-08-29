@@ -18,7 +18,7 @@ class FakeStore implements UnlockStore {
   int restoreCalls = 0;
 
   @override
-  Future<String?> price() async => r'$4.99';
+  Future<String?> price() async => r'$8.99';
 
   @override
   Future<bool> buy() async {
@@ -83,7 +83,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Guides of any size'), findsOneWidget);
-    expect(find.textContaining(r'Unlock for $4.99'), findsOneWidget);
+    expect(find.textContaining(r'Unlock for $8.99'), findsOneWidget);
     // The escape hatch matters: a paywall with no way forward is the wrong trade.
     expect(find.textContaining('Save the first 3 instead'), findsOneWidget);
     expect(find.text('Restore a previous purchase'), findsOneWidget);
@@ -150,7 +150,7 @@ void purchaseIsReachable() {
 
       // The sheet says what is being bought and what it costs, and offers the
       // restore Apple requires alongside it.
-      expect(find.text(r'Unlock for $4.99'), findsOne);
+      expect(find.text(r'Unlock for $8.99'), findsOne);
       expect(find.text('Restore a previous purchase'), findsOne);
       // And it does not claim anything about a list that does not exist.
       expect(find.textContaining('0 selected'), findsNothing);
@@ -167,7 +167,7 @@ void purchaseIsReachable() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Guides of any size'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(r'Unlock for $4.99'));
+      await tester.tap(find.text(r'Unlock for $8.99'));
       await tester.pumpAndSettle();
 
       expect(store.buyCalls, 1);
