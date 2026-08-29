@@ -1,0 +1,125 @@
+name: Advert footage
+
+# Records the app footage for the advert in a simulator, one clip per beat.
+#
+# The sibling of screenshots.yml, and it exists for the same reason: footage
+# taken by hand on a phone is in one language, at whatever size that phone is,
+# and has to be retaken from scratch for a one-word change. This produces it
+# again for nothing whenever the interface moves, in any language the app
+# speaks.
+#
+#   gh workflow run advert-footage.yml                        # every beat, en-GB
+#   gh workflow run advert-footage.yml -f beat="which city"   # one beat
+#   gh workflow run advert-footage.yml -f locale=fr-FR        # in French
+#
+# Deliberately not on push, like screenshots.yml: it boots a simulator, and the
+# interface changes far less often than the code does. Not a money question --
+# this repo is public, so macOS runners are free -- but a wall-clock one.
+#
+# WHAT THIS CANNOT PRODUCE, and neither can any change to it:
+#
+#   The Apple Maps payoff shot. A simulator ignores a `maps://guide` payload
+#   (Maps opens and does not change, delta 0.0) and sends the https form to
+#   Safari, because Maps does not claim the domain there. Measured both ways in
+#   ten languages -- store/SCREENSHOTS-RUNBOOK.md section 3. The link works on a
+#   real device. That shot is a device capture, permanently, and the advert is
+#   cut on the assumption that it is.
+#
+# AND THE THING TO ACTUALLY CHECK: a green job means the clips are the right
+# length and are not frozen. It says nothing about whether they are smooth. A CI
+# runner has no GPU, the simulator renders in software, and a list animating at
+# fifteen frames a second looks fine to every check in this repo and obviously
+# wrong to a person. Download the artifact and watch it before it is cut into
+# anything public.
+
+on:
+  workflow_dispatch:
+    inputs:
+      beat:
+        description: 'One beat by name (blank = all of them)'
+        type: string
+        default: ''
+      locale:
+        description: 'Device language for the recording'
+        type: string
+        default: 'en-GB'
+      verbose:
+        description: 'Log every command and its output'
+        type: boolean
+        default: true
+
+env:
+  FLUTTER_VERSION: '3.44.8'
+
+jobs:
+  record:
+    name: Record the footage
+    # iOS 26 SDK, and the only runner with a simulator at all.
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      # Two guards before anything boots, for the reason screenshots.yml has
+      # one: every beat builds on a scene, and a renamed scene or a moved
+      # button should fail in seconds rather than after a simulator boot, a
+      # Flutter build and a recording of a black screen.
+      #
+      # The probe runs the beats themselves on the fake clock — same file,
+      # same sequence, no device — so it catches everything about this run
+      # except whether the picture moves.
+      - name: Check every scene renders
+        run: flutter test test/scene_render_test.dart --reporter compact
+
+      - name: Check the beats can be performed
+        run: flutter test test/advert_probe_test.dart --reporter compact
+
+      # `-u` so the log arrives as it happens. A previous run of the screenshot
+      # pipeline emitted thirty-one minutes of output in a single burst at the
+      # end, and there was no telling how far it had got.
+      - name: Record
+        run: |
+          python3 -u store/record.py \
+            ${{ inputs.beat && format('--beat "{0}"', inputs.beat) || '' }} \
+            --locale ${{ inputs.locale }} \
+            ${{ inputs.verbose && '--verbose' || '' }}
+
+      # Per-clip verdict in the run summary, so a frozen or truncated clip is
+      # visible without downloading anything. `mdls` reads Spotlight's own
+      # metadata; there is no ffmpeg on a fresh runner and installing one to
+      # print a duration is not worth the minutes.
+      - name: Measure every clip
+        if: always()
+        run: |
+          {
+            echo '| clip | seconds | size | kB/s |'
+            echo '| --- | --- | --- | --- |'
+            find store/footage -name '*.mov' -print0 | while IFS= read -r -d '' f; do
+              secs=$(mdls -name kMDItemDurationSeconds -raw "$f" 2>/dev/null)
+              [ "$secs" = "(null)" ] || [ -z "$secs" ] && secs=0
+              bytes=$(stat -f%z "$f")
+              rate=$(awk -v b="$bytes" -v s="$secs" 'BEGIN{printf "%.0f", (s>0)?b/s/1000:0}')
+              printf '| %s | %.1f | %.1f MB | %s |\n' \
+                "${f#store/footage/}" "$secs" "$(awk -v b="$bytes" 'BEGIN{printf "%.1f", b/1000000}')" "$rate"
+            done
+            echo
+            echo '**A high rate is not proof of smoothness.** It only says the'
+            echo 'picture changed. Watch the clips.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Always, including on failure: a half-finished set is the most useful
+      # thing to look at when working out why it failed.
+      - name: Keep the footage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: advert-footage-${{ inputs.locale || 'en-GB' }}
+          path: store/footage/**/*.mov
+          if-no-files-found: warn
