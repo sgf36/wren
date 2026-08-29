@@ -47,10 +47,14 @@ void main() {
     debugPrint(request.logLine);
     // Advert beats first: they are scenes with a script played over them, and
     // their names are prefixed so they cannot collide with a plain scene.
-    runApp(WrenApp(
-        home: advertFor(request.name) ??
+    runApp(
+      WrenApp(
+        home:
+            advertFor(request.name) ??
             sceneFor(request.name) ??
-            UnknownScene.from(request)));
+            UnknownScene.from(request),
+      ),
+    );
     return;
   }
   runApp(const WrenApp());

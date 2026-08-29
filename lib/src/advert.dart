@@ -66,7 +66,11 @@ const advertLeadIn = 3.0;
 const advertBeats = <String, AdvertBeat>{
   'advert-the-list': AdvertBeat('01-the-list', 8.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 8.0, _whichCity),
-  'advert-correct-a-place': AdvertBeat('03-correct-a-place', 6.0, _correctAPlace),
+  'advert-correct-a-place': AdvertBeat(
+    '03-correct-a-place',
+    6.0,
+    _correctAPlace,
+  ),
 };
 
 /// The beat named, or null so `main` falls through to [sceneFor] and then to the
@@ -163,8 +167,8 @@ class _StageState extends State<_Stage> {
 /// Drives one beat: waits, drags and taps, posted as real pointer events.
 class Choreography {
   Choreography(this.context)
-      : _clock = Stopwatch()..start(),
-        _centre = _centreOf(context);
+    : _clock = Stopwatch()..start(),
+      _centre = _centreOf(context);
 
   final BuildContext context;
   final Stopwatch _clock;
@@ -241,8 +245,14 @@ class Choreography {
     _post(PointerDownEvent(pointer: id, position: at, timeStamp: _now));
     for (var i = 0; i < steps && !_stopped; i++) {
       at += step;
-      _post(PointerMoveEvent(
-          pointer: id, position: at, delta: step, timeStamp: _now));
+      _post(
+        PointerMoveEvent(
+          pointer: id,
+          position: at,
+          delta: step,
+          timeStamp: _now,
+        ),
+      );
       await _wait(const Duration(milliseconds: 16));
     }
     _post(PointerUpEvent(pointer: id, position: at, timeStamp: _now));
