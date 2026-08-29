@@ -110,7 +110,14 @@ def beats():
         BEATS_DART.read_text(encoding="utf-8"))
     if not found:
         sys.exit(f"found no AdvertBeat entries in {BEATS_DART}")
-    return {name: (scene, float(seconds)) for name, scene, seconds in found}
+    lead = re.search(r"const advertLeadIn = ([0-9.]+);",
+                     BEATS_DART.read_text(encoding="utf-8"))
+    if not lead:
+        sys.exit("advertLeadIn is not declared in the beats file")
+    lead_in = float(lead.group(1))
+    # The app waits this out before every beat, so the recorder must too.
+    return {name: (scene, float(seconds) + lead_in)
+            for name, scene, seconds in found}
 
 
 # --- reading the movie back, without asking the operating system anything -----

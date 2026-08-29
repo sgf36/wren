@@ -46,6 +46,19 @@ class AdvertBeat {
   final Future<void> Function(Choreography) script;
 }
 
+/// Waited after the first frame, before any beat starts.
+///
+/// **The first frame is not the first frame the recorder sees.** On a CI
+/// simulator the app draws for about two and a half seconds before the
+/// compositor presents anything, and the recording is plain white throughout.
+/// Without this, `advert-which-city` spent its whole 2.6-second hold behind that
+/// white, and the region dialog was visible for under half a second before the
+/// tap dismissed it — the beat played perfectly and recorded almost nothing.
+///
+/// `store/record.py` reads this value out of this file and adds it to every
+/// beat's length, so the two cannot drift apart.
+const advertLeadIn = 3.0;
+
 /// Every beat, by the name `record.py` passes in.
 ///
 /// The `advert-` prefix keeps these clear of [sceneNames]; `shoot.py` iterates
@@ -127,6 +140,8 @@ class _StageState extends State<_Stage> {
       if (!mounted) return;
       final choreography = Choreography(context);
       _choreography = choreography;
+      await choreography.hold(advertLeadIn);
+      if (!mounted) return;
       await widget.script(choreography);
     });
   }

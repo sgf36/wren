@@ -26,7 +26,9 @@ Future<void> _play(WidgetTester tester, String beat) async {
   final home = advertFor(beat);
   expect(home, isNotNull, reason: 'no beat called "$beat"');
   await tester.pumpWidget(WrenApp(home: home));
-  final seconds = advertBeats[beat]!.seconds;
+  // The lead-in as well as the beat: the app waits it out before the script
+  // starts, and pumping only the beat's own length stops short of the end.
+  final seconds = advertLeadIn + advertBeats[beat]!.seconds;
   for (var t = 0.0; t < seconds + 1; t += 0.1) {
     await tester.pump(const Duration(milliseconds: 100));
   }
