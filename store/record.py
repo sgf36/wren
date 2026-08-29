@@ -69,14 +69,31 @@ APP = ROOT / "build/ios/iphonesimulator/Runner.app"
 # app is coming up in.
 RECORDER_LEAD_IN = 2.0
 
-# Added to each beat's own length before terminating: app launch, the first
-# frame, and the scene's post-frame work all happen inside it.
-LAUNCH_ALLOWANCE = 4.0
+# How long to wait for the app to appear in launchd before giving up.
+LAUNCH_TIMEOUT = 45.0
 
-# A beat that renders below this is stuttering, and stutter is the one fault that
-# looks fine in every still and obviously wrong in motion. The first live run
-# measured 53-57fps on a GPU-less runner, so this is a floor, not a target.
-MIN_FPS = 20.0
+# After launchd reports the process, before the beat is assumed to be playing.
+#
+# launchd knows about the process well before Flutter has drawn anything. A cold
+# debug build on a CI simulator took about eight seconds to its first frame, and
+# a four-second allowance cut `advert-which-city` off partway through: the clip
+# ran blank, showed the app briefly, then cut to the home screen because
+# terminate arrived before the script had finished. The beat itself was fine.
+FIRST_FRAME_SETTLE = 9.0
+
+# Frames per second across the busiest two seconds of the clip.
+#
+# NOT the average, which is a trap this file fell into twice. `simctl` writes a
+# frame only when the screen CHANGES, and a beat is mostly deliberate holds --
+# `advert-which-city` is 68% held still by design. Its average was 8fps and its
+# scroll ran at 59. Averaging the two measures how much of the beat is a hold,
+# which is a creative decision, not a fault.
+#
+# A real scroll on this runner measures 55-61. Thirty is a floor.
+MIN_PEAK_FPS = 30.0
+
+# The window the peak is measured over.
+PEAK_WINDOW = 2.0
 
 
 def beats():
@@ -125,16 +142,17 @@ def _atoms(buf, start, end, want, depth=0, out=None):
 
 
 def probe(path):
-    """(seconds, frames, finalised) read from the file's own atoms.
+    """(seconds, frames, finalised, peak_fps) read from the file's own atoms.
 
     `finalised` is whether a `moov` atom is present at all. A recorder that was
     killed rather than interrupted leaves a file of plausible size that no player
     will open, and nothing else here would notice.
     """
     buf = path.read_bytes()
-    found = _atoms(buf, 0, len(buf), {b"moov", b"mvhd", b"stsz"})
+    found = _atoms(buf, 0, len(buf),
+                   {b"moov", b"mvhd", b"stsz", b"mdhd", b"stts"})
     if b"moov" not in found:
-        return 0.0, 0, False
+        return 0.0, 0, False, 0.0
 
     seconds = 0.0
     if b"mvhd" in found:
@@ -151,7 +169,45 @@ def probe(path):
         at, _ = found[b"stsz"]
         frames = struct.unpack(">I", buf[at + 8:at + 12])[0]
 
-    return seconds, frames, True
+    return seconds, frames, True, _peak_fps(buf, found)
+
+
+def _peak_fps(buf, found):
+    """The busiest [PEAK_WINDOW] seconds, in frames per second.
+
+    Frame times are rebuilt from the time-to-sample table rather than asked of
+    ffprobe, which is not on a fresh runner. Checked against ffprobe on three
+    real clips: 61 against 59, 41 against 39.5, 35 against 33.5.
+    """
+    if b"mdhd" not in found or b"stts" not in found:
+        return 0.0
+    at, _ = found[b"mdhd"]
+    version = buf[at]
+    lo = at + (12 if version == 0 else 20)
+    scale = struct.unpack(">I", buf[lo:lo + 4])[0]
+    if not scale:
+        return 0.0
+
+    at, end = found[b"stts"]
+    entries = struct.unpack(">I", buf[at + 4:at + 8])[0]
+    times, tick, p = [], 0, at + 8
+    for _ in range(entries):
+        if p + 8 > end:
+            break
+        count, delta = struct.unpack(">II", buf[p:p + 8])
+        p += 8
+        for _ in range(count):
+            times.append(tick / scale)
+            tick += delta
+
+    most, j = 0, 0
+    for i, start in enumerate(times):
+        if j < i:
+            j = i
+        while j < len(times) and times[j] - start <= PEAK_WINDOW:
+            j += 1
+        most = max(most, j - i)
+    return most / PEAK_WINDOW
 
 
 # --- the recorder ------------------------------------------------------------
@@ -208,7 +264,21 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         if r.returncode != 0:
             shoot.say(f"launch failed: {r.stderr.strip()[:300]}", indent=1)
             return False
-        time.sleep(seconds + LAUNCH_ALLOWANCE)
+
+        # Ask launchd rather than guessing at a duration. The same instrument
+        # shoot.py uses to prove which app is on screen.
+        waited = 0.0
+        while waited < LAUNCH_TIMEOUT and not shoot.running(udid, shoot.BUNDLE):
+            time.sleep(1.0)
+            waited += 1.0
+        if waited >= LAUNCH_TIMEOUT:
+            shoot.say(f"the app never appeared in launchd after "
+                      f"{LAUNCH_TIMEOUT:.0f}s", indent=1)
+            return False
+        if shoot.VERBOSE:
+            shoot.say(f"launchd has it after {waited:.0f}s", indent=2)
+
+        time.sleep(FIRST_FRAME_SETTLE + seconds)
     finally:
         # Terminate before stopping the recorder, so the last frame is the app
         # rather than the home screen sliding back in.
@@ -220,10 +290,11 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         shoot.say("the recorder wrote no file at all", indent=1)
         return False
 
-    length, frames, finalised = probe(out)
-    fps = frames / length if length else 0.0
+    length, frames, finalised, peak = probe(out)
+    average = frames / length if length else 0.0
     size = out.stat().st_size
-    shoot.say(f"{out.name}  {length:.1f}s  {frames} frames  {fps:.0f} fps  "
+    shoot.say(f"{out.name}  {length:.1f}s  {frames} frames  "
+              f"peak {peak:.0f} fps (avg {average:.0f})  "
               f"{size / 1e6:.1f} MB", indent=1)
 
     if not finalised:
@@ -233,9 +304,10 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
     if length < seconds * 0.6:
         shoot.say(f"only {length:.1f}s of video for a {seconds:.0f}s beat", indent=1)
         return False
-    if fps < MIN_FPS:
-        shoot.say(f"{fps:.0f} fps is stutter. Something is rendering in "
-                  f"software, and no still will show it.", indent=1)
+    if peak < MIN_PEAK_FPS:
+        shoot.say(f"the busiest {PEAK_WINDOW:.0f}s of this clip ran at "
+                  f"{peak:.0f} fps, which is stutter. No still will show it.",
+                  indent=1)
         return False
     return True
 
