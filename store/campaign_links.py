@@ -16,8 +16,9 @@ live in `campaigns.json` and the links are generated. Nobody types a token.
 
 **`pt` is required, and you cannot invent it.** Apple generates the provider
 token when the FIRST campaign link is created in App Store Connect, under
-Analytics > Acquisition > Campaigns > the add button. It is then the same six
-digits for every campaign afterwards. A link without `pt=` is still a working
+Analytics > Acquisition > Campaigns > the add button. It is then the same value
+for every campaign afterwards. Wren's is nine digits, not six as an earlier
+note here guessed; do not validate on a length Apple never promised. A link without `pt=` is still a working
 App Store link -- it opens the page, installs happen, and **none of it is
 attributed**. That failure is silent and unrecoverable, which is why this script
 refuses to print anything until `providerToken` is filled in.
