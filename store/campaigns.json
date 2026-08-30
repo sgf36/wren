@@ -9,7 +9,7 @@
     "",
     "providerToken is NOT invented. Apple generates it when the first campaign",
     "link is created in App Store Connect (Analytics > Acquisition > Campaigns >",
-    "+), and it is the same six digits for every campaign afterwards. Until it is",
+    "+), and it is the same value for every campaign afterwards. Until it is",
     "filled in here the generator refuses to print links, because a link missing",
     "pt= is accepted by the App Store and attributed to nothing.",
     "",
@@ -17,7 +17,7 @@
     "until no row means anything."
   ],
   "appId": "6802053382",
-  "providerToken": null,
+  "providerToken": "129201947",
   "campaigns": [
     {
       "token": "ig-organic-gone-by-thursday",
