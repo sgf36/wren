@@ -53,6 +53,13 @@
       "surface": "site",
       "creative": "Apps page listing",
       "notes": null
+    },
+    {
+      "token": "site-wren-apps",
+      "channel": "site",
+      "surface": "apps.html",
+      "creative": "The App Store badge and text link on the Apps page",
+      "notes": "Separate from site-wren-hero. Somebody who reached the Apps page went looking; somebody who clicked the hero was offered. Those are different intents and worth telling apart."
     }
   ]
 }
