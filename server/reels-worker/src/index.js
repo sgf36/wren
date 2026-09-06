@@ -206,11 +206,25 @@ export async function verifiedComp(env, token) {
   }
 }
 
-/** Products that carry the reel entitlement, on either store. */
+/**
+ * Products that carry the reel entitlement, on either store.
+ *
+ * Two, not three, and the same two on both stores. `everything` is what
+ * somebody who owns nothing buys; `reels.upgrade` is what somebody who already
+ * owns `unlimited` buys, and owning both is the same thing as owning
+ * `everything`. Non-consumables have no native upgrade mechanism, so which of
+ * the two a person is offered is a decision the paywall makes from what they
+ * already own — not something this list expresses.
+ *
+ * `unlimited` is deliberately absent. It is the existing purchase, it removes
+ * the three-place cap on guides and exports, and it grants nothing here. An
+ * id listed in this array is an id that unlocks a feature costing real money
+ * per call, so an unused entry left in "just in case" is a product that would
+ * silently grant the moment anybody created it.
+ */
 export const REEL_PRODUCTS = Object.freeze([
   'com.spencerfields.littlebird.everything',
   'com.spencerfields.littlebird.reels.upgrade',
-  'com.spencerfields.littlebird.reels',
 ]);
 
 /** The bundle these purchases must belong to. */

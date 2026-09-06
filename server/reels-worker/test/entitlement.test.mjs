@@ -114,11 +114,14 @@ test('every unrecognised or malformed identity fails closed', async () => {
     { kind: 'comp', token: 'aaaa' },
     // No purchase token at all. Reaching Google with an empty handle would
     // still be a network call made on an anonymous caller's say-so.
-    { kind: 'play', productId: REEL_PRODUCTS[2] },
+    { kind: 'play', productId: REEL_PRODUCTS[0] },
     // A real product with no key configured must not become a free unlock.
-    { kind: 'play', purchaseToken: 'x', productId: REEL_PRODUCTS[2] },
-    // A product that grants nothing, presented as though it did.
+    { kind: 'play', purchaseToken: 'x', productId: REEL_PRODUCTS[0] },
+    // The existing unlock, presented as though it granted reels. It removes
+    // the three-place cap and nothing else, on both stores.
     { kind: 'play', purchaseToken: 'x', productId: 'com.spencerfields.littlebird.unlimited' },
+    // A product nobody created. An id that is merely plausible grants nothing.
+    { kind: 'play', purchaseToken: 'x', productId: 'com.spencerfields.littlebird.reels' },
   ];
   for (const auth of refused) {
     assert.equal(await identify(env, auth), null,
