@@ -14,13 +14,15 @@ import UniformTypeIdentifiers
 /// replaces screenshot → leave the app → open Wren → Add → picker → choose with
 /// share → Wren.
 ///
-/// Deliberately silent. It takes what it was given, writes it where the app will
-/// find it, opens the app, and completes — no interface of its own, because
-/// there is nothing to ask and a sheet that lingers to say "done" is a sheet in
-/// the way. The reviewing and confirming all happens in the app, where it
-/// already does, and opening the app is what gets the user there: an extension
-/// cannot show a result, and a share that arrives silently in a container reads
-/// as a share that failed.
+/// Nearly silent. It takes what it was given, writes it where the app will find
+/// it, shows a tick for a moment, and completes. The reviewing and confirming
+/// all happens in the app, where it already does.
+///
+/// The tick is not decoration. This cannot open Wren — no share extension can
+/// open its containing app, and see finish() for how thoroughly iOS means it —
+/// so the share is taken and then nothing visibly happens, which is exactly
+/// what failure looks like. A sheet that lingers to say "done" was rejected
+/// when there was nothing else to say; there is now.
 ///
 /// Apple Maps only, for links. A shared Google Maps list URL is opaque — no
 /// documented format, nothing to decode — so `Info.plist` does not claim it, and
@@ -43,12 +45,6 @@ class ShareViewController: UIViewController {
   /// files it lists, a directory listing cannot.
   static let inboxName = "shared-images"
 
-  /// The app's own URL scheme, registered in Runner/Info.plist. Opening it is
-  /// the whole message — nothing is parsed out of it, because whatever was
-  /// shared is already in the container by the time this is used. CI checks
-  /// that the built app really registers this, rather than that the source
-  /// says so.
-  static let hostURL = "wren://shared"
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -56,7 +52,7 @@ class ShareViewController: UIViewController {
 
     let items = (extensionContext?.inputItems as? [NSExtensionItem]) ?? []
     let providers = items.flatMap { $0.attachments ?? [] }
-    guard !providers.isEmpty else { return finish() }
+    guard !providers.isEmpty else { return finish(showing: false) }
 
     // Every provider is handled, and finish() waits for all of them. Completing
     // the request tears this process down, so returning after the first would
@@ -133,78 +129,82 @@ class ShareViewController: UIViewController {
   }
 
 
-  /// Brings Wren forward once what was shared has been written.
+  /// Says so, briefly, and then goes.
   ///
-  /// Without this the share is accepted, written into the container, and then
-  /// waits — the app drains its inbox on launch and on resume, so nothing
-  /// happens until somebody thinks to open Wren themselves. From the outside
-  /// that is indistinguishable from the share having failed, which is how it
-  /// was reported.
+  /// This used to try to open Wren. It cannot, and neither can any other share
+  /// extension: iOS 18 refuses both routes deliberately. Sending openURL: to
+  /// whatever answers it on the responder chain — what every app that does this
+  /// has historically shipped — is met with "BUG IN CLIENT OF UIKIT ... Force
+  /// returning false", and NSExtensionContext.open is documented and enforced
+  /// as a Today-widget call and answers false here. Apple's guidance is that an
+  /// extension wanting attention should post a local notification instead.
   ///
-  /// There is no first-class way to do this, so it tries two and settles for
-  /// neither working.
+  /// Do not try it again. Both were tried on device, in builds 164 and 165.
   ///
-  /// NSExtensionContext.open is the documented call. Apple's own documentation
-  /// says only a Today extension may use it, and on current iOS it does answer
-  /// for a share extension — so it is tried first, because if it works it is
-  /// the supported route and needs no defending in review.
+  /// So the problem is solved the other way round. The share worked; it simply
+  /// looked as though it had not, because a sheet that vanishes in silence is
+  /// what failure looks like too. A tick that lingers for a moment says the
+  /// thing was taken, and the app finds it on next launch as it always has.
   ///
-  /// Walking the responder chain to whatever answers openURL: is the fallback.
-  /// It is what every app that does this has historically shipped, and iOS has
-  /// been steadily less willing to allow it. The earlier attempt at this looked
-  /// for a UIApplication by type; this asks whether a responder answers the
-  /// selector, which is the same question asked in a way that does not depend
-  /// on the chain being shaped as expected.
-  ///
-  /// If both fail nothing is lost. The share is already written into the
-  /// container and the app collects it on next launch, exactly as it did before
-  /// any of this existed.
-  @discardableResult
-  private func openViaResponder(_ url: URL) -> Bool {
-    let selector = NSSelectorFromString("openURL:")
-    var responder: UIResponder? = self
-    while let current = responder {
-      if current.responds(to: selector) {
-        _ = current.perform(selector, with: url)
-        return true
-      }
-      responder = current.next
-    }
-    return false
+  /// No words, deliberately. The app is translated into forty-seven languages
+  /// and this extension has no localisation of its own; a tick and the app's
+  /// own name need none.
+  private func confirm() {
+    let card = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+    card.layer.cornerRadius = 22
+    card.layer.cornerCurve = .continuous
+    card.clipsToBounds = true
+    card.alpha = 0
+    card.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(card)
+
+    let tick = UIImageView(
+      image: UIImage(systemName: "checkmark.circle.fill"))
+    tick.tintColor = .label
+    tick.contentMode = .scaleAspectFit
+    tick.preferredSymbolConfiguration = UIImage.SymbolConfiguration(
+      pointSize: 34, weight: .regular)
+
+    let name = UILabel()
+    name.text = "Wren"
+    name.textColor = .label
+    name.font = .preferredFont(forTextStyle: .headline)
+    name.adjustsFontForContentSizeCategory = true
+
+    let stack = UIStackView(arrangedSubviews: [tick, name])
+    stack.axis = .vertical
+    stack.alignment = .center
+    stack.spacing = 10
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    card.contentView.addSubview(stack)
+
+    NSLayoutConstraint.activate([
+      card.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      card.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+      card.widthAnchor.constraint(greaterThanOrEqualToConstant: 150),
+      stack.topAnchor.constraint(equalTo: card.contentView.topAnchor,
+                                 constant: 26),
+      stack.bottomAnchor.constraint(equalTo: card.contentView.bottomAnchor,
+                                    constant: -26),
+      stack.leadingAnchor.constraint(equalTo: card.contentView.leadingAnchor,
+                                     constant: 30),
+      stack.trailingAnchor.constraint(equalTo: card.contentView.trailingAnchor,
+                                      constant: -30),
+    ])
+
+    UIView.animate(withDuration: 0.18) { card.alpha = 1 }
   }
-  /// Hands over, then completes.
-  ///
-  /// Completing tears this process down, so it happens after the open has been
-  /// attempted rather than beside it — doing both in one turn of the run loop
-  /// can cancel the open. The guard exists because NSExtensionContext.open is
-  /// documented for a different extension point and is not obliged to call back
-  /// at all: if it stays silent the sheet must still go away, so a timer runs
-  /// the fallback and finishes regardless. Whichever arrives first wins, and
-  /// the other does nothing.
-  private func finish() {
-    guard let url = URL(string: Self.hostURL) else {
+
+  /// Confirms, then completes. Completing tears the process down, so the tick
+  /// has to be on screen for its own moment before that happens.
+  private func finish(showing confirmation: Bool = true) {
+    guard confirmation else {
       extensionContext?.completeRequest(returningItems: nil)
       return
     }
-
-    var settled = false
-    let settle: (String) -> Void = { [weak self] how in
-      guard !settled else { return }
-      settled = true
-      NSLog("WREN-SHARE handover: " + how)
+    confirm()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
       self?.extensionContext?.completeRequest(returningItems: nil)
-    }
-
-    extensionContext?.open(url) { [weak self] opened in
-      if opened { return settle("extensionContext") }
-      let viaChain = self?.openViaResponder(url) ?? false
-      settle(viaChain ? "responder chain" : "nothing would open it")
-    }
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-      guard !settled else { return }
-      let viaChain = self?.openViaResponder(url) ?? false
-      settle(viaChain ? "responder chain, after no answer" : "no answer")
     }
   }
 }
