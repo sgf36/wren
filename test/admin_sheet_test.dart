@@ -183,11 +183,27 @@ void main() {
   });
 
   group('CompRole', () {
-    test('is the only thing that opens the console', () {
-      // Guards the enum itself: a third granting role added without a decision
-      // about the console would otherwise be silently admitted or silently
-      // refused, depending on how the switch was written.
-      expect(CompRole.values, [CompRole.none, CompRole.unlock, CompRole.admin]);
+    test('is a ladder, and only its top opens the console', () {
+      // Guards the enum itself: a granting role added without a decision about
+      // the console would otherwise be silently admitted or silently refused,
+      // depending on how the switch happened to be written.
+      //
+      // `everything` was added for reels and the decision is that it does NOT
+      // open the console. Reading places out of a reel and handing out codes
+      // are unrelated powers, and the second is the one that cannot be undone.
+      expect(CompRole.values, [
+        CompRole.none,
+        CompRole.unlock,
+        CompRole.everything,
+        CompRole.admin,
+      ]);
+      for (final role in CompRole.values) {
+        expect(
+          role == CompRole.admin,
+          role.index == CompRole.values.length - 1,
+          reason: '$role must not silently gain or lose the console',
+        );
+      }
     });
   });
 }

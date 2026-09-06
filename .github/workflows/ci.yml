@@ -97,6 +97,20 @@ jobs:
       - run: node --test
         working-directory: server/comp-codes-worker
 
+      # Tests prove the source is right. This asks whether the thing actually
+      # answering requests is the source — which is a different question, and
+      # the one nobody was asking when /renew sat written, merged and
+      # undeployed from 21 August to 6 September 2026 while administrator
+      # tokens quietly expired against a 404.
+      #
+      # Not run on pull requests. It talks to production, so a Cloudflare blip
+      # would fail somebody's unrelated branch, and a fork's PR should not be
+      # probing this at all.
+      - name: Prove the deployment serves what the app calls
+        if: github.event_name != 'pull_request'
+        run: node tools/smoke.mjs
+        working-directory: server/comp-codes-worker
+
   ios:
     name: Build iOS
     runs-on: macos-26

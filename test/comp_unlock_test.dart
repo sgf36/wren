@@ -266,6 +266,22 @@ void main() {
       );
     });
 
+    test('a reels code reads back as everything, not as an unlock', () async {
+      // The claim travels inside the signature, so this is also the assertion
+      // that a reels grant cannot be added to a token after it was issued.
+      SharedPreferences.setMockInitialValues({
+        'comp_token': await tokenFor('device-A', role: 'everything'),
+      });
+      expect(
+        await heldRole(device: 'device-A', publicKey: publicKey),
+        CompRole.everything,
+      );
+      expect(
+        await wasUnlocked(device: 'device-A', publicKey: publicKey),
+        isTrue,
+      );
+    });
+
     test('an ordinary code grants only the unlock', () async {
       SharedPreferences.setMockInitialValues({
         'comp_token': await tokenFor('device-A', role: 'unlock'),
