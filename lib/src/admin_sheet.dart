@@ -357,20 +357,8 @@ class _MintDialogState extends State<_MintDialog> {
                 setState(() => _role = chosen.first),
           ),
           const SizedBox(height: 8),
-          // Said plainly, because none of these is recoverable once given: an
-          // unlock is checked on the phone and can never be withdrawn, a reels
-          // code costs money every time it is used, and an admin code hands
-          // over the ability to give all of it away.
           Text(
-            switch (_role) {
-              CompRole.admin =>
-                'Everything below, and lets whoever redeems it issue codes of '
-                    'their own.',
-              CompRole.everything =>
-                'Unlocks the app, and reads places out of shared reels. Each '
-                    'reel costs money to read, so give these out sparingly.',
-              _ => 'Unlocks the app. Reels are not included.',
-            },
+            _explains(_role),
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 14),
@@ -427,6 +415,17 @@ class _MintDialogState extends State<_MintDialog> {
   );
 }
 
+/// What a role grants, in the words shown under the picker.
+///
+/// Said plainly because none of these is recoverable once given: an unlock is
+/// checked on the phone and can never be withdrawn, a reels code costs money
+/// every time it is used, and an admin code hands over the ability to give all
+/// of it away.
+String _explains(CompRole role) => switch (role) {
+  CompRole.admin => 'Everything below, plus the code console.',
+  CompRole.everything => 'Unlocks the app, and reads reels. Reads cost money.',
+  _ => 'Unlocks the app. Reels are not included.',
+};
 class _MintedDialog extends StatelessWidget {
   const _MintedDialog({required this.codes, required this.role});
 
@@ -450,8 +449,7 @@ class _MintedDialog extends StatelessWidget {
               child: Text(
                 role == CompRole.admin
                     ? 'These grant the code console as well as the unlock.'
-                    : 'These read places out of shared reels as well as '
-                          'unlocking the app.',
+                    : 'These read shared reels as well as unlocking the app.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
