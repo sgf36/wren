@@ -78,6 +78,24 @@ test('everything that is not a video is refused', () => {
   }
 });
 
+test('a photo post is accepted, not only a video', () => {
+  // A carousel of slides, each naming a place in text, is the clearest case
+  // this feature has — the names are already written down rather than said
+  // out loud. Instagram serves those under the same /p/ shortcode as a single
+  // photograph, and nothing in the link says which it is, so both are taken
+  // and the difference is settled when the media is fetched.
+  for (const url of [
+    'https://www.instagram.com/p/Cx1yZ_aBcDe/',
+    'https://instagram.com/p/Cx1yZ_aBcDe',
+    'https://www.instagram.com/some.person/p/Cx1yZ_aBcDe/',
+  ]) {
+    const got = reelTarget(url);
+    assert.ok(got, `refused ${url}`);
+    assert.equal(got.platform, 'instagram');
+    assert.equal(got.id, 'Cx1yZ_aBcDe');
+  }
+});
+
 test('an Apple Maps guide link is not a reel', () => {
   // The app routes on this: a guide link must still reach the guide importer,
   // and a reel must not. Overlap here would break a shipped feature.

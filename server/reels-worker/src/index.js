@@ -127,6 +127,12 @@ const PATTERNS = [
 /**
  * Reads a shared string and returns what to fetch, or null.
  *
+ * A post is as welcome as a reel. An Instagram /p/ shortcode is a carousel of
+ * photographs as often as it is a single one, and a set of slides each naming a
+ * place in text is exactly the thing this feature is for — arguably more so
+ * than video, since the names are already written down. What kind of media sits
+ * behind the link is not knowable from the link, so it is not decided here.
+ *
  * Takes a string rather than a URL because what arrives is rarely just a link.
  * Android's EXTRA_TEXT routinely carries a sentence with the URL somewhere
  * inside it, and both platforms hang tracking parameters off the end. The first
@@ -457,7 +463,27 @@ export async function quotaState(env, db, key, now = Date.now()) {
 /* ------------------------------------------------------------- the vendors */
 
 /**
- * Fetching the video, and reading it.
+ * Fetching what was shared, and reading it.
+ *
+ * Two shapes arrive here and they are not the same job.
+ *
+ *   video     a reel, a TikTok, a Short. One file. Gemini ingests it whole,
+ *             reading the text burned into the frames and transcribing what is
+ *             said out loud, because half of these name the place only in
+ *             speech.
+ *
+ *   carousel  an Instagram post of several photographs, each one a place with
+ *             its name and often its address written across it. Not a video at
+ *             all: the scraper returns a list of image urls, every one of them
+ *             has to be fetched, and all of them go to the model together in
+ *             one request so that a city named on the first slide is still
+ *             known by the ninth.
+ *
+ * The output contract is identical either way — candidate names and a region
+ * hint — because everything downstream resolves names on the device and does
+ * not care where they were read. Quota counts one post, not one slide: a
+ * carousel of ten costs about what a reel costs, and charging ten would make
+ * the fair-use number mean different things for different people.
  *
  * Not implemented: this is the half that needs accounts, keys and money, and
  * none of them existed when the rest was written. It throws the failure the app
@@ -466,10 +492,10 @@ export async function quotaState(env, db, key, now = Date.now()) {
  * against a Worker that is honestly incomplete.
  *
  * A stub returning plausible place names would be worse than this. It would
- * make the client look finished, and the first real reel would then be the
+ * make the client look finished, and the first real post would then be the
  * first test of the entire pipeline.
  */
-async function placesFromReel(env, target) {
+async function placesFromPost(env, target) {
   throw new Refusal(FAILURES.fetchFailed, 503);
 }
 
@@ -511,7 +537,7 @@ async function handleProcess(request, env) {
   if (!claimed.meta?.changes) throw new Refusal(FAILURES.busy, 409);
 
   try {
-    const result = await placesFromReel(env, target);
+    const result = await placesFromPost(env, target);
 
     // Usage is recorded on success only. A vendor outage is not something to
     // charge against somebody's quota, and "it failed and used one anyway" is
