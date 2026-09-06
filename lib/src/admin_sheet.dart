@@ -357,10 +357,7 @@ class _MintDialogState extends State<_MintDialog> {
                 setState(() => _role = chosen.first),
           ),
           const SizedBox(height: 8),
-          Text(
-            _explains(_role),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          Text(_explains(_role), style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 14),
           Row(
             children: [
@@ -426,6 +423,7 @@ String _explains(CompRole role) => switch (role) {
   CompRole.everything => 'Unlocks the app, and reads reels. Reads cost money.',
   _ => 'Unlocks the app. Reels are not included.',
 };
+
 class _MintedDialog extends StatelessWidget {
   const _MintedDialog({required this.codes, required this.role});
 
