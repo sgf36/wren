@@ -422,12 +422,28 @@ jobs:
                   "In-App-Purchase key will fail here.")
           PY
 
+      # The signed job builds from the committed project file, and the extension
+      # target is not in it — it is generated. Without this step every build that
+      # actually reaches a device or the App Store ships with no share extension
+      # at all, while the unsigned job above proves the extension compiles and
+      # then throws the build away. That was the real state of things until now.
+      - name: Add the share extension target
+        if: steps.signing.outputs.ready == 'true'
+        env:
+          SHARE_PROFILE_NAME: ${{ secrets.IOS_SHARE_PROVISION_PROFILE_NAME }}
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          gem install --no-document xcodeproj
+          ruby ios/add_share_extension.rb
+          grep -q 'ShareExtension' ios/Runner.xcodeproj/project.pbxproj             || { echo "::error::extension target missing from the signed build"; exit 1; }
+
       - name: Import certificate and provisioning profile
         if: steps.signing.outputs.ready == 'true'
         env:
           P12_B64: ${{ secrets.IOS_P12_BASE64 }}
           P12_PASSWORD: ${{ secrets.IOS_P12_PASSWORD }}
           PROFILE_B64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
+          SHARE_PROFILE_B64: ${{ secrets.IOS_SHARE_PROVISION_PROFILE_BASE64 }}
         run: |
           KEYCHAIN=build.keychain
           security create-keychain -p actions "$KEYCHAIN"
@@ -439,15 +455,28 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions "$KEYCHAIN"
           rm -f cert.p12
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          echo "$PROFILE_B64" | base64 --decode > profile.mobileprovision
-          UUID=$(security cms -D -i profile.mobileprovision | plutil -extract UUID raw -)
-          cp profile.mobileprovision "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
+          # Both halves of the App Group need a profile, and they are different
+          # bundle ids, so they are different profiles. Installing only the app's
+          # leaves the appex unsigned and the export fails on the extension.
+          for pair in "app:$PROFILE_B64" "share:$SHARE_PROFILE_B64"; do
+            name=${pair%%:*}; b64=${pair#*:}
+            [ -n "$b64" ] || { echo "::error::no $name provisioning profile"; exit 1; }
+            echo "$b64" | base64 --decode > "$name.mobileprovision"
+            UUID=$(security cms -D -i "$name.mobileprovision" | plutil -extract UUID raw -)
+            cp "$name.mobileprovision"               "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
+            # An App Group entitlement that is present but empty grants nothing,
+            # and signs without complaint. Checked here because the symptom is a
+            # share that vanishes on a real phone, months later.
+            security cms -D -i "$name.mobileprovision"               | plutil -extract Entitlements.com\.apple\.security\.application-groups raw -               | grep -q 'group.com.spencerfields.littlebird'               || { echo "::error::$name profile carries no app group"; exit 1; }
+            echo "$name profile $UUID installed, app group present"
+          done
 
       - name: Write ExportOptions.plist
         if: steps.signing.outputs.ready == 'true'
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           PROFILE_NAME: ${{ secrets.IOS_PROVISION_PROFILE_NAME }}
+          SHARE_PROFILE_NAME: ${{ secrets.IOS_SHARE_PROVISION_PROFILE_NAME }}
         run: |
           cat > ios/ExportOptions.plist <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
@@ -459,6 +488,8 @@ jobs:
             <key>provisioningProfiles</key><dict>
               <key>com.spencerfields.littlebird</key>
               <string>$PROFILE_NAME</string>
+              <key>com.spencerfields.littlebird.share</key>
+              <string>$SHARE_PROFILE_NAME</string>
             </dict>
             <key>uploadSymbols</key><true/>
           </dict></plist>

@@ -104,9 +104,20 @@ ext.build_configurations.each do |config|
   s['TARGETED_DEVICE_FAMILY']    = '1,2'
   s['SKIP_INSTALL']              = 'YES'
   s['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = 'NO'
-  # Signing is set by the workflow, which holds the profiles. Left automatic here
-  # so a local generation without secrets still opens.
-  s['CODE_SIGN_STYLE'] = 'Automatic'
+  # Signing. The extension is a separate bundle id with its own profile, so it
+  # cannot ride on the app's — a manual build that names only the app's profile
+  # fails at export with a mismatch, which reads as a certificate problem.
+  #
+  # Left automatic when the workflow passes nothing, so a local generation
+  # without secrets still opens in Xcode.
+  if ENV['SHARE_PROFILE_NAME'].to_s.empty?
+    s['CODE_SIGN_STYLE'] = 'Automatic'
+  else
+    s['CODE_SIGN_STYLE'] = 'Manual'
+    s['PROVISIONING_PROFILE_SPECIFIER'] = ENV['SHARE_PROFILE_NAME']
+    s['CODE_SIGN_IDENTITY'] = 'Apple Distribution'
+    s['DEVELOPMENT_TEAM'] = ENV['DEVELOPMENT_TEAM'] if ENV['DEVELOPMENT_TEAM']
+  end
 end
 
 project.save
