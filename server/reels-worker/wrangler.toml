@@ -36,6 +36,16 @@ WREN_PUBLIC_KEY = "LN6bVyBTvZgcov3ElAo5JtlrUy02BYKZUgBxMVtq3Ys="
 # production Worker that accepts one sells nothing.
 ACCEPT_SANDBOX = "false"
 
+# The model, overridable only within the allowlist in src/index.js.
+#
+# Left unset here on purpose: unset means the default, which is the model the
+# costs were worked out against. It exists so a future model can be tried
+# without a code change, and the allowlist exists so that trying one nobody
+# priced stops the request instead of arriving as a bill. Gemini charges for
+# video by the second — a premium model at full resolution is roughly $4.50 a
+# reel against $0.0016 here.
+# GEMINI_MODEL = "gemini-3.5-flash-lite"
+
 # Reels per rolling thirty days, per purchase. The safety valve on a one-time
 # price for a feature with a per-use cost. Moved here rather than hard-coded so
 # that raising it costs a deploy and not a release.
