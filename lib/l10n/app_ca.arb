@@ -75,6 +75,7 @@
   "guideLinkLabel": "Enllaç de la guia",
   "readGuide": "Llegir la guia",
   "importGuideNotALink": "Aquest no és l'enllaç d'una guia de Mapes. Obre la guia a Mapes, comparteix-la i tria Copiar l'enllaç.",
+  "importGuideSocialPost": "Wren llegeix captures de pantalla, no enllaços a publicacions. Fes una captura de la publicació i comparteix-la.",
   "importGuideNothing": "Aquesta guia no té cap lloc que el Wren pugui fer servir.",
   "importedGuideSummary": "{count, plural, =1{1 lloc llegit d'aquesta guia} other{{count} llocs llegits d'aquesta guia}}",
   "importedGuideUnusable": "{count, plural, =1{1 lloc no es pot passar a la guia nova} other{{count} llocs no es poden passar a la guia nova}}",

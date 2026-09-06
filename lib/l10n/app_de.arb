@@ -75,6 +75,7 @@
   "guideLinkLabel": "Link zum Guide",
   "readGuide": "Guide lesen",
   "importGuideNotALink": "Das ist kein Link zu einem Guide in Apple Karten. Öffne den Guide in Karten, teile ihn und wähle „Link kopieren“.",
+  "importGuideSocialPost": "Wren liest Screenshots, keine Links zu Beiträgen. Mach einen Screenshot vom Beitrag und teile den.",
   "importGuideNothing": "Dieser Guide enthält nichts, was Wren übernehmen kann.",
   "importedGuideSummary": "{count, plural, =1{1 Ort aus diesem Guide gelesen} other{{count} Orte aus diesem Guide gelesen}}",
   "importedGuideUnusable": "{count, plural, =1{1 Ort darin lässt sich nicht übernehmen} other{{count} Orte darin lassen sich nicht übernehmen}}",

@@ -75,6 +75,7 @@
   "guideLinkLabel": "Łącze do przewodnika",
   "readGuide": "Odczytaj przewodnik",
   "importGuideNotALink": "To nie jest łącze do przewodnika Map Apple. Otwórz przewodnik w Mapach, udostępnij go i wybierz Kopiuj łącze.",
+  "importGuideSocialPost": "Wren czyta zrzuty ekranu, a nie linki do postów. Zrób zrzut ekranu posta i udostępnij go.",
   "importGuideNothing": "W tym przewodniku nie ma nic, co Wren mógłby przenieść.",
   "importedGuideSummary": "{count, plural, one{Odczytano 1 miejsce z tego przewodnika} few{Odczytano {count} miejsca z tego przewodnika} many{Odczytano {count} miejsc z tego przewodnika} other{Odczytano {count} miejsca z tego przewodnika}}",
   "importedGuideUnusable": "{count, plural, one{1 miejsce nie trafi do nowego przewodnika} few{{count} miejsca nie trafią do nowego przewodnika} many{{count} miejsc nie trafi do nowego przewodnika} other{{count} miejsca nie trafi do nowego przewodnika}}",

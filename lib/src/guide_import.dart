@@ -91,6 +91,36 @@ bool isShortGuideLink(String input) {
   return segments.length >= 2 && (segments[0] == 'ug' || segments[0] == 'p');
 }
 
+/// Whether this is a link to a post on a platform Wren cannot read.
+///
+/// Wren appears in the share sheet of every app that shares a web link, so a
+/// reel or a post arrives here as readily as a guide does — and the app's own
+/// first screen invites exactly that. Without this it is told that the link is
+/// not an Apple Maps guide and to open the guide in Maps, which is advice about
+/// a different feature and reads as a fault.
+///
+/// Host only, and deliberately loose about the path. The question is not
+/// whether a particular post can be read — none of them can yet — it is
+/// whether the person deserves a better answer than one about Apple Maps.
+///
+/// No platform is named in the message this drives. Naming them in copy is a
+/// trade-mark question nobody needs to have.
+bool isSocialPostLink(String input) {
+  final uri = Uri.tryParse(input.trim());
+  if (uri == null) return false;
+  final host = uri.host.toLowerCase();
+  const hosts = {
+    'instagram.com', 'www.instagram.com', 'instagr.am', 'www.instagr.am',
+    'tiktok.com', 'www.tiktok.com', 'vm.tiktok.com', 'vt.tiktok.com',
+    'youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be',
+    'facebook.com', 'www.facebook.com', 'fb.watch',
+    'x.com', 'www.x.com', 'twitter.com', 'www.twitter.com',
+    'pinterest.com', 'www.pinterest.com', 'pin.it',
+    'threads.net', 'www.threads.net', 'threads.com', 'www.threads.com',
+  };
+  return hosts.contains(host);
+}
+
 /// Pulls the payload out of any shape of Apple Maps guide URL.
 ///
 /// Accepts a bare payload too, so a user who pasted only the parameter is not

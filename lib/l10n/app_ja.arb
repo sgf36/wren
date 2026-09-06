@@ -75,6 +75,7 @@
   "guideLinkLabel": "ガイドのリンク",
   "readGuide": "ガイドを読み取る",
   "importGuideNotALink": "マップのガイドのリンクではありません。マップでガイドを開いて共有し、「リンクをコピー」を選んでください。",
+  "importGuideSocialPost": "Wren はスクリーンショットを読み取ります。投稿のリンクは読み取れません。投稿のスクリーンショットを撮って共有してください。",
   "importGuideNothing": "そのガイドには、Wrenが追加できるものがありません。",
   "importedGuideSummary": "{count, plural, other{そのガイドから{count}件を読み取りました}}",
   "importedGuideUnusable": "{count, plural, other{そのうち{count}件は引き継げません}}",

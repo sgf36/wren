@@ -75,6 +75,7 @@
   "guideLinkLabel": "गाइड का लिंक",
   "readGuide": "गाइड पढ़ें",
   "importGuideNotALink": "यह Apple Maps गाइड का लिंक नहीं है। गाइड को Maps में खोलिए, उसे शेयर कीजिए, फिर “लिंक कॉपी करें” चुनिए।",
+  "importGuideSocialPost": "Wren स्क्रीनशॉट पढ़ता है, पोस्ट के लिंक नहीं। पोस्ट का स्क्रीनशॉट लें और उसे शेयर करें।",
   "importGuideNothing": "उस गाइड में ऐसा कुछ नहीं है जिसे Wren जोड़ सके।",
   "importedGuideSummary": "{count, plural, one{उस गाइड से 1 जगह पढ़ी} other{उस गाइड से {count} जगहें पढ़ीं}}",
   "importedGuideUnusable": "{count, plural, one{उसमें की 1 जगह नई गाइड में नहीं जा सकती} other{उसमें की {count} जगहें नई गाइड में नहीं जा सकतीं}}",

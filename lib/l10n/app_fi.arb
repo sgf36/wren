@@ -75,6 +75,7 @@
   "guideLinkLabel": "Oppaan linkki",
   "readGuide": "Lue opas",
   "importGuideNotALink": "Tämä ei ole Apple Kartat -oppaan linkki. Avaa opas Kartoissa, jaa se ja valitse ”Kopioi linkki”.",
+  "importGuideSocialPost": "Wren lukee kuvakaappauksia, ei linkkejä julkaisuihin. Ota julkaisusta kuvakaappaus ja jaa se.",
   "importGuideNothing": "Oppaassa ei ole yhtään paikkaa, jonka Wren voisi ottaa mukaan.",
   "importedGuideSummary": "{count, plural, one{Luettiin 1 paikka oppaasta} other{Luettiin {count} paikkaa oppaasta}}",
   "importedGuideUnusable": "{count, plural, one{1 paikkaa oppaasta ei voi ottaa mukaan} other{{count} paikkaa oppaasta ei voi ottaa mukaan}}",

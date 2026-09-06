@@ -75,6 +75,7 @@
   "guideLinkLabel": "指南链接",
   "readGuide": "读取指南",
   "importGuideNotALink": "这不是地图指南的链接。在地图里打开指南并共享，然后选择“拷贝链接”。",
+  "importGuideSocialPost": "Wren 读取截图，不读取帖子链接。请截图该帖子并分享截图。",
   "importGuideNothing": "那个指南里没有 Wren 能添加的东西。",
   "importedGuideSummary": "{count, plural, other{从那个指南读出 {count} 个地点}}",
   "importedGuideUnusable": "{count, plural, other{其中 {count} 个地点无法转移过来}}",

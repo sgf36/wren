@@ -75,6 +75,7 @@
   "guideLinkLabel": "Útikalauz hivatkozása",
   "readGuide": "Útikalauz beolvasása",
   "importGuideNotALink": "Ez nem Apple Térképek útikalauz-hivatkozás. Nyisd meg az útikalauzt a Térképekben, oszd meg, majd válaszd a Hivatkozás másolása lehetőséget.",
+  "importGuideSocialPost": "A Wren képernyőképeket olvas, nem bejegyzésekre mutató hivatkozásokat. Készíts képernyőképet a bejegyzésről, és azt oszd meg.",
   "importGuideNothing": "Abban az útikalauzban nincs semmi, amit a Wren hozzá tudna adni.",
   "importedGuideSummary": "{count, plural, =1{1 hely beolvasva abból az útikalauzból} other{{count} hely beolvasva abból az útikalauzból}}",
   "importedGuideUnusable": "{count, plural, =1{1 hely nem vihető át belőle} other{{count} hely nem vihető át belőle}}",

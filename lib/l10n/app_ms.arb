@@ -75,6 +75,7 @@
   "guideLinkLabel": "Pautan panduan",
   "readGuide": "Baca panduan",
   "importGuideNotALink": "Itu bukan pautan panduan Apple Maps. Buka panduan itu dalam Maps, kongsikannya, kemudian pilih “Salin Pautan”.",
+  "importGuideSocialPost": "Wren membaca tangkapan skrin, bukan pautan ke siaran. Ambil tangkapan skrin siaran itu dan kongsikannya.",
   "importGuideNothing": "Panduan itu tiada apa-apa yang boleh ditambah oleh Wren.",
   "importedGuideSummary": "{count, plural, other{{count} tempat dibaca daripada panduan itu}}",
   "importedGuideUnusable": "{count, plural, other{{count} tempat di dalamnya tidak dapat dipindahkan}}",

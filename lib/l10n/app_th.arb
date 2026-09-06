@@ -75,6 +75,7 @@
   "guideLinkLabel": "ลิงก์ไกด์",
   "readGuide": "อ่านไกด์",
   "importGuideNotALink": "นั่นไม่ใช่ลิงก์ไกด์ของ Apple Maps เปิดไกด์ใน Apple Maps แล้วแชร์ จากนั้นเลือก “คัดลอกลิงก์”",
+  "importGuideSocialPost": "Wren อ่านภาพหน้าจอ ไม่ใช่ลิงก์โพสต์ ถ่ายภาพหน้าจอของโพสต์แล้วแชร์ภาพนั้นแทน",
   "importGuideNothing": "ไกด์นั้นไม่มีอะไรที่ Wren เพิ่มได้",
   "importedGuideSummary": "{count, plural, other{อ่านได้ {count} ที่จากไกด์นั้น}}",
   "importedGuideUnusable": "{count, plural, other{{count} ที่ในนั้นย้ายมาไม่ได้}}",

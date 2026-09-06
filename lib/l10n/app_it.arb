@@ -75,6 +75,7 @@
   "guideLinkLabel": "Link della guida",
   "readGuide": "Leggi la guida",
   "importGuideNotALink": "Questo non è il link di una guida di Mappe. Apri la guida in Mappe, condividila, poi scegli Copia link.",
+  "importGuideSocialPost": "Wren legge gli screenshot, non i link ai post. Fai uno screenshot del post e condividi quello.",
   "importGuideNothing": "Quella guida non contiene nessun luogo che Wren possa usare.",
   "importedGuideSummary": "{count, plural, =1{1 luogo letto da quella guida} other{{count} luoghi letti da quella guida}}",
   "importedGuideUnusable": "{count, plural, =1{1 luogo non può essere trasferito} other{{count} luoghi non possono essere trasferiti}}",

@@ -75,6 +75,7 @@
   "guideLinkLabel": "Link do vodiča",
   "readGuide": "Pročitaj vodič",
   "importGuideNotALink": "To nije link vodiča Apple Karata. Otvori vodič u Kartama, podijeli ga i odaberi Kopiraj link.",
+  "importGuideSocialPost": "Wren čita snimke zaslona, ne poveznice na objave. Snimi objavu i podijeli tu sliku.",
   "importGuideNothing": "U tom vodiču nema ničega što bi Wren mogao prenijeti.",
   "importedGuideSummary": "{count, plural, one{Pročitano {count} mjesto iz tog vodiča} few{Pročitana {count} mjesta iz tog vodiča} other{Pročitano {count} mjesta iz tog vodiča}}",
   "importedGuideUnusable": "{count, plural, one{{count} mjesto iz njega nije moguće prenijeti} few{{count} mjesta iz njega nije moguće prenijeti} other{{count} mjesta iz njega nije moguće prenijeti}}",

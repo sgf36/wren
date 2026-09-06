@@ -75,6 +75,7 @@
   "guideLinkLabel": "ਗਾਈਡ ਦਾ ਲਿੰਕ",
   "readGuide": "ਗਾਈਡ ਪੜ੍ਹੋ",
   "importGuideNotALink": "ਇਹ Apple Maps ਗਾਈਡ ਦਾ ਲਿੰਕ ਨਹੀਂ ਹੈ। ਗਾਈਡ ਨੂੰ Maps ਵਿੱਚ ਖੋਲ੍ਹੋ, ਸਾਂਝੀ ਕਰੋ, ਫਿਰ “ਲਿੰਕ ਕਾਪੀ ਕਰੋ” ਚੁਣੋ।",
+  "importGuideSocialPost": "Wren ਸਕ੍ਰੀਨਸ਼ਾਟ ਪੜ੍ਹਦਾ ਹੈ, ਪੋਸਟ ਦੇ ਲਿੰਕ ਨਹੀਂ। ਪੋਸਟ ਦਾ ਸਕ੍ਰੀਨਸ਼ਾਟ ਲਓ ਅਤੇ ਉਹੀ ਸਾਂਝਾ ਕਰੋ।",
   "importGuideNothing": "ਉਸ ਗਾਈਡ ਵਿੱਚ ਅਜਿਹਾ ਕੁਝ ਨਹੀਂ ਜੋ Wren ਜੋੜ ਸਕੇ।",
   "importedGuideSummary": "{count, plural, one{ਉਸ ਗਾਈਡ ਤੋਂ 1 ਥਾਂ ਪੜ੍ਹੀ} other{ਉਸ ਗਾਈਡ ਤੋਂ {count} ਥਾਵਾਂ ਪੜ੍ਹੀਆਂ}}",
   "importedGuideUnusable": "{count, plural, one{ਉਸ ਵਿੱਚੋਂ 1 ਥਾਂ ਨਵੀਂ ਗਾਈਡ ਵਿੱਚ ਨਹੀਂ ਲਿਜਾਈ ਜਾ ਸਕਦੀ} other{ਉਸ ਵਿੱਚੋਂ {count} ਥਾਵਾਂ ਨਵੀਂ ਗਾਈਡ ਵਿੱਚ ਨਹੀਂ ਲਿਜਾਈਆਂ ਜਾ ਸਕਦੀਆਂ}}",

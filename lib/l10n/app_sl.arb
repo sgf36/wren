@@ -75,6 +75,7 @@
   "guideLinkLabel": "Povezava do vodnika",
   "readGuide": "Preberi vodnik",
   "importGuideNotALink": "To ni povezava do vodnika v Apple Zemljevidih. Odpri vodnik v Zemljevidih, deli ga in izberi Kopiraj povezavo.",
+  "importGuideSocialPost": "Wren bere posnetke zaslona, ne povezav do objav. Naredi posnetek zaslona objave in ga deli.",
   "importGuideNothing": "V tem vodniku ni ničesar, kar bi Wren lahko prenesel.",
   "importedGuideSummary": "{count, plural, one{Iz tega vodnika prebran {count} kraj} two{Iz tega vodnika prebrana {count} kraja} few{Iz tega vodnika prebrani {count} kraji} other{Iz tega vodnika prebranih {count} krajev}}",
   "importedGuideUnusable": "{count, plural, one{Ni mogoče prenesti {count} kraja iz njega} two{Ni mogoče prenesti {count} krajev iz njega} few{Ni mogoče prenesti {count} krajev iz njega} other{Ni mogoče prenesti {count} krajev iz njega}}",

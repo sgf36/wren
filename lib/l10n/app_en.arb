@@ -421,6 +421,10 @@
   "@importGuideNotALink": {
     "description": "Shown when the pasted text could not be decoded as a guide link."
   },
+  "importGuideSocialPost": "Wren reads screenshots, not links to posts. Screenshot the post and share that instead.",
+  "@importGuideSocialPost": {
+    "description": "Shown when the shared or pasted link is a post on a social platform. Wren appears in the share sheet of every app that shares a link, so this arrives often; without it the person is told their reel is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately."
+  },
   "importGuideNothing": "That guide holds nothing Wren can add to.",
   "@importGuideNothing": {
     "description": "Shown when the link decoded but contained no place Wren can republish."

@@ -75,6 +75,7 @@
   "guideLinkLabel": "গাইডের লিঙ্ক",
   "readGuide": "গাইড পড়ুন",
   "importGuideNotALink": "এটি Apple Maps গাইডের লিঙ্ক নয়। Maps-এ গাইডটি খুলে শেয়ার করুন, তারপর “লিঙ্ক কপি করুন” বেছে নিন।",
+  "importGuideSocialPost": "Wren স্ক্রিনশট পড়ে, পোস্টের লিঙ্ক নয়। পোস্টটির স্ক্রিনশট নিন এবং সেটি শেয়ার করুন।",
   "importGuideNothing": "ওই গাইডে Wren যোগ করতে পারে এমন কিছু নেই।",
   "importedGuideSummary": "{count, plural, one{ওই গাইড থেকে ১টি জায়গা পড়া হয়েছে} other{ওই গাইড থেকে {count}টি জায়গা পড়া হয়েছে}}",
   "importedGuideUnusable": "{count, plural, one{তার মধ্যে ১টি জায়গা নতুন গাইডে নেওয়া যাবে না} other{তার মধ্যে {count}টি জায়গা নতুন গাইডে নেওয়া যাবে না}}",
