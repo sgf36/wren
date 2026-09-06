@@ -165,22 +165,27 @@ jobs:
       # existed, so the check compares the two files rather than trusting either.
       - name: Prove both halves of the App Group agree
         run: |
-          # The dots inside the key are escaped because plutil reads a dot as
-          # a path separator, so the unescaped name asks for a key 'com'
-          # containing a key 'apple' and fails with 'invalid key path'. The
-          # trailing .0 is a real index: the value is an array of group ids.
-          GROUPS='com\.apple\.security\.application-groups.0'
+          # Read with grep rather than a plutil keypath. The key is literally
+          # named com.apple.security.application-groups, plutil reads a dot as
+          # a path separator, and its escaping does not survive the trip
+          # through the shell here — it answers 'invalid key path' either way.
+          # The identifier is what the comparison is about, so match on that.
+          # Matched inside a <string> element, not loose in the file. These
+          # entitlements carry comments explaining the group, and a bare
+          # 'group[.]' happily matches the word ending a sentence — which
+          # compares a comment against a real identifier and passes.
+          FIND='<string>group[.][A-Za-z0-9._-]*</string>'
           PBX=ios/Runner.xcodeproj/project.pbxproj
           SETTING='CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements'
           if ! grep -q "$SETTING" "$PBX"; then
             echo "::error::Runner is not pointed at an entitlements file"
             exit 1
           fi
-          ENT=ios/ShareExtension/ShareExtension.entitlements
-          APP=$(plutil -extract "$GROUPS" raw ios/Runner/Runner.entitlements)
-          EXT=$(plutil -extract "$GROUPS" raw "$ENT")
-          if [ "$APP" != "$EXT" ]; then
-            echo "::error::group mismatch: app $APP, extension $EXT"
+          APP=$(grep -oE "$FIND" ios/Runner/Runner.entitlements | head -1)
+          EXT=$(grep -oE "$FIND" \
+            ios/ShareExtension/ShareExtension.entitlements | head -1)
+          if [ -z "$APP" ] || [ "$APP" != "$EXT" ]; then
+            echo "::error::group mismatch: app [$APP], extension [$EXT]"
             exit 1
           fi
           echo "app and extension both claim $APP"
@@ -505,7 +510,7 @@ jobs:
           # Both halves of the App Group need a profile, and they are
           # different bundle ids, so they are different profiles. Installing
           # only the app's leaves the appex unsigned and the export fails.
-          GROUPS='Entitlements.com\.apple\.security\.application-groups'
+
           WANT='<string>group.com.spencerfields.littlebird</string>'
           for pair in "app:$PROFILE_B64" "share:$SHARE_PROFILE_B64"; do
             name=${pair%%:*}
@@ -523,8 +528,10 @@ jobs:
             # that vanishes on a real phone, months later. xml1 rather than
             # raw because the value is an array, and plutil's raw output for
             # an array is not something to depend on.
-            HAS=$(printf %s "$PLIST" | plutil -extract "$GROUPS" xml1 -o - -)
-            if ! printf %s "$HAS" | grep -qF "$WANT"; then
+            # Grepping the decoded profile rather than extracting a keypath,
+            # for the reason given in the unsigned job: the key's own name
+            # contains dots and plutil cannot be talked out of reading them.
+            if ! printf %s "$PLIST" | grep -qF "$WANT"; then
               echo "::error::$name profile carries no app group"
               exit 1
             fi
