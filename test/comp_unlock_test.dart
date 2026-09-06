@@ -261,7 +261,11 @@ void main() {
         CompRole.admin,
       );
       expect(
-        await wasUnlocked(device: 'device-A', publicKey: publicKey),
+        await wasUnlocked(
+          device: 'device-A',
+          publicKey: publicKey,
+          now: issued.add(const Duration(days: 1)),
+        ),
         isTrue,
       );
     });

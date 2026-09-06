@@ -275,8 +275,11 @@ Future<RedeemOutcome> redeem(
 Future<bool> wasUnlocked({
   @visibleForTesting String? device,
   @visibleForTesting String? publicKey,
-}) async =>
-    await heldRole(device: device, publicKey: publicKey) != CompRole.none;
+  @visibleForTesting DateTime? now,
+}) async {
+  final role = await heldRole(device: device, publicKey: publicKey, now: now);
+  return role != CompRole.none;
+}
 
 /// What this device's stored token grants, checked the same way and at the
 /// same moment as the unlock itself.

@@ -146,12 +146,21 @@ void main() {
 
         await tester.tap(find.byIcon(Icons.add));
         await tester.pumpAndSettle();
-        expect(find.text('Unlocks the app. Nothing else.'), findsOneWidget);
+        expect(
+          find.text('Unlocks the app. Reels are not included.'),
+          findsOneWidget,
+        );
 
-        // An admin code says plainly what it hands over before it is issued.
+        // Each role says plainly what it hands over before it is issued, and
+        // the two that cost something say so: a reel is paid for every time it
+        // is read, and an admin code gives away the ability to give it away.
+        await tester.tap(find.text('Reels'));
+        await tester.pumpAndSettle();
+        expect(find.textContaining('cost money'), findsOneWidget);
+
         await tester.tap(find.text('Admin'));
         await tester.pumpAndSettle();
-        expect(find.textContaining('issue codes of their own'), findsOneWidget);
+        expect(find.textContaining('issue codes'), findsOneWidget);
 
         await tester.tap(find.text('Create'));
         // Twice: the first settles the dialog closing, and only then does the

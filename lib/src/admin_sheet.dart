@@ -419,7 +419,7 @@ class _MintDialogState extends State<_MintDialog> {
 /// every time it is used, and an admin code hands over the ability to give all
 /// of it away.
 String _explains(CompRole role) => switch (role) {
-  CompRole.admin => 'Everything below, plus the code console.',
+  CompRole.admin => 'Everything below, and lets its holder issue codes.',
   CompRole.everything => 'Unlocks the app, and reads reels. Reads cost money.',
   _ => 'Unlocks the app. Reels are not included.',
 };
