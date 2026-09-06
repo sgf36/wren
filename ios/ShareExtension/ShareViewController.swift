@@ -43,6 +43,13 @@ class ShareViewController: UIViewController {
   /// files it lists, a directory listing cannot.
   static let inboxName = "shared-images"
 
+  /// The app's own URL scheme, registered in Runner/Info.plist. Opening it is
+  /// the whole message — nothing is parsed out of it, because whatever was
+  /// shared is already in the container by the time this is used. CI checks
+  /// that the built app really registers this, rather than that the source
+  /// says so.
+  static let hostURL = "wren://shared"
+
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .clear
@@ -125,11 +132,6 @@ class ShareViewController: UIViewController {
     }
   }
 
-  /// Exists only so that #selector can name UIApplication's openURL:.
-  ///
-  /// Never called. Swift needs a declaration to build a selector from, and the
-  /// one being sent belongs to UIApplication rather than to this class.
-  @objc private func openURL(_ url: URL) {}
 
   /// Brings Wren forward once what was shared has been written.
   ///
@@ -139,34 +141,70 @@ class ShareViewController: UIViewController {
   /// that is indistinguishable from the share having failed, which is how it
   /// was reported.
   ///
-  /// There is no first-class way to do this. UIApplication.open is unavailable
-  /// to app extensions at compile time, and NSExtensionContext.open answers
-  /// false for a share extension. What is left is to walk the responder chain
-  /// to the UIApplication that is really there and send it openURL:, which is
-  /// a public selector on a public class. It is widely shipped and it is not
-  /// documented as supported, so it is written to fail quietly: if the chain
-  /// holds no UIApplication, the share is still safely in the container and
-  /// the app still collects it on next launch, exactly as before.
-  private func openHost() {
-    guard let url = URL(string: "wren://shared") else { return }
+  /// There is no first-class way to do this, so it tries two and settles for
+  /// neither working.
+  ///
+  /// NSExtensionContext.open is the documented call. Apple's own documentation
+  /// says only a Today extension may use it, and on current iOS it does answer
+  /// for a share extension — so it is tried first, because if it works it is
+  /// the supported route and needs no defending in review.
+  ///
+  /// Walking the responder chain to whatever answers openURL: is the fallback.
+  /// It is what every app that does this has historically shipped, and iOS has
+  /// been steadily less willing to allow it. The earlier attempt at this looked
+  /// for a UIApplication by type; this asks whether a responder answers the
+  /// selector, which is the same question asked in a way that does not depend
+  /// on the chain being shaped as expected.
+  ///
+  /// If both fail nothing is lost. The share is already written into the
+  /// container and the app collects it on next launch, exactly as it did before
+  /// any of this existed.
+  @discardableResult
+  private func openViaResponder(_ url: URL) -> Bool {
+    let selector = NSSelectorFromString("openURL:")
     var responder: UIResponder? = self
     while let current = responder {
-      if let application = current as? UIApplication {
-        application.perform(#selector(openURL(_:)), with: url)
-        return
+      if current.responds(to: selector) {
+        _ = current.perform(selector, with: url)
+        return true
       }
       responder = current.next
     }
-    NSLog("WREN-SHARE no UIApplication in the responder chain")
+    return false
   }
-
+  /// Hands over, then completes.
+  ///
+  /// Completing tears this process down, so it happens after the open has been
+  /// attempted rather than beside it — doing both in one turn of the run loop
+  /// can cancel the open. The guard exists because NSExtensionContext.open is
+  /// documented for a different extension point and is not obliged to call back
+  /// at all: if it stays silent the sheet must still go away, so a timer runs
+  /// the fallback and finishes regardless. Whichever arrives first wins, and
+  /// the other does nothing.
   private func finish() {
-    openHost()
-    // Completing tears this process down, and doing it in the same turn of the
-    // run loop as the open can cancel the open. A short delay is not elegant
-    // and it is imperceptible: the sheet is already dismissing.
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+    guard let url = URL(string: Self.hostURL) else {
+      extensionContext?.completeRequest(returningItems: nil)
+      return
+    }
+
+    var settled = false
+    let settle: (String) -> Void = { [weak self] how in
+      guard !settled else { return }
+      settled = true
+      NSLog("WREN-SHARE handover: " + how)
       self?.extensionContext?.completeRequest(returningItems: nil)
+    }
+
+    extensionContext?.open(url) { [weak self] opened in
+      if opened { return settle("extensionContext") }
+      let viaChain = self?.openViaResponder(url) ?? false
+      settle(viaChain ? "responder chain" : "nothing would open it")
+    }
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+      guard !settled else { return }
+      let viaChain = self?.openViaResponder(url) ?? false
+      settle(viaChain ? "responder chain, after no answer" : "no answer")
     }
   }
 }

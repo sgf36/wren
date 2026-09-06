@@ -230,6 +230,22 @@ jobs:
           URLS=$(plutil -extract NSExtension.NSExtensionAttributes.NSExtensionActivationRule.NSExtensionActivationSupportsWebURLWithMaxCount raw "$APPEX/Info.plist")
           test "$URLS" = "1" || { echo "::error::not activated for web URLs: $URLS"; exit 1; }
           echo "embedded, share-services, activates on 1 web URL"
+
+          # The scheme, read out of the built app rather than the source.
+          #
+          # The extension opens wren:// to bring the app forward, and if the
+          # built app does not register it the open silently fails and the
+          # share sits in the container unnoticed — which is exactly the bug
+          # this was added to fix. Info.plist is processed on the way into the
+          # bundle, so the file on disk saying the right thing is not evidence.
+          APP_PLIST=build/ios/iphoneos/Runner.app/Info.plist
+          SCHEME=$(plutil -extract CFBundleURLTypes.0.CFBundleURLSchemes.0 raw \
+            "$APP_PLIST" 2>/dev/null || true)
+          if [ "$SCHEME" != "wren" ]; then
+            echo "::error::built app registers no wren:// scheme (got [$SCHEME])"
+            exit 1
+          fi
+          echo "built app registers $SCHEME://"
           plutil -extract CFBundleIdentifier raw "$APPEX/Info.plist"
 
       - name: Report app size
