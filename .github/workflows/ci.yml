@@ -74,7 +74,22 @@ jobs:
           cache: true
 
       - run: flutter pub get
-      - run: dart format --output=none --set-exit-if-changed lib test
+      # Prints the diff it wants rather than only the file name.
+      #
+      # There is no Dart SDK on the machine this project is written on, so a
+      # failure that says nothing but "Changed lib/src/thing.dart" cannot be
+      # acted on without pushing another guess and waiting for CI again. The
+      # diff turns that loop into one read.
+      - name: Check formatting
+        run: |
+          if dart format --output=none --set-exit-if-changed lib test; then
+            exit 0
+          fi
+          echo '::group::what dart format wants'
+          dart format lib test > /dev/null
+          git --no-pager diff
+          echo '::endgroup::'
+          exit 1
       - run: flutter analyze
       - run: flutter test --reporter expanded
 
