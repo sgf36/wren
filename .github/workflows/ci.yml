@@ -136,10 +136,20 @@ jobs:
       # existed, so the check compares the two files rather than trusting either.
       - name: Prove both halves of the App Group agree
         run: |
-          grep -q 'CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements'             ios/Runner.xcodeproj/project.pbxproj             || { echo "::error::Runner is not pointed at an entitlements file"; exit 1; }
-          APP=$(plutil -extract com.apple.security.application-groups.0 raw             ios/Runner/Runner.entitlements)
-          EXT=$(plutil -extract com.apple.security.application-groups.0 raw             ios/ShareExtension/ShareExtension.entitlements)
-          test "$APP" = "$EXT"             || { echo "::error::group mismatch: app $APP, extension $EXT"; exit 1; }
+          GROUPS='com.apple.security.application-groups.0'
+          PBX=ios/Runner.xcodeproj/project.pbxproj
+          SETTING='CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements'
+          if ! grep -q "$SETTING" "$PBX"; then
+            echo "::error::Runner is not pointed at an entitlements file"
+            exit 1
+          fi
+          ENT=ios/ShareExtension/ShareExtension.entitlements
+          APP=$(plutil -extract "$GROUPS" raw ios/Runner/Runner.entitlements)
+          EXT=$(plutil -extract "$GROUPS" raw "$ENT")
+          if [ "$APP" != "$EXT" ]; then
+            echo "::error::group mismatch: app $APP, extension $EXT"
+            exit 1
+          fi
           echo "app and extension both claim $APP"
 
       # Unsigned: proves the Swift bridge and the pod install are sound without
@@ -435,7 +445,10 @@ jobs:
         run: |
           gem install --no-document xcodeproj
           ruby ios/add_share_extension.rb
-          grep -q 'ShareExtension' ios/Runner.xcodeproj/project.pbxproj             || { echo "::error::extension target missing from the signed build"; exit 1; }
+          if ! grep -q 'ShareExtension' ios/Runner.xcodeproj/project.pbxproj; then
+            echo "::error::extension target missing from the signed build"
+            exit 1
+          fi
 
       - name: Import certificate and provisioning profile
         if: steps.signing.outputs.ready == 'true'
@@ -454,20 +467,34 @@ jobs:
           security import cert.p12 -k "$KEYCHAIN" -P "$P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions "$KEYCHAIN"
           rm -f cert.p12
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          # Both halves of the App Group need a profile, and they are different
-          # bundle ids, so they are different profiles. Installing only the app's
-          # leaves the appex unsigned and the export fails on the extension.
+          DEST="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$DEST"
+          # Both halves of the App Group need a profile, and they are
+          # different bundle ids, so they are different profiles. Installing
+          # only the app's leaves the appex unsigned and the export fails.
+          GROUPS='Entitlements.com\.apple\.security\.application-groups'
+          WANT='<string>group.com.spencerfields.littlebird</string>'
           for pair in "app:$PROFILE_B64" "share:$SHARE_PROFILE_B64"; do
-            name=${pair%%:*}; b64=${pair#*:}
-            [ -n "$b64" ] || { echo "::error::no $name provisioning profile"; exit 1; }
+            name=${pair%%:*}
+            b64=${pair#*:}
+            if [ -z "$b64" ]; then
+              echo "::error::no $name provisioning profile"
+              exit 1
+            fi
             echo "$b64" | base64 --decode > "$name.mobileprovision"
-            UUID=$(security cms -D -i "$name.mobileprovision" | plutil -extract UUID raw -)
-            cp "$name.mobileprovision"               "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
-            # An App Group entitlement that is present but empty grants nothing,
-            # and signs without complaint. Checked here because the symptom is a
-            # share that vanishes on a real phone, months later.
-            security cms -D -i "$name.mobileprovision"               | plutil -extract Entitlements.com\.apple\.security\.application-groups raw -               | grep -q 'group.com.spencerfields.littlebird'               || { echo "::error::$name profile carries no app group"; exit 1; }
+            PLIST=$(security cms -D -i "$name.mobileprovision")
+            UUID=$(printf %s "$PLIST" | plutil -extract UUID raw -)
+            cp "$name.mobileprovision" "$DEST/$UUID.mobileprovision"
+            # An App Group entitlement that is present but empty grants
+            # nothing and signs without complaint. The symptom is a share
+            # that vanishes on a real phone, months later. xml1 rather than
+            # raw because the value is an array, and plutil's raw output for
+            # an array is not something to depend on.
+            HAS=$(printf %s "$PLIST" | plutil -extract "$GROUPS" xml1 -o - -)
+            if ! printf %s "$HAS" | grep -qF "$WANT"; then
+              echo "::error::$name profile carries no app group"
+              exit 1
+            fi
             echo "$name profile $UUID installed, app group present"
           done
 
