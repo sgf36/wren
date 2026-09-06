@@ -17,11 +17,14 @@
  * and pointing the app at a look-alike server achieves nothing, because a
  * forged "yes" cannot carry a valid signature.
  *
- * A code carries a role. 'unlock' is the paid feature and nothing more, which
- * is what every code was before roles existed. 'admin' is that plus the right
- * to issue and withdraw codes — so the person who runs Wren can hand out an
- * unlock from a phone instead of a terminal, and so nobody else can, because
- * the app shows no trace of it without an administrator's token.
+ * A code carries a role, and they form a ladder. 'unlock' is guides and
+ * exports uncapped, which is what every code was before roles existed.
+ * 'everything' is that plus places read out of a shared reel — the thing that
+ * costs money on every use, which is why it is not simply given to every code.
+ * 'admin' is everything plus the right to issue and withdraw codes, so the
+ * person who runs Wren can hand out an unlock from a phone instead of a
+ * terminal, and so nobody else can, because the app shows no trace of the
+ * console without an administrator's token.
  *
  * The token an administrator holds is a bearer credential for /admin/*, but it
  * is not the whole of the decision: every administrative request re-reads the
@@ -43,6 +46,27 @@ const json = (body, status = 200) =>
     headers: { 'Content-Type': 'application/json', ...CORS },
   });
 
+/**
+ * What a code may grant, lowest first.
+ *
+ * A ladder rather than a set, because the products are a ladder: the reels
+ * purchase presumes the base unlock, and reels-without-uncapped-guides is not
+ * a thing anybody can buy. Letting a code grant a combination no customer can
+ * hold would make the comp path a different product from the paid one, which
+ * is exactly the sort of difference that is discovered in App Review.
+ */
+export const ROLES = ['unlock', 'everything', 'admin'];
+
+/**
+ * Anything unrecognised is an ordinary unlock.
+ *
+ * Defaulting downwards is the whole point. A typo, a client too old to send
+ * the field, and a mangled claim must all land on the least privilege rather
+ * than the most — and every token minted before roles existed carries no role
+ * at all, so the absent case is the common one and not an error.
+ */
+export const roleOf = (value) =>
+  ROLES.includes(value) ? value : 'unlock';
 /** Unambiguous alphabet: no 0/O, no 1/I/L, no U. 30 symbols. */
 const ALPHABET = '23456789ABCDEFGHJKMNPQRSTVWXYZ';
 
@@ -228,7 +252,7 @@ async function redeem(request, env) {
     return json({ error: 'invalid_code' }, 403);
   }
 
-  const role = held.role === 'admin' ? 'admin' : 'unlock';
+  const role = roleOf(held.role);
   return json({ token: await issueToken(env, device, code, role), role });
 }
 
@@ -279,7 +303,7 @@ export async function renew(request, env) {
     .bind(code, device, Math.floor(Date.now() / 1000)).first();
   if (!row) return json({ error: 'not_live' }, 403);
 
-  const role = row.role === 'admin' ? 'admin' : 'unlock';
+  const role = roleOf(row.role);
   return json({ token: await issueToken(env, device, code, role), role });
 }
 
@@ -355,12 +379,10 @@ async function createCodes(request, env) {
   const note = String(body.note ?? '').slice(0, 200);
   const expiresAt = body.expiresAt ? parseInt(body.expiresAt, 10) : null;
 
-  // Anything unrecognised is an unlock. Defaulting the other way would turn a
-  // typo, or an older client that does not send the field, into an
-  // administrator. The column carries the same CHECK on a fresh database, but
-  // it cannot be added to the existing one without rebuilding the table, so
-  // this is where the values are actually held to two.
-  const role = body.role === 'admin' ? 'admin' : 'unlock';
+  // The column carries a CHECK on a fresh database, but the live one was
+  // given its role column by ALTER TABLE, which cannot add a constraint — so
+  // this line, not the schema, is what actually holds the values to three.
+  const role = roleOf(body.role);
 
   const now = Math.floor(Date.now() / 1000);
   const codes = Array.from({ length: count }, () => normalise(mintCode()));
@@ -385,7 +407,7 @@ async function listCodes(env) {
     codes: results.map((r) => ({
       code: grouped(r.code),
       note: r.note,
-      role: r.role ?? 'unlock',
+      role: roleOf(r.role),
       uses: r.uses,
       maxUses: r.max_uses,
       revoked: !!r.revoked,

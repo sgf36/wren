@@ -22,8 +22,10 @@
  *   play      a Play purchase token, verified online against androidpublisher
  *             and then cached, because Google rate-limits and a reel should not
  *             wait on it twice.
- *   comp      an Ed25519 token this project's other Worker signed. App Review
- *             holds one, and it has to unlock this too.
+ *   comp      an Ed25519 token this project's other Worker signed, carrying a
+ *             role. Only 'everything' and 'admin' reach this feature; an
+ *             ordinary 'unlock' is guides and exports. App Review's code must
+ *             therefore be issued as 'everything'.
  *
  * The identity matters because quota hangs off it. A one-time purchase for a
  * feature with a per-use cost needs a lid, and a lid keyed on the device is not
@@ -222,6 +224,14 @@ export async function verifiedComp(env, token) {
  * per call, so an unused entry left in "just in case" is a product that would
  * silently grant the moment anybody created it.
  */
+/**
+ * Comp-code roles that carry the reel entitlement.
+ *
+ * Mirrors the ladder in the codes Worker, where 'unlock' is guides and exports
+ * and 'everything' adds reels. Held as its own list rather than inferred from
+ * that one, so adding a role there cannot silently grant a paid feature here.
+ */
+export const COMP_ROLES_WITH_REELS = Object.freeze(['everything', 'admin']);
 export const REEL_PRODUCTS = Object.freeze([
   'com.spencerfields.littlebird.everything',
   'com.spencerfields.littlebird.reels.upgrade',
@@ -392,11 +402,18 @@ export async function identify(env, auth) {
   try {
     if (auth?.kind === 'comp') {
       const claims = await verifiedComp(env, auth.token);
-      // Comp codes grant everything, as they always have. App Review holds one,
-      // and a reviewer who cannot reach the feature rejects the build.
-      return claims?.c
-        ? { key: `comp:${claims.c}`, store: 'comp', productId: null }
-        : null;
+      if (!claims?.c) return null;
+      // Not every comp code reaches this feature. A code carries a role, and
+      // reels cost money on every use, so only the roles that name them grant
+      // them. An ordinary 'unlock' is guides and exports, as it has always
+      // been, and a token minted before roles existed carries no role at all
+      // and reads as that.
+      //
+      // The consequence worth remembering: App Review's code must be issued as
+      // 'everything'. A reviewer following the notes into a paywall rejects the
+      // build, and the rejection will not say it was about a comp code.
+      if (!COMP_ROLES_WITH_REELS.includes(claims.r)) return null;
+      return { key: `comp:${claims.c}`, store: 'comp', productId: null };
     }
     if (auth?.kind === 'appstore') return await verifyApple(env, auth.jws);
     if (auth?.kind === 'play') {

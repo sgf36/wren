@@ -90,15 +90,37 @@ test('a token signed by somebody else verifies as nothing', async () => {
   assert.equal(await verifiedComp(mine.env, forged), null);
 });
 
-test('App Review reaches the feature, because comp grants everything', async () => {
-  // The comp code in the review notes has to unlock reels as well as guides. A
-  // reviewer who follows the notes and hits a paywall rejects the build, and
-  // the rejection reads as something else entirely.
+test('a comp code issued for everything reaches the feature', async () => {
+  // This is the shape App Review's code has to have. A reviewer who follows
+  // the notes and hits a paywall rejects the build, and the rejection reads as
+  // something else entirely.
   const { keys, env } = await pair();
-  const who = await identify(env,
-    { kind: 'comp', token: await token(keys, { v: 1, d: 'd', c: 'REVIEW-1' }) });
-  assert.equal(who.store, 'comp');
-  assert.equal(who.key, 'comp:REVIEW-1');
+  for (const r of ['everything', 'admin']) {
+    const who = await identify(env, {
+      kind: 'comp',
+      token: await token(keys, { v: 1, d: 'd', c: 'REVIEW-1', r }),
+    });
+    assert.equal(who?.store, 'comp', r);
+    assert.equal(who.key, 'comp:REVIEW-1');
+  }
+});
+
+test('an ordinary unlock code does not reach the feature', async () => {
+  // Reels cost money on every use, so a code issued for guides must not buy
+  // them. The absent case matters as much as the explicit one: every token
+  // minted before roles existed carries no role, and must read as an unlock
+  // rather than as a free pass to the expensive half of the app.
+  const { keys, env } = await pair();
+  for (const claims of [
+    { v: 1, d: 'd', c: 'GUIDES-1', r: 'unlock' },
+    { v: 1, d: 'd', c: 'OLD-1' },
+    { v: 1, d: 'd', c: 'ODD-1', r: 'EVERYTHING' },
+    { v: 1, d: 'd', c: 'ODD-2', r: 'reels' },
+  ]) {
+    const who = await identify(env,
+      { kind: 'comp', token: await token(keys, claims) });
+    assert.equal(who, null, JSON.stringify(claims));
+  }
 });
 
 test('every unrecognised or malformed identity fails closed', async () => {

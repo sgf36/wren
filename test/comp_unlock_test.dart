@@ -245,8 +245,19 @@ void main() {
       SharedPreferences.setMockInitialValues({
         'comp_token': await tokenFor('device-A', role: 'admin'),
       });
+      // `now` is passed rather than left to the clock. An administrator's
+      // token goes stale after compGrace, and `issued` is a fixed date, so a
+      // test that asks the real clock asserts the role for a fortnight and
+      // then asserts staleness for ever. This one went red on 4 September
+      // 2026 having passed since August, and nothing about the failure said
+      // it was about time. Any new assertion that a token is still an
+      // administrator needs this argument too.
       expect(
-        await heldRole(device: 'device-A', publicKey: publicKey),
+        await heldRole(
+          device: 'device-A',
+          publicKey: publicKey,
+          now: issued.add(const Duration(days: 1)),
+        ),
         CompRole.admin,
       );
       expect(
