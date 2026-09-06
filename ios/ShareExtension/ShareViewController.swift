@@ -15,9 +15,12 @@ import UniformTypeIdentifiers
 /// share → Wren.
 ///
 /// Deliberately silent. It takes what it was given, writes it where the app will
-/// find it, and completes — no interface of its own, because there is nothing to
-/// ask and a sheet that lingers to say "done" is a sheet in the way. The
-/// reviewing and confirming all happens in the app, where it already does.
+/// find it, opens the app, and completes — no interface of its own, because
+/// there is nothing to ask and a sheet that lingers to say "done" is a sheet in
+/// the way. The reviewing and confirming all happens in the app, where it
+/// already does, and opening the app is what gets the user there: an extension
+/// cannot show a result, and a share that arrives silently in a container reads
+/// as a share that failed.
 ///
 /// Apple Maps only, for links. A shared Google Maps list URL is opaque — no
 /// documented format, nothing to decode — so `Info.plist` does not claim it, and
@@ -122,7 +125,48 @@ class ShareViewController: UIViewController {
     }
   }
 
+  /// Exists only so that #selector can name UIApplication's openURL:.
+  ///
+  /// Never called. Swift needs a declaration to build a selector from, and the
+  /// one being sent belongs to UIApplication rather than to this class.
+  @objc private func openURL(_ url: URL) {}
+
+  /// Brings Wren forward once what was shared has been written.
+  ///
+  /// Without this the share is accepted, written into the container, and then
+  /// waits — the app drains its inbox on launch and on resume, so nothing
+  /// happens until somebody thinks to open Wren themselves. From the outside
+  /// that is indistinguishable from the share having failed, which is how it
+  /// was reported.
+  ///
+  /// There is no first-class way to do this. UIApplication.open is unavailable
+  /// to app extensions at compile time, and NSExtensionContext.open answers
+  /// false for a share extension. What is left is to walk the responder chain
+  /// to the UIApplication that is really there and send it openURL:, which is
+  /// a public selector on a public class. It is widely shipped and it is not
+  /// documented as supported, so it is written to fail quietly: if the chain
+  /// holds no UIApplication, the share is still safely in the container and
+  /// the app still collects it on next launch, exactly as before.
+  private func openHost() {
+    guard let url = URL(string: "wren://shared") else { return }
+    var responder: UIResponder? = self
+    while let current = responder {
+      if let application = current as? UIApplication {
+        application.perform(#selector(openURL(_:)), with: url)
+        return
+      }
+      responder = current.next
+    }
+    NSLog("WREN-SHARE no UIApplication in the responder chain")
+  }
+
   private func finish() {
-    extensionContext?.completeRequest(returningItems: nil)
+    openHost()
+    // Completing tears this process down, and doing it in the same turn of the
+    // run loop as the open can cancel the open. A short delay is not elegant
+    // and it is imperceptible: the sheet is already dismissing.
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+      self?.extensionContext?.completeRequest(returningItems: nil)
+    }
   }
 }

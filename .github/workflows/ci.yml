@@ -190,6 +190,25 @@ jobs:
           fi
           echo "app and extension both claim $APP"
 
+          # The extension writes into that container and then has to hand
+          # over, because it cannot show a result and the app only drains its
+          # inbox on launch and on resume. If the scheme it opens is not the
+          # scheme the app registers, the share still arrives and still sits
+          # there — the same silent failure the App Group used to produce.
+          SCHEME=$(grep -A 2 CFBundleURLSchemes ios/Runner/Info.plist \
+            | grep -oE '<string>[a-z][a-z0-9.+-]*</string>' | head -1 \
+            | sed -E 's|</?string>||g')
+          if [ -z "$SCHEME" ]; then
+            echo "::error::the app registers no URL scheme to be opened with"
+            exit 1
+          fi
+          SRC=ios/ShareExtension/ShareViewController.swift
+          if ! grep -qF "\"$SCHEME://" "$SRC"; then
+            echo "::error::the extension does not open $SCHEME://"
+            exit 1
+          fi
+          echo "the extension hands over on $SCHEME://"
+
       # Unsigned: proves the Swift bridge and the pod install are sound without
       # needing certificates. Signing comes in with the TestFlight job below.
       #

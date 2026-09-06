@@ -128,6 +128,29 @@
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Wren reads the text in screenshots you choose, so it can find the places they name. Screenshots are read on this device and are not uploaded.</string>
+	<!-- The scheme the share extension opens to bring the app forward.
+	
+	     The extension writes what was shared into the App Group and then has
+	     to hand over: an extension cannot show the result, and the app only
+	     drains the inbox on launch and on resume. Without something to open,
+	     a share is accepted, written, and then waits for the user to think of
+	     opening Wren themselves — which reads as the share having failed.
+	
+	     Nothing is parsed out of the URL. Arriving at all is the whole point,
+	     because the payload is already in the container by then. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.spencerfields.littlebird.share</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wren</string>
+			</array>
+		</dict>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>maps</string>
