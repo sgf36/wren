@@ -45,7 +45,7 @@ Vision for OCR. It has no interface, so it never needs a simulator.
 | OCR | **Measured** at 25/25 on graded synthetic frames using Vision `.accurate`. Real reel typography is untested. |
 | Chrome filtering / place picking | Heuristic. Tested against a realistic line set, but the "largest text wins" rule comes from frames we authored. |
 | Resolution | **Stubbed.** `StubResolver` returns real, device-verified place ids so the rest of the app runs. |
-| Share extension | Not built. Deliberately deferred — it is the riskiest config item and cannot be debugged without a device. |
+| Share extension | **Built and embedded.** CI asserts the appex ships inside the app, activates on one web URL or up to twenty images, and that the app and the extension claim the same App Group. Whether a share arrives end to end is still a device question. |
 
 ## The two rules that matter
 
@@ -126,7 +126,7 @@ never allowed to grant the unlock.
    so the key never ships in the app.
 2. Put ten real reel screenshots through Vision and see whether real typography
    behaves like the synthetic fixtures.
-3. Add the share extension, once the loop above is trusted.
+3. Share a link into the app from a device and confirm it arrives, now that the app claims the App Group the extension writes into.
 4. Turn on the TestFlight job in CI — without a Mac, that is the device-testing
    loop.
 

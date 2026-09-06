@@ -125,6 +125,23 @@ jobs:
           grep -q 'ShareExtension' ios/Runner.xcodeproj/project.pbxproj
           echo "target present in the project file"
 
+      # Both halves of the App Group, checked as a pair.
+      #
+      # An App Group only works if the app and the extension both claim the same
+      # identifier. When only one does, nothing fails: the extension writes into
+      # its container, the app asks for a container it does not hold, gets nil
+      # back, and reads that as "nothing was shared" — which is exactly what it
+      # gets when nothing was shared. Every share would vanish and every test
+      # would pass. That was the real state of the project until this step
+      # existed, so the check compares the two files rather than trusting either.
+      - name: Prove both halves of the App Group agree
+        run: |
+          grep -q 'CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements'             ios/Runner.xcodeproj/project.pbxproj             || { echo "::error::Runner is not pointed at an entitlements file"; exit 1; }
+          APP=$(plutil -extract com.apple.security.application-groups.0 raw             ios/Runner/Runner.entitlements)
+          EXT=$(plutil -extract com.apple.security.application-groups.0 raw             ios/ShareExtension/ShareExtension.entitlements)
+          test "$APP" = "$EXT"             || { echo "::error::group mismatch: app $APP, extension $EXT"; exit 1; }
+          echo "app and extension both claim $APP"
+
       # Unsigned: proves the Swift bridge and the pod install are sound without
       # needing certificates. Signing comes in with the TestFlight job below.
       #

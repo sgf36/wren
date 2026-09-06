@@ -22,8 +22,28 @@ GROUP_DIR = 'ShareExtension'
 project = Xcodeproj::Project.open(PROJECT)
 app = project.targets.find { |t| t.name == 'Runner' } or abort 'no Runner target'
 
+# The app half of the App Group, set before anything else and on every run.
+#
+# The extension has always carried the group entitlement, because this script
+# gives it one. Runner never did: no target in the project pointed at an
+# entitlements file, so the app had no right to open the container the extension
+# writes into. That failure is silent by construction — containerURL returns nil
+# for a group you do not hold, and a nil container is exactly what AppDelegate
+# sees when nothing was shared. The extension would accept a share, write it,
+# and the app would find an empty inbox.
+#
+# Done ahead of the "already present" check rather than inside the creation
+# branch, because the extension target existed for weeks before anyone noticed
+# the app side was missing, and a fix that only runs when the target is created
+# would never have run at all.
+app.build_configurations.each do |config|
+  config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Runner.entitlements'
+end
+puts 'pointed Runner at Runner/Runner.entitlements'
+
 if project.targets.any? { |t| t.name == TARGET }
-  puts "#{TARGET} already present — nothing to do"
+  puts "#{TARGET} already present — leaving it alone"
+  project.save
   exit 0
 end
 

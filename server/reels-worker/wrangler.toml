@@ -1,0 +1,55 @@
+name = "wren-reels"
+main = "src/index.js"
+compatibility_date = "2026-09-06"
+
+# Apple's own verification library is a Node package, and the parts of it that
+# matter here — X.509 chain parsing, ES256 over a certificate chain — have no
+# WebCrypto equivalent to reimplement safely. `nodejs_compat` is what lets it
+# run unchanged, and running Apple's implementation unchanged is the point: a
+# hand-rolled receipt verifier that is subtly wrong fails open.
+compatibility_flags = ["nodejs_compat"]
+
+# Four secrets, set with `wrangler secret put <NAME>` and never committed:
+#   SCRAPECREATORS_API_KEY  primary video vendor
+#   APIFY_TOKEN             fallback vendor, different infrastructure
+#   GEMINI_API_KEY          paid tier, not the free one — the free tier trains
+#                           on what it is sent
+#   PLAY_SA_KEY             Google service-account JSON, base64, androidpublisher
+#                           read only
+#
+# `wrangler secret put` takes the secret's NAME, not its value. The value goes
+# at the interactive prompt only. Passing the value as the argument creates a
+# secret whose name is the credential, leaves the real one unset, and writes the
+# credential into the Wrangler logs, which record full command lines.
+# Check `wrangler secret list` afterwards: any name that looks like a credential
+# is one.
+
+[vars]
+# The verifying half of the comp-code signing pair, identical to the value in
+# wren-codes and in lib/src/comp_unlock.dart. Public by definition — it can
+# check a signature and never produce one — so it is a var rather than a secret.
+WREN_PUBLIC_KEY = "LN6bVyBTvZgcov3ElAo5JtlrUy02BYKZUgBxMVtq3Ys="
+
+# Whether a StoreKit transaction carrying `environment: Sandbox` is accepted.
+# False everywhere that ships. Set true only on a throwaway deployment used for
+# testing, never on this one: a sandbox transaction is free to mint, so a
+# production Worker that accepts one sells nothing.
+ACCEPT_SANDBOX = "false"
+
+# Reels per rolling thirty days, per purchase. The safety valve on a one-time
+# price for a feature with a per-use cost. Moved here rather than hard-coded so
+# that raising it costs a deploy and not a release.
+QUOTA_PER_30_DAYS = "250"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wren-reels"
+# Empty until the database exists. Create it with:
+#   npx wrangler d1 create wren-reels
+# and paste the id it prints here. A deploy against an empty id fails loudly,
+# which is the right way round: a Worker that starts without its database would
+# answer /process by throwing on the first quota read.
+database_id = ""
+
+[observability]
+enabled = true
