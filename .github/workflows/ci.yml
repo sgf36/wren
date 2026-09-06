@@ -165,7 +165,11 @@ jobs:
       # existed, so the check compares the two files rather than trusting either.
       - name: Prove both halves of the App Group agree
         run: |
-          GROUPS='com.apple.security.application-groups.0'
+          # The dots inside the key are escaped because plutil reads a dot as
+          # a path separator, so the unescaped name asks for a key 'com'
+          # containing a key 'apple' and fails with 'invalid key path'. The
+          # trailing .0 is a real index: the value is an array of group ids.
+          GROUPS='com\.apple\.security\.application-groups.0'
           PBX=ios/Runner.xcodeproj/project.pbxproj
           SETTING='CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements'
           if ! grep -q "$SETTING" "$PBX"; then
