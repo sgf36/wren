@@ -314,6 +314,10 @@ class LAr extends L {
       'هذا ليس رابط دليل من خرائط Apple. افتح الدليل في الخرائط وشاركه، ثم اختر ”نسخ الرابط“.';
 
   @override
+  String get importGuideSocialPost =>
+      '‏Wren يقرأ لقطات الشاشة، لا روابط المنشورات. التقط لقطة شاشة للمنشور وشاركها بدلاً من الرابط.';
+
+  @override
   String get importGuideNothing =>
       'هذا الدليل لا يضم شيئاً يمكن لـ Wren إضافته.';
 

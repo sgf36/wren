@@ -320,6 +320,10 @@ class LPl extends L {
       'To nie jest łącze do przewodnika Map Apple. Otwórz przewodnik w Mapach, udostępnij go i wybierz Kopiuj łącze.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren czyta zrzuty ekranu, a nie linki do postów. Zrób zrzut ekranu posta i udostępnij go.';
+
+  @override
   String get importGuideNothing =>
       'W tym przewodniku nie ma nic, co Wren mógłby przenieść.';
 

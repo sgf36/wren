@@ -318,6 +318,10 @@ class LSk extends L {
       'To nie je odkaz na sprievodcu z Máp Apple. Otvor sprievodcu v Mapách, zdieľaj ho a vyber Kopírovať odkaz.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren číta snímky obrazovky, nie odkazy na príspevky. Vytvor snímku príspevku a zdieľaj ju.';
+
+  @override
   String get importGuideNothing =>
       'V tomto sprievodcovi nie je nič, čo by Wren mohol preniesť.';
 

@@ -296,6 +296,10 @@ class LJa extends L {
       'マップのガイドのリンクではありません。マップでガイドを開いて共有し、「リンクをコピー」を選んでください。';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren はスクリーンショットを読み取ります。投稿のリンクは読み取れません。投稿のスクリーンショットを撮って共有してください。';
+
+  @override
   String get importGuideNothing => 'そのガイドには、Wrenが追加できるものがありません。';
 
   @override

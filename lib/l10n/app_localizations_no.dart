@@ -315,6 +315,10 @@ class LNo extends L {
       'Det er ikke en link til en guide i Apple Kart. Åpne guiden i Kart, del den og velg «Kopier link».';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren leser skjermbilder, ikke lenker til innlegg. Ta et skjermbilde av innlegget, og del det i stedet.';
+
+  @override
   String get importGuideNothing =>
       'Den guiden inneholder ingenting Wren kan ta med videre.';
 

@@ -306,6 +306,10 @@ class LTr extends L {
       'Bu bir Apple Harita rehber bağlantısı değil. Rehberi Harita\'da aç, paylaş, ardından Bağlantıyı Kopyala\'yı seç.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren ekran görüntülerini okur, gönderi bağlantılarını değil. Gönderinin ekran görüntüsünü al ve onu paylaş.';
+
+  @override
   String get importGuideNothing =>
       'O rehberde Wren\'in ekleyebileceği bir şey yok.';
 

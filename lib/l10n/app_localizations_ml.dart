@@ -315,6 +315,10 @@ class LMl extends L {
       'അത് Apple Maps ഗൈഡിന്റെ ലിങ്ക് അല്ല. Maps‌ൽ ഗൈഡ് തുറന്ന് പങ്കിട്ട്, പിന്നെ ലിങ്ക് പകർത്തുക എന്നത് തിരഞ്ഞെടുക്കുക.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren സ്ക്രീൻഷോട്ടുകൾ വായിക്കുന്നു, പോസ്റ്റിന്റെ ലിങ്കുകളല്ല. പോസ്റ്റിന്റെ സ്ക്രീൻഷോട്ട് എടുത്ത് അത് പങ്കിടുക.';
+
+  @override
   String get importGuideNothing =>
       'ആ ഗൈഡിൽ Wren‌ന് ചേർക്കാനാവുന്നത് ഒന്നുമില്ല.';
 

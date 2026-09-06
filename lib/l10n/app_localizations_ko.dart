@@ -297,6 +297,10 @@ class LKo extends L {
       '지도 가이드 링크가 아닙니다. 지도에서 가이드를 열어 공유한 다음 “링크 복사”를 선택하세요.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren은 스크린샷을 읽습니다. 게시물 링크는 읽지 못합니다. 게시물을 스크린샷으로 찍어 공유해 주세요.';
+
+  @override
   String get importGuideNothing => '그 가이드에는 Wren이 추가할 수 있는 것이 없습니다.';
 
   @override

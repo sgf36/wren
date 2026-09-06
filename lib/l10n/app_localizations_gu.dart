@@ -307,6 +307,10 @@ class LGu extends L {
       'આ Apple Maps માર્ગદર્શિકાની લિંક નથી. માર્ગદર્શિકા Maps માં ખોલો, શેર કરો, પછી “લિંક કૉપિ કરો” પસંદ કરો.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren સ્ક્રીનશૉટ વાંચે છે, પોસ્ટની લિંક નહીં. પોસ્ટનો સ્ક્રીનશૉટ લો અને તે શેર કરો.';
+
+  @override
   String get importGuideNothing =>
       'એ માર્ગદર્શિકામાં Wren ઉમેરી શકે એવું કશું નથી.';
 

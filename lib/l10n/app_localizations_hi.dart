@@ -312,6 +312,10 @@ class LHi extends L {
       'यह Apple Maps गाइड का लिंक नहीं है। गाइड को Maps में खोलिए, उसे शेयर कीजिए, फिर “लिंक कॉपी करें” चुनिए।';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren स्क्रीनशॉट पढ़ता है, पोस्ट के लिंक नहीं। पोस्ट का स्क्रीनशॉट लें और उसे शेयर करें।';
+
+  @override
   String get importGuideNothing =>
       'उस गाइड में ऐसा कुछ नहीं है जिसे Wren जोड़ सके।';
 

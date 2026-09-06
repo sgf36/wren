@@ -308,6 +308,10 @@ class LMs extends L {
       'Itu bukan pautan panduan Apple Maps. Buka panduan itu dalam Maps, kongsikannya, kemudian pilih “Salin Pautan”.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren membaca tangkapan skrin, bukan pautan ke siaran. Ambil tangkapan skrin siaran itu dan kongsikannya.';
+
+  @override
   String get importGuideNothing =>
       'Panduan itu tiada apa-apa yang boleh ditambah oleh Wren.';
 

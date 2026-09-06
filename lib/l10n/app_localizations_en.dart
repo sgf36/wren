@@ -321,6 +321,10 @@ class LEn extends L {
       'That is not an Apple Maps guide link. Open the guide in Maps, share it, then choose Copy Link.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren reads screenshots, not links to posts. Screenshot the post and share that instead.';
+
+  @override
   String get importGuideNothing => 'That guide holds nothing Wren can add to.';
 
   @override

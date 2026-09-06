@@ -645,6 +645,12 @@ abstract class L {
   /// **'That is not an Apple Maps guide link. Open the guide in Maps, share it, then choose Copy Link.'**
   String get importGuideNotALink;
 
+  /// Shown when the shared or pasted link is a post on a social platform. Wren appears in the share sheet of every app that shares a link, so this arrives often; without it the person is told their reel is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately.
+  ///
+  /// In en, this message translates to:
+  /// **'Wren reads screenshots, not links to posts. Screenshot the post and share that instead.'**
+  String get importGuideSocialPost;
+
   /// Shown when the link decoded but contained no place Wren can republish.
   ///
   /// In en, this message translates to:

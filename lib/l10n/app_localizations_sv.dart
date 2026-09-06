@@ -317,6 +317,10 @@ class LSv extends L {
       'Det är ingen länk till en guide i Apple Kartor. Öppna guiden i Kartor, dela den och välj ”Kopiera länk”.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren läser skärmbilder, inte länkar till inlägg. Ta en skärmbild av inlägget och dela den i stället.';
+
+  @override
   String get importGuideNothing =>
       'Den guiden innehåller inget som Wren kan ta med.';
 

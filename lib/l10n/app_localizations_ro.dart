@@ -318,6 +318,10 @@ class LRo extends L {
       'Acesta nu este un link de ghid Apple Hărți. Deschide ghidul în Hărți, partajează-l, apoi alege Copiază linkul.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren citește capturi de ecran, nu linkuri către postări. Fă o captură a postării și trimite captura.';
+
+  @override
   String get importGuideNothing =>
       'Acel ghid nu conține nimic ce Wren ar putea prelua.';
 

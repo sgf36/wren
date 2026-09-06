@@ -310,6 +310,10 @@ class LHu extends L {
       'Ez nem Apple Térképek útikalauz-hivatkozás. Nyisd meg az útikalauzt a Térképekben, oszd meg, majd válaszd a Hivatkozás másolása lehetőséget.';
 
   @override
+  String get importGuideSocialPost =>
+      'A Wren képernyőképeket olvas, nem bejegyzésekre mutató hivatkozásokat. Készíts képernyőképet a bejegyzésről, és azt oszd meg.';
+
+  @override
   String get importGuideNothing =>
       'Abban az útikalauzban nincs semmi, amit a Wren hozzá tudna adni.';
 

@@ -314,6 +314,10 @@ class LEs extends L {
       'Ese no es el enlace de una guía de Mapas. Abre la guía en Mapas, compártela y elige Copiar enlace.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren lee capturas de pantalla, no enlaces a publicaciones. Haz una captura de la publicación y compártela.';
+
+  @override
   String get importGuideNothing =>
       'Esa guía no contiene ningún lugar que Wren pueda utilizar.';
 
@@ -847,6 +851,10 @@ class LEsMx extends LEs {
   @override
   String get importGuideNotALink =>
       'Ese no es el enlace de una guía de Mapas. Abre la guía en Mapas, compártela y elige Copiar enlace.';
+
+  @override
+  String get importGuideSocialPost =>
+      'Wren lee capturas de pantalla, no enlaces a publicaciones. Toma una captura de la publicación y compártela.';
 
   @override
   String get importGuideNothing =>

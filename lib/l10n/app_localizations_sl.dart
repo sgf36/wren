@@ -322,6 +322,10 @@ class LSl extends L {
       'To ni povezava do vodnika v Apple Zemljevidih. Odpri vodnik v Zemljevidih, deli ga in izberi Kopiraj povezavo.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren bere posnetke zaslona, ne povezav do objav. Naredi posnetek zaslona objave in ga deli.';
+
+  @override
   String get importGuideNothing =>
       'V tem vodniku ni ničesar, kar bi Wren lahko prenesel.';
 

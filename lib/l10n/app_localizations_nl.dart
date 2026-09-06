@@ -316,6 +316,10 @@ class LNl extends L {
       'Dat is geen link naar een gids in Apple Kaarten. Open de gids in Kaarten, deel hem en kies ‘Kopieer link’.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren leest schermafbeeldingen, geen links naar posts. Maak een schermafbeelding van de post en deel die.';
+
+  @override
   String get importGuideNothing =>
       'In die gids staat niets wat Wren kan overnemen.';
 

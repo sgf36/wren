@@ -308,6 +308,10 @@ class LOr extends L {
       'ଏହା Apple Maps ଗାଇଡ୍‌ର ଲିଙ୍କ୍ ନୁହେଁ। Maps‌ରେ ଗାଇଡ୍ ଖୋଲି ଶେୟାର୍ କରନ୍ତୁ, ତା\'ପରେ ଲିଙ୍କ୍ କପି କରନ୍ତୁ ବିକଳ୍ପଟି ବାଛନ୍ତୁ।';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren ସ୍କ୍ରିନସଟ୍ ପଢ଼େ, ପୋଷ୍ଟର ଲିଙ୍କ ନୁହେଁ। ପୋଷ୍ଟର ସ୍କ୍ରିନସଟ୍ ନିଅନ୍ତୁ ଏବଂ ତାହା ସେୟାର କରନ୍ତୁ।';
+
+  @override
   String get importGuideNothing =>
       'ସେହି ଗାଇଡ୍‌ରେ Wren ଯୋଡ଼ିପାରିବ ଏପରି କିଛି ନାହିଁ।';
 
