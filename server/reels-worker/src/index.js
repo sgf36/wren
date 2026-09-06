@@ -460,6 +460,77 @@ export async function quotaState(env, db, key, now = Date.now()) {
   return { used, limit, resetsAt, exhausted: used >= limit };
 }
 
+/* -------------------------------------------------------------- the model */
+
+/**
+ * The only models this Worker will call.
+ *
+ * An allowlist rather than a default, because the difference between a
+ * Flash-Lite model and a premium one is not a difference of degree. Gemini
+ * tokenises video by the second, and a premium model at full resolution runs to
+ * roughly $0.10 for every second of a reel — about $4.50 for a forty-five second
+ * one, against $0.0016 here. That is a thousandfold, on a feature paid for once
+ * and used for ever, and it would arrive as a bill rather than as an error.
+ *
+ * So the model is not a string somebody can edit in a hurry. A name that is not
+ * on this list stops the request.
+ */
+export const ALLOWED_MODELS = Object.freeze(['gemini-3.5-flash-lite']);
+
+/**
+ * Low, always.
+ *
+ * The other half of the same arithmetic. Media resolution decides how many
+ * tokens a second of video becomes, and the difference between low and default
+ * is several times the cost of every call. There is no configuration for it and
+ * no environment override: a reel read at low resolution has been the plan since
+ * the costs were worked out, and anything that wanted to change it should have
+ * to change this line and answer for it.
+ */
+export const MEDIA_RESOLUTION = 'MEDIA_RESOLUTION_LOW';
+
+/** What the model is asked to return, so the answer needs no parsing. */
+export const RESPONSE_SCHEMA = Object.freeze({
+  type: 'ARRAY',
+  items: {
+    type: 'OBJECT',
+    properties: {
+      name: { type: 'STRING' },
+      city: { type: 'STRING' },
+      kind: { type: 'STRING' },
+    },
+    required: ['name'],
+  },
+});
+
+/**
+ * Builds the call, and refuses to build a ruinous one.
+ *
+ * Every request goes through here so that the two settings that decide the cost
+ * are asserted in one place rather than repeated at each call site — the second
+ * copy of a rule is where it stops being true.
+ */
+export function modelRequest(env, parts) {
+  const model = env.GEMINI_MODEL || ALLOWED_MODELS[0];
+  if (!ALLOWED_MODELS.includes(model)) {
+    // Deliberately not a soft fallback to a safe model. Something has been
+    // configured that nobody costed, and running anyway would hide it.
+    throw new Refusal(FAILURES.modelFailed, 500);
+  }
+  return {
+    model,
+    body: {
+      contents: [{ role: 'user', parts }],
+      generationConfig: {
+        mediaResolution: MEDIA_RESOLUTION,
+        temperature: 0,
+        responseMimeType: 'application/json',
+        responseSchema: RESPONSE_SCHEMA,
+      },
+    },
+  };
+}
+
 /* ------------------------------------------------------------- the vendors */
 
 /**
