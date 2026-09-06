@@ -96,6 +96,24 @@ test('a photo post is accepted, not only a video', () => {
   }
 });
 
+test('the link Instagram actually shares, from a real share', () => {
+  // Captured on 6 September 2026 by sharing a post from the Instagram app on
+  // an iPhone into Wren. Kept verbatim because every synthetic fixture above
+  // was written by guessing at the shape, and this one was not.
+  //
+  // Note what Instagram appends. `stkn` is a share token identifying the
+  // person who shared it, not the post, and it is dropped here rather than
+  // forwarded to a vendor along with the request — the point of dropping the
+  // query is that nobody has to remember which parameters are personal.
+  const shared =
+    'https://www.instagram.com/p/DcZzVx4Da6a/?stkn=MmZuc2ExdmJ3cmhp';
+  const got = reelTarget(shared);
+  assert.equal(got.platform, 'instagram');
+  assert.equal(got.id, 'DcZzVx4Da6a');
+  assert.equal(got.canonical, 'https://www.instagram.com/p/DcZzVx4Da6a/');
+  assert.ok(!got.canonical.includes('stkn'), 'the share token was forwarded');
+});
+
 test('an Apple Maps guide link is not a reel', () => {
   // The app routes on this: a guide link must still reach the guide importer,
   // and a reel must not. Overlap here would break a shipped feature.
