@@ -316,6 +316,10 @@ class LFr extends L {
       'Ce n\'est pas le lien d\'un guide Plans. Ouvrez le guide dans Plans, partagez-le, puis choisissez Copier le lien.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren lit les captures d’écran, pas les liens vers les publications. Fais une capture de la publication et partage-la.';
+
+  @override
   String get importGuideNothing =>
       'Ce guide ne contient aucun lieu que Wren puisse reprendre.';
 
@@ -851,6 +855,10 @@ class LFrCa extends LFr {
   @override
   String get importGuideNotALink =>
       'Ce n\'est pas le lien d\'un guide Plans. Ouvrez le guide dans Plans, partagez-le, puis choisissez Copier le lien.';
+
+  @override
+  String get importGuideSocialPost =>
+      'Wren lit les captures d’écran, pas les liens vers les publications. Fais une capture de la publication et partage-la.';
 
   @override
   String get importGuideNothing =>

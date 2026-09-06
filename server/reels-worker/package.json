@@ -1,0 +1,15 @@
+{
+  "name": "wren-reels-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx wrangler dev",
+    "deploy": "npx wrangler deploy",
+    "schema": "npx wrangler d1 execute wren-reels --remote --file schema.sql",
+    "_schema-note": "--file refuses the OAuth token on this account (code 10000). Export a real CLOUDFLARE_API_TOKEN first, or run each statement with --command.",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@apple/app-store-server-library": "^1.5.0"
+  }
+}

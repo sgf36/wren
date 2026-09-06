@@ -320,6 +320,10 @@ class LPa extends L {
       'ਇਹ Apple Maps ਗਾਈਡ ਦਾ ਲਿੰਕ ਨਹੀਂ ਹੈ। ਗਾਈਡ ਨੂੰ Maps ਵਿੱਚ ਖੋਲ੍ਹੋ, ਸਾਂਝੀ ਕਰੋ, ਫਿਰ “ਲਿੰਕ ਕਾਪੀ ਕਰੋ” ਚੁਣੋ।';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren ਸਕ੍ਰੀਨਸ਼ਾਟ ਪੜ੍ਹਦਾ ਹੈ, ਪੋਸਟ ਦੇ ਲਿੰਕ ਨਹੀਂ। ਪੋਸਟ ਦਾ ਸਕ੍ਰੀਨਸ਼ਾਟ ਲਓ ਅਤੇ ਉਹੀ ਸਾਂਝਾ ਕਰੋ।';
+
+  @override
   String get importGuideNothing =>
       'ਉਸ ਗਾਈਡ ਵਿੱਚ ਅਜਿਹਾ ਕੁਝ ਨਹੀਂ ਜੋ Wren ਜੋੜ ਸਕੇ।';
 

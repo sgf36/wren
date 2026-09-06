@@ -22,8 +22,28 @@ GROUP_DIR = 'ShareExtension'
 project = Xcodeproj::Project.open(PROJECT)
 app = project.targets.find { |t| t.name == 'Runner' } or abort 'no Runner target'
 
+# The app half of the App Group, set before anything else and on every run.
+#
+# The extension has always carried the group entitlement, because this script
+# gives it one. Runner never did: no target in the project pointed at an
+# entitlements file, so the app had no right to open the container the extension
+# writes into. That failure is silent by construction — containerURL returns nil
+# for a group you do not hold, and a nil container is exactly what AppDelegate
+# sees when nothing was shared. The extension would accept a share, write it,
+# and the app would find an empty inbox.
+#
+# Done ahead of the "already present" check rather than inside the creation
+# branch, because the extension target existed for weeks before anyone noticed
+# the app side was missing, and a fix that only runs when the target is created
+# would never have run at all.
+app.build_configurations.each do |config|
+  config.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Runner.entitlements'
+end
+puts 'pointed Runner at Runner/Runner.entitlements'
+
 if project.targets.any? { |t| t.name == TARGET }
-  puts "#{TARGET} already present — nothing to do"
+  puts "#{TARGET} already present — leaving it alone"
+  project.save
   exit 0
 end
 
@@ -84,9 +104,20 @@ ext.build_configurations.each do |config|
   s['TARGETED_DEVICE_FAMILY']    = '1,2'
   s['SKIP_INSTALL']              = 'YES'
   s['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = 'NO'
-  # Signing is set by the workflow, which holds the profiles. Left automatic here
-  # so a local generation without secrets still opens.
-  s['CODE_SIGN_STYLE'] = 'Automatic'
+  # Signing. The extension is a separate bundle id with its own profile, so it
+  # cannot ride on the app's — a manual build that names only the app's profile
+  # fails at export with a mismatch, which reads as a certificate problem.
+  #
+  # Left automatic when the workflow passes nothing, so a local generation
+  # without secrets still opens in Xcode.
+  if ENV['SHARE_PROFILE_NAME'].to_s.empty?
+    s['CODE_SIGN_STYLE'] = 'Automatic'
+  else
+    s['CODE_SIGN_STYLE'] = 'Manual'
+    s['PROVISIONING_PROFILE_SPECIFIER'] = ENV['SHARE_PROFILE_NAME']
+    s['CODE_SIGN_IDENTITY'] = 'Apple Distribution'
+    s['DEVELOPMENT_TEAM'] = ENV['DEVELOPMENT_TEAM'] if ENV['DEVELOPMENT_TEAM']
+  end
 end
 
 project.save

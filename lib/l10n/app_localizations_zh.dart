@@ -291,6 +291,9 @@ class LZh extends L {
   String get importGuideNotALink => '这不是地图指南的链接。在地图里打开指南并共享，然后选择“拷贝链接”。';
 
   @override
+  String get importGuideSocialPost => 'Wren 读取截图，不读取帖子链接。请截图该帖子并分享截图。';
+
+  @override
   String get importGuideNothing => '那个指南里没有 Wren 能添加的东西。';
 
   @override
@@ -776,6 +779,9 @@ class LZhHant extends LZh {
 
   @override
   String get importGuideNotALink => '這不是地圖指南的連結。在地圖裡打開指南並分享，然後選擇「拷貝連結」。';
+
+  @override
+  String get importGuideSocialPost => 'Wren 讀取截圖，不讀取貼文連結。請截取貼文的畫面再分享截圖。';
 
   @override
   String get importGuideNothing => '那個指南裡沒有 Wren 能加入的東西。';

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- The app side of the App Group the share extension writes into.
+
+       The extension has carried this entitlement since it was added. The app
+       never did, and nothing in project.pbxproj pointed the Runner target at an
+       entitlements file at all, so the container the extension writes to was one
+       the app had no right to open. containerURL(forSecurityApplicationGroupIdentifier:)
+       returns nil in that case rather than throwing, and AppDelegate treats nil
+       as "nothing was shared" — which is the designed behaviour when a share
+       really is absent, and indistinguishable from it when the entitlement is
+       missing. A share would be accepted by the extension, written, and then
+       silently never arrive.
+
+       Both halves of a group must claim it. One half is not a group. -->
+  <key>com.apple.security.application-groups</key>
+  <array>
+    <string>group.com.spencerfields.littlebird</string>
+  </array>
+</dict>
+</plist>

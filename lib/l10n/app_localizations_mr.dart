@@ -314,6 +314,10 @@ class LMr extends L {
       'ही Apple Maps मार्गदर्शिकेची लिंक नाही. मार्गदर्शिका Maps मध्ये उघडा, शेअर करा, नंतर “लिंक कॉपी करा” निवडा.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren स्क्रीनशॉट वाचते, पोस्टच्या लिंक नाही. पोस्टचा स्क्रीनशॉट घ्या आणि तो शेअर करा.';
+
+  @override
   String get importGuideNothing =>
       'त्या मार्गदर्शिकेत Wren जोडू शकेल असं काहीच नाही.';
 

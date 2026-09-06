@@ -138,6 +138,45 @@ void main() {
     });
   });
 
+  group('a link to a post', () {
+    test('is recognised, so the answer is not about Apple Maps', () {
+      // Wren is in the share sheet of every app that shares a link, and its own
+      // first screen asks for reels and posts by name. Without this the person
+      // is told their reel is not an Apple Maps guide and to open the guide in
+      // Maps, which is advice about a feature they were not using.
+      const links = [
+        // Captured from a real share out of the Instagram app.
+        'https://www.instagram.com/p/DcZzVx4Da6a/?stkn=MmZuc2ExdmJ3cmhp',
+        'https://www.instagram.com/reel/Cx1yZ_aBcDe/',
+        'https://vm.tiktok.com/ZTdAbCdEf/',
+        'https://www.tiktok.com/@someone/video/7234567890123456789',
+        'https://youtu.be/dQw4w9WgXcQ',
+        'https://www.youtube.com/shorts/dQw4w9WgXcQ',
+        'https://x.com/someone/status/123',
+        'https://pin.it/abc123',
+      ];
+      for (final link in links) {
+        expect(isSocialPostLink(link), isTrue, reason: link);
+      }
+    });
+
+    test('does not swallow the links Wren does read', () {
+      // The guide importer has to keep getting these. A host check that caught
+      // one of them would break a shipped feature to improve an error message.
+      const kept = [
+        'https://maps.apple/ug/qai3oPE2QtpYfaNFg27D3C',
+        'https://maps.apple.com/?ug=abc123',
+        'https://maps.apple/p/abc123',
+        'https://example.com/anything',
+        'not a link at all',
+        '',
+      ];
+      for (final link in kept) {
+        expect(isSocialPostLink(link), isFalse, reason: link);
+      }
+    });
+  });
+
   group('the shapes a pasted link arrives in', () {
     late String link;
     setUp(() {

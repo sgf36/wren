@@ -75,6 +75,7 @@
   "guideLinkLabel": "קישור למדריך",
   "readGuide": "קריאת המדריך",
   "importGuideNotALink": "זה לא קישור למדריך במפות של Apple. יש לפתוח את המדריך במפות, לשתף אותו ולבחור „העתקת קישור”.",
+  "importGuideSocialPost": "‏Wren קורא צילומי מסך, לא קישורים לפוסטים. צלם את הפוסט ושתף את צילום המסך.",
   "importGuideNothing": "במדריך הזה אין מקומות שאפשר לצרף.",
   "importedGuideSummary": "{count, plural, one{נקרא מקום אחד מהמדריך הזה} two{נקראו שני מקומות מהמדריך הזה} other{נקראו {count} מקומות מהמדריך הזה}}",
   "importedGuideUnusable": "{count, plural, one{מקום אחד מתוכו לא יעבור למדריך החדש} two{שני מקומות מתוכו לא יעברו למדריך החדש} other{{count} מקומות מתוכו לא יעברו למדריך החדש}}",

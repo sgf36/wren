@@ -316,6 +316,10 @@ class LDe extends L {
       'Das ist kein Link zu einem Guide in Apple Karten. Öffne den Guide in Karten, teile ihn und wähle „Link kopieren“.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren liest Screenshots, keine Links zu Beiträgen. Mach einen Screenshot vom Beitrag und teile den.';
+
+  @override
   String get importGuideNothing =>
       'Dieser Guide enthält nichts, was Wren übernehmen kann.';
 

@@ -75,6 +75,7 @@
   "guideLinkLabel": "Odkaz na sprievodcu",
   "readGuide": "Prečítať sprievodcu",
   "importGuideNotALink": "To nie je odkaz na sprievodcu z Máp Apple. Otvor sprievodcu v Mapách, zdieľaj ho a vyber Kopírovať odkaz.",
+  "importGuideSocialPost": "Wren číta snímky obrazovky, nie odkazy na príspevky. Vytvor snímku príspevku a zdieľaj ju.",
   "importGuideNothing": "V tomto sprievodcovi nie je nič, čo by Wren mohol preniesť.",
   "importedGuideSummary": "{count, plural, one{Z tohto sprievodcu prečítané 1 miesto} few{Z tohto sprievodcu prečítané {count} miesta} many{Z tohto sprievodcu prečítané {count} miesta} other{Z tohto sprievodcu prečítaných {count} miest}}",
   "importedGuideUnusable": "{count, plural, one{1 miesto sa z neho nedá preniesť} few{{count} miesta sa z neho nedajú preniesť} many{{count} miesta sa z neho nedá preniesť} other{{count} miest sa z neho nedá preniesť}}",

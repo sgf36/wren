@@ -301,6 +301,10 @@ class LTh extends L {
       'นั่นไม่ใช่ลิงก์ไกด์ของ Apple Maps เปิดไกด์ใน Apple Maps แล้วแชร์ จากนั้นเลือก “คัดลอกลิงก์”';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren อ่านภาพหน้าจอ ไม่ใช่ลิงก์โพสต์ ถ่ายภาพหน้าจอของโพสต์แล้วแชร์ภาพนั้นแทน';
+
+  @override
   String get importGuideNothing => 'ไกด์นั้นไม่มีอะไรที่ Wren เพิ่มได้';
 
   @override

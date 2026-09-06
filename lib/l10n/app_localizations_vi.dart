@@ -305,6 +305,10 @@ class LVi extends L {
       'Đó không phải liên kết hướng dẫn của Apple Maps. Mở hướng dẫn trong Maps, chia sẻ, rồi chọn “Sao chép liên kết”.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren đọc ảnh chụp màn hình, không đọc liên kết bài đăng. Hãy chụp màn hình bài đăng rồi chia sẻ ảnh đó.';
+
+  @override
   String get importGuideNothing => 'Hướng dẫn đó không có gì để Wren thêm vào.';
 
   @override

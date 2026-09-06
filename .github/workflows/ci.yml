@@ -74,7 +74,22 @@ jobs:
           cache: true
 
       - run: flutter pub get
-      - run: dart format --output=none --set-exit-if-changed lib test
+      # Prints the diff it wants rather than only the file name.
+      #
+      # There is no Dart SDK on the machine this project is written on, so a
+      # failure that says nothing but "Changed lib/src/thing.dart" cannot be
+      # acted on without pushing another guess and waiting for CI again. The
+      # diff turns that loop into one read.
+      - name: Check formatting
+        run: |
+          if dart format --output=none --set-exit-if-changed lib test; then
+            exit 0
+          fi
+          echo '::group::what dart format wants'
+          dart format lib test > /dev/null
+          git --no-pager diff
+          echo '::endgroup::'
+          exit 1
       - run: flutter analyze
       - run: flutter test --reporter expanded
 
@@ -95,6 +110,20 @@ jobs:
       # No dependencies and no lockfile: node:test is built in, so there is
       # nothing to install and nothing to keep up to date.
       - run: node --test
+        working-directory: server/comp-codes-worker
+
+      # Tests prove the source is right. This asks whether the thing actually
+      # answering requests is the source — which is a different question, and
+      # the one nobody was asking when /renew sat written, merged and
+      # undeployed from 21 August to 6 September 2026 while administrator
+      # tokens quietly expired against a 404.
+      #
+      # Not run on pull requests. It talks to production, so a Cloudflare blip
+      # would fail somebody's unrelated branch, and a fork's PR should not be
+      # probing this at all.
+      - name: Prove the deployment serves what the app calls
+        if: github.event_name != 'pull_request'
+        run: node tools/smoke.mjs
         working-directory: server/comp-codes-worker
 
   ios:
@@ -125,6 +154,43 @@ jobs:
           grep -q 'ShareExtension' ios/Runner.xcodeproj/project.pbxproj
           echo "target present in the project file"
 
+      # Both halves of the App Group, checked as a pair.
+      #
+      # An App Group only works if the app and the extension both claim the same
+      # identifier. When only one does, nothing fails: the extension writes into
+      # its container, the app asks for a container it does not hold, gets nil
+      # back, and reads that as "nothing was shared" — which is exactly what it
+      # gets when nothing was shared. Every share would vanish and every test
+      # would pass. That was the real state of the project until this step
+      # existed, so the check compares the two files rather than trusting either.
+      - name: Prove both halves of the App Group agree
+        run: |
+          # Read with grep rather than a plutil keypath. The key is literally
+          # named com.apple.security.application-groups, plutil reads a dot as
+          # a path separator, and its escaping does not survive the trip
+          # through the shell here — it answers 'invalid key path' either way.
+          # The identifier is what the comparison is about, so match on that.
+          # Matched inside a <string> element, not loose in the file. These
+          # entitlements carry comments explaining the group, and a bare
+          # 'group[.]' happily matches the word ending a sentence — which
+          # compares a comment against a real identifier and passes.
+          FIND='<string>group[.][A-Za-z0-9._-]*</string>'
+          PBX=ios/Runner.xcodeproj/project.pbxproj
+          SETTING='CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements'
+          if ! grep -q "$SETTING" "$PBX"; then
+            echo "::error::Runner is not pointed at an entitlements file"
+            exit 1
+          fi
+          APP=$(grep -oE "$FIND" ios/Runner/Runner.entitlements | head -1)
+          EXT=$(grep -oE "$FIND" \
+            ios/ShareExtension/ShareExtension.entitlements | head -1)
+          if [ -z "$APP" ] || [ "$APP" != "$EXT" ]; then
+            echo "::error::group mismatch: app [$APP], extension [$EXT]"
+            exit 1
+          fi
+          echo "app and extension both claim $APP"
+
+
       # Unsigned: proves the Swift bridge and the pod install are sound without
       # needing certificates. Signing comes in with the TestFlight job below.
       #
@@ -146,6 +212,7 @@ jobs:
           URLS=$(plutil -extract NSExtension.NSExtensionAttributes.NSExtensionActivationRule.NSExtensionActivationSupportsWebURLWithMaxCount raw "$APPEX/Info.plist")
           test "$URLS" = "1" || { echo "::error::not activated for web URLs: $URLS"; exit 1; }
           echo "embedded, share-services, activates on 1 web URL"
+
           plutil -extract CFBundleIdentifier raw "$APPEX/Info.plist"
 
       - name: Report app size
@@ -405,12 +472,31 @@ jobs:
                   "In-App-Purchase key will fail here.")
           PY
 
+      # The signed job builds from the committed project file, and the extension
+      # target is not in it — it is generated. Without this step every build that
+      # actually reaches a device or the App Store ships with no share extension
+      # at all, while the unsigned job above proves the extension compiles and
+      # then throws the build away. That was the real state of things until now.
+      - name: Add the share extension target
+        if: steps.signing.outputs.ready == 'true'
+        env:
+          SHARE_PROFILE_NAME: ${{ secrets.IOS_SHARE_PROVISION_PROFILE_NAME }}
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          gem install --no-document xcodeproj
+          ruby ios/add_share_extension.rb
+          if ! grep -q 'ShareExtension' ios/Runner.xcodeproj/project.pbxproj; then
+            echo "::error::extension target missing from the signed build"
+            exit 1
+          fi
+
       - name: Import certificate and provisioning profile
         if: steps.signing.outputs.ready == 'true'
         env:
           P12_B64: ${{ secrets.IOS_P12_BASE64 }}
           P12_PASSWORD: ${{ secrets.IOS_P12_PASSWORD }}
           PROFILE_B64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
+          SHARE_PROFILE_B64: ${{ secrets.IOS_SHARE_PROVISION_PROFILE_BASE64 }}
         run: |
           KEYCHAIN=build.keychain
           security create-keychain -p actions "$KEYCHAIN"
@@ -421,16 +507,45 @@ jobs:
           security import cert.p12 -k "$KEYCHAIN" -P "$P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions "$KEYCHAIN"
           rm -f cert.p12
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          echo "$PROFILE_B64" | base64 --decode > profile.mobileprovision
-          UUID=$(security cms -D -i profile.mobileprovision | plutil -extract UUID raw -)
-          cp profile.mobileprovision "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
+          DEST="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$DEST"
+          # Both halves of the App Group need a profile, and they are
+          # different bundle ids, so they are different profiles. Installing
+          # only the app's leaves the appex unsigned and the export fails.
+
+          WANT='<string>group.com.spencerfields.littlebird</string>'
+          for pair in "app:$PROFILE_B64" "share:$SHARE_PROFILE_B64"; do
+            name=${pair%%:*}
+            b64=${pair#*:}
+            if [ -z "$b64" ]; then
+              echo "::error::no $name provisioning profile"
+              exit 1
+            fi
+            echo "$b64" | base64 --decode > "$name.mobileprovision"
+            PLIST=$(security cms -D -i "$name.mobileprovision")
+            UUID=$(printf %s "$PLIST" | plutil -extract UUID raw -)
+            cp "$name.mobileprovision" "$DEST/$UUID.mobileprovision"
+            # An App Group entitlement that is present but empty grants
+            # nothing and signs without complaint. The symptom is a share
+            # that vanishes on a real phone, months later. xml1 rather than
+            # raw because the value is an array, and plutil's raw output for
+            # an array is not something to depend on.
+            # Grepping the decoded profile rather than extracting a keypath,
+            # for the reason given in the unsigned job: the key's own name
+            # contains dots and plutil cannot be talked out of reading them.
+            if ! printf %s "$PLIST" | grep -qF "$WANT"; then
+              echo "::error::$name profile carries no app group"
+              exit 1
+            fi
+            echo "$name profile $UUID installed, app group present"
+          done
 
       - name: Write ExportOptions.plist
         if: steps.signing.outputs.ready == 'true'
         env:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           PROFILE_NAME: ${{ secrets.IOS_PROVISION_PROFILE_NAME }}
+          SHARE_PROFILE_NAME: ${{ secrets.IOS_SHARE_PROVISION_PROFILE_NAME }}
         run: |
           cat > ios/ExportOptions.plist <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
@@ -442,6 +557,8 @@ jobs:
             <key>provisioningProfiles</key><dict>
               <key>com.spencerfields.littlebird</key>
               <string>$PROFILE_NAME</string>
+              <key>com.spencerfields.littlebird.share</key>
+              <string>$SHARE_PROFILE_NAME</string>
             </dict>
             <key>uploadSymbols</key><true/>
           </dict></plist>

@@ -75,6 +75,7 @@
   "guideLinkLabel": "Lien du guide",
   "readGuide": "Lire le guide",
   "importGuideNotALink": "Ce n'est pas le lien d'un guide Plans. Ouvrez le guide dans Plans, partagez-le, puis choisissez Copier le lien.",
+  "importGuideSocialPost": "Wren lit les captures d’écran, pas les liens vers les publications. Fais une capture de la publication et partage-la.",
   "importGuideNothing": "Ce guide ne contient aucun lieu que Wren puisse reprendre.",
   "importedGuideSummary": "{count, plural, =1{1 lieu lu dans ce guide} other{{count} lieux lus dans ce guide}}",
   "importedGuideUnusable": "{count, plural, =1{1 lieu ne peut pas être repris} other{{count} lieux ne peuvent pas être repris}}",

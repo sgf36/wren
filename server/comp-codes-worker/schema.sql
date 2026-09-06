@@ -23,8 +23,20 @@ CREATE TABLE IF NOT EXISTS codes (
   -- show; the table says what the server will do. Keeping the decision here
   -- is what makes revoking an administrator take effect immediately, on a
   -- device that is already holding a valid signed token.
+  --
+  -- 'everything' arrived with the reel feature: the same unlock plus places
+  -- read out of a shared reel. A ladder rather than a set, because the
+  -- products are a ladder — the reels purchase presumes the base unlock, and
+  -- reels without uncapped guides is not a combination anybody can buy.
+  --
+  -- This CHECK only ever applies to a database created from this file. The
+  -- live one was given its role column by ALTER TABLE, which cannot add a
+  -- constraint, so there the values are held to three by roleOf() in the
+  -- Worker and nowhere else. Widening this line needs no migration for that
+  -- reason, and a rebuild of the table to add the constraint would be a
+  -- larger risk than the constraint is worth.
   role        TEXT    NOT NULL DEFAULT 'unlock'
-      CHECK (role IN ('unlock', 'admin'))
+      CHECK (role IN ('unlock', 'everything', 'admin'))
 );
 
 -- One row per (code, device). The primary key is what makes redeeming

@@ -85,7 +85,11 @@ class CodeRecord {
       note: (m['note'] ?? '').toString(),
       // Anything unrecognised is an unlock, matching the server. A listing
       // that guessed 'admin' would be a lie about who can issue codes.
-      role: m['role'] == 'admin' ? CompRole.admin : CompRole.unlock,
+      role: switch (m['role']) {
+        'admin' => CompRole.admin,
+        'everything' => CompRole.everything,
+        _ => CompRole.unlock,
+      },
       uses: (m['uses'] as num?)?.toInt() ?? 0,
       maxUses: (m['maxUses'] as num?)?.toInt() ?? 1,
       revoked: m['revoked'] == true,
@@ -204,7 +208,11 @@ class AdminCodes {
       'count': count,
       'maxUses': maxUses,
       'note': note,
-      'role': role == CompRole.admin ? 'admin' : 'unlock',
+      'role': switch (role) {
+        CompRole.admin => 'admin',
+        CompRole.everything => 'everything',
+        _ => 'unlock',
+      },
     });
     final codes = body['codes'];
     if (codes is! List) throw const AdminException(AdminFailure.unreadable);

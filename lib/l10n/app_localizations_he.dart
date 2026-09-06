@@ -323,6 +323,10 @@ class LHe extends L {
       'זה לא קישור למדריך במפות של Apple. יש לפתוח את המדריך במפות, לשתף אותו ולבחור „העתקת קישור”.';
 
   @override
+  String get importGuideSocialPost =>
+      '‏Wren קורא צילומי מסך, לא קישורים לפוסטים. צלם את הפוסט ושתף את צילום המסך.';
+
+  @override
   String get importGuideNothing => 'במדריך הזה אין מקומות שאפשר לצרף.';
 
   @override

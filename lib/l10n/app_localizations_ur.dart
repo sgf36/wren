@@ -321,6 +321,10 @@ class LUr extends L {
       'یہ Apple Maps گائیڈ کا لنک نہیں ہے۔ گائیڈ کو Maps میں کھولیے، شیئر کیجیے، پھر ”لنک کاپی کریں“ چنیے۔';
 
   @override
+  String get importGuideSocialPost =>
+      '‏Wren اسکرین شاٹ پڑھتا ہے، پوسٹ کے لنک نہیں۔ پوسٹ کا اسکرین شاٹ لیں اور وہی شیئر کریں۔';
+
+  @override
   String get importGuideNothing =>
       'اس گائیڈ میں ایسا کچھ نہیں جو Wren شامل کر سکے۔';
 

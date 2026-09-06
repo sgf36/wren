@@ -75,6 +75,7 @@
   "guideLinkLabel": "رابط الدليل",
   "readGuide": "قراءة الدليل",
   "importGuideNotALink": "هذا ليس رابط دليل من خرائط Apple. افتح الدليل في الخرائط وشاركه، ثم اختر ”نسخ الرابط“.",
+  "importGuideSocialPost": "‏Wren يقرأ لقطات الشاشة، لا روابط المنشورات. التقط لقطة شاشة للمنشور وشاركها بدلاً من الرابط.",
   "importGuideNothing": "هذا الدليل لا يضم شيئاً يمكن لـ Wren إضافته.",
   "importedGuideSummary": "{count, plural, zero{لم يُقرأ أي مكان من ذلك الدليل} one{قُرئ مكان واحد من ذلك الدليل} two{قُرئ مكانان من ذلك الدليل} few{قُرئت {count} أماكن من ذلك الدليل} many{قُرئ {count} مكاناً من ذلك الدليل} other{قُرئ {count} مكان من ذلك الدليل}}",
   "importedGuideUnusable": "{count, plural, zero{لا يوجد فيه ما يتعذّر نقله} one{يتعذّر نقل مكان واحد منه} two{يتعذّر نقل مكانين منه} few{يتعذّر نقل {count} أماكن منه} many{يتعذّر نقل {count} مكاناً منه} other{يتعذّر نقل {count} مكان منه}}",

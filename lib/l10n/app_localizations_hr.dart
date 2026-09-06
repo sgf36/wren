@@ -316,6 +316,10 @@ class LHr extends L {
       'To nije link vodiča Apple Karata. Otvori vodič u Kartama, podijeli ga i odaberi Kopiraj link.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren čita snimke zaslona, ne poveznice na objave. Snimi objavu i podijeli tu sliku.';
+
+  @override
   String get importGuideNothing =>
       'U tom vodiču nema ničega što bi Wren mogao prenijeti.';
 

@@ -307,6 +307,10 @@ class LFi extends L {
       'Tämä ei ole Apple Kartat -oppaan linkki. Avaa opas Kartoissa, jaa se ja valitse ”Kopioi linkki”.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren lukee kuvakaappauksia, ei linkkejä julkaisuihin. Ota julkaisusta kuvakaappaus ja jaa se.';
+
+  @override
   String get importGuideNothing =>
       'Oppaassa ei ole yhtään paikkaa, jonka Wren voisi ottaa mukaan.';
 

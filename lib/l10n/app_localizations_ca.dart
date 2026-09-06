@@ -316,6 +316,10 @@ class LCa extends L {
       'Aquest no és l\'enllaç d\'una guia de Mapes. Obre la guia a Mapes, comparteix-la i tria Copiar l\'enllaç.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren llegeix captures de pantalla, no enllaços a publicacions. Fes una captura de la publicació i comparteix-la.';
+
+  @override
   String get importGuideNothing =>
       'Aquesta guia no té cap lloc que el Wren pugui fer servir.';
 

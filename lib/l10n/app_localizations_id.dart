@@ -309,6 +309,10 @@ class LId extends L {
       'Itu bukan tautan panduan Apple Maps. Buka panduannya di Maps, bagikan, lalu pilih “Salin Tautan”.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren membaca tangkapan layar, bukan tautan ke postingan. Tangkap layar postingannya lalu bagikan itu.';
+
+  @override
   String get importGuideNothing =>
       'Panduan itu tidak berisi apa pun yang bisa ditambahkan Wren.';
 

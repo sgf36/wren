@@ -314,6 +314,10 @@ class LDa extends L {
       'Det er ikke et link til en guide i Apple Kort. Åbn guiden i Kort, del den, og vælg »Kopier link«.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren læser skærmbilleder, ikke links til opslag. Tag et skærmbillede af opslaget, og del det i stedet.';
+
+  @override
   String get importGuideNothing =>
       'Den guide indeholder ikke noget, Wren kan tage med over.';
 

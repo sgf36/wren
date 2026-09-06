@@ -75,6 +75,7 @@
   "guideLinkLabel": "Liên kết hướng dẫn",
   "readGuide": "Đọc hướng dẫn",
   "importGuideNotALink": "Đó không phải liên kết hướng dẫn của Apple Maps. Mở hướng dẫn trong Maps, chia sẻ, rồi chọn “Sao chép liên kết”.",
+  "importGuideSocialPost": "Wren đọc ảnh chụp màn hình, không đọc liên kết bài đăng. Hãy chụp màn hình bài đăng rồi chia sẻ ảnh đó.",
   "importGuideNothing": "Hướng dẫn đó không có gì để Wren thêm vào.",
   "importedGuideSummary": "{count, plural, other{Đã đọc {count} địa điểm từ hướng dẫn đó}}",
   "importedGuideUnusable": "{count, plural, other{{count} địa điểm trong đó không chuyển sang được}}",

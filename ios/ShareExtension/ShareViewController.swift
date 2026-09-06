@@ -14,10 +14,15 @@ import UniformTypeIdentifiers
 /// replaces screenshot → leave the app → open Wren → Add → picker → choose with
 /// share → Wren.
 ///
-/// Deliberately silent. It takes what it was given, writes it where the app will
-/// find it, and completes — no interface of its own, because there is nothing to
-/// ask and a sheet that lingers to say "done" is a sheet in the way. The
-/// reviewing and confirming all happens in the app, where it already does.
+/// Nearly silent. It takes what it was given, writes it where the app will find
+/// it, shows a tick for a moment, and completes. The reviewing and confirming
+/// all happens in the app, where it already does.
+///
+/// The tick is not decoration. This cannot open Wren — no share extension can
+/// open its containing app, and see finish() for how thoroughly iOS means it —
+/// so the share is taken and then nothing visibly happens, which is exactly
+/// what failure looks like. A sheet that lingers to say "done" was rejected
+/// when there was nothing else to say; there is now.
 ///
 /// Apple Maps only, for links. A shared Google Maps list URL is opaque — no
 /// documented format, nothing to decode — so `Info.plist` does not claim it, and
@@ -40,13 +45,14 @@ class ShareViewController: UIViewController {
   /// files it lists, a directory listing cannot.
   static let inboxName = "shared-images"
 
+
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = .clear
 
     let items = (extensionContext?.inputItems as? [NSExtensionItem]) ?? []
     let providers = items.flatMap { $0.attachments ?? [] }
-    guard !providers.isEmpty else { return finish() }
+    guard !providers.isEmpty else { return finish(showing: false) }
 
     // Every provider is handled, and finish() waits for all of them. Completing
     // the request tears this process down, so returning after the first would
@@ -122,7 +128,83 @@ class ShareViewController: UIViewController {
     }
   }
 
-  private func finish() {
-    extensionContext?.completeRequest(returningItems: nil)
+
+  /// Says so, briefly, and then goes.
+  ///
+  /// This used to try to open Wren. It cannot, and neither can any other share
+  /// extension: iOS 18 refuses both routes deliberately. Sending openURL: to
+  /// whatever answers it on the responder chain — what every app that does this
+  /// has historically shipped — is met with "BUG IN CLIENT OF UIKIT ... Force
+  /// returning false", and NSExtensionContext.open is documented and enforced
+  /// as a Today-widget call and answers false here. Apple's guidance is that an
+  /// extension wanting attention should post a local notification instead.
+  ///
+  /// Do not try it again. Both were tried on device, in builds 164 and 165.
+  ///
+  /// So the problem is solved the other way round. The share worked; it simply
+  /// looked as though it had not, because a sheet that vanishes in silence is
+  /// what failure looks like too. A tick that lingers for a moment says the
+  /// thing was taken, and the app finds it on next launch as it always has.
+  ///
+  /// No words, deliberately. The app is translated into forty-seven languages
+  /// and this extension has no localisation of its own; a tick and the app's
+  /// own name need none.
+  private func confirm() {
+    let card = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+    card.layer.cornerRadius = 22
+    card.layer.cornerCurve = .continuous
+    card.clipsToBounds = true
+    card.alpha = 0
+    card.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(card)
+
+    let tick = UIImageView(
+      image: UIImage(systemName: "checkmark.circle.fill"))
+    tick.tintColor = .label
+    tick.contentMode = .scaleAspectFit
+    tick.preferredSymbolConfiguration = UIImage.SymbolConfiguration(
+      pointSize: 34, weight: .regular)
+
+    let name = UILabel()
+    name.text = "Wren"
+    name.textColor = .label
+    name.font = .preferredFont(forTextStyle: .headline)
+    name.adjustsFontForContentSizeCategory = true
+
+    let stack = UIStackView(arrangedSubviews: [tick, name])
+    stack.axis = .vertical
+    stack.alignment = .center
+    stack.spacing = 10
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    card.contentView.addSubview(stack)
+
+    NSLayoutConstraint.activate([
+      card.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      card.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+      card.widthAnchor.constraint(greaterThanOrEqualToConstant: 150),
+      stack.topAnchor.constraint(equalTo: card.contentView.topAnchor,
+                                 constant: 26),
+      stack.bottomAnchor.constraint(equalTo: card.contentView.bottomAnchor,
+                                    constant: -26),
+      stack.leadingAnchor.constraint(equalTo: card.contentView.leadingAnchor,
+                                     constant: 30),
+      stack.trailingAnchor.constraint(equalTo: card.contentView.trailingAnchor,
+                                      constant: -30),
+    ])
+
+    UIView.animate(withDuration: 0.18) { card.alpha = 1 }
+  }
+
+  /// Confirms, then completes. Completing tears the process down, so the tick
+  /// has to be on screen for its own moment before that happens.
+  private func finish(showing confirmation: Bool = true) {
+    guard confirmation else {
+      extensionContext?.completeRequest(returningItems: nil)
+      return
+    }
+    confirm()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
+      self?.extensionContext?.completeRequest(returningItems: nil)
+    }
   }
 }

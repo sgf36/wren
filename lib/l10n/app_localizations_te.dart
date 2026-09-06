@@ -314,6 +314,10 @@ class LTe extends L {
       'అది Apple Maps గైడ్ లింక్ కాదు. Maps‌లో గైడ్‌ను తెరిచి షేర్ చేయండి, తర్వాత లింక్‌ను కాపీ చేయండి అనే ఎంపికను ఎంచుకోండి.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren స్క్రీన్‌షాట్‌లను చదువుతుంది, పోస్ట్ లింక్‌లను కాదు. పోస్ట్ స్క్రీన్‌షాట్ తీసి దాన్ని షేర్ చేయండి.';
+
+  @override
   String get importGuideNothing => 'ఆ గైడ్‌లో Wren జోడించగలిగేది ఏదీ లేదు.';
 
   @override

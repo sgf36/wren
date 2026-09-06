@@ -307,6 +307,10 @@ class LBn extends L {
       'এটি Apple Maps গাইডের লিঙ্ক নয়। Maps-এ গাইডটি খুলে শেয়ার করুন, তারপর “লিঙ্ক কপি করুন” বেছে নিন।';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren স্ক্রিনশট পড়ে, পোস্টের লিঙ্ক নয়। পোস্টটির স্ক্রিনশট নিন এবং সেটি শেয়ার করুন।';
+
+  @override
   String get importGuideNothing => 'ওই গাইডে Wren যোগ করতে পারে এমন কিছু নেই।';
 
   @override

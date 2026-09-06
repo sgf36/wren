@@ -75,6 +75,7 @@
   "guideLinkLabel": "Hiperligação do guia",
   "readGuide": "Ler o guia",
   "importGuideNotALink": "Esta não é a hiperligação de um guia do Mapas. Abra o guia no Mapas, partilhe-o e escolha Copiar hiperligação.",
+  "importGuideSocialPost": "O Wren lê capturas de ecrã, não ligações para publicações. Faz uma captura da publicação e partilha essa.",
   "importGuideNothing": "Esse guia não tem nenhum lugar que o Wren consiga usar.",
   "importedGuideSummary": "{count, plural, =1{1 lugar lido desse guia} other{{count} lugares lidos desse guia}}",
   "importedGuideUnusable": "{count, plural, =1{1 lugar não pode passar para o novo guia} other{{count} lugares não podem passar para o novo guia}}",

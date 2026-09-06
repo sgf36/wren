@@ -75,6 +75,7 @@
   "guideLinkLabel": "Rehber bağlantısı",
   "readGuide": "Rehberi oku",
   "importGuideNotALink": "Bu bir Apple Harita rehber bağlantısı değil. Rehberi Harita'da aç, paylaş, ardından Bağlantıyı Kopyala'yı seç.",
+  "importGuideSocialPost": "Wren ekran görüntülerini okur, gönderi bağlantılarını değil. Gönderinin ekran görüntüsünü al ve onu paylaş.",
   "importGuideNothing": "O rehberde Wren'in ekleyebileceği bir şey yok.",
   "importedGuideSummary": "{count, plural, =1{O rehberden 1 mekân okundu} other{O rehberden {count} mekân okundu}}",
   "importedGuideUnusable": "{count, plural, =1{İçindeki 1 mekân aktarılamıyor} other{İçindeki {count} mekân aktarılamıyor}}",

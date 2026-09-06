@@ -75,6 +75,7 @@
   "guideLinkLabel": "માર્ગદર્શિકાની લિંક",
   "readGuide": "માર્ગદર્શિકા વાંચો",
   "importGuideNotALink": "આ Apple Maps માર્ગદર્શિકાની લિંક નથી. માર્ગદર્શિકા Maps માં ખોલો, શેર કરો, પછી “લિંક કૉપિ કરો” પસંદ કરો.",
+  "importGuideSocialPost": "Wren સ્ક્રીનશૉટ વાંચે છે, પોસ્ટની લિંક નહીં. પોસ્ટનો સ્ક્રીનશૉટ લો અને તે શેર કરો.",
   "importGuideNothing": "એ માર્ગદર્શિકામાં Wren ઉમેરી શકે એવું કશું નથી.",
   "importedGuideSummary": "{count, plural, one{એ માર્ગદર્શિકામાંથી ૧ જગ્યા વંચાઈ} other{એ માર્ગદર્શિકામાંથી {count} જગ્યાઓ વંચાઈ}}",
   "importedGuideUnusable": "{count, plural, one{તેમાંની ૧ જગ્યા નવી માર્ગદર્શિકામાં લઈ જઈ શકાતી નથી} other{તેમાંની {count} જગ્યાઓ નવી માર્ગદર્શિકામાં લઈ જઈ શકાતી નથી}}",

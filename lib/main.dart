@@ -928,6 +928,17 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // that this is happening, because it reaches the network and is the one
     // slow step in an otherwise instant flow.
     var link = pasted.trim();
+
+    // Answered before anything is parsed, because the parser's answer would be
+    // about Apple Maps and the question was not. Wren is in the share sheet of
+    // every app that shares a link, and the first screen asks for reels and
+    // posts by name, so this arrives often and deserves better than advice
+    // about a feature the person was not using.
+    if (isSocialPostLink(link)) {
+      setState(() => _status = l.importGuideSocialPost);
+      return;
+    }
+
     if (isShortGuideLink(link)) {
       setState(() => _status = l.expandingLink);
       try {

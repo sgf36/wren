@@ -146,12 +146,21 @@ void main() {
 
         await tester.tap(find.byIcon(Icons.add));
         await tester.pumpAndSettle();
-        expect(find.text('Unlocks the app. Nothing else.'), findsOneWidget);
+        expect(
+          find.text('Unlocks the app. Reels are not included.'),
+          findsOneWidget,
+        );
 
-        // An admin code says plainly what it hands over before it is issued.
+        // Each role says plainly what it hands over before it is issued, and
+        // the two that cost something say so: a reel is paid for every time it
+        // is read, and an admin code gives away the ability to give it away.
+        await tester.tap(find.text('Reels'));
+        await tester.pumpAndSettle();
+        expect(find.textContaining('cost money'), findsOneWidget);
+
         await tester.tap(find.text('Admin'));
         await tester.pumpAndSettle();
-        expect(find.textContaining('issue codes of their own'), findsOneWidget);
+        expect(find.textContaining('issue codes'), findsOneWidget);
 
         await tester.tap(find.text('Create'));
         // Twice: the first settles the dialog closing, and only then does the
@@ -183,11 +192,27 @@ void main() {
   });
 
   group('CompRole', () {
-    test('is the only thing that opens the console', () {
-      // Guards the enum itself: a third granting role added without a decision
-      // about the console would otherwise be silently admitted or silently
-      // refused, depending on how the switch was written.
-      expect(CompRole.values, [CompRole.none, CompRole.unlock, CompRole.admin]);
+    test('is a ladder, and only its top opens the console', () {
+      // Guards the enum itself: a granting role added without a decision about
+      // the console would otherwise be silently admitted or silently refused,
+      // depending on how the switch happened to be written.
+      //
+      // `everything` was added for reels and the decision is that it does NOT
+      // open the console. Reading places out of a reel and handing out codes
+      // are unrelated powers, and the second is the one that cannot be undone.
+      expect(CompRole.values, [
+        CompRole.none,
+        CompRole.unlock,
+        CompRole.everything,
+        CompRole.admin,
+      ]);
+      for (final role in CompRole.values) {
+        expect(
+          role == CompRole.admin,
+          role.index == CompRole.values.length - 1,
+          reason: '$role must not silently gain or lose the console',
+        );
+      }
     });
   });
 }

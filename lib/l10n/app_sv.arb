@@ -75,6 +75,7 @@
   "guideLinkLabel": "Länk till guiden",
   "readGuide": "Läs guide",
   "importGuideNotALink": "Det är ingen länk till en guide i Apple Kartor. Öppna guiden i Kartor, dela den och välj ”Kopiera länk”.",
+  "importGuideSocialPost": "Wren läser skärmbilder, inte länkar till inlägg. Ta en skärmbild av inlägget och dela den i stället.",
   "importGuideNothing": "Den guiden innehåller inget som Wren kan ta med.",
   "importedGuideSummary": "{count, plural, =1{Läste 1 plats från den guiden} other{Läste {count} platser från den guiden}}",
   "importedGuideUnusable": "{count, plural, =1{1 plats i den kan inte följa med} other{{count} platser i den kan inte följa med}}",

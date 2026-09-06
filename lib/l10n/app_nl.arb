@@ -75,6 +75,7 @@
   "guideLinkLabel": "Link naar de gids",
   "readGuide": "Gids lezen",
   "importGuideNotALink": "Dat is geen link naar een gids in Apple Kaarten. Open de gids in Kaarten, deel hem en kies ‘Kopieer link’.",
+  "importGuideSocialPost": "Wren leest schermafbeeldingen, geen links naar posts. Maak een schermafbeelding van de post en deel die.",
   "importGuideNothing": "In die gids staat niets wat Wren kan overnemen.",
   "importedGuideSummary": "{count, plural, =1{1 plek uit die gids gelezen} other{{count} plekken uit die gids gelezen}}",
   "importedGuideUnusable": "{count, plural, =1{1 plek daarin kan niet worden overgenomen} other{{count} plekken daarin kunnen niet worden overgenomen}}",

@@ -75,6 +75,7 @@
   "guideLinkLabel": "గైడ్ లింక్",
   "readGuide": "గైడ్ చదవండి",
   "importGuideNotALink": "అది Apple Maps గైడ్ లింక్ కాదు. Maps‌లో గైడ్‌ను తెరిచి షేర్ చేయండి, తర్వాత లింక్‌ను కాపీ చేయండి అనే ఎంపికను ఎంచుకోండి.",
+  "importGuideSocialPost": "Wren స్క్రీన్‌షాట్‌లను చదువుతుంది, పోస్ట్ లింక్‌లను కాదు. పోస్ట్ స్క్రీన్‌షాట్ తీసి దాన్ని షేర్ చేయండి.",
   "importGuideNothing": "ఆ గైడ్‌లో Wren జోడించగలిగేది ఏదీ లేదు.",
   "importedGuideSummary": "{count, plural, one{ఆ గైడ్ నుంచి 1 ప్రదేశం చదివాం} other{ఆ గైడ్ నుంచి {count} ప్రదేశాలు చదివాం}}",
   "importedGuideUnusable": "{count, plural, one{అందులోని 1 ప్రదేశాన్ని తీసుకెళ్లడం కుదరదు} other{అందులోని {count} ప్రదేశాలను తీసుకెళ్లడం కుదరదు}}",

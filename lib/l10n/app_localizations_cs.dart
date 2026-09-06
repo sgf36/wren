@@ -318,6 +318,10 @@ class LCs extends L {
       'To není odkaz na průvodce z Map Apple. Otevři průvodce v Mapách, sdílej ho a vyber Kopírovat odkaz.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren čte snímky obrazovky, ne odkazy na příspěvky. Vyfoť příspěvek a sdílej ten snímek.';
+
+  @override
   String get importGuideNothing =>
       'V tomto průvodci není nic, co by Wren mohl přenést.';
 

@@ -6,6 +6,7 @@
     "dev": "npx wrangler dev",
     "deploy": "npx wrangler deploy",
     "migrate": "npx wrangler d1 execute wren-codes --remote --command \"ALTER TABLE codes ADD COLUMN role TEXT NOT NULL DEFAULT 'unlock';\"",
-    "test": "node --test"
+    "test": "node --test",
+    "smoke": "node tools/smoke.mjs"
   }
 }

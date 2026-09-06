@@ -235,7 +235,14 @@ class _CodeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final admin = record.role == CompRole.admin;
+    // Only the roles that are not the default are badged. Badging every row
+    // would put a label on all of them and make the rare ones harder to spot,
+    // not easier — and an ordinary unlock is what almost every code is.
+    final badge = switch (record.role) {
+      CompRole.admin => 'ADMIN',
+      CompRole.everything => 'REELS',
+      _ => null,
+    };
     return ListTile(
       onTap: onCopy,
       title: Row(
@@ -251,9 +258,7 @@ class _CodeTile extends StatelessWidget {
               ),
             ),
           ),
-          // Only administrators are badged. Badging both would put a label on
-          // every row and make the rare one harder to spot, not easier.
-          if (admin)
+          if (badge != null)
             Container(
               margin: const EdgeInsetsDirectional.only(start: 8),
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -261,9 +266,9 @@ class _CodeTile extends StatelessWidget {
                 color: Wren.clay,
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: const Text(
-                'ADMIN',
-                style: TextStyle(
+              child: Text(
+                badge,
+                style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
@@ -344,6 +349,7 @@ class _MintDialogState extends State<_MintDialog> {
           SegmentedButton<CompRole>(
             segments: const [
               ButtonSegment(value: CompRole.unlock, label: Text('Unlock')),
+              ButtonSegment(value: CompRole.everything, label: Text('Reels')),
               ButtonSegment(value: CompRole.admin, label: Text('Admin')),
             ],
             selected: {_role},
@@ -351,15 +357,7 @@ class _MintDialogState extends State<_MintDialog> {
                 setState(() => _role = chosen.first),
           ),
           const SizedBox(height: 8),
-          // Said plainly, because the difference is not recoverable: an admin
-          // code hands over the ability to give the paid feature away.
-          Text(
-            _role == CompRole.admin
-                ? 'Unlocks the app, and lets whoever redeems it issue codes of '
-                      'their own.'
-                : 'Unlocks the app. Nothing else.',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          Text(_explains(_role), style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 14),
           Row(
             children: [
@@ -414,6 +412,18 @@ class _MintDialogState extends State<_MintDialog> {
   );
 }
 
+/// What a role grants, in the words shown under the picker.
+///
+/// Said plainly because none of these is recoverable once given: an unlock is
+/// checked on the phone and can never be withdrawn, a reels code costs money
+/// every time it is used, and an admin code hands over the ability to give all
+/// of it away.
+String _explains(CompRole role) => switch (role) {
+  CompRole.admin => 'Everything below, and lets its holder issue codes.',
+  CompRole.everything => 'Unlocks the app, and reads reels. Reads cost money.',
+  _ => 'Unlocks the app. Reels are not included.',
+};
+
 class _MintedDialog extends StatelessWidget {
   const _MintedDialog({required this.codes, required this.role});
 
@@ -431,11 +441,13 @@ class _MintedDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (role == CompRole.admin)
+          if (role != CompRole.unlock)
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Text(
-                'These grant the code console as well as the unlock.',
+                role == CompRole.admin
+                    ? 'These grant the code console as well as the unlock.'
+                    : 'These read shared reels as well as unlocking the app.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),

@@ -75,6 +75,7 @@
   "guideLinkLabel": "Link til guiden",
   "readGuide": "Les guide",
   "importGuideNotALink": "Det er ikke en link til en guide i Apple Kart. Åpne guiden i Kart, del den og velg «Kopier link».",
+  "importGuideSocialPost": "Wren leser skjermbilder, ikke lenker til innlegg. Ta et skjermbilde av innlegget, og del det i stedet.",
   "importGuideNothing": "Den guiden inneholder ingenting Wren kan ta med videre.",
   "importedGuideSummary": "{count, plural, =1{Leste 1 sted fra den guiden} other{Leste {count} steder fra den guiden}}",
   "importedGuideUnusable": "{count, plural, =1{1 sted i den kan ikke bli med over} other{{count} steder i den kan ikke bli med over}}",

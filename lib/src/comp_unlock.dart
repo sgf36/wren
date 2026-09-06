@@ -84,12 +84,21 @@ enum CompRole {
   /// No valid token held. Not a code that failed — no code at all.
   none,
 
-  /// The paid feature, and nothing else. Every code was this before roles
-  /// existed, and a token minted before they did carries no role claim and is
-  /// read as one.
+  /// Guides and exports uncapped, and nothing else. Every code was this
+  /// before roles existed, and a token minted before they did carries no role
+  /// claim and is read as one.
   unlock,
 
-  /// The paid feature, plus the code console. Held by whoever runs Wren.
+  /// That, plus places read out of a shared reel.
+  ///
+  /// Separate from [unlock] because a reel costs money every time one is
+  /// read, and a code given away for guides should not quietly carry that. A
+  /// ladder rather than a set: the reels purchase presumes the base unlock, so
+  /// reels without uncapped guides is not a thing anybody can buy, and should
+  /// not be a thing anybody can be given.
+  everything,
+
+  /// All of that, plus the code console. Held by whoever runs Wren.
   admin,
 }
 
@@ -199,8 +208,19 @@ bool _stale(CompRole role, Map<String, dynamic> claims, DateTime now) =>
 /// The role a verified payload names. Anything unrecognised, absent included,
 /// is an ordinary unlock — a token that predates roles must not read as an
 /// administrator, and neither must one whose claim has been mangled.
-CompRole _roleOf(Map<String, dynamic> claims) =>
-    claims['r'] == 'admin' ? CompRole.admin : CompRole.unlock;
+///
+/// Note what is deliberately not here: [CompRole.everything] is not renewed
+/// and never goes stale, exactly like [CompRole.unlock]. Only an administrator
+/// is re-confirmed. That follows the rule the rest of this file states — an
+/// unlock is checked offline for ever and cannot be withdrawn — and it means a
+/// reels code cannot be taken back either. The cost of that is bounded by the
+/// quota the reels Worker keeps, not unbounded, which is why it is a tolerable
+/// consequence rather than a hole.
+CompRole _roleOf(Map<String, dynamic> claims) => switch (claims['r']) {
+  'admin' => CompRole.admin,
+  'everything' => CompRole.everything,
+  _ => CompRole.unlock,
+};
 
 /// Sends a code, and on success stores the token it gets back.
 Future<RedeemOutcome> redeem(
@@ -255,8 +275,11 @@ Future<RedeemOutcome> redeem(
 Future<bool> wasUnlocked({
   @visibleForTesting String? device,
   @visibleForTesting String? publicKey,
-}) async =>
-    await heldRole(device: device, publicKey: publicKey) != CompRole.none;
+  @visibleForTesting DateTime? now,
+}) async {
+  final role = await heldRole(device: device, publicKey: publicKey, now: now);
+  return role != CompRole.none;
+}
 
 /// What this device's stored token grants, checked the same way and at the
 /// same moment as the unlock itself.

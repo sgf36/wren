@@ -314,6 +314,10 @@ class LPt extends L {
       'Esse não é o link de um guia do Mapas. Abra o guia no Mapas, compartilhe e escolha Copiar link.';
 
   @override
+  String get importGuideSocialPost =>
+      'O Wren lê capturas de tela, não links de publicações. Faça uma captura da publicação e compartilhe a captura.';
+
+  @override
   String get importGuideNothing =>
       'Esse guia não tem nenhum lugar que o Wren consiga usar.';
 
@@ -847,6 +851,10 @@ class LPtPt extends LPt {
   @override
   String get importGuideNotALink =>
       'Esta não é a hiperligação de um guia do Mapas. Abra o guia no Mapas, partilhe-o e escolha Copiar hiperligação.';
+
+  @override
+  String get importGuideSocialPost =>
+      'O Wren lê capturas de ecrã, não ligações para publicações. Faz uma captura da publicação e partilha essa.';
 
   @override
   String get importGuideNothing =>

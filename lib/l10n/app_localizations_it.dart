@@ -315,6 +315,10 @@ class LIt extends L {
       'Questo non è il link di una guida di Mappe. Apri la guida in Mappe, condividila, poi scegli Copia link.';
 
   @override
+  String get importGuideSocialPost =>
+      'Wren legge gli screenshot, non i link ai post. Fai uno screenshot del post e condividi quello.';
+
+  @override
   String get importGuideNothing =>
       'Quella guida non contiene nessun luogo che Wren possa usare.';
 
