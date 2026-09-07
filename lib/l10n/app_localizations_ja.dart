@@ -16,7 +16,7 @@ class LJa extends L {
 
   @override
   String get emptyBody =>
-      'すすめられたものをスクリーンショットで撮るだけ。リール、投稿、メッセージ、ガイドブックのページ。Wrenが名前を読み取って、マップに登録します。';
+      'リールや投稿を Wren に共有すると、そこから場所を読み取ります。スクリーンショットでも構いません——メッセージでも、ガイドブックの1ページでも。読み取った名前はマップに入ります。';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LJa extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'すすめられたものをスクリーンショットで撮るだけ。リール、投稿、メッセージ、ガイドブックのページ。Wrenが名前を読み取って、スマートフォンの地図アプリに送ります。';
+      'リールや投稿を Wren に共有すると、そこから場所を読み取ります。スクリーンショットでも構いません——メッセージでも、ガイドブックの1ページでも。読み取った名前はお使いの地図アプリに入ります。';
 
   @override
   String get emptyNoteAndroid => 'すでに持っているリストも読み込めます。何かが送られる前に、すべての場所を確認できます。';
@@ -77,7 +77,7 @@ class LJa extends L {
 
   @override
   String get regionNotDetected =>
-      'スクリーンショットには場所の記載がありませんでした。都市を入力すると検索精度が大きく上がります。';
+      'これらの場所がどこにあるのか、どこにも書かれていませんでした。都市名があると検索の精度が大きく上がります。';
 
   @override
   String get cityOrRegion => '都市または地域';
@@ -285,7 +285,7 @@ class LJa extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren はスクリーンショットを読み取ります。投稿のリンクは読み取れません。投稿のスクリーンショットを撮って共有してください。';
+      'そこの投稿は Wren では読み取れません。投稿のスクリーンショットを撮って、それを共有してください。この方法なら必ず読めます。';
 
   @override
   String get importGuideNothing => 'そのガイドには、Wrenが追加できるものがありません。';

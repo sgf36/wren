@@ -16,7 +16,7 @@ class LTr extends L {
 
   @override
   String get emptyBody =>
-      'Sana önerilen şeyin ekran görüntüsünü al — bir reel, bir gönderi, bir mesaj, bir gezi rehberinin sayfası. Wren adları okur ve Apple Harita\'ya koyar.';
+      'Bir reel ya da gönderiyi Wren ile paylaş, içindeki yerleri okusun. Ya da neyin olursa ekran görüntüsünü al — bir mesajın, bir rehberin sayfasının — Wren onu okur. İsimler Harita\'ya gider.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LTr extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Sana önerilen şeyin ekran görüntüsünü al — bir reel, bir gönderi, bir mesaj, bir gezi rehberinin sayfası. Wren adları okur ve telefonundaki harita uygulamasına gönderir.';
+      'Bir reel ya da gönderiyi Wren ile paylaş, içindeki yerleri okusun. Ya da neyin olursa ekran görüntüsünü al — bir mesajın, bir rehberin sayfasının — Wren onu okur. İsimler telefonundaki harita uygulamasına gider.';
 
   @override
   String get emptyNoteAndroid =>
@@ -79,7 +79,7 @@ class LTr extends L {
 
   @override
   String get regionNotDetected =>
-      'Ekran görüntülerinde nerede olduklarını yazmıyordu. Bir şehir verirsen arama çok daha isabetli olur.';
+      'Bu yerlerin nerede olduğu hiçbir yerde yazmıyordu. Bir şehir aramayı çok daha isabetli yapar.';
 
   @override
   String get cityOrRegion => 'Şehir veya bölge';
@@ -295,7 +295,7 @@ class LTr extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren ekran görüntülerini okur, gönderi bağlantılarını değil. Gönderinin ekran görüntüsünü al ve onu paylaş.';
+      'Oradaki gönderileri Wren okuyamıyor. Gönderinin ekran görüntülerini al ve onları paylaş — bu her zaman işe yarar.';
 
   @override
   String get importGuideNothing =>

@@ -16,7 +16,7 @@ class LCa extends L {
 
   @override
   String get emptyBody =>
-      'Fes una captura del que et recomanin: un reel, una publicació, un missatge, la pàgina d\'una guia de viatge. El Wren llegeix els noms i els posa a Mapes.';
+      'Comparteix un reel o una publicació amb el Wren i en traurà els llocs. O fes una captura de pantalla del que sigui — un missatge, una pàgina d\'una guia — i el Wren la llegeix. Els noms van a Mapes.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LCa extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Fes una captura del que et recomanin: un reel, una publicació, un missatge, la pàgina d\'una guia de viatge. El Wren llegeix els noms i els envia a l\'app de mapes del teu telèfon.';
+      'Comparteix un reel o una publicació amb el Wren i en traurà els llocs. O fes una captura de pantalla del que sigui — un missatge, una pàgina d\'una guia — i el Wren la llegeix. Els noms van a l\'app de mapes del teu telèfon.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LCa extends L {
 
   @override
   String get regionNotDetected =>
-      'A les captures no deia on són. Amb una ciutat la cerca és molt més precisa.';
+      'Res no deia on són aquests llocs. Una ciutat fa la cerca molt més precisa.';
 
   @override
   String get cityOrRegion => 'Ciutat o regió';
@@ -305,7 +305,7 @@ class LCa extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren llegeix captures de pantalla, no enllaços a publicacions. Fes una captura de la publicació i comparteix-la.';
+      'El Wren no pot llegir publicacions d\'aquesta plataforma. Fes captures de pantalla de la publicació i comparteix-les: això sempre funciona.';
 
   @override
   String get importGuideNothing =>

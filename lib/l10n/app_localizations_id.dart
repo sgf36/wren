@@ -16,7 +16,7 @@ class LId extends L {
 
   @override
   String get emptyBody =>
-      'Tangkap layar apa pun yang direkomendasikan kepadamu — reel, unggahan, pesan, satu halaman buku panduan. Wren membaca namanya dan memasukkannya ke Apple Maps.';
+      'Bagikan reel atau unggahan ke Wren, lalu Wren membaca tempat-tempatnya. Atau tangkap layar apa saja — pesan, halaman buku panduan — dan Wren membacanya. Namanya masuk ke Peta.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LId extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Tangkap layar apa pun yang direkomendasikan kepadamu — reel, unggahan, pesan, satu halaman buku panduan. Wren membaca namanya dan mengirimkannya ke aplikasi peta di ponsel Anda.';
+      'Bagikan reel atau unggahan ke Wren, lalu Wren membaca tempat-tempatnya. Atau tangkap layar apa saja — pesan, halaman buku panduan — dan Wren membacanya. Namanya masuk ke aplikasi peta di ponselmu.';
 
   @override
   String get emptyNoteAndroid =>
@@ -79,7 +79,7 @@ class LId extends L {
 
   @override
   String get regionNotDetected =>
-      'Di tangkapan layar tidak disebutkan lokasinya. Dengan nama kota, pencarian jadi jauh lebih tepat.';
+      'Tidak ada yang menyebut di mana tempat-tempat ini. Menyebut kota membuat pencarian jauh lebih tepat.';
 
   @override
   String get cityOrRegion => 'Kota atau wilayah';
@@ -298,7 +298,7 @@ class LId extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren membaca tangkapan layar, bukan tautan ke postingan. Tangkap layar postingannya lalu bagikan itu.';
+      'Unggahan dari sana tidak bisa dibaca Wren. Tangkap layar unggahannya dan bagikan tangkapan layar itu — itu selalu berhasil.';
 
   @override
   String get importGuideNothing =>

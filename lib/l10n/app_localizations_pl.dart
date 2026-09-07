@@ -16,7 +16,7 @@ class LPl extends L {
 
   @override
   String get emptyBody =>
-      'Zrób zrzut ekranu tego, co ci polecają — rolki, posta, wiadomości, strony przewodnika. Wren odczyta nazwy i doda je do Map Apple.';
+      'Udostępnij Wrenowi rolkę albo posta, a wyczyta z nich miejsca. Albo zrób zrzut ekranu czegokolwiek — wiadomości, strony z przewodnika — a Wren go odczyta. Nazwy trafią do Map.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LPl extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Zrób zrzut ekranu tego, co ci polecają — rolki, posta, wiadomości, strony przewodnika. Wren odczyta nazwy i wyśle je do aplikacji map w telefonie.';
+      'Udostępnij Wrenowi rolkę albo posta, a wyczyta z nich miejsca. Albo zrób zrzut ekranu czegokolwiek — wiadomości, strony z przewodnika — a Wren go odczyta. Nazwy trafią do aplikacji map w twoim telefonie.';
 
   @override
   String get emptyNoteAndroid =>
@@ -81,7 +81,7 @@ class LPl extends L {
 
   @override
   String get regionNotDetected =>
-      'W zrzutach nie było napisane, gdzie one są. Podanie miasta znacznie poprawia trafność wyszukiwania.';
+      'Nigdzie nie było napisane, gdzie są te miejsca. Miasto sprawia, że wyszukiwanie jest o wiele dokładniejsze.';
 
   @override
   String get cityOrRegion => 'Miasto lub region';
@@ -309,7 +309,7 @@ class LPl extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren czyta zrzuty ekranu, a nie linki do postów. Zrób zrzut ekranu posta i udostępnij go.';
+      'Postów stamtąd Wren nie odczyta. Zrób zrzuty ekranu posta i udostępnij je — to działa zawsze.';
 
   @override
   String get importGuideNothing =>

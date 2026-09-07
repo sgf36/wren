@@ -16,7 +16,7 @@ class LFi extends L {
 
   @override
   String get emptyBody =>
-      'Ota kuvakaappaus siitä, mitä sinulle suositellaan — reelistä, julkaisusta, viestistä, matkaoppaan sivusta. Wren lukee nimet ja vie ne Apple Kartat -appiin.';
+      'Jaa reel tai julkaisu Wreniin, niin se lukee paikat siitä. Tai ota kuvakaappaus mistä tahansa — viestistä, matkaoppaan sivusta — niin Wren lukee sen. Nimet päätyvät Kartat-sovellukseen.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LFi extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Ota kuvakaappaus siitä, mitä sinulle suositellaan — reelistä, julkaisusta, viestistä, matkaoppaan sivusta. Wren lukee nimet ja lähettää ne puhelimesi karttasovellukseen.';
+      'Jaa reel tai julkaisu Wreniin, niin se lukee paikat siitä. Tai ota kuvakaappaus mistä tahansa — viestistä, matkaoppaan sivusta — niin Wren lukee sen. Nimet päätyvät puhelimesi karttasovellukseen.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LFi extends L {
 
   @override
   String get regionNotDetected =>
-      'Kuvakaappauksissa ei kerrottu, missä nämä ovat. Kaupungin kanssa haku osuu paljon paremmin.';
+      'Missään ei kerrottu, missä nämä paikat ovat. Kaupunki tekee hausta paljon tarkemman.';
 
   @override
   String get cityOrRegion => 'Kaupunki tai alue';
@@ -296,7 +296,7 @@ class LFi extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren lukee kuvakaappauksia, ei linkkejä julkaisuihin. Ota julkaisusta kuvakaappaus ja jaa se.';
+      'Wren ei osaa lukea sen alustan julkaisuja. Ota julkaisusta kuvakaappaukset ja jaa ne — se toimii aina.';
 
   @override
   String get importGuideNothing =>

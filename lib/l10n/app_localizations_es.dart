@@ -16,7 +16,7 @@ class LEs extends L {
 
   @override
   String get emptyBody =>
-      'Haz una captura de lo que te recomienden: un reel, una publicación, un mensaje, la página de una guía de viaje. Wren lee los nombres y los pone en Mapas.';
+      'Comparte un reel o una publicación con Wren y extraerá los lugares. O haz una captura de pantalla de lo que sea — un mensaje, una página de una guía — y Wren la lee. Los nombres van a Mapas.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LEs extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Haz una captura de lo que te recomienden: un reel, una publicación, un mensaje, la página de una guía de viaje. Wren lee los nombres y los envía a la app de mapas de tu teléfono.';
+      'Comparte un reel o una publicación con Wren y extraerá los lugares. O haz una captura de pantalla de lo que sea — un mensaje, una página de una guía — y Wren la lee. Los nombres van a la app de mapas de tu teléfono.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LEs extends L {
 
   @override
   String get regionNotDetected =>
-      'En las capturas no se decía dónde están. Con una ciudad la búsqueda es mucho más precisa.';
+      'Nada indicaba dónde están estos lugares. Una ciudad hace la búsqueda mucho más precisa.';
 
   @override
   String get cityOrRegion => 'Ciudad o región';
@@ -303,7 +303,7 @@ class LEs extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren lee capturas de pantalla, no enlaces a publicaciones. Haz una captura de la publicación y compártela.';
+      'Wren no puede leer publicaciones de ahí. Haz capturas de pantalla de la publicación y compártelas: eso siempre funciona.';
 
   @override
   String get importGuideNothing =>
@@ -631,7 +631,7 @@ class LEsMx extends LEs {
 
   @override
   String get emptyBody =>
-      'Toma una captura de lo que te recomienden: un reel, una publicación, un mensaje, la página de una guía de viaje. Wren lee los nombres y los pone en Mapas.';
+      'Comparte un reel o una publicación con Wren y sacará los lugares. O toma una captura de pantalla de lo que sea — un mensaje, una página de una guía — y Wren la lee. Los nombres van a Mapas.';
 
   @override
   String get emptyNote =>
@@ -639,7 +639,7 @@ class LEsMx extends LEs {
 
   @override
   String get emptyBodyAndroid =>
-      'Toma una captura de lo que te recomienden: un reel, una publicación, un mensaje, la página de una guía de viaje. Wren lee los nombres y los envía a la app de mapas de tu teléfono.';
+      'Comparte un reel o una publicación con Wren y sacará los lugares. O toma una captura de pantalla de lo que sea — un mensaje, una página de una guía — y Wren la lee. Los nombres van a la app de mapas de tu teléfono.';
 
   @override
   String get emptyNoteAndroid =>
@@ -695,7 +695,7 @@ class LEsMx extends LEs {
 
   @override
   String get regionNotDetected =>
-      'En las capturas no decía dónde están. Con una ciudad la búsqueda es mucho más precisa.';
+      'Nada indicaba dónde están estos lugares. Una ciudad hace la búsqueda mucho más precisa.';
 
   @override
   String get cityOrRegion => 'Ciudad o región';
@@ -918,7 +918,7 @@ class LEsMx extends LEs {
 
   @override
   String get importGuideSocialPost =>
-      'Wren lee capturas de pantalla, no enlaces a publicaciones. Toma una captura de la publicación y compártela.';
+      'Wren no puede leer publicaciones de ahí. Toma capturas de pantalla de la publicación y compártelas: eso siempre funciona.';
 
   @override
   String get importGuideNothing =>

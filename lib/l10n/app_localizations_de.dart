@@ -16,7 +16,7 @@ class LDe extends L {
 
   @override
   String get emptyBody =>
-      'Mach einen Screenshot von dem, was dir empfohlen wird — ein Reel, ein Post, eine Nachricht, eine Seite aus einem Reiseführer. Wren liest die Namen und legt sie in Apple Karten ab.';
+      'Teile ein Reel oder einen Beitrag mit Wren, und Wren liest die Orte heraus. Oder mach von irgendetwas einen Screenshot — einer Nachricht, einer Seite aus einem Reiseführer — und Wren liest den. Die Namen landen in Karten.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LDe extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Mach einen Screenshot von dem, was dir empfohlen wird — ein Reel, ein Post, eine Nachricht, eine Seite aus einem Reiseführer. Wren liest die Namen und schickt sie an die Karten-App auf deinem Telefon.';
+      'Teile ein Reel oder einen Beitrag mit Wren, und Wren liest die Orte heraus. Oder mach von irgendetwas einen Screenshot — einer Nachricht, einer Seite aus einem Reiseführer — und Wren liest den. Die Namen landen in der Karten-App auf deinem Handy.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LDe extends L {
 
   @override
   String get regionNotDetected =>
-      'In den Screenshots stand nicht, wo diese Orte liegen. Mit einer Stadt wird die Suche deutlich genauer.';
+      'Nirgends stand, wo diese Orte liegen. Mit einer Stadt wird die Suche deutlich genauer.';
 
   @override
   String get cityOrRegion => 'Stadt oder Region';
@@ -305,7 +305,7 @@ class LDe extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren liest Screenshots, keine Links zu Beiträgen. Mach einen Screenshot vom Beitrag und teile den.';
+      'Beiträge von dort kann Wren nicht lesen. Mach Screenshots vom Beitrag und teile die — das klappt immer.';
 
   @override
   String get importGuideNothing =>

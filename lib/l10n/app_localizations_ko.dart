@@ -16,7 +16,7 @@ class LKo extends L {
 
   @override
   String get emptyBody =>
-      '추천받은 것을 스크린샷으로 남기세요 — 릴스, 게시물, 메시지, 여행 안내서의 한 페이지. Wren이 이름을 읽어 지도에 넣어줍니다.';
+      '릴스나 게시물을 Wren에 공유하면 그 안의 장소를 읽어 줍니다. 스크린샷도 됩니다 — 메시지든, 여행 안내서 한 쪽이든. 읽은 이름은 지도로 들어갑니다.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LKo extends L {
 
   @override
   String get emptyBodyAndroid =>
-      '추천받은 것을 스크린샷으로 남기세요 — 릴스, 게시물, 메시지, 여행 안내서의 한 페이지. Wren이 이름을 읽어 휴대전화의 지도 앱으로 보내줍니다.';
+      '릴스나 게시물을 Wren에 공유하면 그 안의 장소를 읽어 줍니다. 스크린샷도 됩니다 — 메시지든, 여행 안내서 한 쪽이든. 읽은 이름은 휴대폰의 지도 앱으로 들어갑니다.';
 
   @override
   String get emptyNoteAndroid =>
@@ -78,7 +78,7 @@ class LKo extends L {
 
   @override
   String get regionNotDetected =>
-      '스크린샷에 어디인지 나와 있지 않았습니다. 도시를 입력하면 검색이 훨씬 정확해집니다.';
+      '이 장소들이 어디인지 어디에도 나와 있지 않았습니다. 도시를 알려 주면 검색이 훨씬 정확해집니다.';
 
   @override
   String get cityOrRegion => '도시 또는 지역';
@@ -286,7 +286,7 @@ class LKo extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren은 스크린샷을 읽습니다. 게시물 링크는 읽지 못합니다. 게시물을 스크린샷으로 찍어 공유해 주세요.';
+      '거기 게시물은 Wren이 읽지 못합니다. 게시물을 스크린샷으로 찍어 그것을 공유해 주세요. 이 방법은 언제나 됩니다.';
 
   @override
   String get importGuideNothing => '그 가이드에는 Wren이 추가할 수 있는 것이 없습니다.';

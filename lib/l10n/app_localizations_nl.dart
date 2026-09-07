@@ -16,7 +16,7 @@ class LNl extends L {
 
   @override
   String get emptyBody =>
-      'Maak een schermafbeelding van wat mensen je aanraden — een reel, een post, een bericht, een pagina uit een reisgids. Wren leest de namen en zet ze in Apple Kaarten.';
+      'Deel een reel of een post met Wren en Wren haalt de plekken eruit. Of maak van wat dan ook een schermafbeelding — een bericht, een bladzijde uit een reisgids — en Wren leest die. De namen gaan naar Kaarten.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LNl extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Maak een schermafbeelding van wat mensen je aanraden — een reel, een post, een bericht, een pagina uit een reisgids. Wren leest de namen en stuurt ze naar de kaarten-app op je telefoon.';
+      'Deel een reel of een post met Wren en Wren haalt de plekken eruit. Of maak van wat dan ook een schermafbeelding — een bericht, een bladzijde uit een reisgids — en Wren leest die. De namen gaan naar de kaart-app op je telefoon.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LNl extends L {
 
   @override
   String get regionNotDetected =>
-      'In de schermafbeeldingen stond niet waar deze liggen. Met een stad wordt het zoeken veel nauwkeuriger.';
+      'Nergens stond waar deze plekken liggen. Met een stad wordt het zoeken een stuk nauwkeuriger.';
 
   @override
   String get cityOrRegion => 'Stad of regio';
@@ -305,7 +305,7 @@ class LNl extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren leest schermafbeeldingen, geen links naar posts. Maak een schermafbeelding van de post en deel die.';
+      'Posts daarvandaan kan Wren niet lezen. Maak er schermafbeeldingen van en deel die — dat werkt altijd.';
 
   @override
   String get importGuideNothing =>

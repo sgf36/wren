@@ -16,7 +16,7 @@ class LNo extends L {
 
   @override
   String get emptyBody =>
-      'Ta et skjermbilde av det folk tipser deg om — en reel, et innlegg, en melding, en side i en reisehåndbok. Wren leser navnene og legger dem i Apple Kart.';
+      'Del en reel eller et innlegg med Wren, så leser Wren stedene ut av det. Eller ta et skjermbilde av hva som helst — en melding, en side i en reisehåndbok — så leser Wren det. Navnene havner i Kart.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LNo extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Ta et skjermbilde av det folk tipser deg om — en reel, et innlegg, en melding, en side i en reisehåndbok. Wren leser navnene og sender dem til kart-appen på telefonen din.';
+      'Del en reel eller et innlegg med Wren, så leser Wren stedene ut av det. Eller ta et skjermbilde av hva som helst — en melding, en side i en reisehåndbok — så leser Wren det. Navnene havner i kartappen på telefonen din.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LNo extends L {
 
   @override
   String get regionNotDetected =>
-      'Skjermbildene sa ikke hvor de ligger. Med en by blir søket langt mer treffsikkert.';
+      'Ingenting sa hvor disse stedene ligger. En by gjør søket mye mer presist.';
 
   @override
   String get cityOrRegion => 'By eller område';
@@ -304,7 +304,7 @@ class LNo extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren leser skjermbilder, ikke lenker til innlegg. Ta et skjermbilde av innlegget, og del det i stedet.';
+      'Innlegg derfra klarer ikke Wren å lese. Ta skjermbilder av innlegget og del dem — det fungerer alltid.';
 
   @override
   String get importGuideNothing =>

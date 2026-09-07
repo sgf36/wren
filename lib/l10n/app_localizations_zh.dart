@@ -16,14 +16,14 @@ class LZh extends L {
 
   @override
   String get emptyBody =>
-      '把别人推荐给你的东西截个图 — 一条 Reel、一个帖子、一条消息、旅行指南的一页。Wren 会读出名字，放进地图。';
+      '把 Reels 或帖子分享给 Wren，它就会从中读出地点。也可以截图任何东西——一条消息、旅行指南的一页——Wren 同样能读。名字会进入地图。';
 
   @override
   String get emptyNote => '单个地点会加进你已有的指南。多个地点会新建一个 — 地图无法合并指南。';
 
   @override
   String get emptyBodyAndroid =>
-      '把别人推荐给你的东西截个图 — 一条 Reel、一个帖子、一条消息、旅行指南的一页。Wren 会读出名字，发送到你手机上的地图应用。';
+      '把 Reels 或帖子分享给 Wren，它就会从中读出地点。也可以截图任何东西——一条消息、旅行指南的一页——Wren 同样能读。名字会进入你手机上的地图应用。';
 
   @override
   String get emptyNoteAndroid => '它也能读取你已有的列表，并在任何内容发送前让你看到每一个地点。';
@@ -75,7 +75,7 @@ class LZh extends L {
   String get regionDetected => '从图片说明中读出。不对的话请修改。';
 
   @override
-  String get regionNotDetected => '截屏里没有说明这些地方在哪里。填上城市，搜索会准确得多。';
+  String get regionNotDetected => '没有地方说明这些地点在哪里。填上城市，搜索会准确得多。';
 
   @override
   String get cityOrRegion => '城市或地区';
@@ -279,7 +279,7 @@ class LZh extends L {
   String get importGuideNotALink => '这不是地图指南的链接。在地图里打开指南并共享，然后选择“拷贝链接”。';
 
   @override
-  String get importGuideSocialPost => 'Wren 读取截图，不读取帖子链接。请截图该帖子并分享截图。';
+  String get importGuideSocialPost => 'Wren 读不了那个平台的帖子。请截图后分享截图——这个办法总是管用。';
 
   @override
   String get importGuideNothing => '那个指南里没有 Wren 能添加的东西。';
@@ -572,14 +572,14 @@ class LZhHant extends LZh {
 
   @override
   String get emptyBody =>
-      '把別人推薦給你的東西截個圖 — 一則 Reel、一篇貼文、一則訊息、旅遊指南的一頁。Wren 會讀出名字，放進地圖。';
+      '把 Reels 或貼文分享給 Wren，它就會從中讀出地點。也可以截圖任何東西——一則訊息、旅遊指南的一頁——Wren 同樣讀得出來。名字會進入地圖。';
 
   @override
   String get emptyNote => '單一地點會加進你已有的指南。多個地點會新建一個 — 地圖無法合併指南。';
 
   @override
   String get emptyBodyAndroid =>
-      '把別人推薦給你的東西截個圖 — 一則 Reel、一篇貼文、一則訊息、旅遊指南的一頁。Wren 會讀出名字，傳送到你手機上的地圖應用程式。';
+      '把 Reels 或貼文分享給 Wren，它就會從中讀出地點。也可以截圖任何東西——一則訊息、旅遊指南的一頁——Wren 同樣讀得出來。名字會進入你手機上的地圖 App。';
 
   @override
   String get emptyNoteAndroid => '它也能讀取你已有的清單，並在任何內容傳送前讓你看到每一個地點。';
@@ -631,7 +631,7 @@ class LZhHant extends LZh {
   String get regionDetected => '從圖片說明讀出。不對的話請修改。';
 
   @override
-  String get regionNotDetected => '截圖裡沒有說這些地方在哪裡。填上城市，搜尋會準確得多。';
+  String get regionNotDetected => '沒有地方說明這些地點在哪裡。填上城市，搜尋會準確得多。';
 
   @override
   String get cityOrRegion => '城市或地區';
@@ -835,7 +835,7 @@ class LZhHant extends LZh {
   String get importGuideNotALink => '這不是地圖指南的連結。在地圖裡打開指南並分享，然後選擇「拷貝連結」。';
 
   @override
-  String get importGuideSocialPost => 'Wren 讀取截圖，不讀取貼文連結。請截取貼文的畫面再分享截圖。';
+  String get importGuideSocialPost => 'Wren 讀不了那個平台的貼文。請截圖後分享截圖——這個辦法總是管用。';
 
   @override
   String get importGuideNothing => '那個指南裡沒有 Wren 能加入的東西。';

@@ -16,7 +16,7 @@ class LHr extends L {
 
   @override
   String get emptyBody =>
-      'Snimi zaslon onoga što ti preporuče — reel, objavu, poruku, stranicu vodiča. Wren pročita imena i stavi ih u Apple Karte.';
+      'Podijeli s Wrenom reel ili objavu i on iz nje iščita mjesta. Ili snimi zaslon bilo čega — poruke, stranice vodiča — i Wren će to pročitati. Nazivi završe u Kartama.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LHr extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Snimi zaslon onoga što ti preporuče — reel, objavu, poruku, stranicu vodiča. Wren pročita imena i pošalje ih u aplikaciju za karte na tvom telefonu.';
+      'Podijeli s Wrenom reel ili objavu i on iz nje iščita mjesta. Ili snimi zaslon bilo čega — poruke, stranice vodiča — i Wren će to pročitati. Nazivi završe u aplikaciji za karte na tvom telefonu.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LHr extends L {
 
   @override
   String get regionNotDetected =>
-      'Na snimkama zaslona nije pisalo gdje se nalaze. S gradom je pretraživanje mnogo preciznije.';
+      'Nigdje nije pisalo gdje su ta mjesta. S gradom je pretraga puno preciznija.';
 
   @override
   String get cityOrRegion => 'Grad ili regija';
@@ -305,7 +305,7 @@ class LHr extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren čita snimke zaslona, ne poveznice na objave. Snimi objavu i podijeli tu sliku.';
+      'Objave odande Wren ne može pročitati. Snimi zaslone objave i podijeli njih — to uvijek radi.';
 
   @override
   String get importGuideNothing =>

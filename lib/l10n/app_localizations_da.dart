@@ -16,7 +16,7 @@ class LDa extends L {
 
   @override
   String get emptyBody =>
-      'Tag et skærmbillede af det, folk anbefaler dig — en reel, et opslag, en besked, en side i en rejseguide. Wren læser navnene og lægger dem i Apple Kort.';
+      'Del et reel eller et opslag med Wren, så læser Wren stederne ud af det. Eller tag et skærmbillede af hvad som helst — en besked, en side i en rejseguide — så læser Wren det. Navnene ender i Kort.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LDa extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Tag et skærmbillede af det, folk anbefaler dig — en reel, et opslag, en besked, en side i en rejseguide. Wren læser navnene og sender dem til kort-appen på din telefon.';
+      'Del et reel eller et opslag med Wren, så læser Wren stederne ud af det. Eller tag et skærmbillede af hvad som helst — en besked, en side i en rejseguide — så læser Wren det. Navnene ender i kortappen på din telefon.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LDa extends L {
 
   @override
   String get regionNotDetected =>
-      'Der stod ikke i skærmbillederne, hvor de ligger. Med en by bliver søgningen langt mere præcis.';
+      'Der stod ingen steder, hvor de her steder ligger. En by gør søgningen langt mere præcis.';
 
   @override
   String get cityOrRegion => 'By eller område';
@@ -303,7 +303,7 @@ class LDa extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren læser skærmbilleder, ikke links til opslag. Tag et skærmbillede af opslaget, og del det i stedet.';
+      'Opslag derfra kan Wren ikke læse. Tag skærmbilleder af opslaget og del dem — det virker altid.';
 
   @override
   String get importGuideNothing =>

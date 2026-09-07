@@ -16,7 +16,7 @@ class LFr extends L {
 
   @override
   String get emptyBody =>
-      'Faites une capture de ce qu\'on vous recommande — un reel, une publication, un message, la page d\'un guide de voyage. Wren lit les noms et les place dans Plans.';
+      'Partage un reel ou une publication vers Wren et il en extrait les lieux. Ou fais une capture d\'écran de n\'importe quoi — un message, une page de guide — et Wren la lit. Les noms partent dans Plans.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LFr extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Faites une capture de ce qu\'on vous recommande — un reel, une publication, un message, la page d\'un guide de voyage. Wren lit les noms et les envoie à l\'app de cartes de votre téléphone.';
+      'Partage un reel ou une publication vers Wren et il en extrait les lieux. Ou fais une capture d\'écran de n\'importe quoi — un message, une page de guide — et Wren la lit. Les noms partent dans l\'app de cartes de ton téléphone.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LFr extends L {
 
   @override
   String get regionNotDetected =>
-      'Rien dans les captures n\'indiquait où se trouvent ces lieux. Une ville rend la recherche bien plus précise.';
+      'Rien n\'indiquait où sont ces lieux. Une ville rend la recherche bien plus précise.';
 
   @override
   String get cityOrRegion => 'Ville ou région';
@@ -305,7 +305,7 @@ class LFr extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren lit les captures d’écran, pas les liens vers les publications. Fais une capture de la publication et partage-la.';
+      'Wren ne sait pas lire les publications de cette plateforme. Fais des captures d\'écran de la publication et partage-les : ça marche toujours.';
 
   @override
   String get importGuideNothing =>
@@ -633,7 +633,7 @@ class LFrCa extends LFr {
 
   @override
   String get emptyBody =>
-      'Faites une saisie d\'écran de ce qu\'on vous recommande — un reel, une publication, un message, la page d\'un guide de voyage. Wren lit les noms et les place dans Plans.';
+      'Partage un reel ou une publication vers Wren et il en extrait les lieux. Ou fais une capture d\'écran de n\'importe quoi — un message, une page de guide — et Wren la lit. Les noms partent dans Plans.';
 
   @override
   String get emptyNote =>
@@ -641,7 +641,7 @@ class LFrCa extends LFr {
 
   @override
   String get emptyBodyAndroid =>
-      'Faites une saisie d\'écran de ce qu\'on vous recommande — un reel, une publication, un message, la page d\'un guide de voyage. Wren lit les noms et les envoie à l\'application de cartes de votre téléphone.';
+      'Partage un reel ou une publication vers Wren et il en extrait les lieux. Ou fais une capture d\'écran de n\'importe quoi — un message, une page de guide — et Wren la lit. Les noms partent dans l\'app de cartes de ton téléphone.';
 
   @override
   String get emptyNoteAndroid =>
@@ -697,7 +697,7 @@ class LFrCa extends LFr {
 
   @override
   String get regionNotDetected =>
-      'Rien dans les saisies d\'écran n\'indiquait où se trouvent ces lieux. Une ville rend la recherche bien plus précise.';
+      'Rien n\'indiquait où sont ces lieux. Une ville rend la recherche bien plus précise.';
 
   @override
   String get cityOrRegion => 'Ville ou région';
@@ -922,7 +922,7 @@ class LFrCa extends LFr {
 
   @override
   String get importGuideSocialPost =>
-      'Wren lit les captures d’écran, pas les liens vers les publications. Fais une capture de la publication et partage-la.';
+      'Wren ne sait pas lire les publications de cette plateforme. Fais des captures d\'écran de la publication et partage-les : ça marche toujours.';
 
   @override
   String get importGuideNothing =>

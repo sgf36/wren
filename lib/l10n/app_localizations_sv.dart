@@ -16,7 +16,7 @@ class LSv extends L {
 
   @override
   String get emptyBody =>
-      'Skärmavbilda det folk tipsar dig om — en reel, ett inlägg, ett meddelande, en sida ur en reseguide. Wren läser namnen och lägger in dem i Apple Kartor.';
+      'Dela en reel eller ett inlägg med Wren, så läser Wren ut platserna. Eller ta en skärmbild av vad som helst — ett meddelande, en sida ur en reseguide — så läser Wren den. Namnen hamnar i Kartor.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LSv extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Skärmavbilda det folk tipsar dig om — en reel, ett inlägg, ett meddelande, en sida ur en reseguide. Wren läser namnen och skickar dem till kartappen i din telefon.';
+      'Dela en reel eller ett inlägg med Wren, så läser Wren ut platserna. Eller ta en skärmbild av vad som helst — ett meddelande, en sida ur en reseguide — så läser Wren den. Namnen hamnar i kartappen i din telefon.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LSv extends L {
 
   @override
   String get regionNotDetected =>
-      'Inget i skärmavbilderna sa var de ligger. Med en stad blir sökningen mycket träffsäkrare.';
+      'Ingenstans stod det var de här platserna ligger. En stad gör sökningen mycket mer träffsäker.';
 
   @override
   String get cityOrRegion => 'Stad eller region';
@@ -306,7 +306,7 @@ class LSv extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren läser skärmbilder, inte länkar till inlägg. Ta en skärmbild av inlägget och dela den i stället.';
+      'Inlägg därifrån kan Wren inte läsa. Ta skärmbilder av inlägget och dela dem — det fungerar alltid.';
 
   @override
   String get importGuideNothing =>

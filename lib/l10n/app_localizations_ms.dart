@@ -16,7 +16,7 @@ class LMs extends L {
 
   @override
   String get emptyBody =>
-      'Tangkap skrin apa sahaja yang disyorkan kepada anda — reel, hantaran, mesej, satu halaman buku panduan. Wren membaca namanya dan memasukkannya ke dalam Apple Maps.';
+      'Kongsi reel atau siaran kepada Wren, dan Wren membaca tempat-tempatnya. Atau tangkap skrin apa sahaja — mesej, halaman buku panduan — dan Wren membacanya. Namanya masuk ke Peta.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LMs extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Tangkap skrin apa sahaja yang disyorkan kepada anda — reel, hantaran, mesej, satu halaman buku panduan. Wren membaca namanya dan menghantarkannya ke apl peta pada telefon anda.';
+      'Kongsi reel atau siaran kepada Wren, dan Wren membaca tempat-tempatnya. Atau tangkap skrin apa sahaja — mesej, halaman buku panduan — dan Wren membacanya. Namanya masuk ke aplikasi peta pada telefon kamu.';
 
   @override
   String get emptyNoteAndroid =>
@@ -79,7 +79,7 @@ class LMs extends L {
 
   @override
   String get regionNotDetected =>
-      'Tangkapan skrin tidak menyatakan lokasinya. Dengan nama bandar, carian menjadi jauh lebih tepat.';
+      'Tiada di mana-mana yang menyebut lokasi tempat-tempat ini. Menyebut bandar menjadikan carian jauh lebih tepat.';
 
   @override
   String get cityOrRegion => 'Bandar atau wilayah';
@@ -297,7 +297,7 @@ class LMs extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren membaca tangkapan skrin, bukan pautan ke siaran. Ambil tangkapan skrin siaran itu dan kongsikannya.';
+      'Siaran dari sana tidak dapat dibaca Wren. Tangkap skrin siaran itu dan kongsi tangkapan skrin — cara itu sentiasa berjaya.';
 
   @override
   String get importGuideNothing =>

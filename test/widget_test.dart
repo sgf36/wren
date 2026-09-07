@@ -13,7 +13,7 @@ void main() {
       await tester.pump();
 
       expect(
-        find.textContaining('Screenshot what people tell you about'),
+        find.textContaining('Share a reel or a post to Wren'),
         findsOneWidget,
       );
       // "Add", not "Add screenshots": screenshots are now one of three sources,

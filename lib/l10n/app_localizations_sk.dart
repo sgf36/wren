@@ -16,7 +16,7 @@ class LSk extends L {
 
   @override
   String get emptyBody =>
-      'Odfoť si obrazovku s tým, čo ti odporúčajú — reel, príspevok, správu, stranu zo sprievodcu. Wren prečíta názvy a uloží ich do Máp Apple.';
+      'Zdieľaj Wrenu reel alebo príspevok a on z neho vyčíta miesta. Alebo si odfoť obrazovku čohokoľvek — správy, strany zo sprievodcu — a Wren to prečíta. Názvy skončia v Mapách.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LSk extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Odfoť si obrazovku s tým, čo ti odporúčajú — reel, príspevok, správu, stranu zo sprievodcu. Wren prečíta názvy a odošle ich do mapovej aplikácie v telefóne.';
+      'Zdieľaj Wrenu reel alebo príspevok a on z neho vyčíta miesta. Alebo si odfoť obrazovku čohokoľvek — správy, strany zo sprievodcu — a Wren to prečíta. Názvy skončia v mapovej aplikácii v tvojom telefóne.';
 
   @override
   String get emptyNoteAndroid =>
@@ -81,7 +81,7 @@ class LSk extends L {
 
   @override
   String get regionNotDetected =>
-      'V snímkach nebolo napísané, kde sa nachádzajú. S mestom bude hľadanie oveľa presnejšie.';
+      'Nikde nebolo, kde tie miesta sú. S mestom je vyhľadávanie oveľa presnejšie.';
 
   @override
   String get cityOrRegion => 'Mesto alebo oblasť';
@@ -307,7 +307,7 @@ class LSk extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren číta snímky obrazovky, nie odkazy na príspevky. Vytvor snímku príspevku a zdieľaj ju.';
+      'Príspevky odtiaľ Wren prečítať nevie. Sprav si z príspevku snímky obrazovky a zdieľaj ich — to funguje vždy.';
 
   @override
   String get importGuideNothing =>

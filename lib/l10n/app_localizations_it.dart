@@ -16,7 +16,7 @@ class LIt extends L {
 
   @override
   String get emptyBody =>
-      'Fai uno screenshot di ciò che ti consigliano: un reel, un post, un messaggio, la pagina di una guida. Wren legge i nomi e li mette in Mappe.';
+      'Condividi un reel o un post con Wren e lui ne ricava i luoghi. Oppure fai uno screenshot di qualsiasi cosa — un messaggio, una pagina di una guida — e Wren lo legge. I nomi finiscono in Mappe.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LIt extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Fai uno screenshot di ciò che ti consigliano: un reel, un post, un messaggio, la pagina di una guida. Wren legge i nomi e li invia all\'app di mappe del tuo telefono.';
+      'Condividi un reel o un post con Wren e lui ne ricava i luoghi. Oppure fai uno screenshot di qualsiasi cosa — un messaggio, una pagina di una guida — e Wren lo legge. I nomi finiscono nell\'app di mappe del telefono.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LIt extends L {
 
   @override
   String get regionNotDetected =>
-      'Negli screenshot non era indicato dove si trovano. Con una città la ricerca è molto più precisa.';
+      'Niente diceva dove si trovano questi luoghi. Una città rende la ricerca molto più precisa.';
 
   @override
   String get cityOrRegion => 'Città o regione';
@@ -304,7 +304,7 @@ class LIt extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren legge gli screenshot, non i link ai post. Fai uno screenshot del post e condividi quello.';
+      'Wren non riesce a leggere i post di quella piattaforma. Fai degli screenshot del post e condividi quelli: funziona sempre.';
 
   @override
   String get importGuideNothing =>

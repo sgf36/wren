@@ -16,7 +16,7 @@ class LHe extends L {
 
   @override
   String get emptyBody =>
-      'צלם מסך של מה שממליצים לך עליו — ריל, פוסט, הודעה, עמוד מתוך מדריך טיולים. Wren קורא את השמות ומכניס אותם למפות של Apple.';
+      'שתפו ריל או פוסט עם Wren והוא יקרא מהם את המקומות. או צלמו מסך של כל דבר — הודעה, עמוד ממדריך טיולים — ו‑Wren יקרא אותו. השמות מגיעים למפות.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LHe extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'צלם מסך של מה שממליצים לך עליו — ריל, פוסט, הודעה, עמוד מתוך מדריך טיולים. Wren קורא את השמות ושולח אותם לאפליקציית המפות שבטלפון שלך.';
+      'שתפו ריל או פוסט עם Wren והוא יקרא מהם את המקומות. או צלמו מסך של כל דבר — הודעה, עמוד ממדריך טיולים — ו‑Wren יקרא אותו. השמות מגיעים לאפליקציית המפות בטלפון שלכם.';
 
   @override
   String get emptyNoteAndroid =>
@@ -81,7 +81,7 @@ class LHe extends L {
 
   @override
   String get regionNotDetected =>
-      'בצילומי המסך לא נכתב היכן הם נמצאים. עם עיר החיפוש מדויק בהרבה.';
+      'בשום מקום לא נכתב היכן המקומות האלה. עיר הופכת את החיפוש למדויק הרבה יותר.';
 
   @override
   String get cityOrRegion => 'עיר או אזור';
@@ -312,7 +312,7 @@ class LHe extends L {
 
   @override
   String get importGuideSocialPost =>
-      '‏Wren קורא צילומי מסך, לא קישורים לפוסטים. צלם את הפוסט ושתף את צילום המסך.';
+      'פוסטים משם Wren לא יודע לקרוא. צלמו את הפוסט ושתפו את צילומי המסך — זה תמיד עובד.';
 
   @override
   String get importGuideNothing => 'במדריך הזה אין מקומות שאפשר לצרף.';

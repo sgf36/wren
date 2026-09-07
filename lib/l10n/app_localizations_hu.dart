@@ -16,7 +16,7 @@ class LHu extends L {
 
   @override
   String get emptyBody =>
-      'Készíts képernyőképet arról, amit ajánlanak neked — egy reelről, egy posztról, egy üzenetről, egy útikönyv oldaláról. A Wren kiolvassa a neveket, és beteszi őket az Apple Térképekbe.';
+      'Oszd meg a Wrennel a reelt vagy a bejegyzést, és kiolvassa belőle a helyeket. Vagy készíts képernyőképet bármiről — egy üzenetről, egy útikönyv oldaláról — és a Wren azt olvassa el. A nevek a Térképekbe kerülnek.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LHu extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Készíts képernyőképet arról, amit ajánlanak neked — egy reelről, egy posztról, egy üzenetről, egy útikönyv oldaláról. A Wren kiolvassa a neveket, és elküldi őket a telefonod térkép-alkalmazásába.';
+      'Oszd meg a Wrennel a reelt vagy a bejegyzést, és kiolvassa belőle a helyeket. Vagy készíts képernyőképet bármiről — egy üzenetről, egy útikönyv oldaláról — és a Wren azt olvassa el. A nevek a telefonod térképalkalmazásába kerülnek.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LHu extends L {
 
   @override
   String get regionNotDetected =>
-      'A képernyőképeken nem szerepelt, hol vannak. Egy várossal a keresés sokkal pontosabb lesz.';
+      'Sehol nem szerepelt, hol vannak ezek a helyek. Egy várossal sokkal pontosabb a keresés.';
 
   @override
   String get cityOrRegion => 'Város vagy régió';
@@ -299,7 +299,7 @@ class LHu extends L {
 
   @override
   String get importGuideSocialPost =>
-      'A Wren képernyőképeket olvas, nem bejegyzésekre mutató hivatkozásokat. Készíts képernyőképet a bejegyzésről, és azt oszd meg.';
+      'Az onnani bejegyzéseket a Wren nem tudja elolvasni. Készíts róla képernyőképeket, és azokat oszd meg — az mindig működik.';
 
   @override
   String get importGuideNothing =>

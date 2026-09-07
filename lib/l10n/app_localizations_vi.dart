@@ -16,7 +16,7 @@ class LVi extends L {
 
   @override
   String get emptyBody =>
-      'Chụp màn hình những gì người ta gợi ý cho bạn — một reel, một bài đăng, một tin nhắn, một trang sách hướng dẫn du lịch. Wren đọc tên và đưa chúng vào Apple Maps.';
+      'Chia sẻ một reel hay một bài đăng tới Wren, Wren sẽ đọc ra các địa điểm. Hoặc chụp màn hình bất cứ thứ gì — một tin nhắn, một trang sách hướng dẫn — Wren đọc được. Các tên sẽ vào Bản đồ.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LVi extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Chụp màn hình những gì người ta gợi ý cho bạn — một reel, một bài đăng, một tin nhắn, một trang sách hướng dẫn du lịch. Wren đọc tên và gửi chúng đến ứng dụng bản đồ trên điện thoại của bạn.';
+      'Chia sẻ một reel hay một bài đăng tới Wren, Wren sẽ đọc ra các địa điểm. Hoặc chụp màn hình bất cứ thứ gì — một tin nhắn, một trang sách hướng dẫn — Wren đọc được. Các tên sẽ vào ứng dụng bản đồ trên máy bạn.';
 
   @override
   String get emptyNoteAndroid =>
@@ -78,7 +78,7 @@ class LVi extends L {
 
   @override
   String get regionNotDetected =>
-      'Ảnh chụp màn hình không nói những nơi này ở đâu. Có tên thành phố thì tìm kiếm chính xác hơn nhiều.';
+      'Không chỗ nào nói những địa điểm này ở đâu. Có tên thành phố thì tìm chính xác hơn nhiều.';
 
   @override
   String get cityOrRegion => 'Thành phố hoặc khu vực';
@@ -294,7 +294,7 @@ class LVi extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren đọc ảnh chụp màn hình, không đọc liên kết bài đăng. Hãy chụp màn hình bài đăng rồi chia sẻ ảnh đó.';
+      'Wren không đọc được bài đăng từ nơi đó. Hãy chụp màn hình bài đăng rồi chia sẻ ảnh — cách đó luôn được.';
 
   @override
   String get importGuideNothing => 'Hướng dẫn đó không có gì để Wren thêm vào.';

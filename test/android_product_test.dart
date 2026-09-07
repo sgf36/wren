@@ -283,11 +283,12 @@ void main() {
       tester,
     ) async {
       await pumpAndroid(tester);
-      // The same promise as iOS up to the destination: a screenshot is read
-      // here too, by ML Kit rather than Vision. What differs is the last
-      // clause -- a map app on the phone, not a guide that does not exist.
-      expect(find.textContaining('Screenshot what people'), findsOne);
-      expect(find.textContaining('sends them to the map app'), findsOne);
+      // The same promise as iOS up to the destination: a post is read by the
+      // same server and a screenshot by ML Kit rather than Vision. What
+      // differs is the last clause -- a map app on the phone, not a guide
+      // that does not exist.
+      expect(find.textContaining('Share a reel or a post'), findsOne);
+      expect(find.textContaining('the map app on your phone'), findsOne);
       expect(find.textContaining('Apple'), findsNothing);
       expect(find.textContaining('Also reads a list'), findsOne);
     });
@@ -295,9 +296,18 @@ void main() {
     testWidgets('the guide-making build keeps its own words', (tester) async {
       await tester.pumpWidget(app(const CapturePage(canMakeGuides: true)));
       await tester.pumpAndSettle();
-      expect(find.textContaining('Screenshot what people'), findsOne);
+      expect(find.textContaining('Share a reel or a post'), findsOne);
       expect(find.textContaining('Also reads a list'), findsOne);
       expect(find.textContaining('Open a list of places'), findsNothing);
+    });
+
+    testWidgets('screenshots are still offered, not dropped', (tester) async {
+      // Sharing a post leads because it is what the app is now for. It is also
+      // the paid half, and most people opening this screen have not bought
+      // anything -- so the free route that works on anything has to stay in
+      // the sentence rather than being demoted out of it.
+      await pumpAndroid(tester);
+      expect(find.textContaining('screenshot anything'), findsOne);
     });
   });
 

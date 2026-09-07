@@ -172,7 +172,7 @@ void main() {
       await paste(tester, 'https://www.facebook.com/reel/123456');
 
       expect(http.sent, isEmpty);
-      expect(find.textContaining('Wren reads screenshots'), findsOne);
+      expect(find.textContaining('cannot read posts from there'), findsOne);
     });
   });
 

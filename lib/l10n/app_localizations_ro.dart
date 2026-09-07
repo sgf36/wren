@@ -16,7 +16,7 @@ class LRo extends L {
 
   @override
   String get emptyBody =>
-      'Fă o captură de ecran cu ce ți se recomandă — un reel, o postare, un mesaj, o pagină dintr-un ghid de călătorie. Wren citește numele și le pune în Apple Hărți.';
+      'Trimite un reel sau o postare către Wren și scoate locurile din ea. Sau fă o captură de ecran la orice — un mesaj, o pagină dintr-un ghid — și Wren o citește. Numele ajung în Hărți.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LRo extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Fă o captură de ecran cu ce ți se recomandă — un reel, o postare, un mesaj, o pagină dintr-un ghid de călătorie. Wren citește numele și le trimite către aplicația de hărți de pe telefonul tău.';
+      'Trimite un reel sau o postare către Wren și scoate locurile din ea. Sau fă o captură de ecran la orice — un mesaj, o pagină dintr-un ghid — și Wren o citește. Numele ajung în aplicația de hărți de pe telefonul tău.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LRo extends L {
 
   @override
   String get regionNotDetected =>
-      'În capturi nu scria unde se află. Cu un oraș, căutarea devine mult mai precisă.';
+      'Nicăieri nu scria unde sunt aceste locuri. Un oraș face căutarea mult mai exactă.';
 
   @override
   String get cityOrRegion => 'Oraș sau regiune';
@@ -307,7 +307,7 @@ class LRo extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren citește capturi de ecran, nu linkuri către postări. Fă o captură a postării și trimite captura.';
+      'Postările de acolo nu pot fi citite de Wren. Fă capturi de ecran ale postării și trimite-le pe acelea — asta merge întotdeauna.';
 
   @override
   String get importGuideNothing =>

@@ -16,7 +16,7 @@ class LAr extends L {
 
   @override
   String get emptyBody =>
-      'التقط لقطة شاشة لما يُنصح به أمامك — ريل أو منشور أو رسالة أو صفحة من دليل سفر. يقرأ Wren الأسماء ويضعها في خرائط Apple.';
+      'شارك ريلًا أو منشورًا مع Wren فيقرأ منه الأماكن. أو صوّر شاشة أي شيء — رسالة، صفحة من دليل سفر — فيقرأها Wren. تذهب الأسماء إلى الخرائط.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LAr extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'التقط لقطة شاشة لما يُنصح به أمامك — ريل أو منشور أو رسالة أو صفحة من دليل سفر. يقرأ Wren الأسماء ويرسلها إلى تطبيق الخرائط على هاتفك.';
+      'شارك ريلًا أو منشورًا مع Wren فيقرأ منه الأماكن. أو صوّر شاشة أي شيء — رسالة، صفحة من دليل سفر — فيقرأها Wren. تذهب الأسماء إلى تطبيق الخرائط على هاتفك.';
 
   @override
   String get emptyNoteAndroid =>
@@ -83,7 +83,7 @@ class LAr extends L {
 
   @override
   String get regionNotDetected =>
-      'لم تذكر لقطات الشاشة أين تقع هذه الأماكن. تحديد المدينة يجعل البحث أدق بكثير.';
+      'لم يُذكر في أي مكان أين تقع هذه الأماكن. تحديد المدينة يجعل البحث أدق بكثير.';
 
   @override
   String get cityOrRegion => 'المدينة أو المنطقة';
@@ -303,7 +303,7 @@ class LAr extends L {
 
   @override
   String get importGuideSocialPost =>
-      '‏Wren يقرأ لقطات الشاشة، لا روابط المنشورات. التقط لقطة شاشة للمنشور وشاركها بدلاً من الرابط.';
+      'لا يستطيع Wren قراءة منشورات تلك المنصة. صوّر شاشة المنشور وشارك الصور — هذا ينجح دائمًا.';
 
   @override
   String get importGuideNothing =>

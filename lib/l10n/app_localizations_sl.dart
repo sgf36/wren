@@ -16,7 +16,7 @@ class LSl extends L {
 
   @override
   String get emptyBody =>
-      'Posnemi zaslon tistega, kar ti priporočijo — reel, objavo, sporočilo, stran iz vodnika. Wren prebere imena in jih doda v Apple Zemljevide.';
+      'Deli z Wrenom reel ali objavo in iz nje bo prebral kraje. Ali pa posnemi zaslon česar koli — sporočila, strani iz vodnika — in Wren to prebere. Imena končajo v Zemljevidih.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LSl extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Posnemi zaslon tistega, kar ti priporočijo — reel, objavo, sporočilo, stran iz vodnika. Wren prebere imena in jih pošlje v aplikacijo z zemljevidi v telefonu.';
+      'Deli z Wrenom reel ali objavo in iz nje bo prebral kraje. Ali pa posnemi zaslon česar koli — sporočila, strani iz vodnika — in Wren to prebere. Imena končajo v aplikaciji za zemljevide na tvojem telefonu.';
 
   @override
   String get emptyNoteAndroid =>
@@ -81,7 +81,7 @@ class LSl extends L {
 
   @override
   String get regionNotDetected =>
-      'Na posnetkih zaslona ni pisalo, kje so. Z mestom je iskanje precej natančnejše.';
+      'Nikjer ni pisalo, kje so ti kraji. Z mestom je iskanje veliko natančnejše.';
 
   @override
   String get cityOrRegion => 'Mesto ali regija';
@@ -311,7 +311,7 @@ class LSl extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren bere posnetke zaslona, ne povezav do objav. Naredi posnetek zaslona objave in ga deli.';
+      'Objav od tam Wren ne zna prebrati. Posnemi zaslone objave in deli tiste — to vedno deluje.';
 
   @override
   String get importGuideNothing =>

@@ -16,7 +16,7 @@ class LEn extends L {
 
   @override
   String get emptyBody =>
-      'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and puts them in Apple Maps.';
+      'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to Apple Maps.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LEn extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and sends them to the map app on your phone.';
+      'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to the map app on your phone.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LEn extends L {
 
   @override
   String get regionNotDetected =>
-      'Nothing in the screenshots said where these are. A city makes the search far more accurate.';
+      'Nothing said where these places are. A city makes the search far more accurate.';
 
   @override
   String get cityOrRegion => 'City or region';
@@ -310,7 +310,7 @@ class LEn extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren reads screenshots, not links to posts. Screenshot the post and share that instead.';
+      'Wren cannot read posts from there. Screenshot the post and share the screenshots instead — that always works.';
 
   @override
   String get importGuideNothing => 'That guide holds nothing Wren can add to.';

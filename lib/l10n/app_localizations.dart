@@ -195,10 +195,10 @@ abstract class L {
   /// **'Places, kept.'**
   String get emptyTitle;
 
-  /// Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video.
+  /// Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video. Sharing a post leads because it is what the app is now for; screenshots stay in the same sentence because they are free, they work on anything, and they are what most people will use first.
   ///
   /// In en, this message translates to:
-  /// **'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and puts them in Apple Maps.'**
+  /// **'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to Apple Maps.'**
   String get emptyBody;
 
   /// A limitation of Apple Maps, stated up front. 'Guide' is Apple's own feature name — use whatever Apple Maps calls it in this language.
@@ -210,7 +210,7 @@ abstract class L {
   /// The opening line of the first screen, on a platform that cannot make guides. It mirrors emptyBody, which ends in Apple Maps; this one ends in whichever map app is installed. Everything before that clause is the same, and should read the same way in translation.
   ///
   /// In en, this message translates to:
-  /// **'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and sends them to the map app on your phone.'**
+  /// **'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to the map app on your phone.'**
   String get emptyBodyAndroid;
 
   /// The quieter second line of the first screen, on a platform that cannot make guides. It replaces emptyNote, which is about Apple Maps refusing to merge guides. Two things: a file is a way in as well as a screenshot, and nothing is sent until the user has seen the list. Name no map app here — the sheet that sends the places names them, and only the ones actually installed.
@@ -285,10 +285,10 @@ abstract class L {
   /// **'Read from the captions. Change it if that is wrong.'**
   String get regionDetected;
 
-  /// Shown when no city could be found in the screenshot text.
+  /// Shown when nothing in what was read said which city these places are in. Said after a screenshot import and after a shared post alike, so it must name neither.
   ///
   /// In en, this message translates to:
-  /// **'Nothing in the screenshots said where these are. A city makes the search far more accurate.'**
+  /// **'Nothing said where these places are. A city makes the search far more accurate.'**
   String get regionNotDetected;
 
   /// Text field label.
@@ -621,10 +621,10 @@ abstract class L {
   /// **'That is not an Apple Maps guide link. Open the guide in Maps, share it, then choose Copy Link.'**
   String get importGuideNotALink;
 
-  /// Shown when the shared or pasted link is a post on a social platform. Wren appears in the share sheet of every app that shares a link, so this arrives often; without it the person is told their reel is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately.
+  /// Shown when the shared or pasted link is a post on a platform Wren cannot read — the ones it can are handled before this. Wren appears in the share sheet of every app that shares a link, so this still arrives; without it the person is told their post is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately.
   ///
   /// In en, this message translates to:
-  /// **'Wren reads screenshots, not links to posts. Screenshot the post and share that instead.'**
+  /// **'Wren cannot read posts from there. Screenshot the post and share the screenshots instead — that always works.'**
   String get importGuideSocialPost;
 
   /// Shown when the link decoded but contained no place Wren can republish.
