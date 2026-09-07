@@ -1,11 +1,13 @@
 # Play screenshots
 
 Four phone screenshots, in `screenshots/en-GB/`, shot on the `wren_play`
-emulator against a real debug build on 20 August 2026.
+emulator against a real debug build. `01` was reshot on 7 September 2026 for
+2.0; the other three were shot on 20 August 2026 and are unchanged, because the
+file-import route they show is untouched by 2.0.
 
 | File | What it shows |
 |---|---|
-| `01-first-screen.png` | The first screen, describing the Android app |
+| `01-first-screen.png` | The first screen. **Reshot for 2.0**: it now opens "Share a reel or a post to Wren and it reads the places out of it", which is what the store listing leads with. The 1.x capture described an app that only read screenshots, so the words and the pictures disagreed |
 | `02-the-list.png` | Six places read out of a CSV, each one to keep or drop |
 | `03-send-sheet.png` | The hand-off sheet, listing only map apps that are installed |
 | `04-landed.png` | The same six places inside Organic Maps, under the file's own name |
@@ -13,6 +15,20 @@ emulator against a real debug build on 20 August 2026.
 **Nothing in `store/screenshots/` may be used here.** Those are iPhone captures
 of the iOS app and several of them show Apple Maps, which does not exist on
 Android. There is no overlap between the two sets and there never will be.
+
+## What is deliberately NOT here yet
+
+There is **no screenshot of a reel being read**. Getting one needs three things
+that a capture run does not otherwise need: a complimentary code carrying the
+`everything` or `admin` role (an ordinary unlock code does not grant reels), a
+real post fetched through the live Worker, which spends a ScrapeCreators credit
+and Vertex tokens, and a share into the app from another app on the device.
+
+The judgement was that `01` now states the reel route in the app's own words on
+the first screen, and that the list a reel produces is the same list a file
+produces -- `02` already shows it. A dedicated shot would be better and is worth
+doing before production, but it is not worth a paid read and a minted code to
+show a screen that differs by one line of source text.
 
 ## Shooting them again
 
