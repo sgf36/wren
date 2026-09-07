@@ -94,8 +94,10 @@ void main() {
         final generated = File(
           'lib/l10n/app_localizations_${locale.replaceAll('-', '_')}.dart',
         );
-        if (!generated.existsSync())
-          return; // A regional variant shares a file.
+        // A regional variant shares its parent's generated file.
+        if (!generated.existsSync()) {
+          return;
+        }
         final source = generated.readAsStringSync();
         for (final key in expected) {
           final value = arb[key];

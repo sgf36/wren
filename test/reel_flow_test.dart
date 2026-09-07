@@ -8,6 +8,7 @@ import 'package:wren/src/entitlement.dart';
 import 'package:wren/src/guide_link.dart';
 import 'package:wren/src/reel_import.dart';
 import 'package:wren/src/resolver.dart';
+import 'package:wren/src/share_inbox.dart';
 
 import 'harness.dart';
 import 'import_flow_test.dart' show addFrom;
@@ -92,6 +93,7 @@ Future<void> pump(
   required Sender send,
   PlaceResolver? resolver,
   FakeStore? store,
+  ShareInbox? shareInbox,
   bool canMakeGuides = true,
 }) async {
   await tester.pumpWidget(
@@ -100,6 +102,7 @@ Future<void> pump(
         reelSender: send,
         resolver: resolver ?? FindsAnything(),
         store: store ?? FakeStore(),
+        shareInbox: shareInbox,
         canMakeGuides: canMakeGuides,
       ),
     ),
@@ -170,6 +173,64 @@ void main() {
 
       expect(http.sent, isEmpty);
       expect(find.textContaining('Wren reads screenshots'), findsOne);
+    });
+  });
+
+  group('a share arrives from another app', () {
+    testWidgets('the link is pulled out of the sentence around it', (
+      tester,
+    ) async {
+      // What TikTok's share sheet actually sends. Handing the whole string to
+      // the importer answers "that is not a link", about a message that
+      // plainly contains one.
+      final http = worker(200, {
+        'candidates': [
+          {'name': 'Padella'},
+        ],
+      });
+      SharedPreferences.setMockInitialValues(entitled());
+      await pump(
+        tester,
+        send: http.send,
+        shareInbox: StubShareInbox(
+          const SharedInput(
+            link:
+                'Check out this video on TikTok '
+                'https://vm.tiktok.com/ZTdAbCdEf/ Find TikTok on the app store',
+          ),
+        ),
+      );
+
+      expect(http.sent.single['url'], 'https://vm.tiktok.com/ZTdAbCdEf/');
+    });
+
+    testWidgets('a share nobody has paid for costs nothing', (tester) async {
+      // The share sheet is open to everyone — the extension has no idea what
+      // was bought — so this is the common case, not an edge one.
+      final http = worker(200, {'candidates': <Object>[]});
+      await pump(
+        tester,
+        send: http.send,
+        shareInbox: StubShareInbox(const SharedInput(link: reel)),
+      );
+
+      expect(http.sent, isEmpty);
+      expect(find.text('Places from a post'), findsOne);
+    });
+
+    testWidgets('shared text holding no link is still not a link', (
+      tester,
+    ) async {
+      final http = worker(200, {'candidates': <Object>[]});
+      SharedPreferences.setMockInitialValues(entitled());
+      await pump(
+        tester,
+        send: http.send,
+        shareInbox: StubShareInbox(const SharedInput(link: 'just some words')),
+      );
+
+      expect(http.sent, isEmpty);
+      expect(find.textContaining('is not'), findsWidgets);
     });
   });
 

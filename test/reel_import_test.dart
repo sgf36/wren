@@ -89,6 +89,68 @@ void main() {
     );
   });
 
+  group('pulling the link out of what was shared', () {
+    test('a bare link is itself', () {
+      expect(
+        firstLinkIn('https://www.instagram.com/p/ABC/'),
+        'https://www.instagram.com/p/ABC/',
+      );
+    });
+
+    test('the link is found inside the sentence a platform wraps it in', () {
+      // What TikTok's share sheet actually produces. Treating the whole string
+      // as a URL fails, and fails as "that is not a link" — a confusing thing
+      // to be told about a message that plainly contains one.
+      expect(
+        firstLinkIn(
+          'Check out this video on TikTok '
+          'https://vm.tiktok.com/ZTdAbCdEf/ Find TikTok on the app store',
+        ),
+        'https://vm.tiktok.com/ZTdAbCdEf/',
+      );
+    });
+
+    test('a link at the end of a sentence loses the full stop', () {
+      // Not the URL's. A trailing dot resolves to a path that does not exist.
+      expect(
+        firstLinkIn('look at https://youtu.be/dQw4w9WgXcQ.'),
+        'https://youtu.be/dQw4w9WgXcQ',
+      );
+      expect(
+        firstLinkIn('is it https://youtu.be/dQw4w9WgXcQ?'),
+        'https://youtu.be/dQw4w9WgXcQ',
+      );
+    });
+
+    test('a bracket only goes if nothing inside the link opened it', () {
+      expect(
+        firstLinkIn('(see https://example.com/a)'),
+        'https://example.com/a',
+      );
+      // A real part of the address. Trimming it breaks the link.
+      expect(
+        firstLinkIn('https://en.wikipedia.org/wiki/Wren_(disambiguation)'),
+        'https://en.wikipedia.org/wiki/Wren_(disambiguation)',
+      );
+    });
+
+    test('the first is taken, not the best', () {
+      // A share holds one link and whatever came with it. Choosing between
+      // several would be guessing at which of two things somebody meant, with
+      // nothing to guess from.
+      expect(
+        firstLinkIn('https://vm.tiktok.com/A/ and https://youtu.be/B'),
+        'https://vm.tiktok.com/A/',
+      );
+    });
+
+    test('text with no link at all is not a link', () {
+      for (final text in ['', 'hello', 'instagram.com/p/ABC', 'ftp://x/y']) {
+        expect(firstLinkIn(text), isNull, reason: text);
+      }
+    });
+  });
+
   group('a reading', () {
     test('carries the places, the region and the allowance', () async {
       final http = replying(200, {

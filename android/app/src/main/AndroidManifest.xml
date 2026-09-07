@@ -57,6 +57,25 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Wren in the share sheet, which is how a reel or a post reaches
+                 it. text/plain only: Instagram, TikTok and YouTube all share a
+                 link as text, and claiming image types as well would put Wren
+                 in the sheet of every photo on the phone in exchange for a
+                 path the app already reaches through the picker.
+
+                 DEFAULT is required. Without it the filter matches nothing the
+                 chooser offers, because every share goes out as an implicit
+                 intent and those carry that category — so the app simply never
+                 appears, with nothing anywhere reporting a fault.
+
+                 MainActivity handles this in both onCreate and onNewIntent;
+                 launchMode is singleTop, so which one fires depends on whether
+                 Wren was already running. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
         </activity>
         <!-- Exports leave through a content:// URI, never a file path.
              A file:// URI grants the receiving app nothing: it launches, matches

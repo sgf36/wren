@@ -49,6 +49,36 @@ const Set<String> reelHosts = {
   'youtu.be',
 };
 
+/// The first web link inside some shared text, or null if there is none.
+///
+/// A share sheet does not promise a bare URL. TikTok sends the link with a
+/// sentence of its own around it, Instagram sometimes prefixes the caption, and
+/// a person forwarding a message may send a whole paragraph. Treating the lot
+/// as a URL fails on every one of those, and it fails as "not a link", which
+/// is a confusing thing to be told about a message that plainly contains one.
+///
+/// Deliberately the *first* rather than the best. A share holds one link and
+/// whatever else came with it; picking among several would be guessing at which
+/// of two things somebody meant, and there is nothing here to guess with.
+String? firstLinkIn(String text) {
+  final match = RegExp(r'https?://[^\s<>"]+').firstMatch(text);
+  if (match == null) return null;
+  var link = match.group(0)!;
+  // Trailing punctuation belongs to the sentence, not to the link: "look at
+  // https://example.com/p/abc." resolves to a path that does not exist.
+  link = link.replaceFirst(RegExp(r'[.,;:!?]+$'), '');
+  // A closing bracket is only punctuation if nothing opened it inside the link
+  // itself. "(see https://example.com/p/a)" ends a sentence; a Wikipedia link
+  // ending in "_(disambiguation)" does not, and trimming that breaks it.
+  if (link.endsWith(')') && !link.contains('(')) {
+    link = link.substring(0, link.length - 1);
+  }
+  if (link.endsWith(']') && !link.contains('[')) {
+    link = link.substring(0, link.length - 1);
+  }
+  return link;
+}
+
 /// Whether this is a link the reel feature can be asked about.
 bool isReelLink(String input) {
   final uri = Uri.tryParse(input.trim());

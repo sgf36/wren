@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
@@ -341,6 +342,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// Product ids the store has confirmed for this account.
   Set<String> _owned = const {};
 
+  /// Completes when the first read of both purchases and complimentary role is
+  /// in. Until then [_entitlement] is the free one because nothing has been
+  /// read yet, not because nothing is held — and a share arriving on a cold
+  /// start is exactly the moment those two look the same.
+  Future<void>? _entitlementSettled;
+
   /// What this device's complimentary token grants, if it holds one.
   ///
   /// Only [comp.CompRole.admin] changes anything on screen, and only by
@@ -382,8 +389,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     // A link may be waiting from before the app was even running.
     WidgetsBinding.instance.addPostFrameCallback((_) => _takeSharedGuide());
-    _syncPurchases();
-    _refreshCompAccess();
+    // Both feed [_recompose], and a share landing on a cold start can reach
+    // the entitlement before either has answered. Kept as a future so the one
+    // path that must not guess can wait for it.
+    _entitlementSettled = Future.wait([_syncPurchases(), _refreshCompAccess()]);
 
     if (widget.initialOverlay != ScreenshotOverlay.none) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -903,6 +912,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       _owned = owned;
       _recompose();
     });
+    // Ask the store its prices now, and throw the answer away. The first such
+    // call opens a billing connection, and on a cold device that took twelve
+    // seconds — twelve seconds of a sheet not appearing, measured on an
+    // emulator on 2026-09-07. Warmed here it has usually finished long before
+    // anybody taps, and if it has not, [_offerUnlock] gives up and shows the
+    // advertised price rather than waiting.
+    unawaited(_store.price(unlimitedProductId));
   }
 
   /// Rebuilds [_entitlement] from everything that can grant something.
@@ -947,9 +963,15 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       if (!mounted) return;
     }
 
-    final link = shared.link;
-    if (link != null && link.isNotEmpty && mounted) {
-      await _importGuide(shared: link);
+    final shareText = shared.link;
+    if (shareText != null && shareText.isNotEmpty && mounted) {
+      // A share sheet does not promise a bare URL. TikTok wraps the link in a
+      // sentence of its own and a person forwarding a message may send a whole
+      // paragraph, so the link is pulled out of whatever arrived. When there is
+      // none, the original text goes on unchanged — the importer's own "that is
+      // not a link" is the right answer then, and better than one about an
+      // empty string.
+      await _importGuide(shared: firstLinkIn(shareText) ?? shareText);
     }
   }
 
@@ -968,6 +990,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// held and the link is one the feature can read.
   Future<void> _importReel(String link) async {
     final l = L.of(context);
+    // A share can arrive before the first frame has finished, which is before
+    // either source of entitlement has been read from disk. Raising the paywall
+    // at somebody who has paid is the failure this avoids, and it is the
+    // ordinary case rather than an edge one: a cold start is what a share does.
+    await _entitlementSettled;
+    if (!mounted) return;
     if (!_entitlement.reels) {
       if (await _sell(PaywallReason.reels) != _Gate.through) return;
       if (!mounted) return;
@@ -1561,8 +1589,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     if (offers.isEmpty) return const _UnlockAnswer(_UnlockChoice.cancel);
 
     // One round trip for every price the sheet shows, together, so the two
-    // figures do not appear one after the other.
-    final prices = await Future.wait(offers.map(_store.price));
+    // figures do not appear one after the other — and bounded, because a sheet
+    // that does not appear is worse than one quoting the advertised price. The
+    // store is normally warm by now: see [_syncPurchases].
+    final prices = await Future.wait(offers.map(_store.price)).timeout(
+      const Duration(seconds: 6),
+      onTimeout: () => List<String?>.filled(offers.length, null),
+    );
     if (!mounted) return const _UnlockAnswer(_UnlockChoice.cancel);
     final priced = [
       for (var i = 0; i < offers.length; i++)
