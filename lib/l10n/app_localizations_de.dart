@@ -296,20 +296,8 @@ class LDe extends L {
   String get fromFile => 'Aus einer Datei';
 
   @override
-  String get fromExistingGuide => 'Aus einem bestehenden Guide';
-
-  @override
-  String get importGuideTitle => 'Zu einem bestehenden Guide hinzufügen';
-
-  @override
   String get importGuideBody =>
-      'Öffne den Guide in Apple Karten, teile ihn und wähle „Link kopieren“. Füge ihn unten ein, dann liest Wren die Orte, die er schon enthält.';
-
-  @override
-  String get guideLinkLabel => 'Link zum Guide';
-
-  @override
-  String get readGuide => 'Guide lesen';
+      'Öffne den Guide in Apple Karten, teile ihn und wähle „Link kopieren“. Füge ihn unten ein, dann liest Wren die Orte, die er schon enthält. Ein Link zu einem Reel oder Beitrag funktioniert hier ebenfalls.';
 
   @override
   String get importGuideNotALink =>
@@ -544,4 +532,92 @@ class LDe extends L {
   @override
   String get compExpiring =>
       'Wren konnte deinen kostenlosen Zugang nicht bestätigen. Stelle in den nächsten Tagen eine Internetverbindung her, um ihn zu behalten.';
+
+  @override
+  String get reelsTitle => 'Orte aus einem Beitrag';
+
+  @override
+  String get reelsExplain =>
+      'Teile ein Reel oder einen Beitrag mit Wren, und Wren liest die Orte heraus – bereit zum Prüfen und Speichern. Wren behält das Video nie.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Alles für $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Beiträge für $price dazu';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Liest außerdem Orte aus einem geteilten Beitrag.';
+
+  @override
+  String get readingPost => 'Beitrag wird gelesen…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'Beiträge diesen Monat übrig: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Das war es für diesen Monat. Dein Kontingent kommt am $date zurück.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'ein paar Wochen';
+
+  @override
+  String get reelBusy =>
+      'Wren liest noch den letzten Beitrag. Versuch es gleich noch einmal.';
+
+  @override
+  String get reelUnavailable =>
+      'Dieser Beitrag ließ sich nicht öffnen. Er ist vielleicht privat, gelöscht oder hier nicht verfügbar.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren konnte diesen Beitrag nicht lesen. Mach Screenshots davon und teile die – das klappt immer.';
+
+  @override
+  String get reelNoPlaces =>
+      'In diesem Beitrag sah nichts nach einem Ort aus, den man besuchen kann.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren hat den Server nicht erreicht, um den Beitrag zu lesen. Von deinem Kontingent wurde nichts abgezogen.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Tipp zuerst auf Kauf wiederherstellen, damit Wren dem Store deinen Beleg zeigen kann.';
+
+  @override
+  String get compEnabledEverything =>
+      'Freier Zugang aktiviert, einschließlich Orte aus einem Beitrag.';
+
+  @override
+  String get restoredEverything =>
+      'Wiederhergestellt. Guides in jeder Größe und Orte aus einem Beitrag.';
+
+  @override
+  String get fromGuideOrPost => 'Aus einem Link';
+
+  @override
+  String get fromPost => 'Aus einem Beitrag';
+
+  @override
+  String get importLinkTitle => 'Aus einem Link hinzufügen';
+
+  @override
+  String get importPostBody =>
+      'Füge den Link zu einem Reel oder Beitrag ein, und Wren liest die Orte heraus. Wren behält das Video nie.';
+
+  @override
+  String get linkLabel => 'Link';
+
+  @override
+  String get readLink => 'Lesen';
 }

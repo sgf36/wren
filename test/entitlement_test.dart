@@ -55,9 +55,11 @@ void main() {
       // If the store is not wired up, the worst outcome is that nobody can buy.
       // The unacceptable outcome would be everybody getting it free.
       final store = UnavailableUnlockStore();
-      expect(await store.buy(), isFalse);
-      expect(await store.restore(), isFalse);
-      expect(await store.price(), isNull);
+      for (final id in allProductIds) {
+        expect(await store.buy(id), isFalse, reason: id);
+        expect(await store.price(id), isNull, reason: id);
+      }
+      expect(await store.restore(), isEmpty);
     });
   });
 }

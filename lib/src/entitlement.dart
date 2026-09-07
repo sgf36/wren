@@ -32,10 +32,75 @@ const String reelsUpgradeProductId =
 /// inferred from a name.
 const Set<String> reelProductIds = {everythingProductId, reelsUpgradeProductId};
 
-/// Advertised price. Only ever used as a fallback in copy — the real figure
+/// Every product either store carries.
+///
+/// Both carry the same three. Android was going to sell a reels-only product
+/// instead, and that was dropped: it already sells `unlimited`, so a separate
+/// ladder would have meant two different answers to "what have I bought" in one
+/// app. Queried in a single call because each round trip to the store costs a
+/// visible pause, and the sheet needs two prices at once.
+const Set<String> allProductIds = {
+  unlimitedProductId,
+  everythingProductId,
+  reelsUpgradeProductId,
+};
+
+/// Why the purchase sheet is open.
+///
+/// It decides which product is offered first, and that is not a marketing
+/// question. Somebody stopped by the three-place cap is served by the cheaper
+/// unlock, and putting the bundle in front of them as the only way past would
+/// be selling them something they did not need. Somebody who shared a post has
+/// no cheaper option, because nothing else grants it.
+enum PaywallReason {
+  /// A list is over the free cap.
+  places,
+
+  /// A post was shared and cannot be read.
+  reels,
+}
+
+/// What is worth offering, best answer first, or empty when nothing is left.
+///
+/// A pure function of the reason and what is held, so the matrix can be tested
+/// without a store, a widget or a phone. Empty is a real answer and the caller
+/// must handle it: a person who owns everything and shares a post has hit the
+/// monthly allowance, not a paywall, and showing them a sheet with nothing to
+/// buy would be the app failing to explain itself.
+List<String> offersFor(PaywallReason reason, Entitlement held) {
+  switch (reason) {
+    case PaywallReason.places:
+      if (held.unlimited) return const [];
+      // The cheaper one first: it is the whole of what was asked for. The
+      // bundle follows as the larger option rather than replacing it.
+      return const [unlimitedProductId, everythingProductId];
+    case PaywallReason.reels:
+      if (held.reels) return const [];
+      // Non-consumables have no upgrade mechanism, so somebody who already
+      // holds the unlock is sold the difference rather than the whole thing
+      // again.
+      return held.unlimited
+          ? const [reelsUpgradeProductId]
+          : const [everythingProductId];
+  }
+}
+
+/// Advertised prices. Only ever used as a fallback in copy — the real figure
 /// shown to the user must come from the store, because Apple sets the local
-/// price and it is not a currency conversion of the dollar one.
+/// price and it is not a currency conversion of the dollar one. Each is the
+/// USD customer price of the product's schedule in App Store Connect, and each
+/// is wrong on every other storefront, which is why it is reached for only when
+/// the store will not answer at all.
 const String unlimitedFallbackPrice = r'$8.99';
+const String everythingFallbackPrice = r'$14.99';
+const String reelsUpgradeFallbackPrice = r'$9.99';
+
+/// The advertised price of one product, for when the store is silent.
+String fallbackPriceOf(String productId) => switch (productId) {
+  everythingProductId => everythingFallbackPrice,
+  reelsUpgradeProductId => reelsUpgradeFallbackPrice,
+  _ => unlimitedFallbackPrice,
+};
 
 enum PublishBlock {
   /// Nothing selected.
@@ -122,14 +187,22 @@ class Entitlement {
 abstract class UnlockStore {
   /// Localised price string from the store, or null if it could not be read.
   /// Never format this yourself — Apple's price points are not conversions.
-  Future<String?> price();
+  Future<String?> price(String productId);
 
-  /// Runs the purchase flow. True if the user now owns the unlock.
-  Future<bool> buy();
+  /// Runs the purchase flow for one product. True if it is now owned.
+  ///
+  /// The product is named rather than implied. There are three, two of them
+  /// differ by five pounds, and a default would let a mistaken call charge the
+  /// wrong one without anything looking wrong at the call site.
+  Future<bool> buy(String productId);
 
-  /// Re-checks previous purchases. Apple requires a restore path, and a user
-  /// on a new phone must not be asked to pay twice.
-  Future<bool> restore();
+  /// Everything the store says this account owns.
+  ///
+  /// A set rather than a yes: restoring on a new phone has to say *which*
+  /// purchases came back, because two of them grant different things. Apple
+  /// requires a restore path, and a user on a new phone must not be asked to
+  /// pay twice.
+  Future<Set<String>> restore();
 }
 
 /// Stands in until `in_app_purchase` is wired to the real product. Always
@@ -137,11 +210,11 @@ abstract class UnlockStore {
 /// implementation cannot become a free upgrade.
 class UnavailableUnlockStore implements UnlockStore {
   @override
-  Future<String?> price() async => null;
+  Future<String?> price(String productId) async => null;
 
   @override
-  Future<bool> buy() async => false;
+  Future<bool> buy(String productId) async => false;
 
   @override
-  Future<bool> restore() async => false;
+  Future<Set<String>> restore() async => const {};
 }

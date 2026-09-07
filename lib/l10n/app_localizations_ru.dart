@@ -303,20 +303,8 @@ class LRu extends L {
   String get fromFile => 'Из файла';
 
   @override
-  String get fromExistingGuide => 'Из существующего путеводителя';
-
-  @override
-  String get importGuideTitle => 'Добавить в существующий путеводитель';
-
-  @override
   String get importGuideBody =>
-      'Открой путеводитель в Apple Картах, нажми «Поделиться» и выбери «Скопировать ссылку». Вставь её ниже, и Wren прочитает места, которые в нём уже есть.';
-
-  @override
-  String get guideLinkLabel => 'Ссылка на путеводитель';
-
-  @override
-  String get readGuide => 'Прочитать путеводитель';
+      'Открой путеводитель в Apple Картах, нажми «Поделиться» и выбери «Скопировать ссылку». Вставь её ниже, и Wren прочитает места, которые в нём уже есть. Ссылка на рилс или публикацию здесь тоже подойдёт.';
 
   @override
   String get importGuideNotALink =>
@@ -581,4 +569,92 @@ class LRu extends L {
   @override
   String get compExpiring =>
       'Wren не смог подтвердить ваш бесплатный доступ. Подключитесь к интернету в ближайшие дни, чтобы сохранить его.';
+
+  @override
+  String get reelsTitle => 'Места из публикации';
+
+  @override
+  String get reelsExplain =>
+      'Поделись с Wren рилсом или публикацией, и он вытащит оттуда места — останется проверить и сохранить. Wren никогда не хранит видео.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Всё за $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Добавить публикации за $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Ещё вытаскивает места из присланной публикации.';
+
+  @override
+  String get readingPost => 'Читаю публикацию…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'публикаций осталось в этом месяце: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Это все публикации на этот месяц. Лимит вернётся $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'несколько недель';
+
+  @override
+  String get reelBusy =>
+      'Wren ещё читает прошлую публикацию. Попробуй через минуту.';
+
+  @override
+  String get reelUnavailable =>
+      'Не удалось открыть эту публикацию. Возможно, она закрытая, удалена или недоступна здесь.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren не смог прочитать эту публикацию. Сделай скриншоты и поделись ими — это работает всегда.';
+
+  @override
+  String get reelNoPlaces =>
+      'Ничего в этой публикации не похоже на место, куда можно сходить.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren не достучался до сервера, чтобы прочитать публикацию. С лимита ничего не списано.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Сначала нажми «Восстановить покупку», чтобы Wren показал магазину твой чек.';
+
+  @override
+  String get compEnabledEverything =>
+      'Бесплатный доступ включён, вместе с местами из публикаций.';
+
+  @override
+  String get restoredEverything =>
+      'Восстановлено. Путеводители любого размера и места из публикаций.';
+
+  @override
+  String get fromGuideOrPost => 'По ссылке';
+
+  @override
+  String get fromPost => 'Из публикации';
+
+  @override
+  String get importLinkTitle => 'Добавить по ссылке';
+
+  @override
+  String get importPostBody =>
+      'Вставь ссылку на рилс или публикацию, и Wren вытащит оттуда места. Wren никогда не хранит видео.';
+
+  @override
+  String get linkLabel => 'Ссылка';
+
+  @override
+  String get readLink => 'Прочитать';
 }

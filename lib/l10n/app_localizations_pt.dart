@@ -294,20 +294,8 @@ class LPt extends L {
   String get fromFile => 'De um arquivo';
 
   @override
-  String get fromExistingGuide => 'De um guia existente';
-
-  @override
-  String get importGuideTitle => 'Adicionar a um guia existente';
-
-  @override
   String get importGuideBody =>
-      'No Mapas, abra o guia e compartilhe, depois escolha Copiar link. Cole o link abaixo e o Wren vai ler os lugares que ele já tem.';
-
-  @override
-  String get guideLinkLabel => 'Link do guia';
-
-  @override
-  String get readGuide => 'Ler o guia';
+      'No Mapas, abra o guia e compartilhe, depois escolha Copiar link. Cole o link abaixo e o Wren vai ler os lugares que ele já tem. Um link para um reel ou uma publicação também funciona aqui.';
 
   @override
   String get importGuideNotALink =>
@@ -539,6 +527,94 @@ class LPt extends L {
   @override
   String get compExpiring =>
       'O Wren não conseguiu confirmar o seu acesso gratuito. Ligue-se à internet nos próximos dias para o manter.';
+
+  @override
+  String get reelsTitle => 'Lugares de uma publicação';
+
+  @override
+  String get reelsExplain =>
+      'Compartilhe um reel ou uma publicação com o Wren e ele tira os lugares dali, prontos para conferir e salvar. O Wren nunca guarda o vídeo.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Tudo por $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Adicionar publicações por $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Também tira lugares de uma publicação compartilhada.';
+
+  @override
+  String get readingPost => 'Lendo a publicação…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'publicações restantes neste mês: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'É tudo por este mês. Sua cota volta em $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'algumas semanas';
+
+  @override
+  String get reelBusy =>
+      'O Wren ainda está lendo a publicação anterior. Tente de novo daqui a pouco.';
+
+  @override
+  String get reelUnavailable =>
+      'Não foi possível abrir essa publicação. Ela pode estar privada, apagada ou indisponível aqui.';
+
+  @override
+  String get reelCouldNotRead =>
+      'O Wren não conseguiu ler essa publicação. Tire prints e compartilhe: isso sempre funciona.';
+
+  @override
+  String get reelNoPlaces =>
+      'Nada nessa publicação parecia um lugar para visitar.';
+
+  @override
+  String get reelUnreachable =>
+      'O Wren não conseguiu falar com o servidor para ler essa publicação. Nada foi descontado da sua cota.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Toque em Restaurar compra primeiro, para o Wren poder mostrar seu recibo à loja.';
+
+  @override
+  String get compEnabledEverything =>
+      'Acesso de cortesia ativado, incluindo lugares de uma publicação.';
+
+  @override
+  String get restoredEverything =>
+      'Restaurado. Roteiros de qualquer tamanho e lugares de uma publicação.';
+
+  @override
+  String get fromGuideOrPost => 'De um link';
+
+  @override
+  String get fromPost => 'De uma publicação';
+
+  @override
+  String get importLinkTitle => 'Adicionar de um link';
+
+  @override
+  String get importPostBody =>
+      'Cole o link de um reel ou de uma publicação e o Wren tira os lugares dali. O Wren nunca guarda o vídeo.';
+
+  @override
+  String get linkLabel => 'Link';
+
+  @override
+  String get readLink => 'Ler';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -833,20 +909,8 @@ class LPtPt extends LPt {
   String get fromFile => 'De um ficheiro';
 
   @override
-  String get fromExistingGuide => 'De um guia existente';
-
-  @override
-  String get importGuideTitle => 'Adicionar a um guia existente';
-
-  @override
   String get importGuideBody =>
-      'No Mapas, abra o guia e partilhe-o, depois escolha Copiar hiperligação. Cole-a abaixo e o Wren vai ler os lugares que ele já tem.';
-
-  @override
-  String get guideLinkLabel => 'Hiperligação do guia';
-
-  @override
-  String get readGuide => 'Ler o guia';
+      'No Mapas, abra o guia e partilhe-o, depois escolha Copiar hiperligação. Cole-a abaixo e o Wren vai ler os lugares que ele já tem. Um link para um reel ou uma publicação também funciona aqui.';
 
   @override
   String get importGuideNotALink =>
@@ -1078,4 +1142,92 @@ class LPtPt extends LPt {
   @override
   String get compExpiring =>
       'O Wren não conseguiu confirmar o seu acesso gratuito. Ligue-se à internet nos próximos dias para o manter.';
+
+  @override
+  String get reelsTitle => 'Lugares de uma publicação';
+
+  @override
+  String get reelsExplain =>
+      'Partilha um reel ou uma publicação com o Wren e ele retira os lugares, prontos a confirmar e guardar. O Wren nunca guarda o vídeo.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Tudo por $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Adicionar publicações por $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Também retira lugares de uma publicação partilhada.';
+
+  @override
+  String get readingPost => 'A ler a publicação…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'publicações que restam este mês: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'É tudo por este mês. A tua quota volta a $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'algumas semanas';
+
+  @override
+  String get reelBusy =>
+      'O Wren ainda está a ler a publicação anterior. Tenta daqui a pouco.';
+
+  @override
+  String get reelUnavailable =>
+      'Não foi possível abrir essa publicação. Pode estar privada, apagada ou indisponível aqui.';
+
+  @override
+  String get reelCouldNotRead =>
+      'O Wren não conseguiu ler essa publicação. Tira capturas de ecrã e partilha-as: isso funciona sempre.';
+
+  @override
+  String get reelNoPlaces =>
+      'Nada nessa publicação parecia um lugar para visitar.';
+
+  @override
+  String get reelUnreachable =>
+      'O Wren não conseguiu chegar ao servidor para ler essa publicação. Não foi descontado nada da tua quota.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Toca primeiro em Restaurar compra, para o Wren poder mostrar o teu recibo à loja.';
+
+  @override
+  String get compEnabledEverything =>
+      'Acesso de cortesia ativado, incluindo lugares de uma publicação.';
+
+  @override
+  String get restoredEverything =>
+      'Restaurado. Guias de qualquer tamanho e lugares de uma publicação.';
+
+  @override
+  String get fromGuideOrPost => 'A partir de um link';
+
+  @override
+  String get fromPost => 'A partir de uma publicação';
+
+  @override
+  String get importLinkTitle => 'Adicionar a partir de um link';
+
+  @override
+  String get importPostBody =>
+      'Cola o link de um reel ou de uma publicação e o Wren retira os lugares. O Wren nunca guarda o vídeo.';
+
+  @override
+  String get linkLabel => 'Link';
+
+  @override
+  String get readLink => 'Ler';
 }

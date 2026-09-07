@@ -16,6 +16,7 @@ import 'src/place_files.dart';
 import 'src/map_targets.dart';
 import 'src/place_export.dart';
 import 'src/place_search_sheet.dart';
+import 'src/reel_import.dart';
 import 'src/place_share.dart';
 import 'src/region_hint.dart';
 import 'src/resolver.dart';
@@ -167,6 +168,7 @@ class CapturePage extends StatefulWidget {
     super.key,
     this.store,
     this.saver,
+    this.reelSender,
     this.canMakeGuides,
     this.sellsUnlock,
     this.resolver,
@@ -190,6 +192,11 @@ class CapturePage extends StatefulWidget {
   /// Writes a file the user names. Injected so the Google Maps route can be
   /// tested without a save dialog.
   final FileSaver? saver;
+
+  /// Speaks to the Worker that reads shared posts. Injected so the whole reel
+  /// flow — paywall, progress, failure copy, resolution — can be tested without
+  /// a network, a vendor account or a real purchase.
+  final Sender? reelSender;
 
   /// Whether this build can publish an Apple Maps guide.
   ///
@@ -327,7 +334,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// forwards rather than reported as a shrinking remainder.
   int _queuedTotal = 0;
 
+  /// What the user may do, rebuilt from [_owned] and [_role] rather than
+  /// raised in place. Never assigned directly: see [_recompose].
   Entitlement _entitlement = const Entitlement.free();
+
+  /// Product ids the store has confirmed for this account.
+  Set<String> _owned = const {};
 
   /// What this device's complimentary token grants, if it holds one.
   ///
@@ -370,11 +382,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     // A link may be waiting from before the app was even running.
     WidgetsBinding.instance.addPostFrameCallback((_) => _takeSharedGuide());
-    StoreUnlockStore.cachedUnlocked().then((unlocked) {
-      if (unlocked && mounted) {
-        setState(() => _entitlement = const Entitlement.unlocked());
-      }
-    });
+    _syncPurchases();
     _refreshCompAccess();
 
     if (widget.initialOverlay != ScreenshotOverlay.none) {
@@ -386,7 +394,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           case ScreenshotOverlay.region:
             _confirmRegion('Borough Market, London');
           case ScreenshotOverlay.paywall:
-            _offerUnlock(_pending.where((p) => p.publishable).length);
+            _offerUnlock(
+              PaywallReason.places,
+              selected: _pending.where((p) => p.publishable).length,
+            );
           case ScreenshotOverlay.search:
             if (_pending.isNotEmpty) _editPlace(0);
           case ScreenshotOverlay.addMenu:
@@ -479,12 +490,17 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     setState(() {
       switch (outcome) {
         case comp.RedeemOutcome.unlocked:
-          _entitlement = const Entitlement.unlocked();
           _role = role;
+          _recompose();
           // A code just redeemed is a token just issued, so whatever the
           // warning was about is over.
           _compExpiring = false;
-          _status = l.compEnabled;
+          // What the code turned on differs by role, and saying "unlocked" to
+          // somebody whose code also bought them reading posts would undersell
+          // it while telling the next person something untrue.
+          _status = _entitlement.reels
+              ? l.compEnabledEverything
+              : l.compEnabled;
         case comp.RedeemOutcome.refused:
           _status = l.compRefused;
         case comp.RedeemOutcome.toooften:
@@ -548,16 +564,30 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   Future<void> _restoreFromMenu() async {
     final l = L.of(context);
     setState(() => _status = l.checkingAppleAccount);
-    final ok = await _store.restore();
+    final restored = await _restore();
     if (!mounted) return;
+    setState(
+      () => _status = restored.isEmpty
+          ? l.noPreviousPurchase
+          : (_entitlement.reels ? l.restoredEverything : l.restoredUnlocked),
+    );
+  }
+
+  /// Asks the store what this account owns, and folds the answer in.
+  ///
+  /// The set matters, not merely whether it is empty: an account can hold the
+  /// base unlock without holding reading posts, and reporting that as "restored"
+  /// while leaving the reel paywall standing is the honest outcome rather than
+  /// a bug. Callers decide what a partial restore means for what they were
+  /// doing; this only records it.
+  Future<Set<String>> _restore() async {
+    final restored = await _store.restore();
+    if (!mounted) return restored;
     setState(() {
-      if (ok) {
-        _entitlement = const Entitlement.unlocked();
-        _status = l.restoredUnlocked;
-      } else {
-        _status = l.noPreviousPurchase;
-      }
+      _owned = {..._owned, ...restored};
+      _recompose();
     });
+    return restored;
   }
 
   /// Asks where the batch is, with whatever the captions suggested filled in.
@@ -615,6 +645,66 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
     if (answer == null || answer.isEmpty) return null;
     return _resolver.locate(answer);
+  }
+
+  /// Turns read names into places, and adds them to the list.
+  ///
+  /// The half the two readers share. A screenshot and a post differ entirely in
+  /// how the names are obtained and not at all in what is done with them, and
+  /// this is the part that took the longest to get right — the ranked retry,
+  /// the duplicate check, the row kept for a name nothing matched. A second
+  /// copy of it for posts would drift, and the drift would show up as posts
+  /// resolving slightly worse than screenshots for no reason anybody could see.
+  ///
+  /// Returns null when the lookup itself failed, having already said so; the
+  /// caller stops rather than reporting a count.
+  Future<({int added, int unmatched})?> _resolveInto(
+    List<({List<String> candidates, String all})> readings,
+    Region? region,
+  ) async {
+    final l = L.of(context);
+    var unmatched = 0, added = 0;
+    for (final r in readings) {
+      List<PlaceMatch> matches = const [];
+      var readAs = r.candidates.first;
+      try {
+        // Each candidate in turn until one is found. The resolver paces
+        // itself, so this costs time rather than risking a throttle.
+        for (final candidate in r.candidates) {
+          matches = usable(await _resolver.resolve(candidate, region: region));
+          if (matches.isNotEmpty) {
+            readAs = candidate;
+            break;
+          }
+        }
+      } on ResolverUnavailable catch (e) {
+        if (!mounted) return null;
+        setState(() {
+          _busy = false;
+          if (e.unsupported) _noMapHere = true;
+          _status = e.throttled
+              ? l.rateLimitedDuringImport(added)
+              : e.unsupported
+              ? l.lookupUnavailable
+              : e.message;
+        });
+        return null;
+      }
+      if (matches.isEmpty) {
+        // Kept, not discarded: the reading is the only record of what was
+        // read, and the user can search for it themselves.
+        unmatched++;
+        _pending.add(Pending(r.candidates.first, null, keep: false));
+        continue;
+      }
+      // Never write silently: Apple replaces the label with its own record,
+      // so a wrong match would ship under a confident name.
+      if (!_pending.any((p) => matches.first.isSamePlaceAs(p.match))) {
+        _pending.add(Pending(readAs, matches.first));
+        added++;
+      }
+    }
+    return (added: added, unmatched: unmatched);
   }
 
   /// Reads screenshots and turns them into places.
@@ -700,48 +790,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       });
 
       // Pass three: resolve, now that the search knows where to look.
-      var unmatched = 0, added = 0;
-      for (final r in readings) {
-        List<PlaceMatch> matches = const [];
-        var readAs = r.candidates.first;
-        try {
-          // Each candidate in turn until one is found. The resolver paces
-          // itself, so this costs time rather than risking a throttle.
-          for (final candidate in r.candidates) {
-            matches = usable(
-              await _resolver.resolve(candidate, region: region),
-            );
-            if (matches.isNotEmpty) {
-              readAs = candidate;
-              break;
-            }
-          }
-        } on ResolverUnavailable catch (e) {
-          setState(() {
-            _busy = false;
-            if (e.unsupported) _noMapHere = true;
-            _status = e.throttled
-                ? l.rateLimitedDuringImport(added)
-                : e.unsupported
-                ? l.lookupUnavailable
-                : e.message;
-          });
-          return;
-        }
-        if (matches.isEmpty) {
-          // Kept, not discarded: the reading is the only record of what the
-          // screenshot said, and the user can search for it themselves.
-          unmatched++;
-          _pending.add(Pending(r.candidates.first, null, keep: false));
-          continue;
-        }
-        // Never write silently: Apple replaces the label with its own record,
-        // so a wrong match would ship under a confident name.
-        if (!_pending.any((p) => matches.first.isSamePlaceAs(p.match))) {
-          _pending.add(Pending(readAs, matches.first));
-          added++;
-        }
-      }
+      final outcome = await _resolveInto(readings, region);
+      if (outcome == null || !mounted) return;
+      final (:added, :unmatched) = outcome;
 
       setState(() {
         _busy = false;
@@ -826,22 +877,54 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// day old, so this is a disk read for almost every user and for every user
   /// who has never entered a code at all.
   ///
-  /// The entitlement is recomposed rather than merely raised, because a token
-  /// that has just been withdrawn must not take a *purchase* down with it —
-  /// somebody can hold both, and only one of them is revocable.
+  /// The entitlement is recomposed afterwards rather than merely raised: see
+  /// [_recompose].
   Future<void> _refreshCompAccess() async {
     final role = await comp.renewIfDue();
     final left = await comp.compTimeLeft();
     if (!mounted) return;
-    final bought = await StoreUnlockStore.cachedUnlocked();
-    if (!mounted) return;
     setState(() {
       _role = role;
       _compExpiring = left != null;
-      _entitlement = bought || role != comp.CompRole.none
-          ? const Entitlement.unlocked()
-          : const Entitlement.free();
+      _recompose();
     });
+  }
+
+  /// Reads back what the store has already confirmed.
+  ///
+  /// Separate from [_refreshCompAccess] so neither waits on the other: this is
+  /// a disk read that settles in the first frame, while renewing a token can
+  /// reach the network for an administrator. Both feed the same recomposition,
+  /// so whichever lands second does not undo the first.
+  Future<void> _syncPurchases() async {
+    final owned = await StoreUnlockStore.cachedProducts();
+    if (!mounted) return;
+    setState(() {
+      _owned = owned;
+      _recompose();
+    });
+  }
+
+  /// Rebuilds [_entitlement] from everything that can grant something.
+  ///
+  /// Recomposed rather than merely raised, because a token that has just been
+  /// withdrawn must not take a *purchase* down with it — somebody can hold
+  /// both, and only one of them is revocable. For the same reason nothing
+  /// outside this method assigns [_entitlement]: a single `= unlocked()` at a
+  /// call site would silently drop whichever of the four inputs it forgot.
+  ///
+  /// Must be called inside a [setState].
+  void _recompose() {
+    _entitlement = Entitlement.from(
+      boughtUnlimited: _owned.contains(unlimitedProductId),
+      boughtReels: _owned.any(reelProductIds.contains),
+      compUnlock: _role != comp.CompRole.none,
+      // The ladder: an ordinary unlock code grants guides and nothing else.
+      // Reels cost money on every use, and a code handed to a friend for
+      // guides must not quietly carry that.
+      compReels:
+          _role == comp.CompRole.everything || _role == comp.CompRole.admin,
+    );
   }
 
   /// Collects whatever the share extension left, and imports it.
@@ -870,6 +953,146 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     }
   }
 
+  /// Asks the Worker to read a shared post, and puts what it says on the list.
+  ///
+  /// The app cannot read one itself. A share sheet hands over a URL and never
+  /// the media, so the video or the slides have to be fetched from somewhere,
+  /// and that needs a vendor, a key and a network posture with no business
+  /// inside a shipped app. What comes back is *names*, which then take exactly
+  /// the path a screenshot's names take — the same region confirmation, the
+  /// same resolver, the same list you can correct. Wren never receives the
+  /// media, never stores it and never shows it, and that is what keeps the
+  /// feature inside Apple's rules as much as it is what keeps it cheap.
+  ///
+  /// Every call costs real money, so nothing is sent until the entitlement is
+  /// held and the link is one the feature can read.
+  Future<void> _importReel(String link) async {
+    final l = L.of(context);
+    if (!_entitlement.reels) {
+      if (await _sell(PaywallReason.reels) != _Gate.through) return;
+      if (!mounted) return;
+    }
+
+    final auth = await _reelAuth();
+    if (!mounted) return;
+    if (auth == null) {
+      // Entitled by something that left no proof: a purchase made before this
+      // version existed, so the receipt was never kept. Restoring asks the
+      // store for it again, which is the only way to get one.
+      setState(() => _status = l.reelNeedsRestore);
+      return;
+    }
+
+    setState(() {
+      _busy = true;
+      _status = l.readingPost;
+    });
+    final ReelReading reading;
+    try {
+      reading = await readReel(link, auth: auth, send: widget.reelSender);
+    } on ReelFailed catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _status = _reelFailure(l, e);
+      });
+      return;
+    }
+    if (!mounted) return;
+
+    // The city, confirmed rather than assumed, exactly as for screenshots — a
+    // wrong region is the expensive failure, because it drags every lookup
+    // toward the wrong place and each result comes back looking valid. A post
+    // naming ten castles in seven countries has no single region and arrives
+    // here with none, which is a real answer and not a missing one.
+    setState(() => _busy = false);
+    final region = await _confirmRegion(reading.regionHint);
+    if (!mounted) return;
+    setState(() {
+      _busy = true;
+      _region = region;
+    });
+
+    final outcome = await _resolveInto([
+      for (final c in reading.candidates)
+        (
+          // One name per candidate rather than a ranked three: the model has
+          // already chosen, and a screenshot's alternatives exist because OCR
+          // cannot tell a caption from a sign.
+          candidates: [
+            if (c.city != null && c.city!.isNotEmpty)
+              '${c.name}, ${c.city}'
+            else
+              c.name,
+            c.name,
+          ],
+          all: c.name,
+        ),
+    ], region);
+    if (outcome == null || !mounted) return;
+    final (:added, :unmatched) = outcome;
+
+    setState(() {
+      _busy = false;
+      _status = [
+        l.importSummary(added),
+        if (region != null) l.importSummaryIn(region.name),
+        if (unmatched > 0) '· ${l.importSummaryNeedLook(unmatched)}',
+        if (reading.used != null && reading.limit != null)
+          '· ${l.reelsLeftThisMonth(reading.limit! - reading.used!)}',
+      ].join(' ');
+    });
+  }
+
+  /// The proof this device can show that it is allowed to spend the money.
+  ///
+  /// Nothing here is trusted by the server — it verifies an App Store
+  /// transaction against Apple's certificate chain, a Play token against
+  /// Google, a complimentary token against the signing key — which is exactly
+  /// why the app can hand it over without the app having to be trustworthy.
+  ///
+  /// A purchase is preferred over a complimentary token because it is the
+  /// user's own and cannot be withdrawn.
+  Future<ReelAuth?> _reelAuth() async {
+    final proof = await StoreUnlockStore.reelProof();
+    if (proof != null) {
+      return proof.store == 'play'
+          ? ReelAuth.play(proof.proof, proof.productId)
+          : ReelAuth.appStore(proof.proof);
+    }
+    if (!_entitlement.reels) return null;
+    final token = await comp.heldToken();
+    return token == null ? null : ReelAuth.comp(token);
+  }
+
+  /// What to say when a post could not be read.
+  ///
+  /// Each reason gets its own sentence. Collapsing two of them would mean
+  /// telling somebody to try screenshots when the real answer is that they have
+  /// used their allowance for the month — advice that cannot work, about a
+  /// problem they do not have.
+  String _reelFailure(L l, ReelFailed e) => switch (e.reason) {
+    // The allowance rolls over a trailing thirty days rather than resetting on
+    // the first, so this says a date. The date is formatted by the platform,
+    // because "5 September" and "September 5" are both correct and which one
+    // is right is not a decision this app should be making.
+    ReelFailure.quotaExceeded => l.reelQuotaUsedUp(
+      e.resetsAt == null
+          ? l.reelQuotaSoon
+          : MaterialLocalizations.of(context).formatFullDate(e.resetsAt!),
+    ),
+    ReelFailure.busy => l.reelBusy,
+    ReelFailure.postUnavailable => l.reelUnavailable,
+    ReelFailure.nothingFound => l.reelNoPlaces,
+    ReelFailure.unreachable => l.reelUnreachable,
+    // Everything else, including anything the server learns to say later. This
+    // is the one whose copy offers the screenshot path, which is the advice
+    // that helps whatever actually went wrong.
+    ReelFailure.notEntitled ||
+    ReelFailure.unsupported ||
+    ReelFailure.fetchFailed => l.reelCouldNotRead,
+  };
+
   /// [shared] arrives from the iOS share sheet, where the user has already
   /// chosen the guide — so the paste dialog is skipped rather than asking them to
   /// hand over something they just handed over.
@@ -882,7 +1105,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           context: context,
           builder: (context) => AlertDialog(
             title: Text(
-              l.importGuideTitle,
+              _makesGuides ? l.importLinkTitle : l.fromPost,
               style: const TextStyle(fontFamily: Wren.serif),
             ),
             content: Column(
@@ -890,7 +1113,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l.importGuideBody,
+                  _makesGuides ? l.importGuideBody : l.importPostBody,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 16),
@@ -901,7 +1124,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                   enableSuggestions: false,
                   maxLines: 2,
                   keyboardType: TextInputType.url,
-                  decoration: InputDecoration(labelText: l.guideLinkLabel),
+                  decoration: InputDecoration(labelText: l.linkLabel),
                 ),
               ],
             ),
@@ -916,7 +1139,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               FilledButton(
                 onPressed: () => Navigator.pop(context, controller.text),
                 style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
-                child: Text(l.readGuide),
+                child: Text(l.readLink),
               ),
             ],
           ),
@@ -932,8 +1155,15 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // Answered before anything is parsed, because the parser's answer would be
     // about Apple Maps and the question was not. Wren is in the share sheet of
     // every app that shares a link, and the first screen asks for reels and
-    // posts by name, so this arrives often and deserves better than advice
-    // about a feature the person was not using.
+    // posts by name, so this arrives often.
+    //
+    // Three of those platforms Wren now reads. The rest still get the advice
+    // about screenshots, which is the true answer for them: it is the same
+    // sentence it always was, and it is now said to fewer people.
+    if (isReelLink(link)) {
+      await _importReel(link);
+      return;
+    }
     if (isSocialPostLink(link)) {
       setState(() => _status = l.importGuideSocialPost);
       return;
@@ -1303,7 +1533,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     );
   }
 
-  /// The purchase sheet, in one of its two jobs.
+  /// The purchase sheet, in one of its three jobs.
+  ///
+  /// [reason] decides what is being sold, and that is not a marketing choice.
+  /// Somebody stopped by the three-place cap is served by the cheaper unlock,
+  /// so that is the button they get, with the bundle offered underneath as the
+  /// larger option rather than in place of it. Somebody who shared a post has
+  /// no cheaper option, because nothing else grants reading one.
   ///
   /// [carried] is how many places came out of a guide the user already keeps.
   /// When there are any, the sheet is selling the combined guide rather than the
@@ -1311,13 +1547,32 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// instead": that option exists to trim what Wren found, and applying it here
   /// would publish a guide missing places the user already had. There is no
   /// smaller version of combining to fall back to.
-  Future<_UnlockChoice> _offerUnlock(int selected, {int carried = 0}) async {
+  Future<_UnlockAnswer> _offerUnlock(
+    PaywallReason reason, {
+    int selected = 0,
+    int carried = 0,
+  }) async {
     final l = L.of(context);
-    final price = await _store.price() ?? unlimitedFallbackPrice;
-    if (!mounted) return _UnlockChoice.cancel;
+    final offers = offersFor(reason, _entitlement);
+    // Nothing left to sell. Reached when a purchase landed while the sheet was
+    // being prepared, and by the caller that has already checked -- never
+    // shown, because a sheet with no button is the app failing to explain
+    // itself.
+    if (offers.isEmpty) return const _UnlockAnswer(_UnlockChoice.cancel);
+
+    // One round trip for every price the sheet shows, together, so the two
+    // figures do not appear one after the other.
+    final prices = await Future.wait(offers.map(_store.price));
+    if (!mounted) return const _UnlockAnswer(_UnlockChoice.cancel);
+    final priced = [
+      for (var i = 0; i < offers.length; i++)
+        (id: offers[i], price: prices[i] ?? fallbackPriceOf(offers[i])),
+    ];
+
+    final reels = reason == PaywallReason.reels;
     final combining = carried > 0;
     final over = _entitlement.overBy(selected);
-    final choice = await showModalBottomSheet<_UnlockChoice>(
+    final choice = await showModalBottomSheet<_UnlockAnswer>(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
@@ -1331,19 +1586,23 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               const WrenMark(size: 44),
               const SizedBox(height: 16),
               Text(
-                combining
+                reels
+                    ? l.reelsTitle
+                    : combining
                     ? l.unlockCombineTitle
                     : (_makesGuides ? l.guidesOfAnySize : l.anyNumberOfPlaces),
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 10),
               // Only said when it is true. Opened from the menu with an empty
-              // list, "you have 0 selected — -3 more than that" is nonsense,
+              // list, "you have 0 selected -- -3 more than that" is nonsense,
               // and the sheet still has a job to do: show what the purchase is
               // and what it costs.
-              if (combining || selected > 0) ...[
+              if (reels || combining || selected > 0) ...[
                 Text(
-                  combining
+                  reels
+                      ? l.reelsExplain
+                      : combining
                       ? l.unlockCombineBody(carried)
                       : (_makesGuides
                             ? l.unlockExplain(freePlaceLimit, selected, over)
@@ -1361,27 +1620,58 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 22),
-              FilledButton(
-                onPressed: () => Navigator.pop(context, _UnlockChoice.buy),
-                // The price string comes from StoreKit already formatted for
+              for (final (i, offer) in priced.indexed) ...[
+                if (i > 0) const SizedBox(height: 10),
+                // The price string comes from the store already formatted for
                 // the storefront, so it is never reformatted here.
-                child: Text(l.unlockFor(price)),
-              ),
+                if (i == 0)
+                  FilledButton(
+                    onPressed: () => Navigator.pop(
+                      context,
+                      _UnlockAnswer(_UnlockChoice.buy, productId: offer.id),
+                    ),
+                    child: Text(_buyLabel(l, offer.id, offer.price)),
+                  )
+                else
+                  OutlinedButton(
+                    onPressed: () => Navigator.pop(
+                      context,
+                      _UnlockAnswer(_UnlockChoice.buy, productId: offer.id),
+                    ),
+                    child: Text(_buyLabel(l, offer.id, offer.price)),
+                  ),
+                // Said once, under the button it belongs to: the bundle costs
+                // more than the thing that was asked for, and the difference
+                // has to be visible or the larger button is a trap.
+                if (offer.id == everythingProductId && i > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      l.everythingAlsoReadsPosts,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+              ],
               // Trimming to the free cap is only an option when there is
-              // something to trim.
-              if (!combining && selected > freePlaceLimit) ...[
+              // something to trim, and never when a post is what was asked for
+              // -- there is no partial reading of one.
+              if (!reels && !combining && selected > freePlaceLimit) ...[
                 const SizedBox(height: 10),
                 OutlinedButton(
-                  onPressed: () =>
-                      Navigator.pop(context, _UnlockChoice.publishFree),
+                  onPressed: () => Navigator.pop(
+                    context,
+                    const _UnlockAnswer(_UnlockChoice.publishFree),
+                  ),
                   child: Text(l.saveFirstInstead(freePlaceLimit)),
                 ),
               ],
               const SizedBox(height: 2),
               Center(
                 child: TextButton(
-                  onPressed: () =>
-                      Navigator.pop(context, _UnlockChoice.restore),
+                  onPressed: () => Navigator.pop(
+                    context,
+                    const _UnlockAnswer(_UnlockChoice.restore),
+                  ),
                   child: Text(
                     l.restorePrevious,
                     style: const TextStyle(color: Wren.muted),
@@ -1393,8 +1683,80 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         ),
       ),
     );
-    return choice ?? _UnlockChoice.cancel;
+    return choice ?? const _UnlockAnswer(_UnlockChoice.cancel);
   }
+
+  /// What a purchase button says. Each product is named by what it does, not by
+  /// its place in a ladder -- "Upgrade" would mean nothing to somebody who has
+  /// forgotten which of three things they own.
+  String _buyLabel(L l, String productId, String price) => switch (productId) {
+    everythingProductId => l.everythingFor(price),
+    reelsUpgradeProductId => l.addPostsFor(price),
+    _ => l.unlockFor(price),
+  };
+
+  /// Raises the sheet, does whatever it was answered with, and says whether the
+  /// caller may now go on.
+  ///
+  /// One method rather than the three near-identical copies this replaced. Each
+  /// copy raised the entitlement by hand on success, which was survivable while
+  /// there was one product and is not now: buying the upgrade does not grant
+  /// the same thing as buying the bundle, and a restore can return neither, one
+  /// or both. So the outcome is decided by asking [_entitlement] again after
+  /// recomposing it, never by the fact that a call succeeded.
+  Future<_Gate> _sell(
+    PaywallReason reason, {
+    int selected = 0,
+    int carried = 0,
+  }) async {
+    final l = L.of(context);
+    final answer = await _offerUnlock(
+      reason,
+      selected: selected,
+      carried: carried,
+    );
+    if (!mounted) return _Gate.stop;
+    switch (answer.choice) {
+      case _UnlockChoice.buy:
+        if (!await _store.buy(answer.productId!)) {
+          if (mounted) setState(() => _status = l.purchaseDidNotComplete);
+          return _Gate.stop;
+        }
+        if (!mounted) return _Gate.stop;
+        // Folded in from the answer rather than re-read from the cache. The
+        // store is the authority on what was bought and it has just said so;
+        // going back to disk would make this depend on a write the injected
+        // store knows nothing about.
+        setState(() {
+          _owned = {..._owned, answer.productId!};
+          _recompose();
+        });
+      case _UnlockChoice.restore:
+        final restored = await _restore();
+        if (!mounted) return _Gate.stop;
+        if (restored.isEmpty) {
+          setState(() => _status = l.noPreviousPurchase);
+          return _Gate.stop;
+        }
+      case _UnlockChoice.publishFree:
+        return _Gate.trimmed;
+      case _UnlockChoice.cancel:
+        return _Gate.stop;
+    }
+    if (!mounted) return _Gate.stop;
+    if (_satisfies(reason)) return _Gate.through;
+    // A restore that found the base unlock when a post was what was wanted.
+    // Real, worth saying, and still short of what was asked for -- so it says
+    // what came back rather than "no previous purchase", and stops.
+    setState(() => _status = l.restoredUnlocked);
+    return _Gate.stop;
+  }
+
+  /// Whether what is held now covers what the sheet was raised about.
+  bool _satisfies(PaywallReason reason) => switch (reason) {
+    PaywallReason.places => _entitlement.unlimited,
+    PaywallReason.reels => _entitlement.reels,
+  };
 
   /// Opens the lookup for a row — to correct a wrong match, or to find one that
   /// was never made.
@@ -1429,33 +1791,19 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// Opens the purchase from the menu, with or without a list.
   ///
   /// The same sheet the publish flow raises, so there is one description of
-  /// what is being bought and one price, formatted by StoreKit for the
-  /// storefront. Buying here unlocks and stops; nothing is published, because
-  /// the user did not ask to publish anything.
-  Future<void> _unlockFromMenu() async {
-    final l = L.of(context);
+  /// what is being bought and one price, formatted by the store for the
+  /// storefront.
+  ///
+  /// No banner on success: the menu items disappear the moment the entitlement
+  /// covers them, which says it without a line of copy that would have needed
+  /// translating into another forty-eight languages to say it.
+  Future<void> _unlockFromMenu(PaywallReason reason) async {
     final selected = _pending.where((p) => p.publishable).length;
-    switch (await _offerUnlock(selected)) {
-      case _UnlockChoice.buy:
-        if (await _store.buy()) {
-          if (!mounted) return;
-          // No banner: the two menu items disappear the moment this is true,
-          // which says it without a line of copy that would have needed
-          // translating into another forty-eight languages to say it.
-          setState(() => _entitlement = const Entitlement.unlocked());
-        } else {
-          if (!mounted) return;
-          setState(() => _status = l.purchaseDidNotComplete);
-        }
-      case _UnlockChoice.restore:
-        await _restoreFromMenu();
-      // Reachable only when the list is over the free cap, and it means "not
-      // now" here rather than "publish the first three": the menu did not ask
-      // to publish anything.
-      case _UnlockChoice.publishFree:
-      case _UnlockChoice.cancel:
-        return;
-    }
+    // The gate's answer is discarded deliberately. It says whether the caller
+    // may go on, and the menu was not on the way to anything -- buying here
+    // unlocks and stops, because the user did not ask to publish or read
+    // anything.
+    await _sell(reason, selected: selected);
   }
 
   /// Warns that a combined guide is a new guide, before one is made.
@@ -1546,24 +1894,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       case PublishBlock.nothingSelected:
         return;
       case PublishBlock.needsUnlock:
-        switch (await _offerUnlock(places.length)) {
-          case _UnlockChoice.buy:
-            if (await _store.buy()) {
-              setState(() => _entitlement = const Entitlement.unlocked());
-            } else {
-              setState(() => _status = l.purchaseDidNotComplete);
-              return;
-            }
-          case _UnlockChoice.restore:
-            if (await _store.restore()) {
-              setState(() => _entitlement = const Entitlement.unlocked());
-            } else {
-              setState(() => _status = l.noPreviousPurchase);
-              return;
-            }
-          case _UnlockChoice.publishFree:
+        switch (await _sell(PaywallReason.places, selected: places.length)) {
+          case _Gate.through:
+            break;
+          case _Gate.trimmed:
             places = places.take(freePlaceLimit).toList();
-          case _UnlockChoice.cancel:
+          case _Gate.stop:
             return;
         }
       case PublishBlock.none:
@@ -1744,29 +2080,21 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       case PublishBlock.nothingSelected:
         return;
       case PublishBlock.needsUnlock:
-        switch (await _offerUnlock(billable, carried: carried)) {
-          case _UnlockChoice.buy:
-            if (await _store.buy()) {
-              setState(() => _entitlement = const Entitlement.unlocked());
-            } else {
-              setState(() => _status = l.purchaseDidNotComplete);
-              return;
-            }
-          case _UnlockChoice.restore:
-            if (await _store.restore()) {
-              setState(() => _entitlement = const Entitlement.unlocked());
-            } else {
-              setState(() => _status = l.noPreviousPurchase);
-              return;
-            }
-          case _UnlockChoice.publishFree:
+        switch (await _sell(
+          PaywallReason.places,
+          selected: billable,
+          carried: carried,
+        )) {
+          case _Gate.through:
+            break;
+          case _Gate.trimmed:
             // Only reachable when nothing was carried over — the sheet does not
             // offer this while combining, because trimming to the cap would
             // drop places out of a guide the user already had. Asserted rather
             // than assumed, since the two paths meet here.
             assert(carried == 0);
             keep = keep.where((p) => p.billable).take(freePlaceLimit).toList();
-          case _UnlockChoice.cancel:
+          case _Gate.stop:
             return;
         }
       case PublishBlock.none:
@@ -1884,17 +2212,24 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               title: Text(l.fromFile),
               onTap: () => Navigator.pop(context, _AddSource.file),
             ),
-            // Only where guides exist. A guide link is a list of Apple
-            // identifiers and nothing else -- no name, no coordinate -- and
-            // resolving one needs Apple's own lookup. Read anywhere else it
-            // produces a list that looks imported and cannot be sent, which
-            // was measured rather than assumed.
-            if (_makesGuides)
-              ListTile(
-                leading: const Icon(Icons.bookmark_border),
-                title: Text(l.fromExistingGuide),
-                onTap: () => Navigator.pop(context, _AddSource.guide),
-              ),
+            // On both platforms now, because two different links land here
+            // and only one of them is Apple's.
+            //
+            // A guide link is a list of Apple identifiers and nothing else --
+            // no name, no coordinate -- and resolving one needs Apple's own
+            // lookup, so read anywhere else it produces a list that looks
+            // imported and cannot be sent. That was measured rather than
+            // assumed, and it is why this used to be hidden on Android.
+            //
+            // A post link needs none of that: the server reads it and the
+            // names come back as text. Withholding the whole entry on Android
+            // would leave the share sheet as the only way in to a feature
+            // Android users can buy.
+            ListTile(
+              leading: const Icon(Icons.link),
+              title: Text(_makesGuides ? l.fromGuideOrPost : l.fromPost),
+              onTap: () => Navigator.pop(context, _AddSource.guide),
+            ),
             const SizedBox(height: 8),
           ],
         ),
@@ -1964,36 +2299,44 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           PopupMenuButton<String>(
             onSelected: (v) {
               if (v == 'restore') _restoreFromMenu();
-              if (v == 'unlock') _unlockFromMenu();
+              if (v == 'unlock') _unlockFromMenu(PaywallReason.places);
+              if (v == 'reels') _unlockFromMenu(PaywallReason.reels);
               if (v == 'clear') _clearList();
             },
             itemBuilder: (context) => [
               if (_pending.isNotEmpty)
                 PopupMenuItem(value: 'clear', child: Text(l.clearList)),
-              // Both of these are the purchase, so both go wherever the
-              // purchase goes.
+              // The purchases, and the restore that belongs with them.
               //
-              // It has to be reachable at any time, from a standing start. It
-              // used to exist only inside the publish flow, behind a list of
-              // more than three places -- so on a review device with nothing
-              // imported there was no way to reach it at all, and App Review
-              // rejected the app under 2.1(b) for exactly that: they could not
-              // locate the In-App Purchase.
+              // They have to be reachable at any time, from a standing start.
+              // The unlock used to exist only inside the publish flow, behind a
+              // list of more than three places -- so on a review device with
+              // nothing imported there was no way to reach it at all, and App
+              // Review rejected the app under 2.1(b) for exactly that: they
+              // could not locate the In-App Purchase. Reading posts is behind a
+              // shared link, which a reviewer is even less likely to have, so
+              // it needs the same door.
               //
-              // And nowhere else. What it sells is guides of any size, and on
-              // a platform with no guides the product does not exist in the
-              // store either: the sheet would quote a price Play never set and
-              // then fail to take the money. Restoring is worse still, since
-              // its own copy says "Apple Account". Fixing one rejection must
-              // not manufacture another.
-              if (_sellsUnlock && !_entitlement.unlimited) ...[
-                PopupMenuItem(
-                  value: 'unlock',
-                  child: Text(
-                    _makesGuides ? l.guidesOfAnySize : l.anyNumberOfPlaces,
+              // Each is listed only while it is unheld, which is how the app
+              // says "bought" without a line of copy that would have needed
+              // translating into another forty-eight languages to say it.
+              if (_sellsUnlock) ...[
+                if (!_entitlement.unlimited)
+                  PopupMenuItem(
+                    value: 'unlock',
+                    child: Text(
+                      _makesGuides ? l.guidesOfAnySize : l.anyNumberOfPlaces,
+                    ),
                   ),
-                ),
-                PopupMenuItem(value: 'restore', child: Text(l.restorePurchase)),
+                if (!_entitlement.reels)
+                  PopupMenuItem(value: 'reels', child: Text(l.reelsTitle)),
+                // Restoring is offered while anything is still unheld, and not
+                // once everything is: there would be nothing for it to find.
+                if (!_entitlement.unlimited || !_entitlement.reels)
+                  PopupMenuItem(
+                    value: 'restore',
+                    child: Text(l.restorePurchase),
+                  ),
               ],
             ],
           ),
@@ -2173,6 +2516,33 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 }
 
 enum _UnlockChoice { buy, restore, publishFree, cancel }
+
+/// What the purchase sheet was answered with, and for which product.
+///
+/// The product travels with the answer rather than being inferred afterwards.
+/// Two of the three differ by five pounds and the sheet can show either first
+/// depending on what is already owned, so a caller that worked it out again
+/// would be a second place for the two to disagree.
+class _UnlockAnswer {
+  const _UnlockAnswer(this.choice, {this.productId});
+
+  final _UnlockChoice choice;
+
+  /// Set for [_UnlockChoice.buy], and null for every other answer.
+  final String? productId;
+}
+
+/// Whether a caller stopped by the paywall may now go on.
+enum _Gate {
+  /// Paid, restored, or already held. Proceed at full size.
+  through,
+
+  /// Not paid, but the free allowance was accepted. Proceed with that much.
+  trimmed,
+
+  /// Cancelled, refused, or restored something short of what was needed.
+  stop,
+}
 
 enum _AddSource { screenshots, file, guide }
 

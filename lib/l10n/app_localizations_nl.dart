@@ -296,20 +296,8 @@ class LNl extends L {
   String get fromFile => 'Uit een bestand';
 
   @override
-  String get fromExistingGuide => 'Uit een bestaande gids';
-
-  @override
-  String get importGuideTitle => 'Aan een bestaande gids toevoegen';
-
-  @override
   String get importGuideBody =>
-      'Open de gids in Apple Kaarten, deel hem en kies ‘Kopieer link’. Plak de link hieronder, dan leest Wren de plekken die er al in staan.';
-
-  @override
-  String get guideLinkLabel => 'Link naar de gids';
-
-  @override
-  String get readGuide => 'Gids lezen';
+      'Open de gids in Apple Kaarten, deel hem en kies ‘Kopieer link’. Plak de link hieronder, dan leest Wren de plekken die er al in staan. Een link naar een reel of een post werkt hier ook.';
 
   @override
   String get importGuideNotALink =>
@@ -542,4 +530,92 @@ class LNl extends L {
   @override
   String get compExpiring =>
       'Wren kon je gratis toegang niet bevestigen. Maak de komende dagen verbinding met internet om die te behouden.';
+
+  @override
+  String get reelsTitle => 'Plekken uit een post';
+
+  @override
+  String get reelsExplain =>
+      'Deel een reel of een post met Wren en Wren haalt de plekken eruit, klaar om na te kijken en te bewaren. Wren bewaart de video nooit.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Alles voor $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Posts erbij voor $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Haalt ook plekken uit een gedeelde post.';
+
+  @override
+  String get readingPost => 'Bezig met lezen van de post…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'posts over deze maand: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Dat was het voor deze maand. Je tegoed komt terug op $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'een paar weken';
+
+  @override
+  String get reelBusy =>
+      'Wren leest de vorige post nog. Probeer het zo nog eens.';
+
+  @override
+  String get reelUnavailable =>
+      'Die post kon niet worden geopend. Hij is misschien privé, verwijderd of hier niet beschikbaar.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren kon die post niet lezen. Maak er schermafbeeldingen van en deel die – dat werkt altijd.';
+
+  @override
+  String get reelNoPlaces =>
+      'Niets in die post leek op een plek waar je heen kunt.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren kon de server niet bereiken om die post te lezen. Er is niets van je tegoed afgegaan.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Tik eerst op Aankoop herstellen, zodat Wren je bon aan de store kan laten zien.';
+
+  @override
+  String get compEnabledEverything =>
+      'Gratis toegang ingeschakeld, inclusief plekken uit een post.';
+
+  @override
+  String get restoredEverything =>
+      'Hersteld. Gidsen van elk formaat, en plekken uit een post.';
+
+  @override
+  String get fromGuideOrPost => 'Uit een link';
+
+  @override
+  String get fromPost => 'Uit een post';
+
+  @override
+  String get importLinkTitle => 'Toevoegen uit een link';
+
+  @override
+  String get importPostBody =>
+      'Plak de link van een reel of een post en Wren haalt de plekken eruit. Wren bewaart de video nooit.';
+
+  @override
+  String get linkLabel => 'Link';
+
+  @override
+  String get readLink => 'Lezen';
 }

@@ -105,11 +105,11 @@ class _SceneResolver extends PlaceResolver {
 /// fabrication that looks like a fact.
 class _SceneStore implements UnlockStore {
   @override
-  Future<String?> price() async => SceneRequest.scenePrice;
+  Future<String?> price(String productId) async => SceneRequest.scenePrice;
   @override
-  Future<bool> buy() async => false;
+  Future<bool> buy(String productId) async => false;
   @override
-  Future<bool> restore() async => false;
+  Future<Set<String>> restore() async => const {};
 }
 
 /// The scenes, keyed by the name `shoot.py` passes in.

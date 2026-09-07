@@ -303,20 +303,8 @@ class LHe extends L {
   String get fromFile => 'מקובץ';
 
   @override
-  String get fromExistingGuide => 'ממדריך קיים';
-
-  @override
-  String get importGuideTitle => 'הוספה למדריך קיים';
-
-  @override
   String get importGuideBody =>
-      'במפות של Apple יש לפתוח את המדריך, לשתף אותו ולבחור „העתקת קישור”. יש להדביק את הקישור למטה, ואז Wren יקרא את המקומות שכבר יש בו.';
-
-  @override
-  String get guideLinkLabel => 'קישור למדריך';
-
-  @override
-  String get readGuide => 'קריאת המדריך';
+      'במפות של Apple יש לפתוח את המדריך, לשתף אותו ולבחור „העתקת קישור”. יש להדביק את הקישור למטה, ואז Wren יקרא את המקומות שכבר יש בו. גם קישור לריל או לפוסט עובד כאן.';
 
   @override
   String get importGuideNotALink =>
@@ -561,4 +549,89 @@ class LHe extends L {
   @override
   String get compExpiring =>
       'Wren לא הצליח לאמת את הגישה ללא תשלום שלך. התחבר לאינטרנט בימים הקרובים כדי לשמור עליה.';
+
+  @override
+  String get reelsTitle => 'מקומות מתוך פוסט';
+
+  @override
+  String get reelsExplain =>
+      'שתפו ריל או פוסט עם Wren והוא יקרא מהם את המקומות, מוכנים לבדיקה ולשמירה. Wren אף פעם לא שומר את הסרטון.';
+
+  @override
+  String everythingFor(String price) {
+    return 'הכול ב־$price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'הוספת פוסטים ב־$price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts => 'קורא גם מקומות מתוך פוסט משותף.';
+
+  @override
+  String get readingPost => 'קורא את הפוסט…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'פוסטים שנשארו החודש: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'אלה כל הפוסטים לחודש הזה. המכסה חוזרת ב־$date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'כמה שבועות';
+
+  @override
+  String get reelBusy => 'Wren עדיין קורא את הפוסט הקודם. נסו שוב עוד רגע.';
+
+  @override
+  String get reelUnavailable =>
+      'לא הצלחנו לפתוח את הפוסט. ייתכן שהוא פרטי, נמחק או אינו זמין כאן.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren לא הצליח לקרוא את הפוסט. צלמו אותו ושתפו את צילומי המסך – זה תמיד עובד.';
+
+  @override
+  String get reelNoPlaces =>
+      'שום דבר בפוסט הזה לא נראה כמו מקום שאפשר לבקר בו.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren לא הצליח להגיע לשרת כדי לקרוא את הפוסט. לא ירד כלום מהמכסה.';
+
+  @override
+  String get reelNeedsRestore =>
+      'הקישו קודם על שחזור רכישה, כדי ש‑Wren יוכל להראות לחנות את הקבלה שלכם.';
+
+  @override
+  String get compEnabledEverything =>
+      'גישה ללא תשלום הופעלה, כולל מקומות מתוך פוסט.';
+
+  @override
+  String get restoredEverything => 'שוחזר. מדריכים בכל גודל ומקומות מתוך פוסט.';
+
+  @override
+  String get fromGuideOrPost => 'מתוך קישור';
+
+  @override
+  String get fromPost => 'מתוך פוסט';
+
+  @override
+  String get importLinkTitle => 'הוספה מתוך קישור';
+
+  @override
+  String get importPostBody =>
+      'הדביקו קישור לריל או לפוסט ו‑Wren יקרא מהם את המקומות. Wren אף פעם לא שומר את הסרטון.';
+
+  @override
+  String get linkLabel => 'קישור';
+
+  @override
+  String get readLink => 'לקרוא';
 }

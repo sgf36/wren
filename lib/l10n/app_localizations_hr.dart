@@ -296,20 +296,8 @@ class LHr extends L {
   String get fromFile => 'Iz datoteke';
 
   @override
-  String get fromExistingGuide => 'Iz postojećeg vodiča';
-
-  @override
-  String get importGuideTitle => 'Dodaj u postojeći vodič';
-
-  @override
   String get importGuideBody =>
-      'U Apple Kartama otvori vodič, podijeli ga i odaberi Kopiraj link. Zalijepi ga niže i Wren će pročitati mjesta koja su već u njemu.';
-
-  @override
-  String get guideLinkLabel => 'Link do vodiča';
-
-  @override
-  String get readGuide => 'Pročitaj vodič';
+      'U Apple Kartama otvori vodič, podijeli ga i odaberi Kopiraj link. Zalijepi ga niže i Wren će pročitati mjesta koja su već u njemu. Ovdje radi i poveznica na reel ili objavu.';
 
   @override
   String get importGuideNotALink =>
@@ -556,4 +544,92 @@ class LHr extends L {
   @override
   String get compExpiring =>
       'Wren nije mogao potvrditi vaš besplatni pristup. Povežite se s internetom u sljedećih nekoliko dana kako biste ga zadržali.';
+
+  @override
+  String get reelsTitle => 'Mjesta iz objave';
+
+  @override
+  String get reelsExplain =>
+      'Podijeli s Wrenom reel ili objavu i on iz nje iščita mjesta, spremna za provjeru i spremanje. Wren nikad ne zadržava videozapis.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Sve za $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Dodaj objave za $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Iščitava i mjesta iz podijeljene objave.';
+
+  @override
+  String get readingPost => 'Čitam objavu…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'objava preostalo ovaj mjesec: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'To su sve objave za ovaj mjesec. Kvota se vraća $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'nekoliko tjedana';
+
+  @override
+  String get reelBusy =>
+      'Wren još čita prethodnu objavu. Pokušaj za koji trenutak.';
+
+  @override
+  String get reelUnavailable =>
+      'Tu objavu nije bilo moguće otvoriti. Možda je privatna, obrisana ili ovdje nedostupna.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren nije uspio pročitati tu objavu. Snimi je i podijeli snimke zaslona – to uvijek radi.';
+
+  @override
+  String get reelNoPlaces =>
+      'Ništa u toj objavi nije izgledalo kao mjesto koje se može posjetiti.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren nije došao do poslužitelja da pročita objavu. S kvote nije skinuto ništa.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Prvo dodirni Vrati kupnju, da Wren trgovini može pokazati tvoj račun.';
+
+  @override
+  String get compEnabledEverything =>
+      'Besplatan pristup uključen, zajedno s mjestima iz objave.';
+
+  @override
+  String get restoredEverything =>
+      'Vraćeno. Vodiči bilo koje veličine i mjesta iz objave.';
+
+  @override
+  String get fromGuideOrPost => 'S poveznice';
+
+  @override
+  String get fromPost => 'Iz objave';
+
+  @override
+  String get importLinkTitle => 'Dodaj s poveznice';
+
+  @override
+  String get importPostBody =>
+      'Zalijepi poveznicu na reel ili objavu i Wren će iz nje iščitati mjesta. Wren nikad ne zadržava videozapis.';
+
+  @override
+  String get linkLabel => 'Poveznica';
+
+  @override
+  String get readLink => 'Pročitaj';
 }

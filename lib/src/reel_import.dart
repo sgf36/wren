@@ -183,7 +183,10 @@ class ReelAuth {
 Future<ReelReading> readReel(
   String link, {
   required ReelAuth auth,
-  @visibleForTesting Sender? send,
+  // Not marked visible-for-testing, though a test is the only thing that ever
+  // passes one: it travels from the widget, which is production code holding a
+  // test seam, and an annotation here would make that call site an error.
+  Sender? send,
   @visibleForTesting Duration timeout = const Duration(seconds: 120),
 }) async {
   if (!isReelLink(link)) throw const ReelFailed(ReelFailure.unsupported);

@@ -40,10 +40,10 @@ void main() {
   Future<void> paste(WidgetTester tester, String text) async {
     await tester.tap(find.widgetWithText(OutlinedButton, 'Add'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('From an existing guide'));
+    await tester.tap(find.text('From a link'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), text);
-    await tester.tap(find.text('Read guide'));
+    await tester.tap(find.text('Read it'));
     await tester.pumpAndSettle();
   }
 

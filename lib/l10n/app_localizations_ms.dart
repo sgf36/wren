@@ -288,20 +288,8 @@ class LMs extends L {
   String get fromFile => 'Daripada fail';
 
   @override
-  String get fromExistingGuide => 'Daripada panduan yang sedia ada';
-
-  @override
-  String get importGuideTitle => 'Tambah ke panduan yang sedia ada';
-
-  @override
   String get importGuideBody =>
-      'Dalam Apple Maps, buka panduan itu dan kongsikannya, kemudian pilih “Salin Pautan”. Tampalkannya di bawah dan Wren akan membaca tempat yang sudah ada di dalamnya.';
-
-  @override
-  String get guideLinkLabel => 'Pautan panduan';
-
-  @override
-  String get readGuide => 'Baca panduan';
+      'Dalam Apple Maps, buka panduan itu dan kongsikannya, kemudian pilih “Salin Pautan”. Tampalkannya di bawah dan Wren akan membaca tempat yang sudah ada di dalamnya. Pautan ke reel atau siaran juga berfungsi di sini.';
 
   @override
   String get importGuideNotALink =>
@@ -519,4 +507,92 @@ class LMs extends L {
   @override
   String get compExpiring =>
       'Wren tidak dapat mengesahkan akses percuma anda. Sambung ke internet dalam beberapa hari akan datang untuk mengekalkannya.';
+
+  @override
+  String get reelsTitle => 'Tempat daripada satu siaran';
+
+  @override
+  String get reelsExplain =>
+      'Kongsi reel atau siaran kepada Wren, dan Wren membaca tempat-tempatnya, sedia untuk kamu semak dan simpan. Wren tidak pernah menyimpan videonya.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Semuanya pada $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Tambah siaran pada $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Turut membaca tempat daripada siaran yang dikongsi.';
+
+  @override
+  String get readingPost => 'Membaca siaran…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'siaran berbaki bulan ini: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Itu semua siaran untuk bulan ini. Kuota kamu kembali pada $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'beberapa minggu';
+
+  @override
+  String get reelBusy =>
+      'Wren masih membaca siaran sebelumnya. Cuba lagi sebentar.';
+
+  @override
+  String get reelUnavailable =>
+      'Siaran itu tidak dapat dibuka. Mungkin ia peribadi, telah dipadam, atau tidak tersedia di sini.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren tidak dapat membaca siaran itu. Tangkap skrinnya dan kongsi tangkapan skrin itu — cara itu sentiasa berjaya.';
+
+  @override
+  String get reelNoPlaces =>
+      'Tiada apa-apa dalam siaran itu yang kelihatan seperti tempat yang boleh dikunjungi.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren tidak dapat menghubungi pelayan untuk membaca siaran itu. Kuota kamu tidak berkurang.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Ketik Pulihkan pembelian dahulu, supaya Wren boleh menunjukkan resit kamu kepada gedung.';
+
+  @override
+  String get compEnabledEverything =>
+      'Akses percuma dihidupkan, termasuk tempat daripada siaran.';
+
+  @override
+  String get restoredEverything =>
+      'Dipulihkan. Panduan sebesar mana pun, dan tempat daripada siaran.';
+
+  @override
+  String get fromGuideOrPost => 'Daripada satu pautan';
+
+  @override
+  String get fromPost => 'Daripada satu siaran';
+
+  @override
+  String get importLinkTitle => 'Tambah daripada pautan';
+
+  @override
+  String get importPostBody =>
+      'Tampal pautan reel atau siaran, dan Wren akan membaca tempat-tempatnya. Wren tidak pernah menyimpan videonya.';
+
+  @override
+  String get linkLabel => 'Pautan';
+
+  @override
+  String get readLink => 'Baca';
 }

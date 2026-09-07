@@ -295,20 +295,8 @@ class LNo extends L {
   String get fromFile => 'Fra en fil';
 
   @override
-  String get fromExistingGuide => 'Fra en eksisterende guide';
-
-  @override
-  String get importGuideTitle => 'Legg til i en eksisterende guide';
-
-  @override
   String get importGuideBody =>
-      'Åpne guiden i Apple Kart, del den og velg «Kopier link». Lim inn linken nedenfor, så leser Wren stedene den allerede inneholder.';
-
-  @override
-  String get guideLinkLabel => 'Link til guiden';
-
-  @override
-  String get readGuide => 'Les guide';
+      'Åpne guiden i Apple Kart, del den og velg «Kopier link». Lim inn linken nedenfor, så leser Wren stedene den allerede inneholder. En lenke til en reel eller et innlegg fungerer også her.';
 
   @override
   String get importGuideNotALink =>
@@ -538,4 +526,92 @@ class LNo extends L {
   @override
   String get compExpiring =>
       'Wren kunne ikke bekrefte den gratis tilgangen din. Koble til internett i løpet av de neste dagene for å beholde den.';
+
+  @override
+  String get reelsTitle => 'Steder fra et innlegg';
+
+  @override
+  String get reelsExplain =>
+      'Del en reel eller et innlegg med Wren, så leser Wren stedene ut av det, klare til å sjekke og lagre. Wren beholder aldri videoen.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Alt for $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Legg til innlegg for $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Leser også steder ut av et delt innlegg.';
+
+  @override
+  String get readingPost => 'Leser innlegget…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'innlegg igjen denne måneden: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Det var alle innleggene for denne måneden. Kvoten din er tilbake $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'et par uker';
+
+  @override
+  String get reelBusy =>
+      'Wren leser fortsatt det forrige innlegget. Prøv igjen om et øyeblikk.';
+
+  @override
+  String get reelUnavailable =>
+      'Innlegget kunne ikke åpnes. Det kan være privat, slettet eller utilgjengelig her.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren klarte ikke å lese det innlegget. Ta skjermbilder av det og del dem i stedet – det fungerer alltid.';
+
+  @override
+  String get reelNoPlaces =>
+      'Ingenting i det innlegget så ut som et sted man kan besøke.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren nådde ikke serveren for å lese innlegget. Ingenting ble trukket fra kvoten din.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Trykk på Gjenopprett kjøp først, så Wren kan vise kvitteringen din til butikken.';
+
+  @override
+  String get compEnabledEverything =>
+      'Gratis tilgang slått på, inkludert steder fra et innlegg.';
+
+  @override
+  String get restoredEverything =>
+      'Gjenopprettet. Guider i alle størrelser og steder fra et innlegg.';
+
+  @override
+  String get fromGuideOrPost => 'Fra en lenke';
+
+  @override
+  String get fromPost => 'Fra et innlegg';
+
+  @override
+  String get importLinkTitle => 'Legg til fra en lenke';
+
+  @override
+  String get importPostBody =>
+      'Lim inn lenken til en reel eller et innlegg, så leser Wren stedene ut av det. Wren beholder aldri videoen.';
+
+  @override
+  String get linkLabel => 'Lenke';
+
+  @override
+  String get readLink => 'Les den';
 }

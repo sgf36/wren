@@ -297,20 +297,8 @@ class LSv extends L {
   String get fromFile => 'Från en fil';
 
   @override
-  String get fromExistingGuide => 'Från en befintlig guide';
-
-  @override
-  String get importGuideTitle => 'Lägg till i en befintlig guide';
-
-  @override
   String get importGuideBody =>
-      'Öppna guiden i Apple Kartor, dela den och välj ”Kopiera länk”. Klistra in länken nedan, så läser Wren de platser den redan innehåller.';
-
-  @override
-  String get guideLinkLabel => 'Länk till guiden';
-
-  @override
-  String get readGuide => 'Läs guide';
+      'Öppna guiden i Apple Kartor, dela den och välj ”Kopiera länk”. Klistra in länken nedan, så läser Wren de platser den redan innehåller. En länk till en reel eller ett inlägg fungerar också här.';
 
   @override
   String get importGuideNotALink =>
@@ -542,4 +530,92 @@ class LSv extends L {
   @override
   String get compExpiring =>
       'Wren kunde inte bekräfta din kostnadsfria åtkomst. Anslut till internet under de närmaste dagarna för att behålla den.';
+
+  @override
+  String get reelsTitle => 'Platser från ett inlägg';
+
+  @override
+  String get reelsExplain =>
+      'Dela en reel eller ett inlägg med Wren, så läser Wren ut platserna, redo att kolla och spara. Wren behåller aldrig videon.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Allt för $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Lägg till inlägg för $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Läser även ut platser ur ett delat inlägg.';
+
+  @override
+  String get readingPost => 'Läser inlägget…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'inlägg kvar den här månaden: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Det var alla inlägg för den här månaden. Din kvot är tillbaka den $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'några veckor';
+
+  @override
+  String get reelBusy =>
+      'Wren läser fortfarande det förra inlägget. Försök igen om en stund.';
+
+  @override
+  String get reelUnavailable =>
+      'Det gick inte att öppna inlägget. Det kan vara privat, borttaget eller inte tillgängligt här.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren kunde inte läsa det inlägget. Ta skärmbilder av det och dela dem i stället – det fungerar alltid.';
+
+  @override
+  String get reelNoPlaces =>
+      'Inget i det inlägget såg ut som en plats man kan besöka.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren nådde inte servern för att läsa inlägget. Inget drogs från din kvot.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Tryck på Återställ köp först, så att Wren kan visa ditt kvitto för butiken.';
+
+  @override
+  String get compEnabledEverything =>
+      'Fri tillgång påslagen, inklusive platser från ett inlägg.';
+
+  @override
+  String get restoredEverything =>
+      'Återställt. Guider i alla storlekar och platser från ett inlägg.';
+
+  @override
+  String get fromGuideOrPost => 'Från en länk';
+
+  @override
+  String get fromPost => 'Från ett inlägg';
+
+  @override
+  String get importLinkTitle => 'Lägg till från en länk';
+
+  @override
+  String get importPostBody =>
+      'Klistra in länken till en reel eller ett inlägg, så läser Wren ut platserna. Wren behåller aldrig videon.';
+
+  @override
+  String get linkLabel => 'Länk';
+
+  @override
+  String get readLink => 'Läs den';
 }

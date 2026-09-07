@@ -272,20 +272,8 @@ class LZh extends L {
   String get fromFile => '从文件';
 
   @override
-  String get fromExistingGuide => '从已有的指南';
-
-  @override
-  String get importGuideTitle => '添加到已有的指南';
-
-  @override
   String get importGuideBody =>
-      '在地图里打开那个指南并共享，然后选择“拷贝链接”。粘贴到下面，Wren 会读出它已经收着的地点。';
-
-  @override
-  String get guideLinkLabel => '指南链接';
-
-  @override
-  String get readGuide => '读取指南';
+      '在地图里打开那个指南并共享，然后选择“拷贝链接”。粘贴到下面，Wren 会读出它已经收着的地点。 Reels 或帖子的链接在这里同样可用。';
 
   @override
   String get importGuideNotALink => '这不是地图指南的链接。在地图里打开指南并共享，然后选择“拷贝链接”。';
@@ -492,6 +480,84 @@ class LZh extends L {
 
   @override
   String get compExpiring => 'Wren 无法确认你的免费使用权限。请在未来几天内连接互联网以继续保留。';
+
+  @override
+  String get reelsTitle => '从帖子里找地点';
+
+  @override
+  String get reelsExplain =>
+      '把 Reels 或帖子分享给 Wren，它会从中读出地点，等你确认后保存。Wren 从不保留视频。';
+
+  @override
+  String everythingFor(String price) {
+    return '全部功能 $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return '加购帖子功能 $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts => '还能从分享来的帖子里读出地点。';
+
+  @override
+  String get readingPost => '正在读取帖子…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return '本月还剩 $count 篇';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return '本月的额度用完了。$date 会恢复。';
+  }
+
+  @override
+  String get reelQuotaSoon => '几周后';
+
+  @override
+  String get reelBusy => 'Wren 还在读上一篇帖子，请稍后再试。';
+
+  @override
+  String get reelUnavailable => '打不开那篇帖子。它可能是私密的、已删除，或在这里无法查看。';
+
+  @override
+  String get reelCouldNotRead => 'Wren 读不了那篇帖子。请截图后改为分享截图——这个办法总是管用。';
+
+  @override
+  String get reelNoPlaces => '那篇帖子里没有看起来像能去的地方。';
+
+  @override
+  String get reelUnreachable => 'Wren 连不上服务器，没能读取那篇帖子。你的额度没有被扣除。';
+
+  @override
+  String get reelNeedsRestore => '请先点“恢复购买”，好让 Wren 把你的收据出示给商店。';
+
+  @override
+  String get compEnabledEverything => '已开启赠送权限，包含从帖子里找地点。';
+
+  @override
+  String get restoredEverything => '已恢复。指南不限大小，也能从帖子里找地点。';
+
+  @override
+  String get fromGuideOrPost => '从链接';
+
+  @override
+  String get fromPost => '从帖子';
+
+  @override
+  String get importLinkTitle => '从链接添加';
+
+  @override
+  String get importPostBody => '粘贴 Reels 或帖子的链接，Wren 会从中读出地点。Wren 从不保留视频。';
+
+  @override
+  String get linkLabel => '链接';
+
+  @override
+  String get readLink => '读取';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -762,20 +828,8 @@ class LZhHant extends LZh {
   String get fromFile => '從檔案';
 
   @override
-  String get fromExistingGuide => '從已有的指南';
-
-  @override
-  String get importGuideTitle => '加入已有的指南';
-
-  @override
   String get importGuideBody =>
-      '在地圖裡打開那個指南並分享，然後選擇「拷貝連結」。貼到下面，Wren 會讀出它已經收著的地點。';
-
-  @override
-  String get guideLinkLabel => '指南連結';
-
-  @override
-  String get readGuide => '讀取指南';
+      '在地圖裡打開那個指南並分享，然後選擇「拷貝連結」。貼到下面，Wren 會讀出它已經收著的地點。 Reels 或貼文的連結在這裡同樣可用。';
 
   @override
   String get importGuideNotALink => '這不是地圖指南的連結。在地圖裡打開指南並分享，然後選擇「拷貝連結」。';
@@ -982,4 +1036,82 @@ class LZhHant extends LZh {
 
   @override
   String get compExpiring => 'Wren 無法確認你的免費使用權限。請在未來幾天內連接網際網路以繼續保留。';
+
+  @override
+  String get reelsTitle => '從貼文裡找地點';
+
+  @override
+  String get reelsExplain =>
+      '把 Reels 或貼文分享給 Wren，它會從中讀出地點，等你確認後儲存。Wren 從不保留影片。';
+
+  @override
+  String everythingFor(String price) {
+    return '全部功能 $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return '加購貼文功能 $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts => '還能從分享來的貼文裡讀出地點。';
+
+  @override
+  String get readingPost => '正在讀取貼文…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return '本月還剩 $count 篇';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return '本月的額度用完了。$date 會恢復。';
+  }
+
+  @override
+  String get reelQuotaSoon => '幾週後';
+
+  @override
+  String get reelBusy => 'Wren 還在讀上一篇貼文，請稍後再試。';
+
+  @override
+  String get reelUnavailable => '打不開那篇貼文。它可能是私密的、已刪除，或在這裡無法查看。';
+
+  @override
+  String get reelCouldNotRead => 'Wren 讀不了那篇貼文。請截圖後改為分享截圖——這個辦法總是管用。';
+
+  @override
+  String get reelNoPlaces => '那篇貼文裡沒有看起來像能去的地方。';
+
+  @override
+  String get reelUnreachable => 'Wren 連不上伺服器，沒能讀取那篇貼文。你的額度沒有被扣除。';
+
+  @override
+  String get reelNeedsRestore => '請先點「回復購買項目」，好讓 Wren 把你的收據出示給商店。';
+
+  @override
+  String get compEnabledEverything => '已開啟贈送權限，包含從貼文裡找地點。';
+
+  @override
+  String get restoredEverything => '已回復。指南不限大小，也能從貼文裡找地點。';
+
+  @override
+  String get fromGuideOrPost => '從連結';
+
+  @override
+  String get fromPost => '從貼文';
+
+  @override
+  String get importLinkTitle => '從連結加入';
+
+  @override
+  String get importPostBody => '貼上 Reels 或貼文的連結，Wren 會從中讀出地點。Wren 從不保留影片。';
+
+  @override
+  String get linkLabel => '連結';
+
+  @override
+  String get readLink => '讀取';
 }

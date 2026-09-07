@@ -307,21 +307,28 @@ name,latitude,longitude,address
 Fuunji,35.6895,139.6917,Shibuya
 ''';
 
-    testWidgets('a guide link is the only source left out', (tester) async {
-      // Screenshots work here now. A guide link still does not: it is a list
-      // of Apple identifiers and nothing else, and resolving one needs
-      // Apple's own lookup, so it produces a list that looks imported and
-      // cannot be sent. Measured, not assumed.
+    testWidgets('a link is offered here too, and says what it takes', (
+      tester,
+    ) async {
+      // This used to be withheld on Android, because the only link it took
+      // was an Apple Maps guide: a list of Apple identifiers and nothing else,
+      // which resolving needs Apple's own lookup for, so it produced a list
+      // that looked imported and could not be sent. Measured, not assumed.
+      //
+      // A post link needs none of that, so the entry is here now — and its
+      // wording is the narrower one, because a guide link still does nothing
+      // on this platform and offering it would be a lie in three words.
       await pumpAndroid(tester, files: StubFileSource(csv));
       await tester.tap(find.widgetWithText(OutlinedButton, 'Add'));
       await tester.pumpAndSettle();
 
       expect(find.text('Add screenshots'), findsOne);
       expect(find.text('From a file'), findsOne);
-      expect(find.text('From an existing guide'), findsNothing);
+      expect(find.text('From a post'), findsOne);
+      expect(find.text('From a link'), findsNothing);
     });
 
-    testWidgets('the guide-making build still asks which source', (
+    testWidgets('the guide-making build offers both kinds of link', (
       tester,
     ) async {
       await tester.pumpWidget(app(const CapturePage(canMakeGuides: true)));
@@ -330,7 +337,7 @@ Fuunji,35.6895,139.6917,Shibuya
       await tester.pumpAndSettle();
       expect(find.text('Add screenshots'), findsOne);
       expect(find.text('From a file'), findsOne);
-      expect(find.text('From an existing guide'), findsOne);
+      expect(find.text('From a link'), findsOne);
     });
   });
 

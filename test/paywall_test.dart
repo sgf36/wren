@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wren/main.dart';
 import 'package:wren/src/entitlement.dart';
 import 'package:wren/src/guide_link.dart';
@@ -10,26 +11,45 @@ import 'harness.dart';
 /// Stands in for StoreKit. Records what was asked of it so the tests can check
 /// the app did not, for instance, charge someone twice.
 class FakeStore implements UnlockStore {
-  FakeStore({this.buySucceeds = true, this.restoreSucceeds = false});
+  FakeStore({this.buySucceeds = true, this.restoreSucceeds = false, this.owns});
 
   final bool buySucceeds;
+
+  /// Whether restoring finds anything at all.
   final bool restoreSucceeds;
+
+  /// What restoring finds, when it finds anything. Defaults to the original
+  /// unlock — the account almost every real restore belongs to.
+  final Set<String>? owns;
+
   int buyCalls = 0;
   int restoreCalls = 0;
 
+  /// Which products were bought, in order. The count alone stopped being
+  /// enough once there were three of them at three prices.
+  final List<String> bought = [];
+
+  /// The real per-product prices, so a test that asserts on a figure is
+  /// asserting on the right one.
   @override
-  Future<String?> price() async => r'$8.99';
+  Future<String?> price(String productId) async => switch (productId) {
+    everythingProductId => r'$14.99',
+    reelsUpgradeProductId => r'$9.99',
+    _ => r'$8.99',
+  };
 
   @override
-  Future<bool> buy() async {
+  Future<bool> buy(String productId) async {
     buyCalls++;
+    if (buySucceeds) bought.add(productId);
     return buySucceeds;
   }
 
   @override
-  Future<bool> restore() async {
+  Future<Set<String>> restore() async {
     restoreCalls++;
-    return restoreSucceeds;
+    if (!restoreSucceeds) return const {};
+    return owns ?? const {unlimitedProductId};
   }
 }
 
@@ -52,7 +72,12 @@ Future<void> pump(WidgetTester tester, FakeStore store, int count) async {
 }
 
 void main() {
+  // Mock preferences persist between tests, so an unlock seeded by one test
+  // would silently disable the paywall in the next. Reset first.
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   purchaseIsReachable();
+  paywallMatrix();
   testWidgets('three places publish without ever mentioning money', (
     tester,
   ) async {
@@ -170,19 +195,22 @@ void purchaseIsReachable() {
       await tester.tap(find.text(r'Unlock for $8.99'));
       await tester.pumpAndSettle();
 
-      expect(store.buyCalls, 1);
-      // Bought once, and the way in is gone because there is nothing left to
-      // buy -- which is how the app says "unlocked" without a line of copy.
+      expect(store.bought, [unlimitedProductId]);
+      // The entry for the thing just bought is gone, which is how the app says
+      // "unlocked" without a line of copy that would have needed translating
+      // into another forty-eight languages to say it. The other purchase stays,
+      // because it was not bought and is a different thing.
       await tester.tap(find.byIcon(Icons.more_vert));
       await tester.pumpAndSettle();
       expect(find.text('Guides of any size'), findsNothing);
-      expect(find.text('Restore purchase'), findsNothing);
+      expect(find.text('Places from a post'), findsOne);
+      expect(find.text('Restore purchase'), findsOne);
     });
 
-    testWidgets('an unlocked app stops advertising the purchase', (
+    testWidgets('an unlocked app stops advertising what it sold', (
       tester,
     ) async {
-      // Nothing to sell somebody who has already paid.
+      // Nothing to sell somebody who has already paid -- for that.
       final store = FakeStore(restoreSucceeds: true);
       await pump(tester, store, 0);
 
@@ -193,6 +221,140 @@ void purchaseIsReachable() {
 
       await tester.tap(find.byIcon(Icons.more_vert));
       await tester.pumpAndSettle();
+      expect(find.text('Guides of any size'), findsNothing);
+    });
+
+    testWidgets('owning everything leaves nothing to buy or restore', (
+      tester,
+    ) async {
+      // The end of the ladder. A menu still offering "Restore purchase" here
+      // would be offering to look for something that cannot exist.
+      final store = FakeStore(
+        restoreSucceeds: true,
+        owns: const {everythingProductId},
+      );
+      await pump(tester, store, 0);
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Restore purchase'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+      expect(find.text('Guides of any size'), findsNothing);
+      expect(find.text('Places from a post'), findsNothing);
+      expect(find.text('Restore purchase'), findsNothing);
+    });
+  });
+}
+
+/// Which product the sheet offers, and at which price.
+///
+/// The matrix is the point. Two of the three products differ by five pounds and
+/// which one is right depends on both what is already owned and what the person
+/// was trying to do, so getting it wrong means either charging somebody for
+/// something they hold or offering them something that will not help.
+void paywallMatrix() {
+  group('the sheet sells what the moment calls for', () {
+    testWidgets('the cap offers the cheaper unlock first, bundle second', (
+      tester,
+    ) async {
+      // Somebody stopped by the three-place cap is served by the unlock. The
+      // bundle appears underneath as the larger option, never in place of it.
+      final store = FakeStore();
+      await pump(tester, store, 5);
+
+      await tester.tap(find.text('Make a guide (5)'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.widgetWithText(FilledButton, r'Unlock for $8.99'),
+        findsOne,
+        reason: 'the answer to the question asked goes first',
+      );
+      expect(
+        find.widgetWithText(OutlinedButton, r'Everything for $14.99'),
+        findsOne,
+      );
+      // The extra five pounds has to say what it buys, or the larger button is
+      // a trap.
+      expect(find.text('Also reads places out of a shared post.'), findsOne);
+      expect(store.buyCalls, 0);
+    });
+
+    testWidgets('a post offers the bundle, and no cheaper way past it', (
+      tester,
+    ) async {
+      final store = FakeStore();
+      await pump(tester, store, 0);
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Places from a post'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.widgetWithText(FilledButton, r'Everything for $14.99'),
+        findsOne,
+      );
+      // Nothing cheaper grants it, so nothing cheaper is shown. Offering the
+      // £8.99 unlock here would be selling something that cannot help.
+      expect(find.textContaining(r'$8.99'), findsNothing);
+      // And there is no partial reading of a post to fall back on.
+      expect(find.textContaining('Save the first'), findsNothing);
+      expect(store.buyCalls, 0);
+    });
+
+    testWidgets('an owner of the unlock is sold the difference', (
+      tester,
+    ) async {
+      // Non-consumables have no upgrade mechanism, so the ladder is a second
+      // product. Charging £14.99 to somebody holding £8.99 of it would be
+      // charging twice for the same half.
+      SharedPreferences.setMockInitialValues({'unlimited_unlocked': true});
+      final store = FakeStore();
+      await pump(tester, store, 0);
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+      expect(find.text('Guides of any size'), findsNothing);
+      await tester.tap(find.text('Places from a post'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.widgetWithText(FilledButton, r'Add posts for $9.99'),
+        findsOne,
+      );
+      expect(find.textContaining(r'$14.99'), findsNothing);
+
+      await tester.tap(find.text(r'Add posts for $9.99'));
+      await tester.pumpAndSettle();
+      expect(store.bought, [reelsUpgradeProductId]);
+    });
+
+    testWidgets('a restore that finds the wrong half does not open the rest', (
+      tester,
+    ) async {
+      // The honest partial outcome. Restoring found a real purchase, and it is
+      // not the one that was asked for -- so it says what came back, and the
+      // post stays locked.
+      final store = FakeStore(restoreSucceeds: true);
+      await pump(tester, store, 0);
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Places from a post'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Restore a previous purchase'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Restored'), findsOne);
+      expect(store.buyCalls, 0, reason: 'a restore must never charge');
+      // Still for sale, because it is still unheld.
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+      expect(find.text('Places from a post'), findsOne);
       expect(find.text('Guides of any size'), findsNothing);
     });
   });

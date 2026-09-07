@@ -301,20 +301,8 @@ class LUr extends L {
   String get fromFile => 'فائل سے';
 
   @override
-  String get fromExistingGuide => 'پہلے سے موجود گائیڈ سے';
-
-  @override
-  String get importGuideTitle => 'پہلے سے موجود گائیڈ میں شامل کریں';
-
-  @override
   String get importGuideBody =>
-      'Apple Maps میں گائیڈ کھول کر شیئر کیجیے، پھر ”لنک کاپی کریں“ چنیے۔ اسے نیچے پیسٹ کیجیے، Wren اس میں پہلے سے موجود جگہیں پڑھ لے گا۔';
-
-  @override
-  String get guideLinkLabel => 'گائیڈ کا لنک';
-
-  @override
-  String get readGuide => 'گائیڈ پڑھیں';
+      'Apple Maps میں گائیڈ کھول کر شیئر کیجیے، پھر ”لنک کاپی کریں“ چنیے۔ اسے نیچے پیسٹ کیجیے، Wren اس میں پہلے سے موجود جگہیں پڑھ لے گا۔ ریل یا پوسٹ کا لنک بھی یہاں کام کرتا ہے۔';
 
   @override
   String get importGuideNotALink =>
@@ -545,4 +533,91 @@ class LUr extends L {
   @override
   String get compExpiring =>
       'Wren آپ کی مفت رسائی کی تصدیق نہیں کر سکا۔ اسے برقرار رکھنے کے لیے اگلے چند دنوں میں انٹرنیٹ سے منسلک ہوں۔';
+
+  @override
+  String get reelsTitle => 'پوسٹ سے مقامات';
+
+  @override
+  String get reelsExplain =>
+      'کوئی ریل یا پوسٹ Wren کو بھیجیں، یہ اس میں سے مقامات پڑھ لے گا — بس جانچ کر محفوظ کر لیں۔ Wren ویڈیو کبھی نہیں رکھتا۔';
+
+  @override
+  String everythingFor(String price) {
+    return 'سب کچھ $price میں';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'پوسٹس $price میں شامل کریں';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'بھیجی گئی پوسٹ سے بھی مقامات پڑھتا ہے۔';
+
+  @override
+  String get readingPost => 'پوسٹ پڑھی جا رہی ہے…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'اس مہینے باقی پوسٹس: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'اس مہینے کی پوسٹس ختم۔ آپ کا کوٹا $date کو واپس آئے گا۔';
+  }
+
+  @override
+  String get reelQuotaSoon => 'چند ہفتے';
+
+  @override
+  String get reelBusy =>
+      'Wren ابھی پچھلی پوسٹ پڑھ رہا ہے۔ ذرا دیر بعد دوبارہ کوشش کریں۔';
+
+  @override
+  String get reelUnavailable =>
+      'یہ پوسٹ نہیں کھل سکی۔ ہو سکتا ہے یہ نجی ہو، حذف ہو چکی ہو یا یہاں دستیاب نہ ہو۔';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren یہ پوسٹ نہیں پڑھ سکا۔ اس کے اسکرین شاٹ لے کر بھیجیں — یہ ہمیشہ کام کرتا ہے۔';
+
+  @override
+  String get reelNoPlaces =>
+      'اس پوسٹ میں کوئی چیز ایسی جگہ نہیں لگی جہاں جایا جا سکے۔';
+
+  @override
+  String get reelUnreachable =>
+      'Wren پوسٹ پڑھنے کے لیے سرور تک نہیں پہنچ سکا۔ آپ کے کوٹے سے کچھ کم نہیں ہوا۔';
+
+  @override
+  String get reelNeedsRestore =>
+      'پہلے خریداری بحال کریں پر ٹیپ کریں، تاکہ Wren اسٹور کو آپ کی رسید دکھا سکے۔';
+
+  @override
+  String get compEnabledEverything => 'مفت رسائی فعال، بشمول پوسٹ سے مقامات۔';
+
+  @override
+  String get restoredEverything =>
+      'بحال ہو گیا۔ کسی بھی حجم کی گائیڈز اور پوسٹ سے مقامات۔';
+
+  @override
+  String get fromGuideOrPost => 'لنک سے';
+
+  @override
+  String get fromPost => 'پوسٹ سے';
+
+  @override
+  String get importLinkTitle => 'لنک سے شامل کریں';
+
+  @override
+  String get importPostBody =>
+      'کسی ریل یا پوسٹ کا لنک چسپاں کریں، Wren اس میں سے مقامات پڑھ لے گا۔ Wren ویڈیو کبھی نہیں رکھتا۔';
+
+  @override
+  String get linkLabel => 'لنک';
+
+  @override
+  String get readLink => 'پڑھیں';
 }

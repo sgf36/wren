@@ -277,20 +277,8 @@ class LKo extends L {
   String get fromFile => '파일에서';
 
   @override
-  String get fromExistingGuide => '이미 있는 가이드에서';
-
-  @override
-  String get importGuideTitle => '이미 있는 가이드에 추가';
-
-  @override
   String get importGuideBody =>
-      '지도에서 그 가이드를 열어 공유한 다음 “링크 복사”를 선택하세요. 아래에 붙여넣으면 Wren이 그 가이드에 담긴 장소를 읽습니다.';
-
-  @override
-  String get guideLinkLabel => '가이드 링크';
-
-  @override
-  String get readGuide => '가이드 읽기';
+      '지도에서 그 가이드를 열어 공유한 다음 “링크 복사”를 선택하세요. 아래에 붙여넣으면 Wren이 그 가이드에 담긴 장소를 읽습니다. 릴스나 게시물 링크도 여기에서 사용할 수 있습니다.';
 
   @override
   String get importGuideNotALink =>
@@ -503,4 +491,86 @@ class LKo extends L {
   @override
   String get compExpiring =>
       'Wren에서 무료 이용 권한을 확인하지 못했습니다. 유지하려면 며칠 안에 인터넷에 연결하세요.';
+
+  @override
+  String get reelsTitle => '게시물에서 장소 찾기';
+
+  @override
+  String get reelsExplain =>
+      '릴스나 게시물을 Wren에 공유하면 그 안의 장소를 읽어 줍니다. 확인하고 저장하기만 하면 됩니다. Wren은 영상을 보관하지 않습니다.';
+
+  @override
+  String everythingFor(String price) {
+    return '전부 $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return '게시물 기능 추가 $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts => '공유받은 게시물에서도 장소를 읽습니다.';
+
+  @override
+  String get readingPost => '게시물을 읽는 중…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return '이번 달 남은 게시물: $count개';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return '이번 달 게시물은 여기까지입니다. 사용량은 $date에 다시 채워집니다.';
+  }
+
+  @override
+  String get reelQuotaSoon => '몇 주 뒤';
+
+  @override
+  String get reelBusy => 'Wren이 아직 이전 게시물을 읽고 있습니다. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get reelUnavailable =>
+      '그 게시물을 열 수 없었습니다. 비공개이거나 삭제되었거나 여기에서는 볼 수 없을 수 있습니다.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren이 그 게시물을 읽지 못했습니다. 스크린샷을 찍어 그것을 공유해 보세요. 이 방법은 언제나 됩니다.';
+
+  @override
+  String get reelNoPlaces => '그 게시물에는 갈 만한 장소로 보이는 것이 없었습니다.';
+
+  @override
+  String get reelUnreachable => '게시물을 읽으려고 서버에 연결하지 못했습니다. 사용량은 차감되지 않았습니다.';
+
+  @override
+  String get reelNeedsRestore =>
+      '먼저 구입 복원을 누르세요. 그래야 Wren이 스토어에 영수증을 보여 줄 수 있습니다.';
+
+  @override
+  String get compEnabledEverything => '무상 이용을 켰습니다. 게시물에서 장소 찾기도 포함됩니다.';
+
+  @override
+  String get restoredEverything => '복원했습니다. 크기 제한 없는 가이드와 게시물에서 장소 찾기.';
+
+  @override
+  String get fromGuideOrPost => '링크에서';
+
+  @override
+  String get fromPost => '게시물에서';
+
+  @override
+  String get importLinkTitle => '링크에서 추가';
+
+  @override
+  String get importPostBody =>
+      '릴스나 게시물 링크를 붙여 넣으면 Wren이 그 안의 장소를 읽습니다. Wren은 영상을 보관하지 않습니다.';
+
+  @override
+  String get linkLabel => '링크';
+
+  @override
+  String get readLink => '읽기';
 }

@@ -296,20 +296,8 @@ class LCa extends L {
   String get fromFile => 'Des d\'un fitxer';
 
   @override
-  String get fromExistingGuide => 'Des d\'una guia existent';
-
-  @override
-  String get importGuideTitle => 'Afegir a una guia existent';
-
-  @override
   String get importGuideBody =>
-      'A Mapes, obre la guia i comparteix-la; després tria Copiar l\'enllaç. Enganxa\'l aquí sota i el Wren llegirà els llocs que ja conté.';
-
-  @override
-  String get guideLinkLabel => 'Enllaç de la guia';
-
-  @override
-  String get readGuide => 'Llegir la guia';
+      'A Mapes, obre la guia i comparteix-la; després tria Copiar l\'enllaç. Enganxa\'l aquí sota i el Wren llegirà els llocs que ja conté. Aquí també funciona un enllaç a un reel o a una publicació.';
 
   @override
   String get importGuideNotALink =>
@@ -543,4 +531,92 @@ class LCa extends L {
   @override
   String get compExpiring =>
       'Wren no ha pogut confirmar el vostre accés gratuït. Connecteu-vos a internet els propers dies per conservar-lo.';
+
+  @override
+  String get reelsTitle => 'Llocs d\'una publicació';
+
+  @override
+  String get reelsExplain =>
+      'Comparteix un reel o una publicació amb el Wren i en traurà els llocs, a punt per revisar i desar. El Wren no conserva mai el vídeo.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Tot per $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Afegeix les publicacions per $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'També treu llocs d\'una publicació compartida.';
+
+  @override
+  String get readingPost => 'S\'està llegint la publicació…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'publicacions que et queden aquest mes: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Això és tot per aquest mes. La teva quota torna el $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'unes setmanes';
+
+  @override
+  String get reelBusy =>
+      'El Wren encara està llegint la publicació anterior. Torna-ho a provar d\'aquí a un moment.';
+
+  @override
+  String get reelUnavailable =>
+      'No s\'ha pogut obrir aquesta publicació. Pot ser privada, esborrada o no disponible aquí.';
+
+  @override
+  String get reelCouldNotRead =>
+      'El Wren no ha pogut llegir aquesta publicació. Fes-ne captures de pantalla i comparteix-les: això sempre funciona.';
+
+  @override
+  String get reelNoPlaces =>
+      'Res d\'aquesta publicació no semblava un lloc on es pugui anar.';
+
+  @override
+  String get reelUnreachable =>
+      'El Wren no ha pogut arribar al servidor per llegir aquesta publicació. No s\'ha descomptat res de la teva quota.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Toca primer Restaura la compra, perquè el Wren pugui ensenyar el teu rebut a la botiga.';
+
+  @override
+  String get compEnabledEverything =>
+      'Accés de cortesia activat, inclosos els llocs d\'una publicació.';
+
+  @override
+  String get restoredEverything =>
+      'Restaurat. Guies de qualsevol mida i llocs d\'una publicació.';
+
+  @override
+  String get fromGuideOrPost => 'Des d\'un enllaç';
+
+  @override
+  String get fromPost => 'Des d\'una publicació';
+
+  @override
+  String get importLinkTitle => 'Afegeix des d\'un enllaç';
+
+  @override
+  String get importPostBody =>
+      'Enganxa l\'enllaç d\'un reel o d\'una publicació i el Wren en traurà els llocs. El Wren no conserva mai el vídeo.';
+
+  @override
+  String get linkLabel => 'Enllaç';
+
+  @override
+  String get readLink => 'Llegeix-ho';
 }

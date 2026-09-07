@@ -290,20 +290,8 @@ class LHu extends L {
   String get fromFile => 'Fájlból';
 
   @override
-  String get fromExistingGuide => 'Meglévő útikalauzból';
-
-  @override
-  String get importGuideTitle => 'Hozzáadás meglévő útikalauzhoz';
-
-  @override
   String get importGuideBody =>
-      'Az Apple Térképekben nyisd meg az útikalauzt és oszd meg, majd válaszd a Hivatkozás másolása lehetőséget. Illeszd be alább, és a Wren kiolvassa a benne lévő helyeket.';
-
-  @override
-  String get guideLinkLabel => 'Útikalauz hivatkozása';
-
-  @override
-  String get readGuide => 'Útikalauz beolvasása';
+      'Az Apple Térképekben nyisd meg az útikalauzt és oszd meg, majd válaszd a Hivatkozás másolása lehetőséget. Illeszd be alább, és a Wren kiolvassa a benne lévő helyeket. Reelre vagy bejegyzésre mutató hivatkozás is működik itt.';
 
   @override
   String get importGuideNotALink =>
@@ -536,4 +524,92 @@ class LHu extends L {
   @override
   String get compExpiring =>
       'A Wren nem tudta megerősíteni az ingyenes hozzáférésedet. Csatlakozz az internethez a következő napokban, hogy megtartsd.';
+
+  @override
+  String get reelsTitle => 'Helyek egy bejegyzésből';
+
+  @override
+  String get reelsExplain =>
+      'Oszd meg a Wrennel a reelt vagy a bejegyzést, és kiolvassa belőle a helyeket, készen az ellenőrzésre és a mentésre. A Wren soha nem tartja meg a videót.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Minden $price áron';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Bejegyzések hozzáadása $price áron';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Megosztott bejegyzésből is kiolvassa a helyeket.';
+
+  @override
+  String get readingPost => 'Bejegyzés olvasása…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'hátralévő bejegyzés ebben a hónapban: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Ennyi bejegyzés jutott erre a hónapra. A kereted $date napján tér vissza.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'néhány hét';
+
+  @override
+  String get reelBusy =>
+      'A Wren még az előző bejegyzést olvassa. Próbáld újra egy pillanat múlva.';
+
+  @override
+  String get reelUnavailable =>
+      'Ezt a bejegyzést nem sikerült megnyitni. Lehet, hogy privát, törölték, vagy itt nem érhető el.';
+
+  @override
+  String get reelCouldNotRead =>
+      'A Wren nem tudta elolvasni ezt a bejegyzést. Készíts róla képernyőképeket, és azokat oszd meg – az mindig működik.';
+
+  @override
+  String get reelNoPlaces =>
+      'Semmi sem tűnt olyan helynek a bejegyzésben, ahová el lehet menni.';
+
+  @override
+  String get reelUnreachable =>
+      'A Wren nem érte el a kiszolgálót, hogy elolvassa a bejegyzést. A keretedből semmi nem fogyott.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Előbb koppints a Vásárlás visszaállítása gombra, hogy a Wren megmutathassa a nyugtádat az áruháznak.';
+
+  @override
+  String get compEnabledEverything =>
+      'Ingyenes hozzáférés bekapcsolva, a bejegyzésekből olvasott helyekkel együtt.';
+
+  @override
+  String get restoredEverything =>
+      'Visszaállítva. Bármekkora útikalauz, és helyek egy bejegyzésből.';
+
+  @override
+  String get fromGuideOrPost => 'Hivatkozásból';
+
+  @override
+  String get fromPost => 'Bejegyzésből';
+
+  @override
+  String get importLinkTitle => 'Hozzáadás hivatkozásból';
+
+  @override
+  String get importPostBody =>
+      'Illeszd be egy reel vagy egy bejegyzés hivatkozását, és a Wren kiolvassa belőle a helyeket. A Wren soha nem tartja meg a videót.';
+
+  @override
+  String get linkLabel => 'Hivatkozás';
+
+  @override
+  String get readLink => 'Olvasd be';
 }

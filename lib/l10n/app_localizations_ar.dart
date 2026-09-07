@@ -294,20 +294,8 @@ class LAr extends L {
   String get fromFile => 'من ملف';
 
   @override
-  String get fromExistingGuide => 'من دليل موجود';
-
-  @override
-  String get importGuideTitle => 'الإضافة إلى دليل موجود';
-
-  @override
   String get importGuideBody =>
-      'في خرائط Apple، افتح الدليل وشاركه، ثم اختر ”نسخ الرابط“. الصقه أدناه وسيقرأ Wren الأماكن التي يضمها بالفعل.';
-
-  @override
-  String get guideLinkLabel => 'رابط الدليل';
-
-  @override
-  String get readGuide => 'قراءة الدليل';
+      'في خرائط Apple، افتح الدليل وشاركه، ثم اختر ”نسخ الرابط“. الصقه أدناه وسيقرأ Wren الأماكن التي يضمها بالفعل. رابط ريل أو منشور يعمل هنا أيضًا.';
 
   @override
   String get importGuideNotALink =>
@@ -592,4 +580,90 @@ class LAr extends L {
   @override
   String get compExpiring =>
       'تعذّر على Wren تأكيد وصولك المجاني. اتصل بالإنترنت خلال الأيام القليلة القادمة للحفاظ عليه.';
+
+  @override
+  String get reelsTitle => 'أماكن من منشور';
+
+  @override
+  String get reelsExplain =>
+      'شارك ريلًا أو منشورًا مع Wren فيقرأ منه الأماكن، جاهزة للمراجعة والحفظ. لا يحتفظ Wren بالفيديو أبدًا.';
+
+  @override
+  String everythingFor(String price) {
+    return 'كل شيء مقابل $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'أضف المنشورات مقابل $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'يقرأ أيضًا الأماكن من منشور تمت مشاركته.';
+
+  @override
+  String get readingPost => 'جارٍ قراءة المنشور…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'المنشورات المتبقية هذا الشهر: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'هذه كل منشورات هذا الشهر. تعود حصتك في $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'بضعة أسابيع';
+
+  @override
+  String get reelBusy => 'لا يزال Wren يقرأ المنشور السابق. حاول بعد لحظة.';
+
+  @override
+  String get reelUnavailable =>
+      'تعذّر فتح هذا المنشور. قد يكون خاصًا أو محذوفًا أو غير متاح هنا.';
+
+  @override
+  String get reelCouldNotRead =>
+      'لم يستطع Wren قراءة هذا المنشور. صوّر الشاشة وشارك الصور بدلًا من ذلك — هذا ينجح دائمًا.';
+
+  @override
+  String get reelNoPlaces => 'لا شيء في هذا المنشور بدا مكانًا يمكن زيارته.';
+
+  @override
+  String get reelUnreachable =>
+      'لم يصل Wren إلى الخادم لقراءة المنشور. لم يُخصم شيء من حصتك.';
+
+  @override
+  String get reelNeedsRestore =>
+      'اضغط أولًا على استعادة الشراء، حتى يعرض Wren إيصالك على المتجر.';
+
+  @override
+  String get compEnabledEverything =>
+      'تم تفعيل الوصول المجاني، بما في ذلك الأماكن من منشور.';
+
+  @override
+  String get restoredEverything =>
+      'تمت الاستعادة. أدلة بأي حجم وأماكن من منشور.';
+
+  @override
+  String get fromGuideOrPost => 'من رابط';
+
+  @override
+  String get fromPost => 'من منشور';
+
+  @override
+  String get importLinkTitle => 'الإضافة من رابط';
+
+  @override
+  String get importPostBody =>
+      'الصق رابط ريل أو منشور فيقرأ Wren منه الأماكن. لا يحتفظ Wren بالفيديو أبدًا.';
+
+  @override
+  String get linkLabel => 'رابط';
+
+  @override
+  String get readLink => 'اقرأه';
 }

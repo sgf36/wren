@@ -285,20 +285,8 @@ class LVi extends L {
   String get fromFile => 'Từ một tệp';
 
   @override
-  String get fromExistingGuide => 'Từ một hướng dẫn có sẵn';
-
-  @override
-  String get importGuideTitle => 'Thêm vào một hướng dẫn có sẵn';
-
-  @override
   String get importGuideBody =>
-      'Trong Apple Maps, mở hướng dẫn đó và chia sẻ, rồi chọn “Sao chép liên kết”. Dán vào bên dưới và Wren sẽ đọc những địa điểm đang có trong đó.';
-
-  @override
-  String get guideLinkLabel => 'Liên kết hướng dẫn';
-
-  @override
-  String get readGuide => 'Đọc hướng dẫn';
+      'Trong Apple Maps, mở hướng dẫn đó và chia sẻ, rồi chọn “Sao chép liên kết”. Dán vào bên dưới và Wren sẽ đọc những địa điểm đang có trong đó. Liên kết tới một reel hay bài đăng cũng dùng được ở đây.';
 
   @override
   String get importGuideNotALink =>
@@ -514,4 +502,92 @@ class LVi extends L {
   @override
   String get compExpiring =>
       'Wren không thể xác nhận quyền truy cập miễn phí của bạn. Hãy kết nối internet trong vài ngày tới để giữ quyền này.';
+
+  @override
+  String get reelsTitle => 'Địa điểm từ một bài đăng';
+
+  @override
+  String get reelsExplain =>
+      'Chia sẻ một reel hay một bài đăng tới Wren, Wren sẽ đọc ra các địa điểm, sẵn sàng để kiểm và lưu. Wren không bao giờ giữ lại video.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Trọn bộ với $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Thêm bài đăng với $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Còn đọc địa điểm từ một bài đăng được chia sẻ.';
+
+  @override
+  String get readingPost => 'Đang đọc bài đăng…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'bài đăng còn lại tháng này: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Hết bài đăng cho tháng này rồi. Hạn mức quay lại vào $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'vài tuần nữa';
+
+  @override
+  String get reelBusy =>
+      'Wren vẫn đang đọc bài đăng trước. Thử lại sau một lát.';
+
+  @override
+  String get reelUnavailable =>
+      'Không mở được bài đăng đó. Có thể nó ở chế độ riêng tư, đã bị xoá, hoặc không khả dụng ở đây.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren không đọc được bài đăng đó. Hãy chụp màn hình rồi chia sẻ ảnh — cách đó luôn được.';
+
+  @override
+  String get reelNoPlaces =>
+      'Không có gì trong bài đăng đó trông giống một nơi có thể ghé thăm.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren không kết nối được máy chủ để đọc bài đăng. Hạn mức của bạn không bị trừ.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Hãy chạm Khôi phục giao dịch trước, để Wren đưa biên nhận của bạn cho cửa hàng.';
+
+  @override
+  String get compEnabledEverything =>
+      'Đã bật quyền dùng miễn phí, gồm cả địa điểm từ bài đăng.';
+
+  @override
+  String get restoredEverything =>
+      'Đã khôi phục. Hướng dẫn cỡ nào cũng được, và địa điểm từ bài đăng.';
+
+  @override
+  String get fromGuideOrPost => 'Từ một liên kết';
+
+  @override
+  String get fromPost => 'Từ một bài đăng';
+
+  @override
+  String get importLinkTitle => 'Thêm từ một liên kết';
+
+  @override
+  String get importPostBody =>
+      'Dán liên kết của một reel hay một bài đăng, Wren sẽ đọc ra các địa điểm. Wren không bao giờ giữ lại video.';
+
+  @override
+  String get linkLabel => 'Liên kết';
+
+  @override
+  String get readLink => 'Đọc đi';
 }

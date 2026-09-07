@@ -289,20 +289,8 @@ class LId extends L {
   String get fromFile => 'Dari file';
 
   @override
-  String get fromExistingGuide => 'Dari panduan yang sudah ada';
-
-  @override
-  String get importGuideTitle => 'Tambahkan ke panduan yang sudah ada';
-
-  @override
   String get importGuideBody =>
-      'Di Apple Maps, buka panduannya dan bagikan, lalu pilih “Salin Tautan”. Tempelkan di bawah, dan Wren akan membaca tempat-tempat yang sudah ada di dalamnya.';
-
-  @override
-  String get guideLinkLabel => 'Tautan panduan';
-
-  @override
-  String get readGuide => 'Baca panduan';
+      'Di Apple Maps, buka panduannya dan bagikan, lalu pilih “Salin Tautan”. Tempelkan di bawah, dan Wren akan membaca tempat-tempat yang sudah ada di dalamnya. Tautan ke reel atau unggahan juga bisa di sini.';
 
   @override
   String get importGuideNotALink =>
@@ -519,4 +507,92 @@ class LId extends L {
   @override
   String get compExpiring =>
       'Wren tidak dapat mengonfirmasi akses gratis Anda. Sambungkan ke internet dalam beberapa hari ke depan untuk mempertahankannya.';
+
+  @override
+  String get reelsTitle => 'Tempat dari sebuah unggahan';
+
+  @override
+  String get reelsExplain =>
+      'Bagikan reel atau unggahan ke Wren, lalu Wren membaca tempat-tempatnya, siap kamu periksa dan simpan. Wren tidak pernah menyimpan videonya.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Semuanya seharga $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Tambahkan unggahan seharga $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Juga membaca tempat dari unggahan yang dibagikan.';
+
+  @override
+  String get readingPost => 'Membaca unggahan…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'unggahan tersisa bulan ini: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Itu semua unggahan untuk bulan ini. Jatahmu kembali pada $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'beberapa minggu';
+
+  @override
+  String get reelBusy =>
+      'Wren masih membaca unggahan sebelumnya. Coba lagi sebentar.';
+
+  @override
+  String get reelUnavailable =>
+      'Unggahan itu tidak bisa dibuka. Mungkin privat, sudah dihapus, atau tidak tersedia di sini.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren tidak bisa membaca unggahan itu. Tangkap layarnya dan bagikan tangkapan layar saja — itu selalu berhasil.';
+
+  @override
+  String get reelNoPlaces =>
+      'Tidak ada di unggahan itu yang tampak seperti tempat yang bisa didatangi.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren tidak bisa menghubungi server untuk membaca unggahan itu. Jatahmu tidak berkurang.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Ketuk Pulihkan pembelian dulu, supaya Wren bisa menunjukkan tanda terimamu ke toko.';
+
+  @override
+  String get compEnabledEverything =>
+      'Akses gratis diaktifkan, termasuk tempat dari unggahan.';
+
+  @override
+  String get restoredEverything =>
+      'Dipulihkan. Panduan sebesar apa pun, dan tempat dari unggahan.';
+
+  @override
+  String get fromGuideOrPost => 'Dari sebuah tautan';
+
+  @override
+  String get fromPost => 'Dari sebuah unggahan';
+
+  @override
+  String get importLinkTitle => 'Tambah dari tautan';
+
+  @override
+  String get importPostBody =>
+      'Tempel tautan reel atau unggahan, lalu Wren membaca tempat-tempatnya. Wren tidak pernah menyimpan videonya.';
+
+  @override
+  String get linkLabel => 'Tautan';
+
+  @override
+  String get readLink => 'Baca';
 }
