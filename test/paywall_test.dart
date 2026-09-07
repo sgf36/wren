@@ -333,6 +333,53 @@ void paywallMatrix() {
       expect(store.bought, [reelsUpgradeProductId]);
     });
 
+    testWidgets('a seeded purchase reaches the sheet on the first frame', (
+      tester,
+    ) async {
+      // The screenshot scenes open their sheet in the post-frame callback,
+      // which runs before any read from disk lands. Seeding what is owned had
+      // to reach the entitlement synchronously or the sheet would still be
+      // "owns nothing" when it was photographed — and it was: both purchase
+      // review images came out byte-identical, showing the wrong product for
+      // one of them.
+      await tester.pumpWidget(
+        app(
+          CapturePage(
+            store: FakeStore(),
+            initialOwned: const {unlimitedProductId},
+            initialOverlay: ScreenshotOverlay.reelsPaywall,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.widgetWithText(FilledButton, r'Add posts for $9.99'),
+        findsOne,
+        reason: 'the seeded unlock did not reach the sheet',
+      );
+      expect(find.textContaining(r'$14.99'), findsNothing);
+    });
+
+    testWidgets('and without the seed it is the bundle', (tester) async {
+      // The other half of the same flag: without it, inverting the seed would
+      // still pass the test above.
+      await tester.pumpWidget(
+        app(
+          CapturePage(
+            store: FakeStore(),
+            initialOverlay: ScreenshotOverlay.reelsPaywall,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.widgetWithText(FilledButton, r'Everything for $14.99'),
+        findsOne,
+      );
+    });
+
     testWidgets('a restore that finds the wrong half does not open the rest', (
       tester,
     ) async {

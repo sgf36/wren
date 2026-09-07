@@ -823,6 +823,8 @@ def main():
                     help="skip the Apple Maps payoff shot")
     ap.add_argument("--no-iap", action="store_true",
                     help="skip the in-app purchase review images")
+    ap.add_argument("--only-iap", action="store_true",
+                    help="take ONLY the in-app purchase review images")
     ap.add_argument("--settle", type=float, default=6.0,
                     help="seconds to wait after launch before the shutter")
     ap.add_argument("--keep-build", action="store_true",
@@ -901,9 +903,9 @@ def main():
             say(f"paywall price: {price}", indent=1)
         for_locale = {product: table[asc]
                       for product, table in per_product.items() if asc in table}
-        paths = shoot_app(udid, out_dir, language, locale, args.settle,
-                          app_tmp, price=price, first=index == 0,
-                          prices=for_locale)
+        paths = [] if args.only_iap else shoot_app(
+            udid, out_dir, language, locale, args.settle, app_tmp,
+            price=price, first=index == 0, prices=for_locale)
 
         # The purchase review images, once. They are not localised listing
         # images and they do not go in a locale directory — see IAP_SCENES.
@@ -922,7 +924,7 @@ def main():
                 say(f"{pathlib.Path(shot).name}: "
                     f"{'ok' if drew_ok else 'SUSPECT — ' + why}", indent=2)
 
-        if not args.no_maps:
+        if not args.no_maps and not args.only_iap:
             maps = shoot_maps(udid, out_dir, args.settle)
             if maps:
                 paths.append(maps)

@@ -19,6 +19,7 @@ carry the API token, and the commit needs an MD5.
 """
 import argparse
 import hashlib
+import os
 import json
 import pathlib
 import sys
@@ -28,9 +29,17 @@ import urllib.request
 
 import jwt
 
-KEY_ID, ISSUER = "4CU796U485", "65aee88f-46c4-4daf-8238-5dc37263d06b"
-KEY = (pathlib.Path(r"C:\Users\SpencerFields\OneDrive - Spencer Fields"
-                    r"\Apps\Claude MacOS\signing") / "AuthKey_4CU796U485.p8")
+# In CI the key arrives as a secret written to a temporary file, so the path
+# and the two ids are overridable. Hard-coding them worked on the author's
+# machine and failed the first time this ran on a runner, after forty
+# minutes of simulator work — the same three environment variables
+# push_screenshots.py has always honoured.
+KEY_ID = os.environ.get("WREN_ASC_KEY_ID") or "4CU796U485"
+ISSUER = (os.environ.get("WREN_ASC_ISSUER")
+          or "65aee88f-46c4-4daf-8238-5dc37263d06b")
+KEY = pathlib.Path(os.environ.get("WREN_ASC_KEY") or (
+    r"C:\Users\SpencerFields\OneDrive - Spencer Fields"
+    r"\Apps\Claude MacOS\signing\AuthKey_4CU796U485.p8"))
 APP = "6802053382"
 HERE = pathlib.Path(__file__).resolve().parent
 IAP_DIR = HERE / "screenshots" / "IAP"

@@ -398,6 +398,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     // A link may be waiting from before the app was even running.
     WidgetsBinding.instance.addPostFrameCallback((_) => _takeSharedGuide());
+    // Seeded products have to reach the entitlement NOW, not when the first
+    // disk read lands: a scene opens its sheet in the post-frame callback
+    // below, which runs first. Without this both purchase scenes photographed
+    // the same sheet, because both were still "owns nothing" at that moment.
+    if (widget.initialOwned != null) _recompose();
+
     // Both feed [_recompose], and a share landing on a cold start can reach
     // the entitlement before either has answered. Kept as a future so the one
     // path that must not guess can wait for it.
