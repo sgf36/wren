@@ -1,106 +1,110 @@
 # Wren — where the submission stands
 
-Last updated 21 August 2026. Everything below was read back from App Store
-Connect on that date, not assumed. The version of this file before it was four
-days stale and said the opposite of the truth on its first line: it claimed the
-app was not submitted, when 1.0 had been live for days.
+Last updated **7 September 2026**. Everything below was read back from App Store
+Connect and the Play Console on that date, not assumed. This file has been wrong
+before in the most misleading way possible — its first line once said the app was
+unsubmitted while 1.0 had been live for days — so every claim here names what was
+checked.
 
-## 1.0 is on the App Store. 1.1.0 is prepared and waiting for you to submit it.
+## 2.0 is approved on the App Store and must NOT be released yet
 
 | | |
 |---|---|
-| **1.0** | `READY_FOR_SALE` — live, build 105 |
-| **1.1.0** | `PREPARE_FOR_SUBMISSION` — build **108** attached, VALID, minOS 18.0 |
-| Release notes | All 49 locales, pushed from `store/metadata_*.json` |
-| Reviewer notes | Updated for 1.1.0 and matching the repo byte for byte |
+| **2.0.0** | `PENDING_DEVELOPER_RELEASE` — approved, build 177, MANUAL release |
+| 1.2.0 | `READY_FOR_SALE` — the version customers have now |
 | Purchase `unlimited` | `APPROVED` |
-| App Privacy questionnaire | Answered and published 17 August. Still correct — see below |
-| Paid Applications Agreement | Executed via Easy-Post, which covers the account |
-| Copyright, age rating, category, screenshots, privacy URLs | All set |
+| Purchase `everything` | **`WAITING_FOR_REVIEW`** |
+| Purchase `reels.upgrade` | **`WAITING_FOR_REVIEW`** |
+| App Privacy label | Published 7 Sept — User ID + Device ID + Other Data, App Functionality, not linked, no tracking |
+| Listing, 49 locales | Description, promotional text, release notes, keywords, screenshots — all pushed |
 
-**The only step left is pressing Submit**, deliberately left to a person so the
-build and the in-app purchase can be seen attached rather than reported so.
+**Releasing 2.0.0 before those two purchases are APPROVED ships a broken
+paywall.** A purchase in `WAITING_FOR_REVIEW` is not sold in production, so
+`queryProductDetails` returns nothing for it, the sheet falls back to the
+hardcoded `$14.99` / `$9.99` strings in `entitlement.dart`, and the buy fails.
+Every customer who shares a reel would hit that. This is the entire reason the
+release was set to MANUAL.
 
-### Why the privacy answers did not need revisiting for 1.1.0
+Check with `python store/readiness.py`, which prints the state of all three.
 
-Administrative complimentary codes now re-confirm themselves daily. That changes
-how *often* the device identifier is sent, not what is sent or why: it is the
-same identifier, for the same purpose, and Apple's form has no field for
-frequency. The label declares *Identifiers → Device ID, App Functionality, not
-linked to the user, not used for tracking*, which is also what
-https://wren.spencerfields.com/privacy.html says it declares, so the two agree.
-
-### Two things the API cannot see, and one trap
+### What the API cannot see, and how to read that
 
 `appDataUsages` and `agreements` both 404 under this key. That is the API's
 shape, not a permissions problem, and a stronger key does not help.
-`store/readiness.py` prints `?` for them, meaning **could not look** — not
-"missing". Reading that `?` as a blocker is how the previous version of this
-file came to name a satisfied requirement as the thing holding up a submission.
+`readiness.py` prints `?` for them, meaning **could not look** — not "missing".
+Reading that `?` as a blocker is how an earlier version of this file named a
+satisfied requirement as the thing holding up a submission.
 
-`store/push_metadata.py` reports `0 of 49 succeeded` whenever the in-app
-purchase is live: Apple refuses to edit an `ACTIVE` InAppPurchaseLocalization,
-and the script counts a locale as successful only if the listing *and* the
-purchase both wrote. The listings do get written. Read the per-locale
-`listing set` lines, not the summary.
+`store/push_metadata.py` reports `0 of 49 succeeded` whenever an in-app purchase
+is live: Apple refuses to edit an `ACTIVE` InAppPurchaseLocalization, and the
+script counts a locale as successful only if the listing *and* the purchase both
+wrote. The listings do get written. Read the per-locale `listing set` lines.
 
-## What 1.1.0 contains
+### One declaration deliberately left to a person
 
-A code console, reachable only on a device that has redeemed an administrative
-complimentary code, and revocable administrators: an admin token is now good for
-a fortnight and re-confirms daily, so withdrawing such a code ends the unlock it
-granted. Ordinary unlock codes do not renew and are not revocable. A purchase is
-untouched and is never re-checked.
+`contentRightsDeclaration` is still `DOES_NOT_USE_THIRD_PARTY_CONTENT`. That was
+plainly true when Wren only read your own screenshots. 2.0 reads place names out
+of somebody else's post. It is arguably still true — Wren displays names, never
+the video, caption or images, and shows them only to the person who shared the
+post — but it is a rights claim, not an engineering fact, and it has not been
+changed on anyone's behalf.
 
-The console is deliberately absent from the public release notes — describing it
-there is the one thing that would make it discoverable — and deliberately
-present in the reviewer notes, because guideline 2.3.1 asks that functionality
-be clear to App Review rather than only to end users. The App Review code
-`7QFG-7FVY-QXP6-2AT6` is an ordinary unlock code, so the console cannot be opened
-during review, and unlock codes never renew, so nothing about renewal reaches a
-reviewer either.
-
-## Android
-
-**On Play's internal track and going no further until the Console is finished.**
-
-`com.spencerfields.littlebird` — the id predates the rename and is what the
-bundle is signed under. 1.1.0, versionCode 2, `status: completed`, read back
-from Play rather than inferred. Signed with the upload key
-(`META-INF/UPLOAD.RSA`, fingerprint `B0:67:…:27:93`, checked against the
-keystore). The store listing — title, both descriptions, contact details, four
-screenshots — was filled through the API and read back.
+## Android: 2.0.0 is on closed testing
 
 | | |
 |---|---|
-| Listing text and graphics | `store/play_listing.py --apply` |
-| Bundle to a track | `store/play_upload.py --aab <path>` |
-| Credential | Easy-Post's Play service account; it reaches this app too |
+| Track `alpha` (closed testing) | **2.0.0, versionCode 5, `completed`** |
+| Track `internal` | 1.1.0, versionCode 2 |
+| Bundle signature | `META-INF/UPLOAD.RSA`, SHA-256 `B0:67:…:27:93`, compared against the keystore README |
+| Store listing | Rewritten for 2.0 and applied 7 Sept — 70-char short, 3,869-char full |
+| Products | All three ACTIVE, 173 territories each, read back from `/oneTimeProducts` |
+| Data safety | **Updated 7 Sept** for the reel feature |
+| Other nine App content declarations | Unchanged since 28 Aug, reviewed and still correct |
 
-### What is left, and why no script can do it
+### What the Data safety declaration now says, and why
 
-The **App content declarations** — data safety, content rating, target audience,
-ads, the privacy policy URL — have no endpoint in `androidpublisher` v3. They
-are Console-only for every developer. `store/play/LISTING.md` §10 holds the
-answers.
+Three types, and the answers follow Play's own definitions rather than instinct:
 
-Give Play **<https://wren.spencerfields.com/android-privacy.html>**, not
-`/privacy.html`. The latter is the iPhone policy and describes an app this is
-not.
+* **Device or other IDs** — collected, not shared, App functionality. The random
+  installation identifier sent with a complimentary code. Unchanged.
+* **Personal info → User IDs** — collected, **not** ephemeral, optional, App
+  functionality. The Play purchase token: one row keyed to it counts the
+  250-per-30-days allowance, so it is retained and pseudonymous data must be
+  disclosed.
+* **App activity → Other user-generated content** — collected, **ephemeral**,
+  optional, App functionality. The shared post link and the place name. Play
+  requires ephemeral data to be declared but does not show it on the public
+  listing, which is why the store page shows only the two above.
 
-Until those are done nothing reaches a phone by any route: a track release on an
-app that has never been published waits at "Pending publication" for Google's
-first review, and Internal app sharing — which Easy-Post's tooling calls the way
-round exactly this — refuses with `NOT_PUBLISHED`, measured against this
-package.
+The public label reads **"No data shared with third parties"**, and that is
+correct rather than convenient: ScrapeCreators and Vertex AI are service
+providers processing on Wren's instructions, and the geocoder lookup rides the
+user-initiated-action exemption. Both are named exemptions from *sharing* in
+Play's policy.
 
-### Expect this in the listing
+The privacy policy URL registered with Play is
+**<https://wren.spencerfields.com/android-privacy.html>** — the Android policy,
+not `/privacy.html`, which is the iPhone one.
 
-Play will advertise that the app collects a device identifier. That is correct:
-entering a complimentary code sends the code and a random installation
-identifier to Wren's Worker. Almost nobody ever triggers it, because codes go to
-named people — but Play asks what an app *can* collect, not what it usually
-does, and the privacy page says the same thing in the same terms.
+### Still open on Android
+
+* **Closed testing needs 12 testers for 14 days** before production is offered.
+  That clock is about the tester cohort, not this build.
+* **Screenshots are still the 1.x set** — four images, none showing the reel
+  flow. The listing describes a feature the pictures do not.
+* Production has never been released, and `play_upload.py` deliberately offers no
+  production flag.
+
+## The website is current in all sixteen languages
+
+Deployed and verified byte-for-byte 7 Sept: 188 files, plus `contact.php` which
+is executed rather than served. The 2.0 copy — three products instead of one, the
+reel route, the fair-use allowance, and the Android policy's new section on what
+a shared post sends — is live in English and the fifteen translated directories.
+
+Two branches still show as unmerged and both are **superseded, not pending**:
+`vendor/vertex`'s `web/` tree is byte-identical to main, and
+`site/microsoft-clarity` would only delete content main already has.
 
 ## The guide-link ceiling, measured
 
@@ -117,40 +121,3 @@ using real muids from a real 82-place guide:
 | 160 places, lean | 3,534 | empty |
 | 40 places, padded title | 3,420 | parsed all 40 |
 | 40 places, padded title | 3,550 | empty |
-
-**One limit, and it is the URL's length** — between 3,504 and 3,534 characters.
-Forty places fails at the same length as a hundred and sixty, so it is not a
-count. The old figure was measuring the cost of encoding a name and an empty
-address with every place, fields Apple overwrites from its own record. Dropping
-them takes a link from 50 places to about 150, so an 82-place guide is one guide.
-
-Also probably the explanation for the original "60 places fails" observation:
-sixty copies of one muid parses as sixty places but renders eight distinct ones
-and a page a ninth the size. That test was measuring muid validity, not count.
-
-**Confirmed on a device**, 17 August 2026. Five links were opened on an iPhone:
-5 places lean opened with all five and every field filled in by Apple; 5 places
-with our own names opened identically, so the names were doing nothing; 82 lean
-opened as 80; 150 lean opened as 148; 160 gave Apple's "Coming Soon" page. The
-device boundary is exactly where the bisection put it, so the cap stands at 150.
-
-One thing that fell out of it: **Apple silently drops a place whose muid it no
-longer serves.** Both large tests came back exactly two short, from a set drawn
-from one real 82-place guide — so two of those places are dead records. Nothing
-in this app can prevent that; the payload is right and Apple has nothing to
-resolve. A republished guide can therefore be smaller than the one it replaces,
-and the missing places were already unreachable in Maps.
-
-## Two things that will bite whoever picks this up
-
-`reviewSubmissionItems` has no `inAppPurchaseV2` relationship — the API rejects
-it as unknown. A first-submission IAP in `READY_TO_SUBMIT` goes with the app
-version. `submit.py` still tries and reports the 409; that line is noise.
-
-The Apple Maps payoff screenshot (`02-in-apple-maps.png`) is **English only and
-should stay that way**. About twenty-five of its text labels are baked into the
-raster map tiles, so translating the sheet alone leaves an English map, and
-re-typesetting Apple's own interface on Apple's own store is both a review risk
-and impossible to do correctly for Arabic or Devanagari shaping. `shoot.py`
-attempts the real thing with a real guide link and skips it loudly, by name, if
-a simulator's Maps will not open a guide.
