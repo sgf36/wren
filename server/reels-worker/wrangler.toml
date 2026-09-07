@@ -10,8 +10,14 @@ compatibility_date = "2026-09-06"
 compatibility_flags = ["nodejs_compat"]
 
 # Four secrets, set with `wrangler secret put <NAME>` and never committed:
-#   SCRAPECREATORS_API_KEY  primary video vendor
-#   APIFY_TOKEN             fallback vendor, different infrastructure
+#   SCRAPECREATORS_API_KEY  the ONLY video vendor. There is no fallback: an
+#                           APIFY_TOKEN was planned and never built, and
+#                           `fetchPost` in vendors.js calls ScrapeCreators and
+#                           nothing else. Setting an Apify token would do
+#                           nothing. If a second vendor is ever wanted, the work
+#                           is the code path and the two privacy policies, which
+#                           name ScrapeCreators explicitly in sixteen languages
+#                           -- not the account.
 #   GEMINI_API_KEY          paid tier, not the free one — the free tier trains
 #                           on what it is sent
 #   PLAY_SA_KEY             Google service-account JSON, base64, androidpublisher
@@ -23,6 +29,25 @@ compatibility_flags = ["nodejs_compat"]
 # credential into the Wrangler logs, which record full command lines.
 # Check `wrangler secret list` afterwards: any name that looks like a credential
 # is one.
+
+# --- spending controls, both optional and both with safe defaults ---
+#
+# GLOBAL_DAILY_LIMIT   successful readings served in any trailing 24 hours,
+#                      across every customer. Defaults to 1000 in code, which is
+#                      far above plausible early use -- at 250 per customer per
+#                      thirty days it is roughly 120 customers spending their
+#                      whole allowance daily -- and far below a runaway. The
+#                      per-identity quota bounds one customer; this bounds the
+#                      bill. Raise it with a deploy if it ever binds honestly.
+#
+# REELS_DISABLED       set to "1" to stop serving reels immediately, without
+#                      deploying code. The kill switch, for when a vendor's
+#                      pricing or a retry loop has gone wrong and the app is
+#                      already in the store.
+#
+# Both refuse with codes the shipped 2.0 client does not recognise, so it tells
+# the customer Wren could not read the post and to share screenshots instead --
+# true, free, and works on anything.
 
 [vars]
 # The verifying half of the comp-code signing pair, identical to the value in

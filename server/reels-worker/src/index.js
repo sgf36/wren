@@ -66,6 +66,14 @@ export const FAILURES = Object.freeze({
   postUnavailable: 'post_unavailable',
   fetchFailed: 'fetch_failed',
   modelFailed: 'model_failed',
+  // Neither of these is a fault of the customer's, and the shipped 2.0 client
+  // does not know them: `_failureOf` maps anything unrecognised to
+  // `fetchFailed`, which tells them Wren could not read the post and to share
+  // screenshots instead. That is true, free, and works on anything -- so a
+  // capacity stop degrades into honest advice rather than a dead end. They are
+  // distinct on the wire so the logs say which happened.
+  capacityReached: 'capacity_reached',
+  disabled: 'disabled',
 });
 
 export class Refusal extends Error {
@@ -481,6 +489,34 @@ export async function quotaState(env, db, key, now = Date.now()) {
   return { used, limit, resetsAt, exhausted: used >= limit };
 }
 
+/**
+ * Everything this Worker has served in the trailing 24 hours, across everybody.
+ *
+ * The per-identity quota above bounds what ONE customer can cost. Nothing
+ * bounded the total, and the two failure modes that matter are not customers
+ * behaving normally: a purchase token shared around, or a bug that retries. The
+ * feature costs real money per call -- a ScrapeCreators credit and Vertex
+ * tokens -- and the bill arrives after the fact.
+ *
+ * Deliberately a count and not a currency estimate. Money would need per-call
+ * token accounting and a price table that goes stale silently; a count is
+ * exact, and the price per call is known well enough to convert by hand.
+ *
+ * The default is set far above plausible early use and far below a runaway: at
+ * 250 per customer per thirty days, 1000 a day is roughly 120 customers using
+ * their entire allowance every single day. If it ever binds legitimately that
+ * is a good problem, and it is one line of `wrangler deploy` to raise.
+ */
+export async function globalUsage(env, db, now = Date.now()) {
+  const limit = Number(env.GLOBAL_DAILY_LIMIT || 1000);
+  const since = Math.floor(now / 1000) - 24 * 60 * 60;
+  const row = await db.prepare(
+    'SELECT COUNT(*) AS n FROM usage WHERE ts >= ?1',
+  ).bind(since).first();
+  const used = Number(row?.n || 0);
+  return { used, limit, exhausted: used >= limit };
+}
+
 /* -------------------------------------------------------------- the model */
 
 /**
@@ -733,8 +769,24 @@ async function handleProcess(request, env) {
   const now = Date.now();
   const seconds = Math.floor(now / 1000);
 
+  // The kill switch. One var, no deploy of code required, and it stops the
+  // spending immediately -- which is what you want at 3am when a vendor's
+  // pricing or a loop has gone wrong and the app is in the store.
+  if (String(env.REELS_DISABLED || '') === '1') {
+    throw new Refusal(FAILURES.disabled, 503);
+  }
+
   const quota = await quotaState(env, db, who.key, now);
   if (quota.exhausted) throw new Refusal(FAILURES.quotaExceeded, 429, { quota });
+
+  // Checked after the per-identity quota so an exhausted customer still gets
+  // the accurate answer about their own allowance, and before the vendor call
+  // so nothing is spent past the ceiling.
+  const global = await globalUsage(env, db, now);
+  if (global.exhausted) {
+    console.log(`capacity: ${global.used}/${global.limit} in 24h, refusing`);
+    throw new Refusal(FAILURES.capacityReached, 503);
+  }
 
   // One reel at a time per identity. The row is the lock, and a stale claim is
   // released after five minutes: a Worker that dies mid-reel would otherwise
