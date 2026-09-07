@@ -33,6 +33,11 @@
  * originalTransactionId and Google's purchase token both do.
  */
 
+import {
+  fetchPost, fetchImages, regionOf, UA, MEDIA_BUDGET,
+  CAPTION_PROMPT, MEDIA_PROMPT,
+} from './vendors.js';
+
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -561,9 +566,16 @@ export function modelRequest(env, parts) {
  */
 export function vertexEndpoint(env, model) {
   const project = env.VERTEX_PROJECT;
-  const location = env.VERTEX_LOCATION || 'europe-west1';
+  const location = env.VERTEX_LOCATION || 'global';
   if (!project) return null;
-  return `https://${location}-aiplatform.googleapis.com/v1/projects/`
+  // `global` is not a region and has no region prefix on the host. It is also
+  // the only place 3.5 Flash-Lite exists: europe-west1, europe-west4 and
+  // us-central1 all answer 404 for it while happily serving 2.5. Measured, not
+  // assumed — the first smoke test failed on exactly this.
+  const host = location === 'global'
+    ? 'aiplatform.googleapis.com'
+    : `${location}-aiplatform.googleapis.com`;
+  return `https://${host}/v1/projects/`
     + `${project}/locations/${location}/publishers/google/models/`
     + `${model}:generateContent`;
 }
@@ -634,18 +646,59 @@ export async function readPlaces(env, parts) {
  * carousel of ten costs about what a reel costs, and charging ten would make
  * the fair-use number mean different things for different people.
  *
- * Not implemented: this is the half that needs accounts, keys and money, and
- * none of them existed when the rest was written. It throws the failure the app
- * already knows how to show — the one whose copy offers the screenshot path
- * instead — so that every layer above it can be built, deployed and exercised
- * against a Worker that is honestly incomplete.
- *
- * A stub returning plausible place names would be worse than this. It would
- * make the client look finished, and the first real post would then be the
- * first test of the entire pipeline.
+ * The caption is read first, and the media only if it yields nothing. That
+ * order was decided by a real post rather than by design: the first carousel
+ * tested listed all ten of its places in the caption as a numbered list, which
+ * cost a few hundred text tokens against 2,772 for the eleven images. Both
+ * were measured. List-style posts are the genre this feature exists for, so for
+ * a good share of them the expensive half never runs.
  */
 async function placesFromPost(env, target) {
-  throw new Refusal(FAILURES.fetchFailed, 503);
+  const post = await fetchPost(env, target);
+  if (!post) throw new Refusal(FAILURES.postUnavailable, 404);
+
+  // The caption, if there is one worth asking about. Two words is not a list.
+  if (post.caption && post.caption.length > 20) {
+    const text = [CAPTION_PROMPT, '', post.caption, ...post.alts].join(NEWLINE);
+    const found = await readPlaces(env, [{ text }]);
+    if (found.length) {
+      return { candidates: found, regionHint: regionOf(found), read: 'caption' };
+    }
+  }
+
+  // Otherwise the media, which is what most reels need.
+  const parts = [{ text: MEDIA_PROMPT }];
+  if (post.video) {
+    const res = await fetch(post.video, { headers: { 'User-Agent': UA } });
+    if (!res.ok) throw new Refusal(FAILURES.fetchFailed, 502);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    if (bytes.length > MEDIA_BUDGET) throw new Refusal(FAILURES.fetchFailed, 413);
+    parts.push({
+      inlineData: {
+        mimeType: res.headers.get('content-type')?.split(';')[0] || 'video/mp4',
+        data: bytesToB64(bytes),
+      },
+    });
+  } else {
+    parts.push(...await fetchImages(post.images));
+  }
+
+  if (parts.length < 2) throw new Refusal(FAILURES.fetchFailed, 502);
+
+  const found = await readPlaces(env, parts);
+  if (!found.length) throw new Refusal(FAILURES.postUnavailable, 404);
+  return { candidates: found, regionHint: regionOf(found), read: 'media' };
+}
+
+const NEWLINE = String.fromCharCode(10);
+
+/** Base64 in chunks, because a spread over megabytes hits the argument limit. */
+function bytesToB64(bytes) {
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    out += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(out);
 }
 
 /* ------------------------------------------------------------------ routes */

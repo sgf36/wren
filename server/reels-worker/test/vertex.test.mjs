@@ -22,9 +22,14 @@ import {
 const parts = [{ text: 'read the places' }];
 const PROJECT = 'gen-lang-client-0475397099';
 
-test('the endpoint names the project, the region and the model', () => {
+test('the default is global, which has no region prefix on the host', () => {
+  // Not a preference. gemini-3.5-flash-lite exists only in global; every
+  // regional endpoint answers 404 for it while serving 2.5 quite happily, so
+  // a regional default would be an outage that reads as a wrong model name.
+  // The first smoke test failed on exactly this.
   const url = vertexEndpoint({ VERTEX_PROJECT: PROJECT }, 'gemini-3.5-flash-lite');
-  assert.match(url, /^https:\/\/europe-west1-aiplatform\.googleapis\.com\//);
+  assert.match(url, /^https:\/\/aiplatform\.googleapis\.com\//);
+  assert.ok(url.includes('/locations/global/'));
   assert.ok(url.includes(`/projects/${PROJECT}/`));
   assert.ok(url.endsWith('/gemini-3.5-flash-lite:generateContent'));
 });

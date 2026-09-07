@@ -61,7 +61,11 @@ QUOTA_PER_30_DAYS = "250"
 # The region is part of the hostname as well as the path, and Vertex prices by
 # region, so changing this changes both where the call goes and what it costs.
 VERTEX_PROJECT = "gen-lang-client-0475397099"
-VERTEX_LOCATION = "europe-west1"
+# `global`, and not by preference: gemini-3.5-flash-lite exists ONLY there.
+# europe-west1, europe-west4 and us-central1 all 404 for it while serving 2.5
+# quite happily, so a regional endpoint here is a production outage that looks
+# like a wrong model name.
+VERTEX_LOCATION = "global"
 
 [[d1_databases]]
 binding = "DB"
