@@ -105,7 +105,8 @@ class _SceneResolver extends PlaceResolver {
 /// fabrication that looks like a fact.
 class _SceneStore implements UnlockStore {
   @override
-  Future<String?> price(String productId) async => SceneRequest.scenePrice;
+  Future<String?> price(String productId) async =>
+      SceneRequest.priceOf(productId);
   @override
   Future<bool> buy(String productId) async => false;
   @override
@@ -177,6 +178,36 @@ Widget? sceneFor(String name) {
         initialOverlay: ScreenshotOverlay.paywall,
       );
 
+    // The two reel purchases, which App Review wants a picture of and which
+    // are two different sheets rather than one shown twice. Neither is a store
+    // screenshot: they exist to be uploaded as the in-app purchases' own review
+    // images, which is a separate resource with its own upload.
+    //
+    // What decides which sheet appears is what the device already owns, so
+    // that is what differs between them — not a flag saying which to draw.
+    // Drawing it from the same `offersFor` the shipped app uses is the point:
+    // a reviewer comparing the image to the app is comparing two renders of
+    // one function.
+    case '07-everything':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        initialOverlay: ScreenshotOverlay.reelsPaywall,
+      );
+
+    case '08-reels-upgrade':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        // Owning the base unlock is what turns the £14.99 bundle into the
+        // £9.99 difference. Seeded rather than bought, because a simulator has
+        // no store to buy from.
+        initialOwned: const {unlimitedProductId},
+        initialOverlay: ScreenshotOverlay.reelsPaywall,
+      );
+
     // The launch screen, at rest: the bird, the name, the idiom under it.
     //
     // It used to be the empty state, whose copy says where places end up and
@@ -204,7 +235,21 @@ const sceneNames = <String>[
   '04-which-city',
   '05-places-kept',
   '06-a-little-bird',
+  // Not store screenshots. Shot in the same run because the simulator is
+  // already up, and uploaded to the in-app purchases rather than the listing.
+  '07-everything',
+  '08-reels-upgrade',
 ];
+
+/// The scenes that are in-app-purchase review images rather than store pages.
+///
+/// Named here so that shoot.py, push_screenshots.py and push_iap_screenshot.py
+/// all agree, rather than each carrying its own idea of which is which — the
+/// failure that would follow is a paywall appearing on the public product page.
+const Map<String, String> iapScenes = {
+  '07-everything': everythingProductId,
+  '08-reels-upgrade': reelsUpgradeProductId,
+};
 
 /// The file shoot.py writes into the app's own tmp directory to name the scene.
 ///
@@ -244,6 +289,7 @@ class SceneRequest {
     final sources = <(String, String)>[];
     String? found;
     String? price;
+    _prices.clear();
 
     final env = Platform.environment['WREN_SCENE'];
     sources.add(('env WREN_SCENE', _show(env)));
@@ -259,7 +305,17 @@ class SceneRequest {
       for (final line in (text ?? '').split('\n')) {
         final trimmed = line.trim();
         if (trimmed.isEmpty) continue;
-        if (trimmed.startsWith('price=')) {
+        if (trimmed.startsWith('price.')) {
+          // `price.<productId>=<localised price>`. One line per product,
+          // because the sheet shows two at once and the difference between
+          // them is the whole reason the second product exists.
+          final eq = trimmed.indexOf('=');
+          if (eq > 0) {
+            _prices[trimmed.substring('price.'.length, eq).trim()] = trimmed
+                .substring(eq + 1)
+                .trim();
+          }
+        } else if (trimmed.startsWith('price=')) {
           price = trimmed.substring('price='.length).trim();
         } else {
           found ??= trimmed;
@@ -283,6 +339,7 @@ class SceneRequest {
   }
 
   static String? _price;
+  static final Map<String, String> _prices = {};
 
   /// The real storefront price for the language being shot, or null.
   ///
@@ -290,6 +347,14 @@ class SceneRequest {
   /// figure — correct in the United States and nowhere else. Read by
   /// [_SceneStore] in place of a StoreKit call a simulator cannot make.
   static String? get scenePrice => _price;
+
+  /// The price of one product, falling back to the single unnamed one.
+  ///
+  /// The fallback is what every existing scene file carries: one `price=` line
+  /// from before there was more than one thing to buy. It is right for the
+  /// base unlock and wrong for the other two, which is why they are named.
+  static String? priceOf(String productId) =>
+      _prices[productId] ?? (productId == unlimitedProductId ? _price : null);
 
   /// One line for the device log, which shoot.py reads back after each launch.
   String get logLine =>

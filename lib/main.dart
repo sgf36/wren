@@ -180,6 +180,7 @@ class CapturePage extends StatefulWidget {
     this.reviewPrompt,
     this.initialPending,
     this.initialGuideName,
+    this.initialOwned,
     this.initialOverlay = ScreenshotOverlay.none,
   });
 
@@ -268,6 +269,14 @@ class CapturePage extends StatefulWidget {
   /// look right would keep looking right after the real ones changed.
   final ScreenshotOverlay initialOverlay;
 
+  /// Products to treat as already bought, before the store has been asked.
+  ///
+  /// For the screenshot scenes, where the paywall being photographed depends
+  /// on what is owned and a simulator has no store to buy from. It seeds the
+  /// same field the cache fills, so the sheet that appears is the one
+  /// `offersFor` really produces rather than a picture of one.
+  final Set<String>? initialOwned;
+
   @override
   State<CapturePage> createState() => _CapturePageState();
 }
@@ -340,7 +349,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   Entitlement _entitlement = const Entitlement.free();
 
   /// Product ids the store has confirmed for this account.
-  Set<String> _owned = const {};
+  late Set<String> _owned = widget.initialOwned ?? const {};
 
   /// Completes when the first read of both purchases and complimentary role is
   /// in. Until then [_entitlement] is the free one because nothing has been
@@ -407,6 +416,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               PaywallReason.places,
               selected: _pending.where((p) => p.publishable).length,
             );
+          case ScreenshotOverlay.reelsPaywall:
+            _offerUnlock(PaywallReason.reels);
           case ScreenshotOverlay.search:
             if (_pending.isNotEmpty) _editPlace(0);
           case ScreenshotOverlay.addMenu:
@@ -909,7 +920,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     final owned = await StoreUnlockStore.cachedProducts();
     if (!mounted) return;
     setState(() {
-      _owned = owned;
+      // Unioned rather than assigned, so a scene's seeded set is not wiped by
+      // the first read from a device that has bought nothing.
+      _owned = {..._owned, ...owned};
       _recompose();
     });
     // Ask the store its prices now, and throw the answer away. The first such
@@ -2580,7 +2593,7 @@ enum _Gate {
 enum _AddSource { screenshots, file, guide }
 
 /// Which overlay the store-screenshot build should open on launch.
-enum ScreenshotOverlay { none, region, paywall, search, addMenu }
+enum ScreenshotOverlay { none, region, paywall, reelsPaywall, search, addMenu }
 
 /// The collapsed group holding places carried over from an existing guide.
 ///
