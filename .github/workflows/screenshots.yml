@@ -38,6 +38,10 @@ on:
         description: 'Also take the in-app purchase review images'
         type: boolean
         default: true
+      only_iap:
+        description: 'Take ONLY the purchase review images (one boot, not forty minutes)'
+        type: boolean
+        default: false
       verbose:
         description: 'Log every simctl command and its output'
         type: boolean
@@ -83,7 +87,7 @@ jobs:
           /tmp/shots/bin/python -u store/shoot.py \
             ${{ inputs.locale && format('--locale {0}', inputs.locale) || '' }} \
             ${{ inputs.verbose && '--verbose' || '' }} \
-            ${{ !inputs.maps && '--no-maps' || '' }} ${{ !inputs.iap && '--no-iap' || '' }}  # inverted deliberately: an empty string is FALSY in a GitHub
+            ${{ !inputs.maps && '--no-maps' || '' }} ${{ !inputs.iap && '--no-iap' || '' }} ${{ inputs.only_iap && '--only-iap' || '' }}  # inverted deliberately: an empty string is FALSY in a GitHub
             # expression, so `inputs.maps && '' || '--no-maps'` falls through
             # to the || branch even when maps is true, and always passed
             # --no-maps. The Apple Maps shot was skipped on every run.
@@ -143,16 +147,20 @@ jobs:
           # In CI it comes from a secret, so it is pointed at the decoded copy
           # and the copy is removed on the way out, failure or not.
           trap 'rm -f /tmp/asc/key.p8' EXIT
-          WREN_ASC_KEY=/tmp/asc/key.p8 \
-          WREN_ASC_KEY_ID="$ASC_KEY_ID" \
-          WREN_ASC_ISSUER="$ASC_ISSUER_ID" \
+          export WREN_ASC_KEY=/tmp/asc/key.p8
+          export WREN_ASC_KEY_ID="$ASC_KEY_ID"
+          export WREN_ASC_ISSUER="$ASC_ISSUER_ID"
+          # A run that took only the purchase images has no listing
+          # images to push, and pushing what is on disk would upload
+          # nothing at all or something stale from the checkout.
+          if [ "${{ inputs.only_iap }}" != "true" ]; then
             /tmp/shots/bin/python store/push_screenshots.py --all
+          else
+            echo "only_iap: skipping the listing screenshots"
+          fi
           # The purchases' own review images: a different resource
           # with a different upload, and the thing that keeps a new
           # purchase at MISSING_METADATA. Uploaded in the same run
           # because the images have just been taken and are otherwise
           # only in an artifact nobody will remember to open.
-          WREN_ASC_KEY=/tmp/asc/key.p8 \
-          WREN_ASC_KEY_ID="$ASC_KEY_ID" \
-          WREN_ASC_ISSUER="$ASC_ISSUER_ID" \
-            /tmp/shots/bin/python store/push_iap_screenshot.py --write
+          /tmp/shots/bin/python store/push_iap_screenshot.py --write
