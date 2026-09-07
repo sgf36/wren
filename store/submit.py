@@ -151,13 +151,40 @@ def main():
               + ("" if st == 201 else f"  {errs(d)}"))
 
     # --- 4. submit ----------------------------------------------------
-    # The version and the purchase are separate items in one submission.
-    st, iaps = call("GET", f"apps/{APP}/inAppPurchasesV2?limit=5")
-    iap = iaps["data"][0]
+    # The version and every purchase awaiting review are separate items in one
+    # submission. This used to take inAppPurchasesV2[0] and submit whichever
+    # purchase the API happened to list first, which was right while there was
+    # one. There are three, and two of them are new: submitting one of those and
+    # calling it done would ship a version whose paywall offers a product App
+    # Review never saw.
+    #
+    # APPROVED ones are left alone — Apple refuses to re-submit them — and
+    # MISSING_METADATA is named loudly rather than skipped quietly, because it
+    # means a purchase has no review screenshot and CANNOT go in.
+    st, iaps = call("GET", f"apps/{APP}/inAppPurchasesV2?limit=50")
+    if "data" not in iaps:
+        sys.exit(f"inAppPurchasesV2 -> {st}: {errs(iaps)}")
+
+    SUBMITTABLE = {"READY_TO_SUBMIT", "DEVELOPER_ACTION_NEEDED", "REJECTED",
+                   "DEVELOPER_REMOVED_FROM_SALE"}
+    wanted, blocked = [], []
+    for i in iaps["data"]:
+        a = i["attributes"]
+        if a["state"] in SUBMITTABLE:
+            wanted.append((i["id"], a["productId"]))
+        elif a["state"] == "MISSING_METADATA":
+            blocked.append(f"{a['productId']} ({a['state']})")
+        else:
+            print(f"purchase {a['productId']}: {a['state']}, not submitted")
+
+    if blocked:
+        sys.exit("these purchases have incomplete metadata and cannot be "
+                 "submitted — most likely no App Review screenshot:\n  "
+                 + "\n  ".join(blocked))
 
     if args.dry_run:
-        say(f"submit version {vid} and purchase "
-            f"{iap['attributes']['productId']}")
+        say(f"submit version {vid}"
+            + "".join(f" and purchase {name}" for _, name in wanted))
         return
 
     st, subs = call("GET", f"reviewSubmissions?filter[app]={APP}"
@@ -178,10 +205,9 @@ def main():
         sub_id = d["data"]["id"]
         print(f"created submission {sub_id}")
 
-    for kind, ident, label in (
-            ("appStoreVersion", vid, "the version"),
-            ("inAppPurchaseV2", iap["id"],
-             iap["attributes"]["productId"])):
+    items = [("appStoreVersion", vid, "the version")]
+    items += [("inAppPurchaseV2", ident, name) for ident, name in wanted]
+    for kind, ident, label in items:
         st, d = call("POST", "reviewSubmissionItems", {
             "data": {"type": "reviewSubmissionItems",
                      "relationships": {
