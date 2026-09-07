@@ -46,6 +46,37 @@ ACCEPT_SANDBOX = "false"
 # reel against $0.0016 here.
 # GEMINI_MODEL = "gemini-3.5-flash-lite"
 
+# The trust anchor for an App Store transaction, and the only one.
+#
+# A var rather than a secret because it is a public certificate — it is in every
+# iPhone — and because it belongs in the file a person reads: what a Worker
+# trusts to mint entitlements is the last thing that should live somewhere
+# invisible. Apple Root CA - G3, self-signed, valid to 2039-04-30. Downloaded
+# from apple.com/certificateauthority on 2026-09-07:
+#
+#   SHA-256  63343ABFB89A6A03EBB57E9B3F5FA7BE7C4F5C756F3017B3A8C488C3653E9179
+#   SHA-1    B5:2C:B0:2F:D5:67:E0:35:9F:E8:FA:4D:4C:41:03:79:70:FE:01:B0
+#
+# Check those before replacing it. A wrong anchor here does not fail loudly: it
+# trusts whatever answers, and a forged transaction verifies perfectly.
+APPLE_ROOT_CA_G3 = """
+-----BEGIN CERTIFICATE-----
+MIICQzCCAcmgAwIBAgIILcX8iNLFS5UwCgYIKoZIzj0EAwMwZzEbMBkGA1UEAwwS
+QXBwbGUgUm9vdCBDQSAtIEczMSYwJAYDVQQLDB1BcHBsZSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTETMBEGA1UECgwKQXBwbGUgSW5jLjELMAkGA1UEBhMCVVMwHhcN
+MTQwNDMwMTgxOTA2WhcNMzkwNDMwMTgxOTA2WjBnMRswGQYDVQQDDBJBcHBsZSBS
+b290IENBIC0gRzMxJjAkBgNVBAsMHUFwcGxlIENlcnRpZmljYXRpb24gQXV0aG9y
+aXR5MRMwEQYDVQQKDApBcHBsZSBJbmMuMQswCQYDVQQGEwJVUzB2MBAGByqGSM49
+AgEGBSuBBAAiA2IABJjpLz1AcqTtkyJygRMc3RCV8cWjTnHcFBbZDuWmBSp3ZHtf
+TjjTuxxEtX/1H7YyYl3J6YRbTzBPEVoA/VhYDKX1DyxNB0cTddqXl5dvMVztK517
+IDvYuVTZXpmkOlEKMaNCMEAwHQYDVR0OBBYEFLuw3qFYM4iapIqZ3r6966/ayySr
+MA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgEGMAoGCCqGSM49BAMDA2gA
+MGUCMQCD6cHEFl4aXTQY2e3v9GwOAEZLuN+yRhHFD/3meoyhpmvOwgPUnPWTxnS4
+at+qIxUCMG1mihDK1A3UT82NQz60imOlM27jbdoXt2QfyFMm+YhidDkLF1vLUagM
+6BgD56KyKA==
+-----END CERTIFICATE-----
+"""
+
 # Reels per rolling thirty days, per purchase. The safety valve on a one-time
 # price for a feature with a per-use cost. Moved here rather than hard-coded so
 # that raising it costs a deploy and not a release.
@@ -70,12 +101,10 @@ VERTEX_LOCATION = "global"
 [[d1_databases]]
 binding = "DB"
 database_name = "wren-reels"
-# Empty until the database exists. Create it with:
-#   npx wrangler d1 create wren-reels
-# and paste the id it prints here. A deploy against an empty id fails loudly,
-# which is the right way round: a Worker that starts without its database would
-# answer /process by throwing on the first quota read.
-database_id = ""
+# Created 2026-09-07 in WEUR. The id is not a secret — it names a database that
+# only a bound Worker can reach — and it has to be committed, because a deploy
+# from CI has nowhere else to read it from.
+database_id = "833ae4ac-7d8b-4f8f-a2de-91c3c0ad6789"
 
 [observability]
 enabled = true

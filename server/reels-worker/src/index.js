@@ -372,10 +372,18 @@ export async function verifyPlay(env, purchaseToken, productId) {
  * model, and neither should be the key that publishes releases, which can also
  * replace the app.
  */
-export async function accessToken(saKeyB64, scope) {
-  if (!saKeyB64) return null;
+export async function accessToken(saKey, scope) {
+  if (!saKey) return null;
 
-  const sa = JSON.parse(new TextDecoder().decode(fromB64(saKeyB64)));
+  // Base64 is the documented form, and raw JSON is what somebody reaches for
+  // when setting the secret by hand. Both are accepted because the two are
+  // trivially distinguishable and the alternative is not a clean refusal: a
+  // JSON key put through fromB64 yields rubbish, JSON.parse throws, and the
+  // Worker answers 500 to a request that was correct.
+  const text = saKey.trimStart().startsWith('{')
+    ? saKey
+    : new TextDecoder().decode(fromB64(saKey));
+  const sa = JSON.parse(text);
   const now = Math.floor(Date.now() / 1000);
 
   const seg = (o) => btoa(JSON.stringify(o))
