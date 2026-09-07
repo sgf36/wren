@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>La aplicación</strong> no tiene cuentas ni analítica. Sus capturas de pantalla y cualquier archivo que importe se leen en su teléfono y nunca se suben. Lo único que guarda es un identificador aleatorio de su dispositivo, y solo si se le proporcionó un código gratuito y decide introducirlo, que es también la única razón por la que contacta con un servidor propio.</p>
+    <p><strong>La aplicación</strong> no tiene cuentas ni análisis. Sus capturas de pantalla y cualquier archivo que importe se leen en su teléfono y nunca se suben. Solo dos cosas llegan a un servidor que Wren gestiona, y únicamente cuando usted lo solicita: un código de acceso gratuito, si se le ha dado uno y lo introduce; y el enlace a un reel o publicación, si comparte uno para que Wren lo lea. Esa publicación se descarga, se lee y se descarta —no se conserva nada sobre ella, ni el vídeo, ni las palabras, ni los nombres de lugares.</p>
 
 
 
@@ -190,9 +190,15 @@
 
     <h2>Qué recopila Wren</h2>
 
-    <p>Nada, con una excepción, y solo si usted lo elige: introducir un código de cortesía envía ese código y un identificador aleatorio de esta instalación a un servidor gestionado por Wren. No se recopila, almacena ni comparte ningún otro dato sobre usted. Sin cuenta, sin inicio de sesión, sin analítica, sin identificador publicitario, sin informes de fallos.</p>
+    <p>Casi nada, y solo lo que usted solicita. Dos cosas llegan a un servidor
+    que Wren gestiona, cada una solo cuando usted lo decide: introducir un
+    código de cortesía envía ese código y un identificador aleatorio para esta
+    instalación, y compartir un reel o una publicación envía su enlace junto
+    con la prueba de que compró la función. No se recopila, almacena ni
+    comparte nada más sobre usted. Sin cuenta, sin inicio de sesión, sin
+    análisis, sin identificador publicitario, sin informes de fallos.</p>
 
-    <p>Si nunca introduce un código —y casi nadie lo hace, porque los códigos se entregan a personas concretas—, Wren no contacta con ningún servidor propio en absoluto.</p>
+    <p>Si no hace ninguna de las dos cosas, Wren nunca se pone en contacto con un servidor propio.</p>
 
   </section>
 
@@ -208,13 +214,15 @@
 
     <h2>Qué sale de su dispositivo, y adónde va</h2>
 
-    <p>Dos cosas, y ninguna es una captura de pantalla.</p>
+    <p>Tres cosas, y ninguna de ellas es una captura de pantalla.</p>
 
     <p>El primero es <strong>el nombre de un lugar, y la ciudad en la que confirmó que se encuentra</strong>. Convertir «Dishoom Shoreditch» en una coordenada implica consultar un mapa, y el geocodificador propio de Android responde a través de la red —en la mayoría de los teléfonos es Google, bajo la política de privacidad de Google, exactamente igual que para cualquier aplicación que busca una dirección. Nada más se envía con ello, y no se envía nada hasta que solicita una búsqueda.</p>
 
     <p>La ciudad es una que <em>usted</em> eligió en la aplicación. Wren nunca pregunta dónde está su teléfono —no existe el permiso de ubicación, deliberadamente. Solo pregunta dónde está un lugar con nombre.</p>
 
-    <p>El segundo es un código de cortesía y un identificador aleatorio, descritos a continuación.</p>
+    <p>La segunda es un código de cortesía y un identificador aleatorio, que se
+    describe a continuación. La tercera es la dirección de un reel o una
+    publicación que usted decida compartir, descrita después de eso.</p>
 
   </section>
 
@@ -234,6 +242,48 @@
 
 <section>
 
+    <h2>Un reel o publicación que usted comparta</h2>
+
+    <p>Compartir un enlace a un reel o a una publicación es la única parte de
+    Wren que envía algo elegido por usted a un servidor que Wren gestiona. Wren
+    no puede leer una publicación en el teléfono: una hoja para compartir
+    entrega una dirección web y nunca el vídeo, así que la publicación tiene que
+    obtenerse de algún sitio.</p>
+
+    <p><strong>Lo que se envía es el enlace, y la prueba de que compró la
+    función.</strong> Nada más: ni nombre, ni dirección de correo electrónico,
+    ni ubicación, ni captura de pantalla, ni identificador de usted. En Android,
+    esa prueba es el token de compra que Google Play emitió para la compra, que
+    el servidor verifica con Google; un código de cortesía funciona en su
+    lugar.</p>
+
+    <p>El servidor —un Cloudflare Worker gestionado por el desarrollador—
+    obtiene esa publicación, hace que un modelo de lenguaje lea los nombres de
+    los lugares en su descripción o en sus imágenes, envía los
+    <em>nombres</em> de vuelta a su teléfono, y descarta el resto.
+    <strong>Nada sobre la publicación se almacena: ni la dirección, ni el vídeo
+    o las imágenes, ni la descripción, ni los nombres que encontró.</strong> Su
+    teléfono entonces busca esos nombres exactamente igual que busca un nombre
+    leído en una captura de pantalla.</p>
+
+    <p>Se escribe una fila, y esta registra solo que esa compra en particular
+    gastó una unidad de su asignación mensual. No dice nada sobre lo que se
+    leyó. La asignación existe porque cada lectura cuesta dinero prestar el
+    servicio, y contarla es la única razón por la que se conserva algo.</p>
+
+    <p>En ese momento intervienen otras dos empresas y a ninguna se le dice
+    quién es usted. Un servicio llamado ScrapeCreators obtiene la publicación
+    de la plataforma en la que se encuentra, y puede conservar su propia copia
+    de lo obtenido durante un breve periodo para que la misma publicación
+    pública no se obtenga dos veces. Vertex AI de Google ejecuta el modelo que
+    la lee; Google declara que los datos enviados a Vertex AI no se usan para
+    entrenar sus modelos. Wren no está afiliado con Instagram, TikTok ni
+    YouTube, y solo pide una publicación que usted haya decidido compartir.</p>
+
+  </section>
+
+<section>
+
     <h2>Enviar su lista a otra aplicación de mapas</h2>
 
     <p>La lista se escribe en un archivo en su teléfono y se entrega a la aplicación que elija. Esa entrega es local: no se sube nada, y Wren deja de intervenir en cuanto la otra aplicación tiene el archivo.</p>
@@ -246,7 +296,12 @@
 
     <h2>Permisos</h2>
 
-    <p>Exactamente uno: acceso a internet, necesario para la búsqueda de lugares y, si introduce uno, el código. Sin ubicación, sin cámara, sin contactos, y sin acceso a archivos más allá de los que le entregue mediante el selector del sistema.</p>
+    <p>Dos. Acceso a internet, necesario para la búsqueda de lugares, para leer
+    una publicación que usted comparta, y para un código si introduce uno; y el
+    permiso de facturación que Google Play exige a cualquier aplicación que
+    venda algo. Sin ubicación, sin cámara, sin contactos, y sin acceso a
+    archivos más allá de los que usted le entregue a través del selector del
+    sistema.</p>
 
   </section>
 

@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>L'application</strong> ne comporte ni compte ni analyse. Vos captures d'écran et tout fichier que vous importez sont lus sur votre téléphone et ne sont jamais téléversés. La seule chose qu'elle conserve est un identifiant aléatoire de votre appareil, et uniquement si l'on vous a remis un code gratuit et que vous choisissez de le saisir — c'est aussi la seule raison pour laquelle elle contacte l'un de ses serveurs.</p>
+    <p><strong>L'application</strong> n'a aucun compte et aucun outil d'analyse. Vos captures d'écran et tout fichier que vous importez sont lus sur votre téléphone et ne sont jamais téléversés. Deux choses parviennent bien à un serveur géré par Wren, et seulement lorsque vous le demandez : un code d'accès gratuit, si on vous en a donné un et que vous le saisissez ; et le lien d'un reel ou d'une publication, si vous en partagez un pour que Wren le lise. Cette publication est récupérée, lue puis abandonnée — rien n'en est conservé, ni la vidéo, ni les mots, ni les noms de lieux.</p>
 
 
 
@@ -190,14 +190,15 @@
 
     <h2>Ce que Wren collecte</h2>
 
-    <p>Rien, à une exception près, et seulement si vous le choisissez : saisir un
-    code offert envoie ce code ainsi qu'un identifiant aléatoire pour cette
-    installation à un serveur exploité par Wren. Aucune autre information vous
-    concernant n'est collectée, stockée ou partagée. Pas de compte, pas de
-    connexion, pas d'analyse, pas d'identifiant publicitaire, pas de rapport
-    d'incident.</p>
+    <p>Presque rien, et seulement ce que vous demandez. Deux choses parviennent à un serveur
+    géré par Wren, chacune uniquement lorsque vous le choisissez : la saisie d'un
+    code offert envoie ce code ainsi qu'un identifiant aléatoire propre à cette
+    installation, et le partage d'un reel ou d'une publication envoie son lien
+    accompagné d'une preuve d'achat de la fonctionnalité. Rien d'autre vous concernant
+    n'est collecté, stocké ou partagé. Pas de compte, pas de connexion, pas
+    d'analytique, pas d'identifiant publicitaire, pas de rapport de plantage.</p>
 
-    <p>Si vous ne saisissez jamais de code — et presque personne ne le fait, car les codes sont attribués à des personnes nommément désignées — Wren ne contacte jamais aucun serveur qui lui soit propre.</p>
+    <p>Si vous ne faites ni l'un ni l'autre, Wren ne contacte jamais lui-même de serveur.</p>
 
   </section>
 
@@ -213,13 +214,15 @@
 
     <h2>Ce qui quitte votre appareil, et où cela va</h2>
 
-    <p>Deux choses, et aucune n'est une capture d'écran.</p>
+    <p>Trois choses, et aucune n'est une capture d'écran.</p>
 
     <p>La première est <strong>le nom d'un lieu, et la ville que vous avez confirmée</strong>. Transformer « Dishoom Shoreditch » en coordonnées suppose d'interroger une carte, et le géocodeur propre à Android répond via le réseau — sur la plupart des téléphones, il s'agit de Google, selon la politique de confidentialité de Google, exactement comme pour toute application qui recherche une adresse. Rien d'autre ne l'accompagne, et rien n'est envoyé tant que vous ne demandez pas de recherche.</p>
 
     <p>La ville est celle que <em>vous</em> avez choisie dans l'application. Wren ne demande jamais où se trouve votre téléphone — il n'existe volontairement aucune autorisation de localisation. Elle demande uniquement où se trouve un lieu nommé.</p>
 
-    <p>La seconde est un code gratuit et un identifiant aléatoire, décrits ci-après.</p>
+    <p>La deuxième est un code offert et un identifiant aléatoire, décrits
+    ci-après. La troisième est l'adresse d'un reel ou d'une publication que vous
+    choisissez de partager, décrite ensuite.</p>
 
   </section>
 
@@ -239,6 +242,47 @@
 
 <section>
 
+    <h2>Un reel ou une publication que vous partagez</h2>
+
+    <p>Partager le lien d'un reel ou d'une publication est la seule partie de Wren qui
+    envoie quelque chose que vous avez choisi à un serveur géré par Wren. Wren ne
+    peut pas lire une publication sur le téléphone : une feuille de partage transmet
+    une adresse web et jamais la vidéo, la publication doit donc être récupérée
+    quelque part.</p>
+
+    <p><strong>Ce qui est envoyé, c'est le lien, ainsi qu'une preuve d'achat de la
+    fonctionnalité.</strong> Rien d'autre — ni nom, ni adresse e-mail, ni
+    localisation, ni capture d'écran, ni identifiant vous concernant. Sur Android,
+    cette preuve est le jeton d'achat délivré par Google Play pour l'achat, que le
+    serveur vérifie auprès de Google ; un code offert fonctionne à sa place.</p>
+
+    <p>Le serveur — un Cloudflare Worker géré par le développeur — récupère cette
+    publication, fait lire par un modèle de langage les noms de lieux présents dans
+    sa légende ou ses images, renvoie les <em>noms</em> à votre téléphone, puis
+    supprime le reste. <strong>Rien concernant la publication n'est conservé : ni
+    l'adresse, ni la vidéo ou les images, ni la légende, ni les noms trouvés.</strong>
+    Votre téléphone recherche alors ces noms exactement comme il recherche un nom
+    relevé sur une capture d'écran.</p>
+
+    <p>Une ligne est enregistrée, et elle indique seulement que cet achat a consommé
+    une unité de son quota mensuel. Elle ne dit rien de ce qui a été lu. Ce quota
+    existe parce que chaque lecture a un coût de service, et le comptabiliser est
+    la seule raison pour laquelle quoi que ce soit est conservé.</p>
+
+    <p>Deux autres entreprises interviennent à ce moment-là et aucune ne sait qui vous
+    êtes. Un service appelé ScrapeCreators récupère la publication depuis la
+    plateforme sur laquelle elle se trouve, et peut conserver sa propre copie de ce
+    qu'il a récupéré pendant une courte durée afin que la même publication publique
+    ne soit pas récupérée deux fois. Vertex AI de Google exécute le modèle qui la
+    lit ; Google indique que les données envoyées à Vertex AI ne sont pas utilisées
+    pour entraîner ses modèles. Wren n'est affilié ni à Instagram, ni à TikTok, ni à
+    YouTube, et ne demande jamais que la publication que vous avez choisi de
+    partager.</p>
+
+  </section>
+
+<section>
+
     <h2>Envoyer votre liste vers une autre application de cartes</h2>
 
     <p>La liste est écrite dans un fichier sur votre téléphone et remise à l'application que vous choisissez. Cette remise est locale : rien n'est mis en ligne, et Wren n'intervient plus une fois que l'autre application dispose du fichier.</p>
@@ -251,7 +295,12 @@
 
     <h2>Autorisations</h2>
 
-    <p>Une seule : l'accès à internet, nécessaire pour la recherche de lieux et, si vous en saisissez un, pour le code. Aucune localisation, aucun appareil photo, aucun contact, et aucun accès aux fichiers au-delà de ceux que vous lui confiez via le sélecteur système.</p>
+    <p>Deux. L'accès à Internet, nécessaire pour la recherche de lieux, pour la
+    lecture d'une publication que vous partagez et pour un code si vous en saisissez
+    un ; et l'autorisation de facturation exigée par Google Play pour toute
+    application qui vend quelque chose. Pas de localisation, pas d'appareil photo,
+    pas de contacts, et aucun accès aux fichiers en dehors de ceux que vous lui
+    confiez via le sélecteur du système.</p>
 
   </section>
 

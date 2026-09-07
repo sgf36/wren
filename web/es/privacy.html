@@ -20,7 +20,7 @@
 
 
 
-<meta name="description" content="Política de privacidad de Wren. Wren no tiene cuentas y no recopila datos personales. Las capturas de pantalla se leen en su dispositivo y nunca se suben.">
+<meta name="description" content="La política de privacidad de Wren. Wren no tiene cuentas y no recopila datos personales. Las capturas de pantalla se leen en su dispositivo. Una publicación compartida se descarga, se lee y se descarta.">
 
 
 
@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>La aplicación</strong> no tiene cuentas ni analíticas. Tus capturas de pantalla y cualquier archivo que importes se leen en tu teléfono y nunca se suben. Solo dos cosas llegan a un servidor de Wren, y solo cuando tú lo pides: un código de acceso de cortesía, si te dieron uno y lo introduces; y el enlace de un reel o una publicación, si compartes uno para que Wren lo lea. Esa publicación se obtiene, se lee y se descarta: no se guarda nada de ella, ni el vídeo, ni las palabras, ni los nombres de los lugares.</p>
+    <p><strong>La aplicación</strong> no tiene cuentas ni análisis. Sus capturas de pantalla y cualquier archivo que importe se leen en su teléfono y nunca se suben. Solo dos cosas llegan a un servidor que Wren gestiona, y únicamente cuando usted lo solicita: un código de acceso gratuito, si se le ha dado uno y lo introduce; y el enlace a un reel o publicación, si comparte uno para que Wren lo lea. Esa publicación se descarga, se lee y se descarta —no se conserva nada sobre ella, ni el vídeo, ni las palabras, ni los nombres de lugares.</p>
 
 
 
@@ -224,7 +224,7 @@
 
 
 
-    <p>A algunas personas se les entrega un código que desbloquea la función de pago sin pagar —revisores de Apple y amigos del desarrollador—. Esta es la única parte de Wren que contacta con un servidor gestionado por Wren, y solo ocurre si se le ha dado un código y decide introducirlo. Si no es así, Wren nunca contacta con ese servidor.</p>
+    <p>Algunas personas reciben un código que desbloquea las funciones de pago sin pagar —revisores de Apple y amigos del desarrollador. Esto ocurre solo si se le ha dado un código y decide introducirlo. Si no es así, Wren nunca contacta con ese servidor en absoluto.</p>
 
 
 
@@ -262,25 +262,22 @@
 
     <p>El reconocimiento de texto se ejecuta enteramente en su dispositivo, mediante el framework Vision de Apple. <strong>Wren nunca sube, transmite ni almacena las propias imágenes.</strong> Lo mismo ocurre con un archivo que importe: una hoja de cálculo o una exportación de mapa se abre mediante el selector de documentos de Apple, se lee en el dispositivo y nunca se envía a ningún sitio. Una vez que se ha leído un nombre a partir de una imagen, Wren no le da ningún uso más y no conserva ninguna copia.</p>
 
-
-
   </section>
-
-
 
   <section>
 
+    <h2>Un reel o publicación que usted comparta</h2>
 
-    <h2>Un reel o una publicación que compartes</h2>
+    <p>Esta es la única parte de Wren que envía algo que usted eligió a un servidor que Wren gestiona, y ocurre únicamente cuando comparte o pega un enlace a un reel o una publicación. Wren no puede leerlo en el teléfono: una hoja de compartir entrega una dirección web y nunca el vídeo, así que este debe descargarse de algún lugar.</p>
 
+    <p><strong>Lo que se envía es el enlace, y la prueba de que compró la función.</strong> Nada más —ni nombre, ni dirección de correo electrónico, ni ubicación, ni captura de pantalla, ni identificador alguno para usted. La prueba es el recibo emitido por la App Store o Google Play por la compra, que el servidor verifica con Apple o Google; un código gratuito funciona en su lugar.</p>
 
-    <p>Esta es la única parte de Wren que envía a un servidor de Wren algo que tú has elegido, y solo ocurre cuando compartes o pegas el enlace de un reel o una publicación. Wren no puede leerla en el teléfono: una hoja de compartir entrega una dirección web y nunca el vídeo.</p>
+    <p>El servidor —un Cloudflare Worker en la cuenta propia del desarrollador— descarga esa publicación, hace que un modelo de lenguaje lea los nombres de los lugares de su descripción o de sus imágenes, envía los <em>nombres</em> de vuelta a su teléfono y descarta el resto. <strong>No se almacena nada sobre la publicación: ni la dirección, ni el vídeo o las imágenes, ni la descripción, ni los nombres encontrados.</strong> Su teléfono entonces busca esos nombres de la misma manera en que busca un nombre leído de una captura de pantalla.</p>
 
+    <p>Se escribe una fila, y esta registra únicamente que esa compra concreta consumió una unidad de su límite mensual. No dice nada sobre lo que se leyó. El límite existe porque cada lectura cuesta dinero ofrecerla, y contabilizarla es la única razón por la que se conserva algo en absoluto.</p>
 
-    <p><strong>Lo que se envía es el enlace y la prueba de que compraste la función.</strong> Nada más: ni nombre, ni correo, ni ubicación, ni capturas. El servidor obtiene la publicación, hace que un modelo de lenguaje lea los nombres de lugares, devuelve los <em>nombres</em> a tu teléfono y descarta el resto. <strong>No se almacena nada de la publicación: ni la dirección, ni el vídeo, ni el texto, ni los nombres encontrados.</strong> Se escribe una sola fila, y solo dice que una compra gastó una unidad de su cuota mensual.</p>
+    <p>Otras dos empresas intervienen en ese momento, y a ninguna se le indica quién es usted. Un servicio llamado ScrapeCreators obtiene la publicación de la plataforma en la que se encuentra, y puede conservar durante un breve periodo su propia copia de lo obtenido, de modo que la misma publicación pública no se solicite dos veces. Vertex AI, de Google, ejecuta el modelo que la lee; Google declara que los datos enviados a Vertex AI no se utilizan para entrenar sus modelos. Wren no está afiliada a Instagram, TikTok ni YouTube, y únicamente solicita una publicación que usted haya elegido compartir.</p>
 
-
-    <p>En ese momento intervienen otras dos empresas y ninguna sabe quién eres: un servicio llamado ScrapeCreators obtiene la publicación de la plataforma que la aloja, y Vertex AI de Google ejecuta el modelo que la lee. Google indica que los datos enviados a Vertex AI no se usan para entrenar sus modelos. Wren no está afiliado a Instagram, TikTok ni YouTube, y solo pide una publicación que tú has elegido compartir.</p>
 
 
   </section>

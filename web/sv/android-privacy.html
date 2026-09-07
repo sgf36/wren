@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>Appen</strong> har inga konton och ingen analys. Dina skärmbilder och alla filer du importerar läses på din telefon och laddas aldrig upp. Det enda den sparar är en slumpmässig identifierare för din enhet, och bara om du fått en kostnadsfri kod och väljer att ange den — vilket också är den enda anledningen till att den kontaktar en egen server.</p>
+    <p><strong>Appen</strong> har inga konton och ingen analys. Dina skärmdumpar och alla filer du importerar läses på din telefon och laddas aldrig upp. Två saker når en server som Wren driver, och bara när du ber om det: en kostnadsfri åtkomstkod, om du har fått en och anger den; samt länken till en reel eller ett inlägg, om du delar en för att Wren ska läsa den. Det inlägget hämtas, läses och kastas bort — ingenting om det sparas, inte videon, inte texten, inte platsnamnen.</p>
 
 
 
@@ -190,14 +190,9 @@
 
     <h2>Vad Wren samlar in</h2>
 
-    <p>Ingenting, med ett undantag, och endast om du väljer det: att ange en
-    kostnadsfri kod skickar den koden och en slumpmässig identifierare för
-    denna installation till en server som drivs av Wren. Inget annat om dig
-    samlas in, lagras eller delas. Inget konto, ingen inloggning, ingen
-    analys, ingen annonseringsidentifierare, ingen kraschrapportering.</p>
+    <p>Nästan ingenting, och bara det du själv ber om. Två saker når en server som Wren driver, och bara när du väljer det: att ange en kostnadsfri kod skickar den koden och en slumpmässig identifierare för denna installation, och att dela en reel eller ett inlägg skickar dess länk tillsammans med bevis på att du köpt funktionen. Inget annat om dig samlas in, sparas eller delas. Inget konto, ingen inloggning, ingen analys, ingen annonsidentifierare, ingen krashrapportering.</p>
 
-    <p>Om du aldrig anger en kod – och nästan ingen gör det, eftersom koder skickas till
-    namngivna personer – kontaktar Wren aldrig alls någon egen server.</p>
+    <p>Om du inte gör något av detta kontaktar Wren aldrig någon egen server alls.</p>
 
   </section>
 
@@ -216,7 +211,7 @@
 
     <h2>Vad som lämnar din enhet, och vart det tar vägen</h2>
 
-    <p>Två saker, och ingen av dem är en skärmdump.</p>
+    <p>Tre saker, och ingen av dem är en skärmdump.</p>
 
     <p>Det första är <strong>namnet på en plats, och den stad du bekräftade att
     den ligger i</strong>. Att omvandla "Dishoom Shoreditch" till en koordinat
@@ -229,8 +224,7 @@
     är – det finns ingen platsbehörighet, med avsikt. Den frågar bara var en
     namngiven plats är.</p>
 
-    <p>Det andra är en kostnadsfri kod och en slumpmässig identifierare, som
-    beskrivs härnäst.</p>
+    <p>Den andra är en kostnadsfri kod och en slumpmässig identifierare, som beskrivs härnäst. Den tredje är adressen till en reel eller ett inlägg du väljer att dela, som beskrivs efter det.</p>
 
   </section>
 
@@ -267,6 +261,22 @@
 
 <section>
 
+    <h2>En reel eller ett inlägg du delar</h2>
+
+    <p>Att dela en länk till en reel eller ett inlägg är den enda del av Wren som skickar något du valt till en server som Wren driver. Wren kan inte läsa ett inlägg på telefonen: en delningsfunktion lämnar bara över en webbadress och aldrig videon, så inlägget måste hämtas någonstans ifrån.</p>
+
+    <p><strong>Det som skickas är länken, och bevis på att du köpt funktionen.</strong> Inget annat — inget namn, ingen e-postadress, ingen plats, ingen skärmdump och ingen identifierare för dig. På Android är det beviset köptoken som Google Play utfärdade för köpet, vilket servern kontrollerar mot Google; en kostnadsfri kod fungerar i dess ställe.</p>
+
+    <p>Servern — en Cloudflare Worker som drivs av utvecklaren — hämtar inlägget, låter en språkmodell läsa ut platsnamnen ur dess bildtext eller bilder, skickar <em>namnen</em> tillbaka till din telefon och kasserar resten. <strong>Ingenting om inlägget sparas: inte adressen, inte videon eller bilderna, inte bildtexten, inte namnen som hittades.</strong> Din telefon slår därefter upp dessa namn precis som den slår upp ett namn läst från en skärmdump.</p>
+
+    <p>En rad skrivs, och den registrerar bara att detta ena köpet förbrukade en enhet av dess månatliga tilldelning. Den säger ingenting om vad som lästs. Tilldelningen finns eftersom varje läsning kostar pengar att tillhandahålla, och att räkna den är den enda anledningen till att något sparas alls.</p>
+
+    <p>Två andra företag är inblandade i det ögonblicket och ingen av dem får veta vem du är. En tjänst som kallas ScrapeCreators hämtar inlägget från plattformen det finns på, och kan behålla en egen kopia av det den hämtat under en kort tid så att samma offentliga inlägg inte hämtas två gånger. Googles Vertex AI driver modellen som läser det; Google uppger att data som skickas till Vertex AI inte används för att träna dess modeller. Wren är inte anslutet till Instagram, TikTok eller YouTube, och efterfrågar bara ett inlägg du själv valt att dela.</p>
+
+  </section>
+
+<section>
+
     <h2>Skicka din lista till en annan kartapp</h2>
 
     <p>Listan skrivs till en fil på din telefon och överlämnas till den app du
@@ -284,9 +294,7 @@
 
     <h2>Behörigheter</h2>
 
-    <p>Exakt en: internetåtkomst, som behövs för platsuppslag och, om du anger
-    en, koden. Ingen plats, ingen kamera, inga kontakter, och ingen åtkomst
-    till filer utöver de du lämnar över via systemets filväljare.</p>
+    <p>Två. Internetåtkomst, som behövs för platssökningen, för att läsa ett inlägg du delar, och för en kod om du anger en; samt faktureringsbehörigheten som Google Play kräver av alla appar som säljer något. Ingen plats, ingen kamera, inga kontakter, och ingen åtkomst till filer utöver de du själv lämnar via systemets filväljare.</p>
 
   </section>
 

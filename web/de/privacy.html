@@ -20,7 +20,7 @@
 
 
 
-<meta name="description" content="Die Datenschutzerklärung von Wren. Wren hat keine Konten und erhebt keine personenbezogenen Daten. Screenshots werden auf Ihrem Gerät gelesen und nie hochgeladen.">
+<meta name="description" content="Wrens Datenschutzerklärung. Wren hat keine Konten und erhebt keine personenbezogenen Daten. Screenshots werden auf Ihrem Gerät gelesen. Ein geteilter Beitrag wird abgerufen, gelesen und verworfen.">
 
 
 
@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>Die App</strong> hat keine Konten und keine Analyse-Software. Ihre Screenshots und jede Datei, die Sie importieren, werden auf Ihrem Telefon gelesen und niemals hochgeladen. Nur zwei Dinge erreichen einen Server von Wren, und auch nur auf Ihre Bitte hin: ein kostenloser Zugangscode, wenn Ihnen einer gegeben wurde und Sie ihn eingeben; und der Link zu einem Reel oder Beitrag, wenn Sie einen zum Lesen teilen. Dieser Beitrag wird geholt, gelesen und verworfen — nichts davon wird behalten, weder das Video noch die Worte noch die Ortsnamen.</p>
+    <p><strong>Die App</strong> hat keine Konten und keine Analysefunktionen. Ihre Screenshots und jede Datei, die Sie importieren, werden auf Ihrem Telefon gelesen und niemals hochgeladen. Zwei Dinge erreichen tatsächlich einen Server, den Wren betreibt, und auch nur, wenn Sie danach fragen: ein kostenloser Freischaltcode, sofern Ihnen einer gegeben wurde und Sie ihn eingeben; und der Link zu einem Reel oder Beitrag, sofern Sie einen teilen, damit Wren ihn liest. Dieser Beitrag wird abgerufen, gelesen und verworfen – nichts davon wird behalten, nicht das Video, nicht der Text, nicht die Ortsnamen.</p>
 
 
 
@@ -224,7 +224,7 @@
 
 
 
-    <p>Manchen Personen wird ein Code gegeben, der die kostenpflichtige Funktion freischaltet, ohne dass bezahlt werden muss – Prüfer bei Apple und Freunde des Entwicklers. Dies ist der einzige Teil von Wren, der einen von Wren betriebenen Server kontaktiert, und das geschieht nur, wenn Ihnen ein Code gegeben wurde und Sie sich entscheiden, ihn einzugeben. Falls nicht, kontaktiert Wren diesen Server überhaupt nicht.</p>
+    <p>Manche Personen erhalten einen Code, der die kostenpflichtigen Funktionen freischaltet, ohne dass bezahlt wird – Prüfer bei Apple sowie Freunde des Entwicklers. Das geschieht nur, wenn Ihnen ein Code gegeben wurde und Sie sich entscheiden, ihn einzugeben. Falls nicht, nimmt Wren mit diesem Server überhaupt keinen Kontakt auf.</p>
 
 
 
@@ -262,25 +262,22 @@
 
     <p>Die Texterkennung läuft vollständig auf Ihrem Gerät mit Apples Vision-Framework. <strong>Die Bilder selbst werden von Wren niemals hochgeladen, übertragen oder gespeichert.</strong> Dasselbe gilt für eine Datei, die Sie importieren – eine Tabelle oder ein Karten-Export wird über Apples Dokumentenauswahl geöffnet, auf dem Gerät gelesen und niemals irgendwohin gesendet. Sobald ein Name aus einem Bild gelesen wurde, hat Wren keine weitere Verwendung dafür und behält keine Kopie.</p>
 
-
-
   </section>
-
-
 
   <section>
 
-
     <h2>Ein Reel oder Beitrag, den Sie teilen</h2>
 
+    <p>Dies ist der einzige Teil von Wren, der etwas, das Sie ausgewählt haben, an einen Server sendet, den Wren betreibt, und das geschieht nur, wenn Sie einen Link zu einem Reel oder Beitrag teilen oder einfügen. Wren kann ihn nicht auf dem Telefon lesen: Ein Teilen-Menü übergibt lediglich eine Webadresse, niemals das Video, weshalb das Video von irgendwoher abgerufen werden muss.</p>
 
-    <p>Dies ist der einzige Teil von Wren, der etwas von Ihnen Gewähltes an einen Server von Wren sendet, und er geschieht nur, wenn Sie den Link zu einem Reel oder Beitrag teilen oder einfügen. Wren kann ihn auf dem Telefon nicht lesen: Ein Teilen-Menü übergibt eine Webadresse und niemals das Video.</p>
+    <p><strong>Gesendet werden nur der Link und der Nachweis, dass Sie die Funktion gekauft haben.</strong> Sonst nichts – kein Name, keine E-Mail-Adresse, kein Standort, kein Screenshot und keine Kennung für Sie. Der Nachweis ist der Kaufbeleg, den der App Store oder Google Play für den Kauf ausgestellt hat und den der Server bei Apple oder Google prüft; ein kostenloser Code funktioniert ersatzweise ebenso.</p>
 
+    <p>Der Server – ein Cloudflare Worker im eigenen Konto des Entwicklers – ruft diesen Beitrag ab, lässt ein Sprachmodell die Ortsnamen aus dessen Bildunterschrift oder seinen Bildern lesen, sendet die <em>Namen</em> zurück an Ihr Telefon und verwirft den Rest. <strong>Nichts vom Beitrag wird gespeichert: nicht die Adresse, nicht das Video oder die Bilder, nicht die Bildunterschrift, nicht die gefundenen Namen.</strong> Ihr Telefon sucht diese Namen anschließend auf dieselbe Weise, wie es einen von einem Screenshot gelesenen Namen nachschlägt.</p>
 
-    <p><strong>Gesendet werden der Link und ein Nachweis, dass Sie die Funktion gekauft haben.</strong> Sonst nichts — kein Name, keine E-Mail-Adresse, kein Standort, kein Screenshot. Der Server holt den Beitrag, lässt ein Sprachmodell die Ortsnamen daraus lesen, schickt die <em>Namen</em> an Ihr Telefon zurück und verwirft den Rest. <strong>Vom Beitrag wird nichts gespeichert: weder die Adresse noch das Video, weder die Bildunterschrift noch die gefundenen Namen.</strong> Geschrieben wird eine einzige Zeile, und sie besagt nur, dass ein Kauf eine Einheit seines Monatskontingents verbraucht hat.</p>
+    <p>Es wird ein einziger Eintrag geschrieben, der lediglich festhält, dass dieser eine Kauf eine Einheit seines monatlichen Kontingents verbraucht hat. Er sagt nichts darüber aus, was gelesen wurde. Das Kontingent besteht, weil jedes Lesen Kosten für den Betrieb verursacht, und das Zählen ist der einzige Grund, warum überhaupt etwas gespeichert wird.</p>
 
+    <p>An diesem Moment sind zwei weitere Unternehmen beteiligt, und keinem von beiden wird mitgeteilt, wer Sie sind. Ein Dienst namens ScrapeCreators ruft den Beitrag von der Plattform ab, auf der er sich befindet, und speichert unter Umständen für kurze Zeit eine eigene Kopie des Abgerufenen, damit derselbe öffentliche Beitrag nicht zweimal abgerufen wird. Googles Vertex AI betreibt das Modell, das ihn liest; Google erklärt, dass an Vertex AI gesendete Daten nicht zum Training seiner Modelle verwendet werden. Wren steht in keiner Verbindung zu Instagram, TikTok oder YouTube und fragt stets nur nach einem Beitrag, den Sie selbst zum Teilen ausgewählt haben.</p>
 
-    <p>Zwei weitere Unternehmen sind in diesem Moment beteiligt, und keines erfährt, wer Sie sind: Ein Dienst namens ScrapeCreators holt den Beitrag von der Plattform, die ihn hostet, und Googles Vertex AI führt das Modell aus, das ihn liest. Google gibt an, dass an Vertex AI gesendete Daten nicht zum Training seiner Modelle verwendet werden. Wren steht in keiner Verbindung zu Instagram, TikTok oder YouTube und fragt immer nur nach einem Beitrag, den Sie zu teilen gewählt haben.</p>
 
 
   </section>

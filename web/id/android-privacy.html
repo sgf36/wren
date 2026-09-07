@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>Aplikasi ini</strong> tidak memiliki akun dan tidak ada analitik. Tangkapan layar Anda dan berkas apa pun yang Anda impor dibaca di ponsel Anda dan tidak pernah diunggah. Satu-satunya hal yang disimpan adalah pengenal acak untuk perangkat Anda, dan itu pun hanya jika Anda diberi kode gratis dan memilih untuk memasukkannya — yang juga menjadi satu-satunya alasan aplikasi ini menghubungi server miliknya sendiri.</p>
+    <p><strong>Aplikasi ini</strong> tidak memiliki akun maupun analitik. Tangkapan layar Anda dan berkas apa pun yang Anda impor dibaca di ponsel Anda dan tidak pernah diunggah. Ada dua hal yang memang sampai ke server yang dijalankan Wren, dan hanya ketika Anda memintanya: kode akses gratis, jika Anda diberi salah satu dan memasukkannya; serta tautan ke reel atau unggahan, jika Anda membagikannya agar dibaca oleh Wren. Unggahan tersebut diambil, dibaca, lalu dibuang — tidak ada apa pun darinya yang disimpan, bukan videonya, bukan teksnya, bukan pula nama tempatnya.</p>
 
 
 
@@ -190,14 +190,9 @@
 
     <h2>Apa yang dikumpulkan Wren</h2>
 
-    <p>Tidak ada, dengan satu pengecualian, dan hanya jika Anda memilihnya: memasukkan
-    kode gratis akan mengirimkan kode tersebut beserta pengidentifikasi acak untuk instalasi ini
-    ke server yang dijalankan oleh Wren. Tidak ada hal lain tentang Anda yang dikumpulkan,
-    disimpan, atau dibagikan. Tidak ada akun, tidak ada masuk akun, tidak ada analitik, tidak ada pengidentifikasi
-    iklan, tidak ada pelaporan crash.</p>
+    <p>Hampir tidak ada apa pun, dan hanya yang Anda minta sendiri. Ada dua hal yang mencapai server yang dijalankan Wren, masing-masing hanya ketika Anda memilihnya: memasukkan kode gratis mengirimkan kode tersebut beserta pengenal acak untuk instalasi ini, dan membagikan reel atau post mengirimkan tautannya beserta bukti bahwa Anda telah membeli fitur tersebut. Tidak ada hal lain tentang Anda yang dikumpulkan, disimpan, atau dibagikan. Tidak ada akun, tidak ada masuk (sign-in), tidak ada analitik, tidak ada pengenal iklan, tidak ada pelaporan crash.</p>
 
-    <p>Jika Anda tidak pernah memasukkan kode — dan hampir tidak ada yang melakukannya, karena kode diberikan kepada
-    orang-orang tertentu — Wren sama sekali tidak pernah menghubungi server miliknya sendiri.</p>
+    <p>Jika Anda tidak melakukan keduanya, Wren tidak pernah menghubungi server miliknya sama sekali.</p>
 
   </section>
 
@@ -216,7 +211,7 @@
 
     <h2>Apa yang meninggalkan perangkat Anda, dan ke mana perginya</h2>
 
-    <p>Dua hal, dan tidak satu pun berupa tangkapan layar.</p>
+    <p>Tiga hal, dan tidak satu pun di antaranya adalah screenshot.</p>
 
     <p>Yang pertama adalah <strong>nama sebuah place, dan kota yang Anda konfirmasi
     tempat tersebut berada</strong>. Mengubah "Dishoom Shoreditch" menjadi koordinat berarti bertanya kepada
@@ -229,8 +224,7 @@
     Anda berada — tidak ada izin lokasi, dan itu disengaja. Aplikasi ini hanya menanyakan di mana
     sebuah place bernama berada.</p>
 
-    <p>Yang kedua adalah kode gratis dan pengenal acak, yang dijelaskan
-    berikutnya.</p>
+    <p>Yang kedua adalah kode gratis dan pengenal acak, yang dijelaskan berikutnya. Yang ketiga adalah alamat reel atau post yang Anda pilih untuk dibagikan, yang dijelaskan setelah itu.</p>
 
   </section>
 
@@ -266,6 +260,22 @@
 
 <section>
 
+    <h2>Reel atau unggahan yang Anda bagikan</h2>
+
+    <p>Membagikan tautan ke sebuah reel atau post adalah satu-satunya bagian dari Wren yang mengirimkan sesuatu yang Anda pilih ke server yang dijalankan Wren. Wren tidak bisa membaca post di ponsel: lembar bagikan (share sheet) hanya menyerahkan alamat web dan tidak pernah videonya, sehingga post tersebut harus diambil dari suatu tempat.</p>
+
+    <p><strong>Yang dikirim adalah tautannya, dan bukti bahwa Anda telah membeli fitur tersebut.</strong> Tidak ada yang lain — tidak ada nama, tidak ada alamat email, tidak ada lokasi, tidak ada screenshot, dan tidak ada pengenal untuk Anda. Di Android, bukti tersebut adalah token pembelian yang diterbitkan Google Play untuk pembelian itu, yang diperiksa server dengan Google; kode gratis berfungsi sebagai penggantinya.</p>
+
+    <p>Server tersebut — sebuah Cloudflare Worker yang dijalankan oleh pengembang — mengambil post tersebut, meminta model bahasa membaca nama-nama tempat dari keterangannya atau gambarnya, mengirimkan <em>nama-nama</em> tersebut kembali ke ponsel Anda, dan membuang sisanya. <strong>Tidak ada apa pun tentang post tersebut yang disimpan: bukan alamatnya, bukan video atau gambarnya, bukan keterangannya, bukan nama-nama yang ditemukan.</strong> Ponsel Anda kemudian mencari nama-nama tersebut persis seperti ketika mencari nama yang dibaca dari screenshot.</p>
+
+    <p>Satu baris ditulis, dan itu hanya mencatat bahwa satu pembelian tersebut menghabiskan satu unit dari jatah bulanannya. Baris itu tidak mengatakan apa pun tentang apa yang dibaca. Jatah ini ada karena setiap pembacaan memerlukan biaya untuk dilayani, dan penghitungan ini adalah satu-satunya alasan apa pun disimpan sama sekali.</p>
+
+    <p>Ada dua perusahaan lain yang terlibat pada momen tersebut dan tidak satu pun diberi tahu siapa Anda. Sebuah layanan bernama ScrapeCreators mengambil post dari platform tempatnya berada, dan mungkin menyimpan salinannya sendiri untuk waktu singkat agar post publik yang sama tidak diambil dua kali. Vertex AI milik Google menjalankan model yang membacanya; Google menyatakan bahwa data yang dikirim ke Vertex AI tidak digunakan untuk melatih model-modelnya. Wren tidak berafiliasi dengan Instagram, TikTok, atau YouTube, dan hanya pernah meminta post yang telah Anda pilih untuk dibagikan.</p>
+
+  </section>
+
+<section>
+
     <h2>Mengirim daftar Anda ke aplikasi peta lain</h2>
 
     <p>Daftar tersebut ditulis ke sebuah file di ponsel Anda dan diserahkan ke aplikasi yang Anda
@@ -283,9 +293,7 @@
 
     <h2>Izin</h2>
 
-    <p>Tepat satu: akses internet, yang diperlukan untuk pencarian place dan, jika
-    Anda memasukkannya, kode. Tidak ada lokasi, tidak ada kamera, tidak ada kontak, dan tidak ada akses
-    ke file selain yang Anda serahkan sendiri melalui pemilih sistem.</p>
+    <p>Dua. Akses internet, diperlukan untuk pencarian tempat, untuk membaca post yang Anda bagikan, dan untuk kode jika Anda memasukkannya; serta izin penagihan yang diwajibkan Google Play bagi aplikasi mana pun yang menjual sesuatu. Tidak ada lokasi, tidak ada kamera, tidak ada kontak, dan tidak ada akses ke berkas selain yang Anda serahkan sendiri melalui pemilih sistem (system picker).</p>
 
   </section>
 

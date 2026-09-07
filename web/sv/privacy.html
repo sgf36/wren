@@ -20,7 +20,7 @@
 
 
 
-<meta name="description" content="Wrens integritetspolicy. Wren har inga konton och samlar inte in några personuppgifter. Skärmbilder läses på din enhet och laddas aldrig upp.">
+<meta name="description" content="Wrens integritetspolicy. Wren har inga konton och samlar inte in några personuppgifter. Skärmdumpar läses på din enhet. Ett delat inlägg hämtas, läses och kastas bort.">
 
 
 
@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>Appen</strong> har inga konton och ingen analys. Dina skärmbilder och alla filer du importerar läses på din telefon och laddas aldrig upp. Bara två saker når en server som Wren driver, och bara när du ber om det: en gratis åtkomstkod, om du fått en och matar in den; och länken till en reel eller ett inlägg, om du delar ett för Wren att läsa. Det inlägget hämtas, läses och kastas — ingenting av det behålls, varken videon, orden eller platsnamnen.</p>
+    <p><strong>Appen</strong> har inga konton och ingen analys. Dina skärmdumpar och alla filer du importerar läses på din telefon och laddas aldrig upp. Två saker når en server som Wren driver, och bara när du ber om det: en kostnadsfri åtkomstkod, om du har fått en och anger den; samt länken till en reel eller ett inlägg, om du delar en för att Wren ska läsa den. Det inlägget hämtas, läses och kastas bort — ingenting om det sparas, inte videon, inte texten, inte platsnamnen.</p>
 
 
 
@@ -224,7 +224,7 @@
 
 
 
-    <p>Vissa personer får en kod som låser upp den betalda funktionen utan att betala – granskare på Apple och vänner till utvecklaren. Detta är den enda delen av Wren som kontaktar en server som drivs av Wren, och det sker endast om du har fått en kod och väljer att ange den. Om du inte har det kontaktar Wren aldrig den servern alls.</p>
+    <p>Vissa personer får en kod som låser upp de betalda funktionerna utan att betala — granskare hos Apple, och vänner till utvecklaren. Det sker bara om du har fått en kod och väljer att ange den. Om du inte har det kontaktar Wren aldrig den servern alls.</p>
 
 
 
@@ -262,25 +262,22 @@
 
     <p>Textigenkänning körs helt på din enhet, med Apples Vision-ramverk. <strong>Själva bilderna laddas aldrig upp, överförs eller lagras av Wren.</strong> Detsamma gäller en fil du importerar – ett kalkylblad eller en kartexport öppnas via Apples dokumentväljare, läses på enheten och skickas aldrig någonstans. När ett namn har lästs från en bild har Wren ingen ytterligare användning för det och behåller ingen kopia.</p>
 
-
-
   </section>
-
-
 
   <section>
 
+    <h2>En reel eller ett inlägg du delar</h2>
 
-    <h2>En reel eller ett inlägg som du delar</h2>
+    <p>Detta är den enda delen av Wren som skickar något du själv valt till en server som Wren driver, och det sker bara när du delar eller klistrar in en länk till en reel eller ett inlägg. Wren kan inte läsa det på telefonen: en delningsfunktion lämnar över en webbadress och aldrig videon, så videon måste hämtas någonstans ifrån.</p>
 
+    <p><strong>Det som skickas är länken, samt bevis på att du köpt funktionen.</strong> Ingenting annat — inget namn, ingen e-postadress, ingen plats, ingen skärmdump och ingen identifierare för dig. Beviset är kvittot som App Store eller Google Play utfärdade för köpet, vilket servern kontrollerar hos Apple eller Google; en kostnadsfri kod fungerar i dess ställe.</p>
 
-    <p>Detta är den enda delen av Wren som skickar något du valt till en server Wren driver, och det sker bara när du delar eller klistrar in länken till en reel eller ett inlägg. Wren kan inte läsa det på telefonen: ett delningsblad lämnar över en webbadress och aldrig videon.</p>
+    <p>Servern — en Cloudflare Worker i utvecklarens eget konto — hämtar inlägget, låter en språkmodell läsa ut platsnamnen ur dess bildtext eller bilder, skickar <em>namnen</em> tillbaka till din telefon, och kastar bort resten. <strong>Ingenting om inlägget sparas: inte adressen, inte videon eller bilderna, inte bildtexten, inte namnen den hittade.</strong> Din telefon slår sedan upp dessa namn på samma sätt som den slår upp ett namn som lästs av en skärmdump.</p>
 
+    <p>En rad skrivs, och den registrerar bara att köpet förbrukade en enhet av sin månatliga kvot. Den säger ingenting om vad som lästes. Kvoten finns eftersom varje läsning kostar pengar att tillhandahålla, och att räkna den är den enda anledningen till att något sparas överhuvudtaget.</p>
 
-    <p><strong>Det som skickas är länken och ett bevis på att du köpt funktionen.</strong> Inget annat — inget namn, ingen e-postadress, ingen plats, inga skärmbilder. Servern hämtar inlägget, låter en språkmodell läsa ut platsnamnen, skickar tillbaka <em>namnen</em> till din telefon och kastar resten. <strong>Ingenting om inlägget lagras: varken adressen, videon, bildtexten eller namnen som hittades.</strong> En enda rad skrivs, och den säger bara att ett köp förbrukat en enhet av sin månadskvot.</p>
+    <p>Två andra företag är inblandade i det ögonblicket, och ingen av dem får veta vem du är. En tjänst som heter ScrapeCreators hämtar inlägget från den plattform det finns på, och kan behålla en egen kopia av det som hämtats en kort tid, så att samma offentliga inlägg inte hämtas två gånger. Googles Vertex AI kör modellen som läser det; Google uppger att data som skickas till Vertex AI inte används för att träna deras modeller. Wren är inte anknutet till Instagram, TikTok eller YouTube, och begär endast ett inlägg som du själv har valt att dela.</p>
 
-
-    <p>Två andra företag är inblandade i det ögonblicket och inget av dem får veta vem du är: en tjänst som heter ScrapeCreators hämtar inlägget från plattformen som är värd för det, och Googles Vertex AI kör modellen som läser det. Google uppger att data som skickas till Vertex AI inte används för att träna deras modeller. Wren är inte knutet till Instagram, TikTok eller YouTube och ber alltid bara om ett inlägg som du valt att dela.</p>
 
 
   </section>

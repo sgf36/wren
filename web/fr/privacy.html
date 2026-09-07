@@ -20,7 +20,7 @@
 
 
 
-<meta name="description" content="La politique de confidentialité de Wren. Wren n'a pas de comptes et ne collecte aucune donnée personnelle. Les captures d'écran sont lues sur votre appareil et ne sont jamais envoyées en ligne.">
+<meta name="description" content="La politique de confidentialité de Wren. Wren n'a aucun compte et ne collecte aucune donnée personnelle. Les captures d'écran sont lues sur votre appareil. Une publication partagée est récupérée, lue puis abandonnée.">
 
 
 
@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>L'application</strong> ne comporte ni compte ni analyse. Vos captures d'écran et tout fichier que vous importez sont lus sur votre téléphone et ne sont jamais téléversés. Deux choses seulement atteignent un serveur de Wren, et uniquement à votre demande : un code d'accès gratuit, si l'on vous en a remis un et que vous le saisissez ; et le lien d'un reel ou d'une publication, si vous en partagez un pour que Wren le lise. Cette publication est récupérée, lue, puis jetée — rien n'en est conservé, ni la vidéo, ni les mots, ni les noms de lieux.</p>
+    <p><strong>L'application</strong> n'a aucun compte et aucun outil d'analyse. Vos captures d'écran et tout fichier que vous importez sont lus sur votre téléphone et ne sont jamais téléversés. Deux choses parviennent bien à un serveur géré par Wren, et seulement lorsque vous le demandez : un code d'accès gratuit, si on vous en a donné un et que vous le saisissez ; et le lien d'un reel ou d'une publication, si vous en partagez un pour que Wren le lise. Cette publication est récupérée, lue puis abandonnée — rien n'en est conservé, ni la vidéo, ni les mots, ni les noms de lieux.</p>
 
 
 
@@ -224,7 +224,7 @@
 
 
 
-    <p>Certaines personnes reçoivent un code qui débloque la fonctionnalité payante sans avoir à payer — des évaluateurs chez Apple, et des proches du développeur. C'est la seule partie de Wren qui contacte un serveur géré par Wren, et cela ne se produit que si vous avez reçu un code et choisissez de le saisir. Si ce n'est pas le cas, Wren ne contacte jamais ce serveur.</p>
+    <p>Certaines personnes reçoivent un code qui débloque les fonctionnalités payantes sans paiement — les évaluateurs d'Apple, et les proches du développeur. Cela ne se produit que si l'on vous a donné un code et que vous choisissez de le saisir. Si ce n'est pas le cas, Wren ne contacte jamais ce serveur.</p>
 
 
 
@@ -262,25 +262,22 @@
 
     <p>La reconnaissance de texte s'exécute entièrement sur votre appareil, à l'aide du framework Vision d'Apple. <strong>Les images elles-mêmes ne sont jamais téléversées, transmises ou conservées par Wren.</strong> Il en va de même pour un fichier que vous importez — un tableur ou un export de carte est ouvert via le sélecteur de documents d'Apple, lu sur l'appareil, et jamais envoyé où que ce soit. Une fois qu'un nom a été lu à partir d'une image, Wren n'en a plus l'usage et n'en conserve pas de copie.</p>
 
-
-
   </section>
-
-
 
   <section>
 
-
     <h2>Un reel ou une publication que vous partagez</h2>
 
+    <p>C'est la seule partie de Wren qui envoie quelque chose que vous avez choisi à un serveur géré par Wren, et cela ne se produit que lorsque vous partagez ou collez le lien d'un reel ou d'une publication. Wren ne peut pas le lire sur le téléphone : une feuille de partage transmet une adresse web et jamais la vidéo, il faut donc que la vidéo soit récupérée quelque part.</p>
 
-    <p>C'est la seule partie de Wren qui envoie à un serveur de Wren quelque chose que vous avez choisi, et cela n'arrive que lorsque vous partagez ou collez le lien d'un reel ou d'une publication. Wren ne peut pas la lire sur le téléphone : une feuille de partage transmet une adresse web et jamais la vidéo.</p>
+    <p><strong>Ce qui est envoyé, c'est le lien, ainsi qu'une preuve que vous avez acheté la fonctionnalité.</strong> Rien d'autre — ni nom, ni adresse e-mail, ni localisation, ni capture d'écran, ni identifiant vous concernant. La preuve est le reçu émis par l'App Store ou Google Play pour l'achat, que le serveur vérifie auprès d'Apple ou de Google ; un code gratuit fonctionne à sa place.</p>
 
+    <p>Le serveur — un Cloudflare Worker hébergé dans le propre compte du développeur — récupère cette publication, fait lire les noms de lieux dans sa légende ou ses images par un modèle de langage, renvoie les <em>noms</em> à votre téléphone, puis abandonne le reste. <strong>Rien concernant la publication n'est conservé : ni l'adresse, ni la vidéo ou les images, ni la légende, ni les noms trouvés.</strong> Votre téléphone recherche ensuite ces noms de la même façon qu'il recherche un nom lu sur une capture d'écran.</p>
 
-    <p><strong>Ce qui est envoyé, c'est le lien et la preuve que vous avez acheté la fonctionnalité.</strong> Rien d'autre — ni nom, ni adresse e-mail, ni position, ni capture d'écran. Le serveur récupère la publication, fait lire les noms de lieux par un modèle de langage, renvoie les <em>noms</em> à votre téléphone et jette le reste. <strong>Rien de la publication n'est stocké : ni l'adresse, ni la vidéo, ni la légende, ni les noms trouvés.</strong> Une seule ligne est écrite, et elle indique uniquement qu'un achat a consommé une unité de son quota mensuel.</p>
+    <p>Une ligne est enregistrée, et elle indique uniquement qu'un achat a consommé une unité de son quota mensuel. Elle ne dit rien sur ce qui a été lu. Le quota existe parce que chaque lecture coûte de l'argent à fournir, et le comptabiliser est la seule raison pour laquelle quoi que ce soit est conservé.</p>
 
+    <p>Deux autres entreprises interviennent à ce moment-là, et aucune ne sait qui vous êtes. Un service appelé ScrapeCreators récupère la publication depuis la plateforme où elle se trouve, et peut conserver une copie de ce qu'il a récupéré pendant une courte durée afin de ne pas récupérer deux fois la même publication publique. Vertex AI de Google exécute le modèle qui la lit ; Google indique que les données envoyées à Vertex AI ne servent pas à entraîner ses modèles. Wren n'est affilié ni à Instagram, ni à TikTok, ni à YouTube, et ne demande jamais que la publication que vous avez choisi de partager.</p>
 
-    <p>Deux autres sociétés interviennent à ce moment-là et aucune n'apprend qui vous êtes : un service nommé ScrapeCreators récupère la publication auprès de la plateforme qui l'héberge, et Vertex AI de Google exécute le modèle qui la lit. Google indique que les données envoyées à Vertex AI ne servent pas à entraîner ses modèles. Wren n'est affilié ni à Instagram, ni à TikTok, ni à YouTube, et ne demande jamais qu'une publication que vous avez choisi de partager.</p>
 
 
   </section>

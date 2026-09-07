@@ -198,14 +198,15 @@
 
     <h2>What Wren collects</h2>
 
-    <p>Nothing, with one exception, and only if you choose it: entering a
-    complimentary code sends that code and a random identifier for this
-    installation to a server run by Wren. Nothing else about you is collected,
-    stored or shared. No account, no sign-in, no analytics, no advertising
-    identifier, no crash reporting.</p>
+    <p>Almost nothing, and only what you ask for. Two things reach a server
+    Wren runs, each of them only when you choose it: entering a complimentary
+    code sends that code and a random identifier for this installation, and
+    sharing a reel or a post sends its link along with proof that you bought the
+    feature. Nothing else about you is collected, stored or shared. No account,
+    no sign-in, no analytics, no advertising identifier, no crash
+    reporting.</p>
 
-    <p>If you never enter a code — and almost nobody does, because codes go to
-    named people — Wren never contacts a server of its own at all.</p>
+    <p>If you do neither, Wren never contacts a server of its own at all.</p>
 
   </section>
 
@@ -224,7 +225,7 @@
 
     <h2>What leaves your device, and where it goes</h2>
 
-    <p>Two things, and neither is a screenshot.</p>
+    <p>Three things, and none of them is a screenshot.</p>
 
     <p>The first is <strong>the name of a place, and the city you confirmed it
     is in</strong>. Turning "Dishoom Shoreditch" into a coordinate means asking
@@ -238,7 +239,8 @@
     a named place is.</p>
 
     <p>The second is a complimentary code and a random identifier, described
-    next.</p>
+    next. The third is the address of a reel or post you choose to share,
+    described after that.</p>
 
   </section>
 
@@ -274,6 +276,44 @@
 
 <section>
 
+    <h2>A reel or post you share</h2>
+
+    <p>Sharing a link to a reel or a post is the one part of Wren that sends
+    something you chose to a server Wren runs. Wren cannot read a post on the
+    phone: a share sheet hands over a web address and never the video, so the
+    post has to be fetched from somewhere.</p>
+
+    <p><strong>What is sent is the link, and proof that you bought the
+    feature.</strong> Nothing else — no name, no email address, no location, no
+    screenshot, and no identifier for you. On Android that proof is the purchase
+    token Google Play issued for the purchase, which the server checks with
+    Google; a complimentary code works in its place.</p>
+
+    <p>The server — a Cloudflare Worker run by the developer — fetches that
+    post, has a language model read the place names out of its caption or its
+    pictures, sends the <em>names</em> back to your phone, and discards the
+    rest. <strong>Nothing about the post is stored: not the address, not the
+    video or images, not the caption, not the names it found.</strong> Your
+    phone then looks those names up exactly as it looks up a name read off a
+    screenshot.</p>
+
+    <p>One row is written, and it records only that one purchase spent one unit
+    of its monthly allowance. It says nothing about what was read. The allowance
+    exists because each reading costs money to serve, and counting it is the
+    only reason anything is kept at all.</p>
+
+    <p>Two other companies are involved in that moment and neither is told who
+    you are. A service called ScrapeCreators fetches the post from the platform
+    it is on, and may hold its own copy of what it fetched for a short time so
+    that the same public post is not fetched twice. Google's Vertex AI runs the
+    model that reads it; Google states that data sent to Vertex AI is not used
+    to train its models. Wren is not affiliated with Instagram, TikTok or
+    YouTube, and only ever asks for a post you have chosen to share.</p>
+
+  </section>
+
+<section>
+
     <h2>Sending your list to another map app</h2>
 
     <p>The list is written to a file on your phone and handed to the app you
@@ -291,9 +331,11 @@
 
     <h2>Permissions</h2>
 
-    <p>Exactly one: internet access, needed for the place lookup and, if you
-    enter one, the code. No location, no camera, no contacts, and no access to
-    files beyond the ones you hand it through the system picker.</p>
+    <p>Two. Internet access, needed for the place lookup, for reading a post
+    you share, and for a code if you enter one; and the billing permission
+    Google Play requires of any app that sells something. No location, no
+    camera, no contacts, and no access to files beyond the ones you hand it
+    through the system picker.</p>
 
   </section>
 

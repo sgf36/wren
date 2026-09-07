@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>Die App</strong> hat keine Konten und keine Analyse-Software. Ihre Screenshots und jede Datei, die Sie importieren, werden auf Ihrem Telefon gelesen und niemals hochgeladen. Das Einzige, was sie speichert, ist eine zufällige Kennung für Ihr Gerät, und auch nur dann, wenn Ihnen ein kostenloser Code zur Verfügung gestellt wurde und Sie sich entscheiden, ihn einzugeben — das ist auch der einzige Grund, warum sie mit einem eigenen Server Kontakt aufnimmt.</p>
+    <p><strong>Die App</strong> hat keine Konten und keine Analysefunktionen. Ihre Screenshots und jede Datei, die Sie importieren, werden auf Ihrem Telefon gelesen und niemals hochgeladen. Zwei Dinge erreichen tatsächlich einen Server, den Wren betreibt, und auch nur, wenn Sie danach fragen: ein kostenloser Freischaltcode, sofern Ihnen einer gegeben wurde und Sie ihn eingeben; und der Link zu einem Reel oder Beitrag, sofern Sie einen teilen, damit Wren ihn liest. Dieser Beitrag wird abgerufen, gelesen und verworfen – nichts davon wird behalten, nicht das Video, nicht der Text, nicht die Ortsnamen.</p>
 
 
 
@@ -190,13 +190,9 @@
 
     <h2>Was Wren erfasst</h2>
 
-    <p>Nichts, mit einer Ausnahme, und nur, wenn Sie es wählen: Die Eingabe eines
-    kostenlosen Codes sendet diesen Code und eine zufällige Kennung für diese
-    Installation an einen von Wren betriebenen Server. Nichts weiter über Sie wird erfasst,
-    gespeichert oder weitergegeben. Kein Konto, keine Anmeldung, keine Analyse, keine
-    Werbekennung, keine Absturzberichte.</p>
+    <p>Fast nichts, und nur das, worum Sie bitten. Zwei Dinge erreichen einen Server, den Wren betreibt, jeweils nur dann, wenn Sie es so wählen: Die Eingabe eines Gutscheincodes sendet diesen Code sowie eine zufällige Kennung für diese Installation, und das Teilen eines Reels oder Beitrags sendet dessen Link zusammen mit einem Nachweis, dass Sie die Funktion gekauft haben. Sonst wird nichts über Sie erfasst, gespeichert oder weitergegeben. Kein Konto, keine Anmeldung, keine Analyse, keine Werbekennung, keine Absturzberichte.</p>
 
-    <p>Wenn Sie nie einen Code eingeben – und fast niemand tut das, weil Codes an namentlich genannte Personen gehen –, nimmt Wren überhaupt nie von sich aus Kontakt zu einem Server auf.</p>
+    <p>Tun Sie keines von beidem, nimmt Wren überhaupt nie Kontakt zu einem eigenen Server auf.</p>
 
   </section>
 
@@ -212,13 +208,13 @@
 
     <h2>Was Ihr Gerät verlässt, und wohin es geht</h2>
 
-    <p>Zwei Dinge, und keines davon ist ein Screenshot.</p>
+    <p>Drei Dinge, und keines davon ist ein Screenshot.</p>
 
     <p>Das Erste ist <strong>der Name eines Ortes und die Stadt, in der Sie ihn bestätigt haben</strong>. „Dishoom Shoreditch“ in eine Koordinate zu verwandeln bedeutet, eine Karte zu befragen, und Androids eigener Geocoder antwortet über das Netzwerk – auf den meisten Telefonen ist das Google, gemäß Googles Datenschutzrichtlinie, genau wie bei jeder App, die eine Adresse nachschlägt. Sonst geht nichts mit, und es geht überhaupt nichts, bis Sie eine Suche anfordern.</p>
 
     <p>Die Stadt ist eine, die <em>Sie</em> in der App gewählt haben. Wren fragt nie, wo sich Ihr Telefon befindet – es gibt bewusst keine Standortberechtigung. Es fragt nur, wo sich ein benannter Ort befindet.</p>
 
-    <p>Das Zweite ist ein Gutscheincode und eine zufällige Kennung, die im Folgenden beschrieben werden.</p>
+    <p>Das Zweite ist ein Gutscheincode und eine zufällige Kennung, im Folgenden beschrieben. Das Dritte ist die Adresse eines Reels oder Beitrags, den Sie zum Teilen ausgewählt haben, danach beschrieben.</p>
 
   </section>
 
@@ -238,6 +234,22 @@
 
 <section>
 
+    <h2>Ein Reel oder Beitrag, den Sie teilen</h2>
+
+    <p>Das Teilen eines Links zu einem Reel oder Beitrag ist der einzige Teil von Wren, der etwas, das Sie ausgewählt haben, an einen von Wren betriebenen Server sendet. Wren kann einen Beitrag auf dem Telefon nicht lesen: Ein Teilen-Menü übergibt eine Webadresse und niemals das Video, sodass der Beitrag von irgendwoher abgerufen werden muss.</p>
+
+    <p><strong>Gesendet werden der Link und ein Nachweis, dass Sie die Funktion gekauft haben.</strong> Sonst nichts – kein Name, keine E-Mail-Adresse, kein Standort, kein Screenshot und keine Kennung für Sie. Unter Android ist dieser Nachweis das Kauf-Token, das Google Play für den Kauf ausgestellt hat und das der Server bei Google überprüft; ein Gutscheincode funktioniert an dessen Stelle ebenso.</p>
+
+    <p>Der Server – ein vom Entwickler betriebener Cloudflare Worker – ruft diesen Beitrag ab, lässt ein Sprachmodell die Ortsnamen aus dessen Bildunterschrift oder Bildern herauslesen, sendet die <em>Namen</em> zurück an Ihr Telefon und verwirft den Rest. <strong>Nichts zum Beitrag wird gespeichert: weder die Adresse, noch das Video oder die Bilder, noch die Bildunterschrift, noch die gefundenen Namen.</strong> Ihr Telefon sucht diese Namen anschließend genauso nach, wie es einen von einem Screenshot gelesenen Namen nachschlägt.</p>
+
+    <p>Eine Zeile wird geschrieben, und sie hält nur fest, dass dieser eine Kauf eine Einheit seines monatlichen Kontingents verbraucht hat. Sie sagt nichts darüber aus, was gelesen wurde. Das Kontingent besteht, weil jedes Auslesen Kosten für den Betrieb verursacht, und das Zählen ist der einzige Grund, warum überhaupt etwas gespeichert wird.</p>
+
+    <p>Zwei weitere Unternehmen sind in diesem Moment beteiligt, und keinem wird mitgeteilt, wer Sie sind. Ein Dienst namens ScrapeCreators ruft den Beitrag von der Plattform ab, auf der er sich befindet, und kann eine eigene Kopie des Abgerufenen für kurze Zeit vorhalten, damit derselbe öffentliche Beitrag nicht zweimal abgerufen wird. Googles Vertex AI betreibt das Modell, das ihn liest; Google erklärt, dass an Vertex AI gesendete Daten nicht zum Training seiner Modelle verwendet werden. Wren steht in keiner Verbindung zu Instagram, TikTok oder YouTube und fragt stets nur nach einem Beitrag, den Sie zum Teilen ausgewählt haben.</p>
+
+  </section>
+
+<section>
+
     <h2>Ihre Liste an eine andere Karten-App senden</h2>
 
     <p>Die Liste wird in eine Datei auf Ihrem Telefon geschrieben und an die von Ihnen gewählte App übergeben. Diese Übergabe erfolgt lokal: Nichts wird hochgeladen, und Wren ist nicht mehr beteiligt, sobald die andere App die Datei hat.</p>
@@ -250,7 +262,7 @@
 
     <h2>Berechtigungen</h2>
 
-    <p>Genau eine: Internetzugriff, benötigt für die Ortssuche und, falls Sie einen eingeben, für den Code. Kein Standort, keine Kamera, keine Kontakte und kein Zugriff auf Dateien außer denen, die Sie ihr über die Systemauswahl übergeben.</p>
+    <p>Zwei. Internetzugriff, benötigt für die Ortssuche, zum Lesen eines von Ihnen geteilten Beitrags und für einen Code, falls Sie einen eingeben; sowie die Abrechnungsberechtigung, die Google Play von jeder App verlangt, die etwas verkauft. Kein Standort, keine Kamera, keine Kontakte und kein Zugriff auf Dateien über jene hinaus, die Sie ihr über die Systemauswahl übergeben.</p>
 
   </section>
 
