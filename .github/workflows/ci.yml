@@ -288,7 +288,20 @@ jobs:
           test -f "$P" || { echo "::error::missing res/xml/file_paths.xml"; exit 1; }
           grep -q '<files-path' "$P" || { echo "::error::exports must live in filesDir, not the reclaimable cache — a receiver that defers the import can find the bytes gone"; exit 1; }
           grep -qr 'androidx.browser.customtabs' android/app/src/main/kotlin || { echo "::error::no Custom Tabs import — the Google Maps route needs a real Chrome, because Google blocks sign-in in a WebView"; exit 1; }
-          echo "provider, paths, queries and Custom Tabs all present"
+          # The other direction of the share sheet: Wren receiving a reel or a
+          # post. Every failure here is silent — the app simply never appears
+          # in the sheet, with nothing anywhere reporting a fault — so each
+          # part is asserted separately rather than as one grep.
+          grep -q 'android.intent.action.SEND' "$M" || { echo "::error::no ACTION_SEND filter — Wren cannot receive a shared reel or post at all"; exit 1; }
+          grep -q 'android:mimeType="text/plain"' "$M" || { echo "::error::the SEND filter claims no text/plain, which is how every platform shares a link"; exit 1; }
+          grep -q 'android.intent.category.DEFAULT' "$M" || { echo "::error::the SEND filter has no DEFAULT category. Shares go out as implicit intents and carry that category, so without it the filter matches nothing and Wren never appears in the sheet"; exit 1; }
+          # And the half that reads it. A filter with no handler puts Wren in
+          # the sheet and then does nothing when it is chosen, which is worse
+          # than being absent.
+          K=android/app/src/main/kotlin/com/spencerfields/littlebird
+          grep -q 'onNewIntent' "$K/MainActivity.kt" || { echo "::error::MainActivity handles no onNewIntent — launchMode is singleTop, so a share reaching an already-running Wren would be dropped. This works until the app has been opened once."; exit 1; }
+          grep -q 'handleIntent(intent)' "$K/MainActivity.kt" || { echo "::error::MainActivity never hands its Intent to the share inbox"; exit 1; }
+          echo "provider, paths, queries, Custom Tabs and the share receiver all present"
 
       # Every android:name=".Foo" in the manifest is shorthand for
       # <namespace>.Foo, and nothing in a debug build checks that the class is

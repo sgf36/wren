@@ -8,15 +8,15 @@
   "@emptyTitle": {
     "description": "Headline on the empty main screen. Two words, deliberately terse: the app keeps places for you."
   },
-  "emptyBody": "Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and puts them in Apple Maps.",
+  "emptyBody": "Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to Apple Maps.",
   "@emptyBody": {
-    "description": "Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video."
+    "description": "Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video. Sharing a post leads because it is what the app is now for; screenshots stay in the same sentence because they are free, they work on anything, and they are what most people will use first."
   },
   "emptyNote": "One place joins a guide you already have. Several become a new one — Apple Maps cannot merge guides.",
   "@emptyNote": {
     "description": "A limitation of Apple Maps, stated up front. 'Guide' is Apple's own feature name — use whatever Apple Maps calls it in this language."
   },
-  "emptyBodyAndroid": "Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and sends them to the map app on your phone.",
+  "emptyBodyAndroid": "Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to the map app on your phone.",
   "@emptyBodyAndroid": {
     "description": "The opening line of the first screen, on a platform that cannot make guides. It mirrors emptyBody, which ends in Apple Maps; this one ends in whichever map app is installed. Everything before that clause is the same, and should read the same way in translation."
   },
@@ -91,9 +91,9 @@
   "@regionDetected": {
     "description": "Shown when a city was found in the screenshot text."
   },
-  "regionNotDetected": "Nothing in the screenshots said where these are. A city makes the search far more accurate.",
+  "regionNotDetected": "Nothing said where these places are. A city makes the search far more accurate.",
   "@regionNotDetected": {
-    "description": "Shown when no city could be found in the screenshot text."
+    "description": "Shown when nothing in what was read said which city these places are in. Said after a screenshot import and after a shared post alike, so it must name neither."
   },
   "cityOrRegion": "City or region",
   "@cityOrRegion": {
@@ -397,33 +397,17 @@
   "@fromFile": {
     "description": "Menu item for importing a list exported from another app."
   },
-  "fromExistingGuide": "From an existing guide",
-  "@fromExistingGuide": {
-    "description": "Menu item for reading the places out of a guide the user already has in Apple Maps."
-  },
-  "importGuideTitle": "Add to an existing guide",
-  "@importGuideTitle": {
-    "description": "Title of the dialog where a shared Apple Maps guide link is pasted."
-  },
-  "importGuideBody": "In Apple Maps, open the guide and share it, then choose Copy Link. Paste it below and Wren will read the places it already holds.",
+  "importGuideBody": "In Apple Maps, open the guide and share it, then choose Copy Link. Paste it below and Wren will read the places it already holds. A link to a reel or a post works here too.",
   "@importGuideBody": {
-    "description": "Instructions for finding the guide link. 'Copy Link' is the wording Apple Maps itself uses on the share sheet, so use whatever Apple Maps says in this language."
-  },
-  "guideLinkLabel": "Guide link",
-  "@guideLinkLabel": {
-    "description": "Text field label for the pasted link."
-  },
-  "readGuide": "Read guide",
-  "@readGuide": {
-    "description": "Confirming button. Reads the places out of the pasted link; it does not publish anything."
+    "description": "Instructions for finding the guide link. 'Copy Link' is the wording Apple Maps itself uses on the share sheet, so use whatever Apple Maps says in this language. The last sentence covers the other kind of link the dialog now accepts, which needs no instructions because anybody who has one already has it in the clipboard."
   },
   "importGuideNotALink": "That is not an Apple Maps guide link. Open the guide in Maps, share it, then choose Copy Link.",
   "@importGuideNotALink": {
     "description": "Shown when the pasted text could not be decoded as a guide link."
   },
-  "importGuideSocialPost": "Wren reads screenshots, not links to posts. Screenshot the post and share that instead.",
+  "importGuideSocialPost": "Wren cannot read posts from there. Screenshot the post and share the screenshots instead — that always works.",
   "@importGuideSocialPost": {
-    "description": "Shown when the shared or pasted link is a post on a social platform. Wren appears in the share sheet of every app that shares a link, so this arrives often; without it the person is told their reel is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately."
+    "description": "Shown when the shared or pasted link is a post on a platform Wren cannot read — the ones it can are handled before this. Wren appears in the share sheet of every app that shares a link, so this still arrives; without it the person is told their post is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately."
   },
   "importGuideNothing": "That guide holds nothing Wren can add to.",
   "@importGuideNothing": {
@@ -661,5 +645,117 @@
   "compExpiring": "Wren could not confirm your complimentary access. Connect to the internet in the next few days to keep it.",
   "@compExpiring": {
     "description": "Warning shown when a complimentary code that also grants administrative access has not been re-confirmed with the server for nearly a fortnight, and is days away from lapsing. Only ever seen by the handful of people holding such a code. 'Complimentary' means free of charge."
+  },
+  "reelsTitle": "Places from a post",
+  "@reelsTitle": {
+    "description": "Title of the purchase that reads a shared reel or post, and the name of the in-app purchase. Says what it does rather than naming a platform: naming Instagram or TikTok in app copy is a trade-mark question nobody needs to have."
+  },
+  "reelsExplain": "Share a reel or a post to Wren and it reads the places out of it, ready to check and save. Wren never keeps the video.",
+  "@reelsExplain": {
+    "description": "Explains what the reel purchase does. The last sentence is the privacy claim the App Privacy label and the review notes both rest on, so it must stay true: the media is fetched, read and discarded, and the app never receives it."
+  },
+  "everythingFor": "Everything for {price}",
+  "@everythingFor": {
+    "description": "Purchase button for the bundle: uncapped guides and reading posts together. The price comes from the store already formatted for the user's country — never reformat it.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "addPostsFor": "Add posts for {price}",
+  "@addPostsFor": {
+    "description": "Purchase button shown only to somebody who already owns the unlock. It adds reading posts to it. \"Upgrade\" would mean nothing to somebody who has forgotten which of three things they own. The price comes from the store already formatted — never reformat it.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "everythingAlsoReadsPosts": "Also reads places out of a shared post.",
+  "@everythingAlsoReadsPosts": {
+    "description": "One line under the larger of two purchase buttons, saying what the extra money buys. Without it the more expensive button is a trap."
+  },
+  "readingPost": "Reading that post…",
+  "@readingPost": {
+    "description": "Shown while the shared post is being read. This is the one genuinely slow step in the app — the media has to be fetched and read, which takes tens of seconds — so it says so rather than appearing to hang."
+  },
+  "reelsLeftThisMonth": "{count, plural, =0{no posts left this month} =1{1 post left this month} other{{count} posts left this month}}",
+  "@reelsLeftThisMonth": {
+    "description": "Appended to the import summary. Reading a post costs money on every use, so there is an allowance, and it is shown after each one rather than sprung on the user when it runs out.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reelQuotaUsedUp": "That is all the posts for this month. The allowance comes back on {date}.",
+  "@reelQuotaUsedUp": {
+    "description": "Shown when the monthly allowance is used up. The window rolls over the trailing thirty days rather than resetting on the first of the month, so this states a date. The date is formatted by the platform.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reelQuotaSoon": "a few weeks",
+  "@reelQuotaSoon": {
+    "description": "Stands in for the date in reelQuotaUsedUp when the server did not say when the allowance returns. Vague deliberately: a made-up date would be worse than an honest approximation."
+  },
+  "reelBusy": "Wren is still reading the last post. Try again in a moment.",
+  "@reelBusy": {
+    "description": "Only one post is read at a time for a given purchase, because each one costs money and two at once is usually a double tap."
+  },
+  "reelUnavailable": "That post could not be opened. It may be private, deleted, or not available here.",
+  "@reelUnavailable": {
+    "description": "The post itself is unreachable. Names no platform. Deliberately does not suggest screenshots: a private post cannot be screenshotted by somebody who cannot open it either."
+  },
+  "reelCouldNotRead": "Wren could not read that post. Screenshot it and share the screenshots instead — that always works.",
+  "@reelCouldNotRead": {
+    "description": "The general failure, and the one every unrecognised answer maps to, because the screenshot path is the advice that helps whatever actually went wrong."
+  },
+  "reelNoPlaces": "Nothing in that post looked like a place you could visit.",
+  "@reelNoPlaces": {
+    "description": "The post was read and held no place names. Said plainly rather than as a failure: a post about a sunset is not a fault."
+  },
+  "reelUnreachable": "Wren could not reach the server to read that post. Nothing was charged against your allowance.",
+  "@reelUnreachable": {
+    "description": "No network, or the server did not answer. The second sentence matters: the allowance is the thing the user is protective of, and a failed attempt does not spend it."
+  },
+  "reelNeedsRestore": "Tap Restore purchase first, so Wren can show the store your receipt.",
+  "@reelNeedsRestore": {
+    "description": "Shown to somebody who is entitled to read posts but whose device holds no receipt to prove it — a purchase made before this version existed. Restoring asks the store for one, which is the only way to get it."
+  },
+  "compEnabledEverything": "Complimentary access enabled, including places from a post.",
+  "@compEnabledEverything": {
+    "description": "The complimentary code was accepted and the role it carries grants reading posts as well as guides. An ordinary unlock code does not, so the two cannot share a message."
+  },
+  "restoredEverything": "Restored. Guides of any size, and places from a post.",
+  "@restoredEverything": {
+    "description": "A previous purchase was found and it grants everything the app sells."
+  },
+  "fromGuideOrPost": "From a link",
+  "@fromGuideOrPost": {
+    "description": "One of three ways to add places, on a build that makes Apple Maps guides. The link may be a guide to carry places out of, or a reel or post to read them out of."
+  },
+  "fromPost": "From a post",
+  "@fromPost": {
+    "description": "The same entry on a build with no Apple Maps guides, where the only link that means anything is a reel or a post."
+  },
+  "importLinkTitle": "Add from a link",
+  "@importLinkTitle": {
+    "description": "Title of the paste dialog on a build that makes guides, where the link may be either kind. It replaced \"Add to an existing guide\", which is now only half of what the dialog does."
+  },
+  "importPostBody": "Paste a link to a reel or a post and Wren will read the places out of it. Wren never keeps the video.",
+  "@importPostBody": {
+    "description": "How to use the paste dialog on a build with no Apple Maps guides. The last sentence is the same privacy claim as reelsExplain and must stay true."
+  },
+  "linkLabel": "Link",
+  "@linkLabel": {
+    "description": "Label on the field the link is pasted into. Deliberately not \"Guide link\": two different kinds of link are accepted here."
+  },
+  "readLink": "Read it",
+  "@readLink": {
+    "description": "Button that accepts the pasted link. Says neither \"guide\" nor \"post\", because the dialog does not know which was pasted until it reads it."
   }
 }

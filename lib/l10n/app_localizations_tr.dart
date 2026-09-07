@@ -16,7 +16,7 @@ class LTr extends L {
 
   @override
   String get emptyBody =>
-      'Sana önerilen şeyin ekran görüntüsünü al — bir reel, bir gönderi, bir mesaj, bir gezi rehberinin sayfası. Wren adları okur ve Apple Harita\'ya koyar.';
+      'Bir reel ya da gönderiyi Wren ile paylaş, içindeki yerleri okusun. Ya da neyin olursa ekran görüntüsünü al — bir mesajın, bir rehberin sayfasının — Wren onu okur. İsimler Harita\'ya gider.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LTr extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Sana önerilen şeyin ekran görüntüsünü al — bir reel, bir gönderi, bir mesaj, bir gezi rehberinin sayfası. Wren adları okur ve telefonundaki harita uygulamasına gönderir.';
+      'Bir reel ya da gönderiyi Wren ile paylaş, içindeki yerleri okusun. Ya da neyin olursa ekran görüntüsünü al — bir mesajın, bir rehberin sayfasının — Wren onu okur. İsimler telefonundaki harita uygulamasına gider.';
 
   @override
   String get emptyNoteAndroid =>
@@ -79,7 +79,7 @@ class LTr extends L {
 
   @override
   String get regionNotDetected =>
-      'Ekran görüntülerinde nerede olduklarını yazmıyordu. Bir şehir verirsen arama çok daha isabetli olur.';
+      'Bu yerlerin nerede olduğu hiçbir yerde yazmıyordu. Bir şehir aramayı çok daha isabetli yapar.';
 
   @override
   String get cityOrRegion => 'Şehir veya bölge';
@@ -286,20 +286,8 @@ class LTr extends L {
   String get fromFile => 'Bir dosyadan';
 
   @override
-  String get fromExistingGuide => 'Var olan bir rehberden';
-
-  @override
-  String get importGuideTitle => 'Var olan bir rehbere ekle';
-
-  @override
   String get importGuideBody =>
-      'Apple Harita\'da rehberi aç ve paylaş, ardından Bağlantıyı Kopyala\'yı seç. Aşağıya yapıştır, Wren de içinde zaten bulunan mekânları okur.';
-
-  @override
-  String get guideLinkLabel => 'Rehber bağlantısı';
-
-  @override
-  String get readGuide => 'Rehberi oku';
+      'Apple Harita\'da rehberi aç ve paylaş, ardından Bağlantıyı Kopyala\'yı seç. Aşağıya yapıştır, Wren de içinde zaten bulunan mekânları okur. Bir reel veya gönderi bağlantısı da burada işe yarar.';
 
   @override
   String get importGuideNotALink =>
@@ -307,7 +295,7 @@ class LTr extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren ekran görüntülerini okur, gönderi bağlantılarını değil. Gönderinin ekran görüntüsünü al ve onu paylaş.';
+      'Oradaki gönderileri Wren okuyamıyor. Gönderinin ekran görüntülerini al ve onları paylaş — bu her zaman işe yarar.';
 
   @override
   String get importGuideNothing =>
@@ -532,4 +520,92 @@ class LTr extends L {
   @override
   String get compExpiring =>
       'Wren ücretsiz erişiminizi doğrulayamadı. Erişimi korumak için önümüzdeki birkaç gün içinde internete bağlanın.';
+
+  @override
+  String get reelsTitle => 'Bir gönderideki yerler';
+
+  @override
+  String get reelsExplain =>
+      'Bir reel ya da gönderiyi Wren ile paylaş, içindeki yerleri okusun; kontrol edip kaydetmen yeter. Wren videoyu asla saklamaz.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Hepsi $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Gönderileri $price ile ekle';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Paylaşılan bir gönderideki yerleri de okur.';
+
+  @override
+  String get readingPost => 'Gönderi okunuyor…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'bu ay kalan gönderi: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Bu ayın gönderileri bu kadar. Hakkın $date tarihinde geri geliyor.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'birkaç hafta';
+
+  @override
+  String get reelBusy =>
+      'Wren hâlâ önceki gönderiyi okuyor. Birazdan tekrar dene.';
+
+  @override
+  String get reelUnavailable =>
+      'Bu gönderi açılamadı. Gizli, silinmiş ya da burada erişilemiyor olabilir.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren bu gönderiyi okuyamadı. Ekran görüntüsü al ve onları paylaş – bu her zaman işe yarar.';
+
+  @override
+  String get reelNoPlaces =>
+      'Bu gönderide gidilebilecek bir yere benzeyen bir şey yoktu.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren gönderiyi okumak için sunucuya ulaşamadı. Hakkından hiçbir şey düşülmedi.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Önce Satın alımı geri yükle\'ye dokun ki Wren mağazaya makbuzunu gösterebilsin.';
+
+  @override
+  String get compEnabledEverything =>
+      'Ücretsiz erişim açık, gönderilerden okunan yerler dahil.';
+
+  @override
+  String get restoredEverything =>
+      'Geri yüklendi. Her boyutta rehber ve bir gönderideki yerler.';
+
+  @override
+  String get fromGuideOrPost => 'Bir bağlantıdan';
+
+  @override
+  String get fromPost => 'Bir gönderiden';
+
+  @override
+  String get importLinkTitle => 'Bağlantıdan ekle';
+
+  @override
+  String get importPostBody =>
+      'Bir reel ya da gönderi bağlantısı yapıştır, Wren içindeki yerleri okusun. Wren videoyu asla saklamaz.';
+
+  @override
+  String get linkLabel => 'Bağlantı';
+
+  @override
+  String get readLink => 'Oku';
 }

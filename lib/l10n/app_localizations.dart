@@ -195,10 +195,10 @@ abstract class L {
   /// **'Places, kept.'**
   String get emptyTitle;
 
-  /// Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video.
+  /// Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video. Sharing a post leads because it is what the app is now for; screenshots stay in the same sentence because they are free, they work on anything, and they are what most people will use first.
   ///
   /// In en, this message translates to:
-  /// **'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and puts them in Apple Maps.'**
+  /// **'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to Apple Maps.'**
   String get emptyBody;
 
   /// A limitation of Apple Maps, stated up front. 'Guide' is Apple's own feature name — use whatever Apple Maps calls it in this language.
@@ -210,7 +210,7 @@ abstract class L {
   /// The opening line of the first screen, on a platform that cannot make guides. It mirrors emptyBody, which ends in Apple Maps; this one ends in whichever map app is installed. Everything before that clause is the same, and should read the same way in translation.
   ///
   /// In en, this message translates to:
-  /// **'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and sends them to the map app on your phone.'**
+  /// **'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to the map app on your phone.'**
   String get emptyBodyAndroid;
 
   /// The quieter second line of the first screen, on a platform that cannot make guides. It replaces emptyNote, which is about Apple Maps refusing to merge guides. Two things: a file is a way in as well as a screenshot, and nothing is sent until the user has seen the list. Name no map app here — the sheet that sends the places names them, and only the ones actually installed.
@@ -285,10 +285,10 @@ abstract class L {
   /// **'Read from the captions. Change it if that is wrong.'**
   String get regionDetected;
 
-  /// Shown when no city could be found in the screenshot text.
+  /// Shown when nothing in what was read said which city these places are in. Said after a screenshot import and after a shared post alike, so it must name neither.
   ///
   /// In en, this message translates to:
-  /// **'Nothing in the screenshots said where these are. A city makes the search far more accurate.'**
+  /// **'Nothing said where these places are. A city makes the search far more accurate.'**
   String get regionNotDetected;
 
   /// Text field label.
@@ -609,35 +609,11 @@ abstract class L {
   /// **'From a file'**
   String get fromFile;
 
-  /// Menu item for reading the places out of a guide the user already has in Apple Maps.
+  /// Instructions for finding the guide link. 'Copy Link' is the wording Apple Maps itself uses on the share sheet, so use whatever Apple Maps says in this language. The last sentence covers the other kind of link the dialog now accepts, which needs no instructions because anybody who has one already has it in the clipboard.
   ///
   /// In en, this message translates to:
-  /// **'From an existing guide'**
-  String get fromExistingGuide;
-
-  /// Title of the dialog where a shared Apple Maps guide link is pasted.
-  ///
-  /// In en, this message translates to:
-  /// **'Add to an existing guide'**
-  String get importGuideTitle;
-
-  /// Instructions for finding the guide link. 'Copy Link' is the wording Apple Maps itself uses on the share sheet, so use whatever Apple Maps says in this language.
-  ///
-  /// In en, this message translates to:
-  /// **'In Apple Maps, open the guide and share it, then choose Copy Link. Paste it below and Wren will read the places it already holds.'**
+  /// **'In Apple Maps, open the guide and share it, then choose Copy Link. Paste it below and Wren will read the places it already holds. A link to a reel or a post works here too.'**
   String get importGuideBody;
-
-  /// Text field label for the pasted link.
-  ///
-  /// In en, this message translates to:
-  /// **'Guide link'**
-  String get guideLinkLabel;
-
-  /// Confirming button. Reads the places out of the pasted link; it does not publish anything.
-  ///
-  /// In en, this message translates to:
-  /// **'Read guide'**
-  String get readGuide;
 
   /// Shown when the pasted text could not be decoded as a guide link.
   ///
@@ -645,10 +621,10 @@ abstract class L {
   /// **'That is not an Apple Maps guide link. Open the guide in Maps, share it, then choose Copy Link.'**
   String get importGuideNotALink;
 
-  /// Shown when the shared or pasted link is a post on a social platform. Wren appears in the share sheet of every app that shares a link, so this arrives often; without it the person is told their reel is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately.
+  /// Shown when the shared or pasted link is a post on a platform Wren cannot read — the ones it can are handled before this. Wren appears in the share sheet of every app that shares a link, so this still arrives; without it the person is told their post is not an Apple Maps guide, which is advice about a different feature. Names no platform, deliberately.
   ///
   /// In en, this message translates to:
-  /// **'Wren reads screenshots, not links to posts. Screenshot the post and share that instead.'**
+  /// **'Wren cannot read posts from there. Screenshot the post and share the screenshots instead — that always works.'**
   String get importGuideSocialPost;
 
   /// Shown when the link decoded but contained no place Wren can republish.
@@ -872,6 +848,144 @@ abstract class L {
   /// In en, this message translates to:
   /// **'Wren could not confirm your complimentary access. Connect to the internet in the next few days to keep it.'**
   String get compExpiring;
+
+  /// Title of the purchase that reads a shared reel or post, and the name of the in-app purchase. Says what it does rather than naming a platform: naming Instagram or TikTok in app copy is a trade-mark question nobody needs to have.
+  ///
+  /// In en, this message translates to:
+  /// **'Places from a post'**
+  String get reelsTitle;
+
+  /// Explains what the reel purchase does. The last sentence is the privacy claim the App Privacy label and the review notes both rest on, so it must stay true: the media is fetched, read and discarded, and the app never receives it.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a reel or a post to Wren and it reads the places out of it, ready to check and save. Wren never keeps the video.'**
+  String get reelsExplain;
+
+  /// Purchase button for the bundle: uncapped guides and reading posts together. The price comes from the store already formatted for the user's country — never reformat it.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything for {price}'**
+  String everythingFor(String price);
+
+  /// Purchase button shown only to somebody who already owns the unlock. It adds reading posts to it. "Upgrade" would mean nothing to somebody who has forgotten which of three things they own. The price comes from the store already formatted — never reformat it.
+  ///
+  /// In en, this message translates to:
+  /// **'Add posts for {price}'**
+  String addPostsFor(String price);
+
+  /// One line under the larger of two purchase buttons, saying what the extra money buys. Without it the more expensive button is a trap.
+  ///
+  /// In en, this message translates to:
+  /// **'Also reads places out of a shared post.'**
+  String get everythingAlsoReadsPosts;
+
+  /// Shown while the shared post is being read. This is the one genuinely slow step in the app — the media has to be fetched and read, which takes tens of seconds — so it says so rather than appearing to hang.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading that post…'**
+  String get readingPost;
+
+  /// Appended to the import summary. Reading a post costs money on every use, so there is an allowance, and it is shown after each one rather than sprung on the user when it runs out.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{no posts left this month} =1{1 post left this month} other{{count} posts left this month}}'**
+  String reelsLeftThisMonth(int count);
+
+  /// Shown when the monthly allowance is used up. The window rolls over the trailing thirty days rather than resetting on the first of the month, so this states a date. The date is formatted by the platform.
+  ///
+  /// In en, this message translates to:
+  /// **'That is all the posts for this month. The allowance comes back on {date}.'**
+  String reelQuotaUsedUp(String date);
+
+  /// Stands in for the date in reelQuotaUsedUp when the server did not say when the allowance returns. Vague deliberately: a made-up date would be worse than an honest approximation.
+  ///
+  /// In en, this message translates to:
+  /// **'a few weeks'**
+  String get reelQuotaSoon;
+
+  /// Only one post is read at a time for a given purchase, because each one costs money and two at once is usually a double tap.
+  ///
+  /// In en, this message translates to:
+  /// **'Wren is still reading the last post. Try again in a moment.'**
+  String get reelBusy;
+
+  /// The post itself is unreachable. Names no platform. Deliberately does not suggest screenshots: a private post cannot be screenshotted by somebody who cannot open it either.
+  ///
+  /// In en, this message translates to:
+  /// **'That post could not be opened. It may be private, deleted, or not available here.'**
+  String get reelUnavailable;
+
+  /// The general failure, and the one every unrecognised answer maps to, because the screenshot path is the advice that helps whatever actually went wrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wren could not read that post. Screenshot it and share the screenshots instead — that always works.'**
+  String get reelCouldNotRead;
+
+  /// The post was read and held no place names. Said plainly rather than as a failure: a post about a sunset is not a fault.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in that post looked like a place you could visit.'**
+  String get reelNoPlaces;
+
+  /// No network, or the server did not answer. The second sentence matters: the allowance is the thing the user is protective of, and a failed attempt does not spend it.
+  ///
+  /// In en, this message translates to:
+  /// **'Wren could not reach the server to read that post. Nothing was charged against your allowance.'**
+  String get reelUnreachable;
+
+  /// Shown to somebody who is entitled to read posts but whose device holds no receipt to prove it — a purchase made before this version existed. Restoring asks the store for one, which is the only way to get it.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Restore purchase first, so Wren can show the store your receipt.'**
+  String get reelNeedsRestore;
+
+  /// The complimentary code was accepted and the role it carries grants reading posts as well as guides. An ordinary unlock code does not, so the two cannot share a message.
+  ///
+  /// In en, this message translates to:
+  /// **'Complimentary access enabled, including places from a post.'**
+  String get compEnabledEverything;
+
+  /// A previous purchase was found and it grants everything the app sells.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored. Guides of any size, and places from a post.'**
+  String get restoredEverything;
+
+  /// One of three ways to add places, on a build that makes Apple Maps guides. The link may be a guide to carry places out of, or a reel or post to read them out of.
+  ///
+  /// In en, this message translates to:
+  /// **'From a link'**
+  String get fromGuideOrPost;
+
+  /// The same entry on a build with no Apple Maps guides, where the only link that means anything is a reel or a post.
+  ///
+  /// In en, this message translates to:
+  /// **'From a post'**
+  String get fromPost;
+
+  /// Title of the paste dialog on a build that makes guides, where the link may be either kind. It replaced "Add to an existing guide", which is now only half of what the dialog does.
+  ///
+  /// In en, this message translates to:
+  /// **'Add from a link'**
+  String get importLinkTitle;
+
+  /// How to use the paste dialog on a build with no Apple Maps guides. The last sentence is the same privacy claim as reelsExplain and must stay true.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a link to a reel or a post and Wren will read the places out of it. Wren never keeps the video.'**
+  String get importPostBody;
+
+  /// Label on the field the link is pasted into. Deliberately not "Guide link": two different kinds of link are accepted here.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get linkLabel;
+
+  /// Button that accepts the pasted link. Says neither "guide" nor "post", because the dialog does not know which was pasted until it reads it.
+  ///
+  /// In en, this message translates to:
+  /// **'Read it'**
+  String get readLink;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

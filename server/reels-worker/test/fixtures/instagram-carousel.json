@@ -1,0 +1,157 @@
+{
+ "success": true,
+ "credits_charged": 1,
+ "data": {
+  "xdt_shortcode_media": {
+   "__typename": "XDTGraphSidecar",
+   "shortcode": "DcZzVx4Da6a",
+   "edge_media_to_caption": {
+    "edges": [
+     {
+      "node": {
+       "id": "3970430343538650778",
+       "text": "What if your next hotel was an actual castle? 🏰✨\n\n1. Ashford Castle, Ireland — from about $1,000/night\n2. Thornbury Castle, England — from £329/night\n3. Dromoland Castle, Ireland — from about €800/night\n4. Inverlochy Castle, Scotland — from about £784/night\n5. Amberley Castle, England — from £260/night\n6. Glenapp Castle, Scotland — from about $673/night\n7. Château de Mercuès, France — from about $416/night\n8. Parador de Cardona, Spain — from €109/night\n9. Schlosshotel Kronberg, Germany — from about €233/night\n10. Château d’Audrieu, France — from €284/night\n\nFrom medieval fortresses to royal estates, these castles have been transformed into hotels where you can actually spend the night. Which one are you choosing? 🏰",
+       "created_at": "1787532202"
+      }
+     }
+    ]
+   },
+   "edge_sidecar_to_children": {
+    "edges": [
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-1.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-2.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-3.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-4.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-5.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-6.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-7.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-8.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-9.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-10.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     },
+     {
+      "node": {
+       "__typename": "XDTGraphImage",
+       "display_url": "https://example.invalid/slide-11.jpg",
+       "is_video": false,
+       "accessibility_caption": null,
+       "dimensions": {
+        "height": 1280,
+        "width": 1024
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

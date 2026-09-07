@@ -16,7 +16,7 @@ class LJa extends L {
 
   @override
   String get emptyBody =>
-      'すすめられたものをスクリーンショットで撮るだけ。リール、投稿、メッセージ、ガイドブックのページ。Wrenが名前を読み取って、マップに登録します。';
+      'リールや投稿を Wren に共有すると、そこから場所を読み取ります。スクリーンショットでも構いません——メッセージでも、ガイドブックの1ページでも。読み取った名前はマップに入ります。';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LJa extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'すすめられたものをスクリーンショットで撮るだけ。リール、投稿、メッセージ、ガイドブックのページ。Wrenが名前を読み取って、スマートフォンの地図アプリに送ります。';
+      'リールや投稿を Wren に共有すると、そこから場所を読み取ります。スクリーンショットでも構いません——メッセージでも、ガイドブックの1ページでも。読み取った名前はお使いの地図アプリに入ります。';
 
   @override
   String get emptyNoteAndroid => 'すでに持っているリストも読み込めます。何かが送られる前に、すべての場所を確認できます。';
@@ -77,7 +77,7 @@ class LJa extends L {
 
   @override
   String get regionNotDetected =>
-      'スクリーンショットには場所の記載がありませんでした。都市を入力すると検索精度が大きく上がります。';
+      'これらの場所がどこにあるのか、どこにも書かれていませんでした。都市名があると検索の精度が大きく上がります。';
 
   @override
   String get cityOrRegion => '都市または地域';
@@ -276,20 +276,8 @@ class LJa extends L {
   String get fromFile => 'ファイルから';
 
   @override
-  String get fromExistingGuide => '既存のガイドから';
-
-  @override
-  String get importGuideTitle => '既存のガイドに追加';
-
-  @override
   String get importGuideBody =>
-      'マップでそのガイドを開いて共有し、「リンクをコピー」を選びます。下に貼り付けると、Wrenがそのガイドにある場所を読み取ります。';
-
-  @override
-  String get guideLinkLabel => 'ガイドのリンク';
-
-  @override
-  String get readGuide => 'ガイドを読み取る';
+      'マップでそのガイドを開いて共有し、「リンクをコピー」を選びます。下に貼り付けると、Wrenがそのガイドにある場所を読み取ります。 リールや投稿のリンクもここで使えます。';
 
   @override
   String get importGuideNotALink =>
@@ -297,7 +285,7 @@ class LJa extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren はスクリーンショットを読み取ります。投稿のリンクは読み取れません。投稿のスクリーンショットを撮って共有してください。';
+      'そこの投稿は Wren では読み取れません。投稿のスクリーンショットを撮って、それを共有してください。この方法なら必ず読めます。';
 
   @override
   String get importGuideNothing => 'そのガイドには、Wrenが追加できるものがありません。';
@@ -501,4 +489,85 @@ class LJa extends L {
   @override
   String get compExpiring =>
       'Wren は無償アクセスを確認できませんでした。維持するには、数日以内にインターネットに接続してください。';
+
+  @override
+  String get reelsTitle => '投稿から場所を読む';
+
+  @override
+  String get reelsExplain =>
+      'リールや投稿を Wren に共有すると、そこから場所を読み取ります。あとは確認して保存するだけ。Wren が動画を保管することはありません。';
+
+  @override
+  String everythingFor(String price) {
+    return 'すべて $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return '投稿の読み取りを追加 $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts => '共有された投稿からも場所を読み取ります。';
+
+  @override
+  String get readingPost => '投稿を読んでいます…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return '今月の残りは$count件';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return '今月分の投稿はここまでです。$dateに上限がリセットされます。';
+  }
+
+  @override
+  String get reelQuotaSoon => '数週間後';
+
+  @override
+  String get reelBusy => 'Wren はまだ前の投稿を読んでいます。少ししてからもう一度お試しください。';
+
+  @override
+  String get reelUnavailable => 'その投稿を開けませんでした。非公開か、削除済みか、この地域では見られない可能性があります。';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren はその投稿を読み取れませんでした。スクリーンショットを撮って、それを共有してください。この方法なら必ず読めます。';
+
+  @override
+  String get reelNoPlaces => 'その投稿には、行ける場所らしきものが見当たりませんでした。';
+
+  @override
+  String get reelUnreachable => '投稿を読むためのサーバーに接続できませんでした。上限は消費されていません。';
+
+  @override
+  String get reelNeedsRestore =>
+      '先に「購入を復元」をタップしてください。Wren がストアにレシートを提示できるようになります。';
+
+  @override
+  String get compEnabledEverything => '無償アクセスを有効にしました。投稿からの場所の読み取りも含まれます。';
+
+  @override
+  String get restoredEverything => '復元しました。サイズ無制限のガイドと、投稿からの場所の読み取り。';
+
+  @override
+  String get fromGuideOrPost => 'リンクから';
+
+  @override
+  String get fromPost => '投稿から';
+
+  @override
+  String get importLinkTitle => 'リンクから追加';
+
+  @override
+  String get importPostBody =>
+      'リールや投稿のリンクを貼り付けると、Wren がそこから場所を読み取ります。Wren が動画を保管することはありません。';
+
+  @override
+  String get linkLabel => 'リンク';
+
+  @override
+  String get readLink => '読み取る';
 }

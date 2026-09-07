@@ -85,6 +85,41 @@ void main() {
         }
       });
 
+      // The .arb files are the source, and the app reads the generated Dart.
+      // Nothing regenerates on `flutter test`, so a translation added without
+      // running `flutter gen-l10n` passes every check above and ships English —
+      // which is exactly what happened to all forty-six languages once, and was
+      // invisible because the arb files were perfect.
+      test('has actually been generated since it was last translated', () {
+        final generated = File(
+          'lib/l10n/app_localizations_${locale.replaceAll('-', '_')}.dart',
+        );
+        // A regional variant shares its parent's generated file.
+        if (!generated.existsSync()) {
+          return;
+        }
+        final source = generated.readAsStringSync();
+        for (final key in expected) {
+          final value = arb[key];
+          // Only the messages that appear in the source verbatim: anything with
+          // a placeholder is assembled, and anything with a quote or a dollar
+          // is escaped, so neither can be looked for as a literal.
+          if (value is! String || value.length <= 24) continue;
+          if (value.contains('{') ||
+              value.contains(r'$') ||
+              value.contains("'")) {
+            continue;
+          }
+          expect(
+            source.contains(value),
+            isTrue,
+            reason:
+                '$locale/$key is translated but not generated — '
+                'run `flutter gen-l10n`',
+          );
+        }
+      });
+
       test('leaves nothing in English that should have moved', () {
         // The app's own name is the deliberate exception: it is a bird, and it
         // stays "Wren" everywhere.

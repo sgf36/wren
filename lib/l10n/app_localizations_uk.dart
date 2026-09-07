@@ -16,7 +16,7 @@ class LUk extends L {
 
   @override
   String get emptyBody =>
-      'Зроби знімок екрана того, що тобі радять — рілс, допис, повідомлення, сторінку путівника. Wren прочитає назви й додасть їх у Apple Карти.';
+      'Поділися з Wren рілсом або дописом, і він витягне звідти місця. Або зроби знімок екрана будь-чого — повідомлення, сторінки путівника — і Wren його прочитає. Назви підуть у Карти.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LUk extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Зроби знімок екрана того, що тобі радять — рілс, допис, повідомлення, сторінку путівника. Wren прочитає назви й надішле їх у застосунок карт на вашому телефоні.';
+      'Поділися з Wren рілсом або дописом, і він витягне звідти місця. Або зроби знімок екрана будь-чого — повідомлення, сторінки путівника — і Wren його прочитає. Назви підуть у застосунок карт на твоєму телефоні.';
 
   @override
   String get emptyNoteAndroid =>
@@ -81,7 +81,7 @@ class LUk extends L {
 
   @override
   String get regionNotDetected =>
-      'На знімках не було сказано, де вони розташовані. З містом пошук буде значно точнішим.';
+      'Ніде не було сказано, де ці місця. З містом пошук буде значно точнішим.';
 
   @override
   String get cityOrRegion => 'Місто або регіон';
@@ -303,20 +303,8 @@ class LUk extends L {
   String get fromFile => 'З файлу';
 
   @override
-  String get fromExistingGuide => 'З наявного путівника';
-
-  @override
-  String get importGuideTitle => 'Додати до наявного путівника';
-
-  @override
   String get importGuideBody =>
-      'Відкрий путівник в Apple Картах, натисни «Оприлюднити» й вибери «Скопіювати посилання». Встав його нижче, і Wren прочитає місця, які в ньому вже є.';
-
-  @override
-  String get guideLinkLabel => 'Посилання на путівник';
-
-  @override
-  String get readGuide => 'Прочитати путівник';
+      'Відкрий путівник в Apple Картах, натисни «Оприлюднити» й вибери «Скопіювати посилання». Встав його нижче, і Wren прочитає місця, які в ньому вже є. Посилання на рілс або допис тут теж підійде.';
 
   @override
   String get importGuideNotALink =>
@@ -324,7 +312,7 @@ class LUk extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren читає знімки екрана, а не посилання на дописи. Зроби знімок допису й поділися ним.';
+      'Дописи звідти Wren читати не вміє. Зроби знімки екрана допису й поділися ними — це працює завжди.';
 
   @override
   String get importGuideNothing =>
@@ -576,4 +564,91 @@ class LUk extends L {
   @override
   String get compExpiring =>
       'Wren не зміг підтвердити ваш безкоштовний доступ. Підключіться до інтернету впродовж найближчих днів, щоб зберегти його.';
+
+  @override
+  String get reelsTitle => 'Місця з допису';
+
+  @override
+  String get reelsExplain =>
+      'Поділися з Wren рілсом або дописом, і він витягне звідти місця — лишиться перевірити й зберегти. Wren ніколи не зберігає відео.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Усе за $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Додати дописи за $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Ще витягує місця з надісланого допису.';
+
+  @override
+  String get readingPost => 'Читаю допис…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'дописів залишилось цього місяця: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Це всі дописи на цей місяць. Ліміт повернеться $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'кілька тижнів';
+
+  @override
+  String get reelBusy => 'Wren ще читає попередній допис. Спробуй за хвилину.';
+
+  @override
+  String get reelUnavailable =>
+      'Не вдалося відкрити цей допис. Можливо, він закритий, видалений або недоступний тут.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren не зміг прочитати цей допис. Зроби знімки екрана й поділися ними — це працює завжди.';
+
+  @override
+  String get reelNoPlaces =>
+      'Ніщо в цьому дописі не схоже на місце, куди можна піти.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren не дістався до сервера, щоб прочитати допис. З ліміту нічого не списано.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Спершу натисни «Відновити покупку», щоб Wren показав крамниці твій чек.';
+
+  @override
+  String get compEnabledEverything =>
+      'Безкоштовний доступ увімкнено, разом із місцями з дописів.';
+
+  @override
+  String get restoredEverything =>
+      'Відновлено. Путівники будь-якого розміру та місця з дописів.';
+
+  @override
+  String get fromGuideOrPost => 'За посиланням';
+
+  @override
+  String get fromPost => 'З допису';
+
+  @override
+  String get importLinkTitle => 'Додати за посиланням';
+
+  @override
+  String get importPostBody =>
+      'Встав посилання на рілс або допис, і Wren витягне звідти місця. Wren ніколи не зберігає відео.';
+
+  @override
+  String get linkLabel => 'Посилання';
+
+  @override
+  String get readLink => 'Прочитати';
 }

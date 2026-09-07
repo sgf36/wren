@@ -33,6 +33,11 @@
  * originalTransactionId and Google's purchase token both do.
  */
 
+import {
+  fetchPost, fetchImages, regionOf, UA, MEDIA_BUDGET,
+  CAPTION_PROMPT, MEDIA_PROMPT,
+} from './vendors.js';
+
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
@@ -238,6 +243,9 @@ export async function verifiedComp(env, token) {
  * that one, so adding a role there cannot silently grant a paid feature here.
  */
 export const COMP_ROLES_WITH_REELS = Object.freeze(['everything', 'admin']);
+/** What each service account may reach, and nothing wider. */
+export const PLAY_SCOPE = 'https://www.googleapis.com/auth/androidpublisher';
+export const VERTEX_SCOPE = 'https://www.googleapis.com/auth/cloud-platform';
 export const REEL_PRODUCTS = Object.freeze([
   'com.spencerfields.littlebird.everything',
   'com.spencerfields.littlebird.reels.upgrade',
@@ -330,7 +338,7 @@ export async function verifyPlay(env, purchaseToken, productId) {
   if (!REEL_PRODUCTS.includes(productId)) return null;
   if (!purchaseToken) return null;
 
-  const token = await playAccessToken(env);
+  const token = await accessToken(env.PLAY_SA_KEY, PLAY_SCOPE);
   if (!token) return null;
 
   const url = 'https://androidpublisher.googleapis.com/androidpublisher/v3/'
@@ -351,25 +359,38 @@ export async function verifyPlay(env, purchaseToken, productId) {
 }
 
 /**
- * A service-account bearer token for androidpublisher, minted here.
+ * A service-account bearer token for a Google API, minted here.
  *
  * Google's Node SDK is large and mostly concerned with things a Worker cannot
  * do. What is actually needed is one RS256 JWT and one form post, both of which
- * WebCrypto does. The service account behind PLAY_SA_KEY should hold
- * androidpublisher read access and nothing else — not the key that publishes
- * releases, which can also replace the app.
+ * WebCrypto does.
+ *
+ * Takes the key and the scope rather than reading one variable, because two
+ * different service accounts use this: androidpublisher for verifying Play
+ * purchases, and cloud-platform for calling Vertex. They are deliberately
+ * separate accounts — the one that reads purchases has no business reaching a
+ * model, and neither should be the key that publishes releases, which can also
+ * replace the app.
  */
-async function playAccessToken(env) {
-  if (!env.PLAY_SA_KEY) return null;
+export async function accessToken(saKey, scope) {
+  if (!saKey) return null;
 
-  const sa = JSON.parse(new TextDecoder().decode(fromB64(env.PLAY_SA_KEY)));
+  // Base64 is the documented form, and raw JSON is what somebody reaches for
+  // when setting the secret by hand. Both are accepted because the two are
+  // trivially distinguishable and the alternative is not a clean refusal: a
+  // JSON key put through fromB64 yields rubbish, JSON.parse throws, and the
+  // Worker answers 500 to a request that was correct.
+  const text = saKey.trimStart().startsWith('{')
+    ? saKey
+    : new TextDecoder().decode(fromB64(saKey));
+  const sa = JSON.parse(text);
   const now = Math.floor(Date.now() / 1000);
 
   const seg = (o) => btoa(JSON.stringify(o))
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const unsigned = `${seg({ alg: 'RS256', typ: 'JWT' })}.${seg({
     iss: sa.client_email,
-    scope: 'https://www.googleapis.com/auth/androidpublisher',
+    scope,
     aud: 'https://oauth2.googleapis.com/token',
     iat: now,
     exp: now + 3600,
@@ -531,6 +552,83 @@ export function modelRequest(env, parts) {
   };
 }
 
+/**
+ * Where the model is called, and why it is not AI Studio.
+ *
+ * AI Studio bills Gemini through a separate prepay payments account, even when
+ * the Cloud billing account behind it is postpay. That prepay account is
+ * created by one dialog, that dialog does not render, and no other surface can
+ * create or fund what it never made — confirmed with Google support on
+ * 6 September 2026, and a GBP 10 payment landed as Cloud credit rather than
+ * Gemini prepay because of it.
+ *
+ * Vertex serves the same models and bills through the ordinary Cloud billing
+ * account, which works. So the prepay mechanism is not worked around here, it
+ * is simply not in the path.
+ *
+ * The cost of the two is expected to match and is NOT yet verified: Google's
+ * pricing pages would not give it up, and the account's own SKU browser does
+ * not filter. The honest way to settle it is the first real call — the cost
+ * table then shows the SKU and rate actually charged, in the right currency and
+ * region. Do that before assuming §12 still holds.
+ */
+export function vertexEndpoint(env, model) {
+  const project = env.VERTEX_PROJECT;
+  const location = env.VERTEX_LOCATION || 'global';
+  if (!project) return null;
+  // `global` is not a region and has no region prefix on the host. It is also
+  // the only place 3.5 Flash-Lite exists: europe-west1, europe-west4 and
+  // us-central1 all answer 404 for it while happily serving 2.5. Measured, not
+  // assumed — the first smoke test failed on exactly this.
+  const host = location === 'global'
+    ? 'aiplatform.googleapis.com'
+    : `${location}-aiplatform.googleapis.com`;
+  return `https://${host}/v1/projects/`
+    + `${project}/locations/${location}/publishers/google/models/`
+    + `${model}:generateContent`;
+}
+
+/**
+ * One model call, with the cost guards already applied by modelRequest.
+ *
+ * Returns the parsed candidates, or throws a Refusal the client can localise.
+ * Nothing from Google's error body reaches the caller: it can name a project, a
+ * region and a service account, none of which is the user's business.
+ */
+export async function readPlaces(env, parts) {
+  const { model, body } = modelRequest(env, parts);
+  const url = vertexEndpoint(env, model);
+  const token = await accessToken(env.VERTEX_SA_KEY, VERTEX_SCOPE);
+  if (!url || !token) throw new Refusal(FAILURES.modelFailed, 503);
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    console.error('model call failed', res.status);
+    throw new Refusal(FAILURES.modelFailed, 502);
+  }
+
+  const answer = await res.json();
+  const text = answer?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Refusal(FAILURES.modelFailed, 502);
+
+  let places;
+  try {
+    places = JSON.parse(text);
+  } catch {
+    // responseSchema asks for JSON, so this means the model ignored it. Better
+    // a refusal the app can explain than a half-parsed list of place names.
+    throw new Refusal(FAILURES.modelFailed, 502);
+  }
+  return Array.isArray(places) ? places.filter((p) => p && p.name) : [];
+}
+
 /* ------------------------------------------------------------- the vendors */
 
 /**
@@ -556,18 +654,59 @@ export function modelRequest(env, parts) {
  * carousel of ten costs about what a reel costs, and charging ten would make
  * the fair-use number mean different things for different people.
  *
- * Not implemented: this is the half that needs accounts, keys and money, and
- * none of them existed when the rest was written. It throws the failure the app
- * already knows how to show — the one whose copy offers the screenshot path
- * instead — so that every layer above it can be built, deployed and exercised
- * against a Worker that is honestly incomplete.
- *
- * A stub returning plausible place names would be worse than this. It would
- * make the client look finished, and the first real post would then be the
- * first test of the entire pipeline.
+ * The caption is read first, and the media only if it yields nothing. That
+ * order was decided by a real post rather than by design: the first carousel
+ * tested listed all ten of its places in the caption as a numbered list, which
+ * cost a few hundred text tokens against 2,772 for the eleven images. Both
+ * were measured. List-style posts are the genre this feature exists for, so for
+ * a good share of them the expensive half never runs.
  */
 async function placesFromPost(env, target) {
-  throw new Refusal(FAILURES.fetchFailed, 503);
+  const post = await fetchPost(env, target);
+  if (!post) throw new Refusal(FAILURES.postUnavailable, 404);
+
+  // The caption, if there is one worth asking about. Two words is not a list.
+  if (post.caption && post.caption.length > 20) {
+    const text = [CAPTION_PROMPT, '', post.caption, ...post.alts].join(NEWLINE);
+    const found = await readPlaces(env, [{ text }]);
+    if (found.length) {
+      return { candidates: found, regionHint: regionOf(found), read: 'caption' };
+    }
+  }
+
+  // Otherwise the media, which is what most reels need.
+  const parts = [{ text: MEDIA_PROMPT }];
+  if (post.video) {
+    const res = await fetch(post.video, { headers: { 'User-Agent': UA } });
+    if (!res.ok) throw new Refusal(FAILURES.fetchFailed, 502);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    if (bytes.length > MEDIA_BUDGET) throw new Refusal(FAILURES.fetchFailed, 413);
+    parts.push({
+      inlineData: {
+        mimeType: res.headers.get('content-type')?.split(';')[0] || 'video/mp4',
+        data: bytesToB64(bytes),
+      },
+    });
+  } else {
+    parts.push(...await fetchImages(post.images));
+  }
+
+  if (parts.length < 2) throw new Refusal(FAILURES.fetchFailed, 502);
+
+  const found = await readPlaces(env, parts);
+  if (!found.length) throw new Refusal(FAILURES.postUnavailable, 404);
+  return { candidates: found, regionHint: regionOf(found), read: 'media' };
+}
+
+const NEWLINE = String.fromCharCode(10);
+
+/** Base64 in chunks, because a spread over megabytes hits the argument limit. */
+function bytesToB64(bytes) {
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    out += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(out);
 }
 
 /* ------------------------------------------------------------------ routes */

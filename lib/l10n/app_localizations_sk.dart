@@ -16,7 +16,7 @@ class LSk extends L {
 
   @override
   String get emptyBody =>
-      'Odfoť si obrazovku s tým, čo ti odporúčajú — reel, príspevok, správu, stranu zo sprievodcu. Wren prečíta názvy a uloží ich do Máp Apple.';
+      'Zdieľaj Wrenu reel alebo príspevok a on z neho vyčíta miesta. Alebo si odfoť obrazovku čohokoľvek — správy, strany zo sprievodcu — a Wren to prečíta. Názvy skončia v Mapách.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LSk extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Odfoť si obrazovku s tým, čo ti odporúčajú — reel, príspevok, správu, stranu zo sprievodcu. Wren prečíta názvy a odošle ich do mapovej aplikácie v telefóne.';
+      'Zdieľaj Wrenu reel alebo príspevok a on z neho vyčíta miesta. Alebo si odfoť obrazovku čohokoľvek — správy, strany zo sprievodcu — a Wren to prečíta. Názvy skončia v mapovej aplikácii v tvojom telefóne.';
 
   @override
   String get emptyNoteAndroid =>
@@ -81,7 +81,7 @@ class LSk extends L {
 
   @override
   String get regionNotDetected =>
-      'V snímkach nebolo napísané, kde sa nachádzajú. S mestom bude hľadanie oveľa presnejšie.';
+      'Nikde nebolo, kde tie miesta sú. S mestom je vyhľadávanie oveľa presnejšie.';
 
   @override
   String get cityOrRegion => 'Mesto alebo oblasť';
@@ -298,20 +298,8 @@ class LSk extends L {
   String get fromFile => 'Zo súboru';
 
   @override
-  String get fromExistingGuide => 'Z existujúceho sprievodcu';
-
-  @override
-  String get importGuideTitle => 'Pridať do existujúceho sprievodcu';
-
-  @override
   String get importGuideBody =>
-      'V Mapách Apple otvor sprievodcu, zdieľaj ho a vyber Kopírovať odkaz. Vlož ho nižšie a Wren prečíta miesta, ktoré už obsahuje.';
-
-  @override
-  String get guideLinkLabel => 'Odkaz na sprievodcu';
-
-  @override
-  String get readGuide => 'Prečítať sprievodcu';
+      'V Mapách Apple otvor sprievodcu, zdieľaj ho a vyber Kopírovať odkaz. Vlož ho nižšie a Wren prečíta miesta, ktoré už obsahuje. Odkaz na reel alebo príspevok tu funguje tiež.';
 
   @override
   String get importGuideNotALink =>
@@ -319,7 +307,7 @@ class LSk extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren číta snímky obrazovky, nie odkazy na príspevky. Vytvor snímku príspevku a zdieľaj ju.';
+      'Príspevky odtiaľ Wren prečítať nevie. Sprav si z príspevku snímky obrazovky a zdieľaj ich — to funguje vždy.';
 
   @override
   String get importGuideNothing =>
@@ -574,4 +562,92 @@ class LSk extends L {
   @override
   String get compExpiring =>
       'Wren nedokázal overiť váš bezplatný prístup. V najbližších dňoch sa pripojte na internet, aby ste si ho zachovali.';
+
+  @override
+  String get reelsTitle => 'Miesta z príspevku';
+
+  @override
+  String get reelsExplain =>
+      'Zdieľaj Wrenu reel alebo príspevok a on z neho vyčíta miesta, pripravené na kontrolu a uloženie. Wren si video nikdy nenecháva.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Všetko za $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Pridať príspevky za $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Vyčíta aj miesta zo zdieľaného príspevku.';
+
+  @override
+  String get readingPost => 'Čítam príspevok…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'príspevkov tento mesiac zostáva: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'To sú všetky príspevky za tento mesiac. Limit sa vráti $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'pár týždňov';
+
+  @override
+  String get reelBusy =>
+      'Wren ešte číta predchádzajúci príspevok. Skús to o chvíľu.';
+
+  @override
+  String get reelUnavailable =>
+      'Ten príspevok sa nepodarilo otvoriť. Môže byť súkromný, zmazaný alebo tu nedostupný.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren ten príspevok nedokázal prečítať. Sprav si z neho snímky obrazovky a zdieľaj ich – to funguje vždy.';
+
+  @override
+  String get reelNoPlaces =>
+      'Nič v tom príspevku nevyzeralo ako miesto, kam sa dá zájsť.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren sa nedostal na server, aby príspevok prečítal. Z limitu sa nič nestrhlo.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Najprv ťukni na Obnoviť nákup, nech Wren môže obchodu ukázať tvoj doklad.';
+
+  @override
+  String get compEnabledEverything =>
+      'Bezplatný prístup zapnutý, vrátane miest z príspevku.';
+
+  @override
+  String get restoredEverything =>
+      'Obnovené. Sprievodcovia ľubovoľnej veľkosti a miesta z príspevku.';
+
+  @override
+  String get fromGuideOrPost => 'Z odkazu';
+
+  @override
+  String get fromPost => 'Z príspevku';
+
+  @override
+  String get importLinkTitle => 'Pridať z odkazu';
+
+  @override
+  String get importPostBody =>
+      'Vlož odkaz na reel alebo príspevok a Wren z neho vyčíta miesta. Wren si video nikdy nenecháva.';
+
+  @override
+  String get linkLabel => 'Odkaz';
+
+  @override
+  String get readLink => 'Prečítať';
 }

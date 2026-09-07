@@ -16,7 +16,7 @@ class LRo extends L {
 
   @override
   String get emptyBody =>
-      'Fă o captură de ecran cu ce ți se recomandă — un reel, o postare, un mesaj, o pagină dintr-un ghid de călătorie. Wren citește numele și le pune în Apple Hărți.';
+      'Trimite un reel sau o postare către Wren și scoate locurile din ea. Sau fă o captură de ecran la orice — un mesaj, o pagină dintr-un ghid — și Wren o citește. Numele ajung în Hărți.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LRo extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Fă o captură de ecran cu ce ți se recomandă — un reel, o postare, un mesaj, o pagină dintr-un ghid de călătorie. Wren citește numele și le trimite către aplicația de hărți de pe telefonul tău.';
+      'Trimite un reel sau o postare către Wren și scoate locurile din ea. Sau fă o captură de ecran la orice — un mesaj, o pagină dintr-un ghid — și Wren o citește. Numele ajung în aplicația de hărți de pe telefonul tău.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LRo extends L {
 
   @override
   String get regionNotDetected =>
-      'În capturi nu scria unde se află. Cu un oraș, căutarea devine mult mai precisă.';
+      'Nicăieri nu scria unde sunt aceste locuri. Un oraș face căutarea mult mai exactă.';
 
   @override
   String get cityOrRegion => 'Oraș sau regiune';
@@ -298,20 +298,8 @@ class LRo extends L {
   String get fromFile => 'Dintr-un fișier';
 
   @override
-  String get fromExistingGuide => 'Dintr-un ghid existent';
-
-  @override
-  String get importGuideTitle => 'Adaugă într-un ghid existent';
-
-  @override
   String get importGuideBody =>
-      'În Apple Hărți, deschide ghidul și partajează-l, apoi alege Copiază linkul. Lipește-l mai jos și Wren va citi locurile pe care le conține deja.';
-
-  @override
-  String get guideLinkLabel => 'Linkul ghidului';
-
-  @override
-  String get readGuide => 'Citește ghidul';
+      'În Apple Hărți, deschide ghidul și partajează-l, apoi alege Copiază linkul. Lipește-l mai jos și Wren va citi locurile pe care le conține deja. Un link către un reel sau o postare funcționează și aici.';
 
   @override
   String get importGuideNotALink =>
@@ -319,7 +307,7 @@ class LRo extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren citește capturi de ecran, nu linkuri către postări. Fă o captură a postării și trimite captura.';
+      'Postările de acolo nu pot fi citite de Wren. Fă capturi de ecran ale postării și trimite-le pe acelea — asta merge întotdeauna.';
 
   @override
   String get importGuideNothing =>
@@ -558,4 +546,92 @@ class LRo extends L {
   @override
   String get compExpiring =>
       'Wren nu a putut confirma accesul tău gratuit. Conectează-te la internet în următoarele zile pentru a-l păstra.';
+
+  @override
+  String get reelsTitle => 'Locuri dintr-o postare';
+
+  @override
+  String get reelsExplain =>
+      'Trimite un reel sau o postare către Wren și el scoate locurile din ea, gata de verificat și salvat. Wren nu păstrează niciodată videoclipul.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Tot pentru $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Adaugă postările pentru $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Scoate și locurile dintr-o postare primită.';
+
+  @override
+  String get readingPost => 'Se citește postarea…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'postări rămase luna aceasta: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Atât cu postările pe luna aceasta. Cota revine pe $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'câteva săptămâni';
+
+  @override
+  String get reelBusy =>
+      'Wren încă citește postarea anterioară. Mai încearcă într-o clipă.';
+
+  @override
+  String get reelUnavailable =>
+      'Postarea nu a putut fi deschisă. Poate fi privată, ștearsă sau indisponibilă aici.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren nu a putut citi postarea. Fă-i capturi de ecran și trimite-le pe acelea – asta merge întotdeauna.';
+
+  @override
+  String get reelNoPlaces =>
+      'Nimic din postare nu părea un loc în care se poate merge.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren nu a ajuns la server ca să citească postarea. Nu s-a scăzut nimic din cota ta.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Atinge întâi Restabilește achiziția, ca Wren să poată arăta magazinului chitanța ta.';
+
+  @override
+  String get compEnabledEverything =>
+      'Acces gratuit activat, inclusiv locuri dintr-o postare.';
+
+  @override
+  String get restoredEverything =>
+      'Restabilit. Ghiduri de orice mărime și locuri dintr-o postare.';
+
+  @override
+  String get fromGuideOrPost => 'Dintr-un link';
+
+  @override
+  String get fromPost => 'Dintr-o postare';
+
+  @override
+  String get importLinkTitle => 'Adaugă dintr-un link';
+
+  @override
+  String get importPostBody =>
+      'Lipește linkul unui reel sau al unei postări, iar Wren scoate locurile din ea. Wren nu păstrează niciodată videoclipul.';
+
+  @override
+  String get linkLabel => 'Link';
+
+  @override
+  String get readLink => 'Citește-l';
 }

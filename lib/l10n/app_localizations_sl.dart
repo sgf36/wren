@@ -16,7 +16,7 @@ class LSl extends L {
 
   @override
   String get emptyBody =>
-      'Posnemi zaslon tistega, kar ti priporočijo — reel, objavo, sporočilo, stran iz vodnika. Wren prebere imena in jih doda v Apple Zemljevide.';
+      'Deli z Wrenom reel ali objavo in iz nje bo prebral kraje. Ali pa posnemi zaslon česar koli — sporočila, strani iz vodnika — in Wren to prebere. Imena končajo v Zemljevidih.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LSl extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Posnemi zaslon tistega, kar ti priporočijo — reel, objavo, sporočilo, stran iz vodnika. Wren prebere imena in jih pošlje v aplikacijo z zemljevidi v telefonu.';
+      'Deli z Wrenom reel ali objavo in iz nje bo prebral kraje. Ali pa posnemi zaslon česar koli — sporočila, strani iz vodnika — in Wren to prebere. Imena končajo v aplikaciji za zemljevide na tvojem telefonu.';
 
   @override
   String get emptyNoteAndroid =>
@@ -81,7 +81,7 @@ class LSl extends L {
 
   @override
   String get regionNotDetected =>
-      'Na posnetkih zaslona ni pisalo, kje so. Z mestom je iskanje precej natančnejše.';
+      'Nikjer ni pisalo, kje so ti kraji. Z mestom je iskanje veliko natančnejše.';
 
   @override
   String get cityOrRegion => 'Mesto ali regija';
@@ -302,20 +302,8 @@ class LSl extends L {
   String get fromFile => 'Iz datoteke';
 
   @override
-  String get fromExistingGuide => 'Iz obstoječega vodnika';
-
-  @override
-  String get importGuideTitle => 'Dodaj v obstoječi vodnik';
-
-  @override
   String get importGuideBody =>
-      'V Apple Zemljevidih odpri vodnik, deli ga in izberi Kopiraj povezavo. Prilepi jo spodaj in Wren bo prebral kraje, ki so že v njem.';
-
-  @override
-  String get guideLinkLabel => 'Povezava do vodnika';
-
-  @override
-  String get readGuide => 'Preberi vodnik';
+      'V Apple Zemljevidih odpri vodnik, deli ga in izberi Kopiraj povezavo. Prilepi jo spodaj in Wren bo prebral kraje, ki so že v njem. Tu deluje tudi povezava do reela ali objave.';
 
   @override
   String get importGuideNotALink =>
@@ -323,7 +311,7 @@ class LSl extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren bere posnetke zaslona, ne povezav do objav. Naredi posnetek zaslona objave in ga deli.';
+      'Objav od tam Wren ne zna prebrati. Posnemi zaslone objave in deli tiste — to vedno deluje.';
 
   @override
   String get importGuideNothing =>
@@ -576,4 +564,91 @@ class LSl extends L {
   @override
   String get compExpiring =>
       'Wren ni mogel potrditi vašega brezplačnega dostopa. V naslednjih nekaj dneh se povežite z internetom, da ga obdržite.';
+
+  @override
+  String get reelsTitle => 'Kraji iz objave';
+
+  @override
+  String get reelsExplain =>
+      'Deli z Wrenom reel ali objavo in iz nje bo prebral kraje, pripravljene za pregled in shranjevanje. Wren videa nikoli ne obdrži.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Vse za $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Dodaj objave za $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Prebere tudi kraje iz deljene objave.';
+
+  @override
+  String get readingPost => 'Berem objavo…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'objav ta mesec je še: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'To so vse objave za ta mesec. Kvota se vrne $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'nekaj tednov';
+
+  @override
+  String get reelBusy => 'Wren še bere prejšnjo objavo. Poskusi čez trenutek.';
+
+  @override
+  String get reelUnavailable =>
+      'Te objave ni bilo mogoče odpreti. Morda je zasebna, izbrisana ali tu ni na voljo.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren te objave ni mogel prebrati. Naredi posnetke zaslona in deli tiste – to vedno deluje.';
+
+  @override
+  String get reelNoPlaces =>
+      'Nič v tej objavi ni bilo videti kot kraj, ki bi ga lahko obiskal.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren ni dosegel strežnika, da bi prebral objavo. S kvote ni bilo odšteto nič.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Najprej se dotakni Obnovi nakup, da lahko Wren trgovini pokaže tvoj račun.';
+
+  @override
+  String get compEnabledEverything =>
+      'Brezplačen dostop vklopljen, skupaj s kraji iz objave.';
+
+  @override
+  String get restoredEverything =>
+      'Obnovljeno. Vodniki poljubne velikosti in kraji iz objave.';
+
+  @override
+  String get fromGuideOrPost => 'Iz povezave';
+
+  @override
+  String get fromPost => 'Iz objave';
+
+  @override
+  String get importLinkTitle => 'Dodaj iz povezave';
+
+  @override
+  String get importPostBody =>
+      'Prilepi povezavo do reela ali objave in Wren bo iz nje prebral kraje. Wren videa nikoli ne obdrži.';
+
+  @override
+  String get linkLabel => 'Povezava';
+
+  @override
+  String get readLink => 'Preberi';
 }

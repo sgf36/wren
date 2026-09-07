@@ -16,7 +16,7 @@ class LFi extends L {
 
   @override
   String get emptyBody =>
-      'Ota kuvakaappaus siitä, mitä sinulle suositellaan — reelistä, julkaisusta, viestistä, matkaoppaan sivusta. Wren lukee nimet ja vie ne Apple Kartat -appiin.';
+      'Jaa reel tai julkaisu Wreniin, niin se lukee paikat siitä. Tai ota kuvakaappaus mistä tahansa — viestistä, matkaoppaan sivusta — niin Wren lukee sen. Nimet päätyvät Kartat-sovellukseen.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LFi extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Ota kuvakaappaus siitä, mitä sinulle suositellaan — reelistä, julkaisusta, viestistä, matkaoppaan sivusta. Wren lukee nimet ja lähettää ne puhelimesi karttasovellukseen.';
+      'Jaa reel tai julkaisu Wreniin, niin se lukee paikat siitä. Tai ota kuvakaappaus mistä tahansa — viestistä, matkaoppaan sivusta — niin Wren lukee sen. Nimet päätyvät puhelimesi karttasovellukseen.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LFi extends L {
 
   @override
   String get regionNotDetected =>
-      'Kuvakaappauksissa ei kerrottu, missä nämä ovat. Kaupungin kanssa haku osuu paljon paremmin.';
+      'Missään ei kerrottu, missä nämä paikat ovat. Kaupunki tekee hausta paljon tarkemman.';
 
   @override
   String get cityOrRegion => 'Kaupunki tai alue';
@@ -287,20 +287,8 @@ class LFi extends L {
   String get fromFile => 'Tiedostosta';
 
   @override
-  String get fromExistingGuide => 'Olemassa olevasta oppaasta';
-
-  @override
-  String get importGuideTitle => 'Lisää olemassa olevaan oppaaseen';
-
-  @override
   String get importGuideBody =>
-      'Avaa opas Apple Kartoissa, jaa se ja valitse ”Kopioi linkki”. Liitä linkki alle, niin Wren lukee paikat, jotka oppaassa jo ovat.';
-
-  @override
-  String get guideLinkLabel => 'Oppaan linkki';
-
-  @override
-  String get readGuide => 'Lue opas';
+      'Avaa opas Apple Kartoissa, jaa se ja valitse ”Kopioi linkki”. Liitä linkki alle, niin Wren lukee paikat, jotka oppaassa jo ovat. Myös linkki reeliin tai julkaisuun toimii tässä.';
 
   @override
   String get importGuideNotALink =>
@@ -308,7 +296,7 @@ class LFi extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren lukee kuvakaappauksia, ei linkkejä julkaisuihin. Ota julkaisusta kuvakaappaus ja jaa se.';
+      'Wren ei osaa lukea sen alustan julkaisuja. Ota julkaisusta kuvakaappaukset ja jaa ne — se toimii aina.';
 
   @override
   String get importGuideNothing =>
@@ -533,4 +521,92 @@ class LFi extends L {
   @override
   String get compExpiring =>
       'Wren ei voinut vahvistaa maksutonta käyttöoikeuttasi. Yhdistä internetiin lähipäivinä säilyttääksesi sen.';
+
+  @override
+  String get reelsTitle => 'Paikat julkaisusta';
+
+  @override
+  String get reelsExplain =>
+      'Jaa reel tai julkaisu Wreniin, niin se lukee paikat siitä valmiiksi tarkistettavaksi ja tallennettavaksi. Wren ei säilytä videota koskaan.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Kaikki hintaan $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Lisää julkaisut hintaan $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Lukee myös paikat jaetusta julkaisusta.';
+
+  @override
+  String get readingPost => 'Luetaan julkaisua…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'julkaisuja jäljellä tässä kuussa: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Siinä olivat tämän kuun julkaisut. Kiintiösi palaa $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'muutama viikko';
+
+  @override
+  String get reelBusy =>
+      'Wren lukee vielä edellistä julkaisua. Yritä hetken kuluttua uudelleen.';
+
+  @override
+  String get reelUnavailable =>
+      'Julkaisua ei voitu avata. Se voi olla yksityinen, poistettu tai ei saatavilla täällä.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren ei pystynyt lukemaan julkaisua. Ota siitä kuvakaappaukset ja jaa ne – se toimii aina.';
+
+  @override
+  String get reelNoPlaces =>
+      'Mikään julkaisussa ei näyttänyt paikalta, jossa voisi käydä.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren ei tavoittanut palvelinta lukeakseen julkaisun. Kiintiöstäsi ei veloitettu mitään.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Napauta ensin Palauta osto, jotta Wren voi näyttää kuittisi kaupalle.';
+
+  @override
+  String get compEnabledEverything =>
+      'Ilmainen käyttöoikeus käytössä, mukaan lukien paikat julkaisusta.';
+
+  @override
+  String get restoredEverything =>
+      'Palautettu. Minkä kokoisia oppaita tahansa ja paikat julkaisusta.';
+
+  @override
+  String get fromGuideOrPost => 'Linkistä';
+
+  @override
+  String get fromPost => 'Julkaisusta';
+
+  @override
+  String get importLinkTitle => 'Lisää linkistä';
+
+  @override
+  String get importPostBody =>
+      'Liitä reelin tai julkaisun linkki, niin Wren lukee paikat siitä. Wren ei säilytä videota koskaan.';
+
+  @override
+  String get linkLabel => 'Linkki';
+
+  @override
+  String get readLink => 'Lue se';
 }

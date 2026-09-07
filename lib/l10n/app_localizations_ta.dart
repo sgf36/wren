@@ -16,7 +16,7 @@ class LTa extends L {
 
   @override
   String get emptyBody =>
-      'யாராவது பரிந்துரைப்பதைத் திரைப்பிடிப்பு எடுத்துக் கொள்ளுங்கள் — ஒரு ரீல், ஒரு பதிவு, ஒரு செய்தி, பயண நூலின் ஒரு பக்கம். Wren பெயர்களைப் படித்து Apple Maps-இல் சேர்த்துவிடும்.';
+      'ஒரு ரீல் அல்லது இடுகையை Wren-க்குப் பகிருங்கள், அதிலிருந்து இடங்களை வாசித்துத் தரும். அல்லது எதற்கும் திரைப்பிடிப்பு எடுங்கள் — ஒரு செய்தி, பயண வழிகாட்டியின் ஒரு பக்கம் — Wren அதையும் வாசிக்கும். பெயர்கள் வரைபடத்துக்குச் செல்லும்.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LTa extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'யாராவது பரிந்துரைப்பதைத் திரைப்பிடிப்பு எடுத்துக் கொள்ளுங்கள் — ஒரு ரீல், ஒரு பதிவு, ஒரு செய்தி, பயண நூலின் ஒரு பக்கம். Wren பெயர்களைப் படித்து அவற்றை உங்கள் ஃபோனின் வரைபட ஆப்ஸுக்கு அனுப்பிவிடும்.';
+      'ஒரு ரீல் அல்லது இடுகையை Wren-க்குப் பகிருங்கள், அதிலிருந்து இடங்களை வாசித்துத் தரும். அல்லது எதற்கும் திரைப்பிடிப்பு எடுங்கள் — ஒரு செய்தி, பயண வழிகாட்டியின் ஒரு பக்கம் — Wren அதையும் வாசிக்கும். பெயர்கள் உங்கள் ஃபோனின் வரைபட செயலிக்குச் செல்லும்.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LTa extends L {
 
   @override
   String get regionNotDetected =>
-      'இவை எங்கே உள்ளன என்பது திரைப்பிடிப்புகளில் இல்லை. நகரத்தைக் குறிப்பிட்டால் தேடல் மிகவும் துல்லியமாகும்.';
+      'இந்த இடங்கள் எங்கே இருக்கின்றன என்று எங்கும் சொல்லப்படவில்லை. நகரத்தைச் சொன்னால் தேடல் மிகவும் துல்லியமாகும்.';
 
   @override
   String get cityOrRegion => 'நகரம் அல்லது பகுதி';
@@ -297,20 +297,8 @@ class LTa extends L {
   String get fromFile => 'ஒரு கோப்பிலிருந்து';
 
   @override
-  String get fromExistingGuide => 'ஏற்கெனவே உள்ள வழிகாட்டியிலிருந்து';
-
-  @override
-  String get importGuideTitle => 'ஏற்கெனவே உள்ள வழிகாட்டியில் சேர்க்கவும்';
-
-  @override
   String get importGuideBody =>
-      'Apple Maps-இல் வழிகாட்டியைத் திறந்து பங்கிடுங்கள், பிறகு இணைப்பை நகலெடு என்பதைத் தேர்ந்தெடுங்கள். அதைக் கீழே ஒட்டினால், அதில் ஏற்கெனவே உள்ள இடங்களை Wren படித்துக்கொள்ளும்.';
-
-  @override
-  String get guideLinkLabel => 'வழிகாட்டியின் இணைப்பு';
-
-  @override
-  String get readGuide => 'வழிகாட்டியைப் படி';
+      'Apple Maps-இல் வழிகாட்டியைத் திறந்து பங்கிடுங்கள், பிறகு இணைப்பை நகலெடு என்பதைத் தேர்ந்தெடுங்கள். அதைக் கீழே ஒட்டினால், அதில் ஏற்கெனவே உள்ள இடங்களை Wren படித்துக்கொள்ளும். ரீல் அல்லது இடுகையின் இணைப்பும் இங்கே வேலை செய்யும்.';
 
   @override
   String get importGuideNotALink =>
@@ -318,7 +306,7 @@ class LTa extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren திரைப்பிடிப்புகளைப் படிக்கும், இடுகைகளின் இணைப்புகளை அல்ல. இடுகையின் திரைப்பிடிப்பை எடுத்து அதைப் பகிரவும்.';
+      'அங்குள்ள இடுகைகளை Wren-ஆல் வாசிக்க முடியாது. இடுகையின் திரைப்பிடிப்புகள் எடுத்து அவற்றைப் பகிருங்கள் — அது எப்போதும் வேலை செய்யும்.';
 
   @override
   String get importGuideNothing =>
@@ -545,4 +533,92 @@ class LTa extends L {
   @override
   String get compExpiring =>
       'உங்கள் இலவச அணுகலை Wren உறுதிப்படுத்த முடியவில்லை. அதைத் தக்கவைக்க அடுத்த சில நாட்களில் இணையத்துடன் இணைக்கவும்.';
+
+  @override
+  String get reelsTitle => 'இடுகையிலிருந்து இடங்கள்';
+
+  @override
+  String get reelsExplain =>
+      'ஒரு ரீல் அல்லது இடுகையை Wren-க்குப் பகிருங்கள், அதிலிருந்து இடங்களை வாசித்துத் தரும் — சரிபார்த்துச் சேமித்தால் போதும். Wren வீடியோவை ஒருபோதும் வைத்திருப்பதில்லை.';
+
+  @override
+  String everythingFor(String price) {
+    return 'எல்லாமும் $priceக்கு';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'இடுகைகளைச் சேர்க்க $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'பகிரப்பட்ட இடுகையிலிருந்தும் இடங்களை வாசிக்கும்.';
+
+  @override
+  String get readingPost => 'இடுகை வாசிக்கப்படுகிறது…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'இம்மாதம் மீதமுள்ள இடுகைகள்: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'இம்மாதத்திற்கான இடுகைகள் இத்துடன். உங்கள் வரம்பு $date அன்று திரும்பும்.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'சில வாரங்கள்';
+
+  @override
+  String get reelBusy =>
+      'Wren இன்னும் முந்தைய இடுகையை வாசித்துக்கொண்டிருக்கிறது. சிறிது நேரம் கழித்து முயலுங்கள்.';
+
+  @override
+  String get reelUnavailable =>
+      'அந்த இடுகையைத் திறக்க முடியவில்லை. அது தனிப்பட்டதாக, நீக்கப்பட்டதாக, அல்லது இங்கே கிடைக்காததாக இருக்கலாம்.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren-ஆல் அந்த இடுகையை வாசிக்க முடியவில்லை. திரைப்பிடிப்புகள் எடுத்து அவற்றைப் பகிருங்கள் — அது எப்போதும் வேலை செய்யும்.';
+
+  @override
+  String get reelNoPlaces =>
+      'அந்த இடுகையில் செல்லக்கூடிய இடம் போல எதுவும் தெரியவில்லை.';
+
+  @override
+  String get reelUnreachable =>
+      'இடுகையை வாசிக்க Wren சேவையகத்தை அடைய முடியவில்லை. உங்கள் வரம்பிலிருந்து எதுவும் குறைக்கப்படவில்லை.';
+
+  @override
+  String get reelNeedsRestore =>
+      'முதலில் கொள்முதலை மீட்டமை என்பதைத் தட்டுங்கள், அப்போதுதான் Wren கடைக்கு உங்கள் ரசீதைக் காட்ட முடியும்.';
+
+  @override
+  String get compEnabledEverything =>
+      'இலவச அணுகல் இயக்கப்பட்டது, இடுகையிலிருந்து இடங்கள் உட்பட.';
+
+  @override
+  String get restoredEverything =>
+      'மீட்டமைக்கப்பட்டது. எந்த அளவிலான வழிகாட்டிகளும், இடுகையிலிருந்து இடங்களும்.';
+
+  @override
+  String get fromGuideOrPost => 'இணைப்பிலிருந்து';
+
+  @override
+  String get fromPost => 'இடுகையிலிருந்து';
+
+  @override
+  String get importLinkTitle => 'இணைப்பிலிருந்து சேர்';
+
+  @override
+  String get importPostBody =>
+      'ஒரு ரீல் அல்லது இடுகையின் இணைப்பை ஒட்டுங்கள், Wren அதிலிருந்து இடங்களை வாசிக்கும். Wren வீடியோவை ஒருபோதும் வைத்திருப்பதில்லை.';
+
+  @override
+  String get linkLabel => 'இணைப்பு';
+
+  @override
+  String get readLink => 'வாசி';
 }

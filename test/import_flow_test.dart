@@ -165,9 +165,9 @@ void main() {
     ]);
 
     Future<void> paste(WidgetTester tester, String text) async {
-      await addFrom(tester, 'From an existing guide');
+      await addFrom(tester, 'From a link');
       await tester.enterText(find.byType(TextField), text);
-      await tester.tap(find.text('Read guide'));
+      await tester.tap(find.text('Read it'));
       await tester.pumpAndSettle();
     }
 

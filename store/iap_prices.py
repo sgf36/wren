@@ -1,4 +1,4 @@
-"""Read the real per-territory price of the unlock out of App Store Connect.
+"""Read the real per-territory price of every purchase out of App Store Connect.
 
     python store/iap_prices.py            # show them
     python store/iap_prices.py --write    # and update store/shot_prices.json
@@ -26,7 +26,15 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from submit import call, errs  # noqa: E402  same key, same token handling
 
-IAP = "com.spencerfields.littlebird.unlimited"
+# Every product the paywall can show a price for. The sheet shows two at once
+# — the answer to what was asked and the larger option beside it — so a single
+# figure in shot_prices.json would put the same price under both buttons in a
+# screenshot, which is the kind of wrong that looks right.
+PRODUCTS = [
+    "com.spencerfields.littlebird.unlimited",
+    "com.spencerfields.littlebird.everything",
+    "com.spencerfields.littlebird.reels.upgrade",
+]
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE / "shot_prices.json"
 
@@ -61,18 +69,26 @@ SHOT_TERRITORIES = [
 ]
 
 
-def iap_id():
-    st, d = call(
-        "GET",
-        f"apps/6802053382/inAppPurchasesV2?filter[productId]={IAP}&limit=10",
-        version="v1",
-    )
-    if st != 200:
-        sys.exit(f"inAppPurchasesV2 -> {st}: {errs(d)}")
-    for item in d.get("data", []):
-        if item.get("attributes", {}).get("productId") == IAP:
-            return item["id"]
-    sys.exit(f"no in-app purchase with productId {IAP}")
+_ids = {}
+
+
+def iap_id(product):
+    """The record id for one product id.
+
+    Listed and matched here rather than filtered by the API: filtering on a
+    dotted productId answered 500 on 2026-09-07, and one unfiltered list serves
+    all three anyway.
+    """
+    if not _ids:
+        st, d = call("GET", "apps/6802053382/inAppPurchasesV2?limit=50",
+                     version="v1")
+        if st != 200:
+            sys.exit(f"inAppPurchasesV2 -> {st}: {errs(d)}")
+        _ids.update({i["attributes"]["productId"]: i["id"]
+                     for i in d.get("data", [])})
+    if product not in _ids:
+        sys.exit(f"no in-app purchase with productId {product}")
+    return _ids[product]
 
 
 def schedule_id(iap):
@@ -139,26 +155,30 @@ def main():
     except (AttributeError, OSError):
         pass
 
-    sched = schedule_id(iap_id())
-    prices = territory_prices(sched, [t for _, t, _ in SHOT_TERRITORIES])
-
     out, missing = {}, []
-    print(f"{'locale':10} {'territory':10} {'amount':>10}  written as")
-    for asc, terr, cldr in SHOT_TERRITORIES:
-        got = prices.get(terr)
-        if not got:
-            missing.append(f"{asc} ({terr})")
-            print(f"{asc:10} {terr:10} {'—':>10}  not returned by the API")
-            continue
-        amount, currency = got
-        if not currency:
-            missing.append(f"{asc} ({terr}, no currency)")
-            continue
-        # CLDR decides symbol, placement, separators and digits. Every one of
-        # those differs somewhere in this list.
-        text = format_currency(float(amount), currency, locale=cldr)
-        out[asc] = text
-        print(f"{asc:10} {terr:10} {amount:>10}  {text}")
+    for product in PRODUCTS:
+        sched = schedule_id(iap_id(product))
+        prices = territory_prices(sched, [t for _, t, _ in SHOT_TERRITORIES])
+        per_locale = {}
+        print()
+        print(product)
+        print(f"{'locale':10} {'territory':10} {'amount':>10}  written as")
+        for asc, terr, cldr in SHOT_TERRITORIES:
+            got = prices.get(terr)
+            if not got:
+                missing.append(f"{product} {asc} ({terr})")
+                print(f"{asc:10} {terr:10} {'—':>10}  not returned by the API")
+                continue
+            amount, currency = got
+            if not currency:
+                missing.append(f"{product} {asc} ({terr}, no currency)")
+                continue
+            # CLDR decides symbol, placement, separators and digits. Every one
+            # of those differs somewhere in this list.
+            text = format_currency(float(amount), currency, locale=cldr)
+            per_locale[asc] = text
+            print(f"{asc:10} {terr:10} {amount:>10}  {text}")
+        out[product] = per_locale
 
     if missing:
         print(f"\nno price for: {', '.join(missing)}")
@@ -169,7 +189,8 @@ def main():
         OUT.write_text(
             json.dumps(out, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8")
-        print(f"\nwrote {OUT} ({len(out)} locales)")
+        print(f"\nwrote {OUT} ({len(out)} products x "
+              f"{max((len(v) for v in out.values()), default=0)} locales)")
     return 1 if missing else 0
 
 

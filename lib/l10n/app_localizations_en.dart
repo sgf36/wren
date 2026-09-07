@@ -16,7 +16,7 @@ class LEn extends L {
 
   @override
   String get emptyBody =>
-      'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and puts them in Apple Maps.';
+      'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to Apple Maps.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LEn extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Screenshot what people tell you about — a reel, a post, a message, a page of a guidebook. Wren reads the names and sends them to the map app on your phone.';
+      'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to the map app on your phone.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LEn extends L {
 
   @override
   String get regionNotDetected =>
-      'Nothing in the screenshots said where these are. A city makes the search far more accurate.';
+      'Nothing said where these places are. A city makes the search far more accurate.';
 
   @override
   String get cityOrRegion => 'City or region';
@@ -301,20 +301,8 @@ class LEn extends L {
   String get fromFile => 'From a file';
 
   @override
-  String get fromExistingGuide => 'From an existing guide';
-
-  @override
-  String get importGuideTitle => 'Add to an existing guide';
-
-  @override
   String get importGuideBody =>
-      'In Apple Maps, open the guide and share it, then choose Copy Link. Paste it below and Wren will read the places it already holds.';
-
-  @override
-  String get guideLinkLabel => 'Guide link';
-
-  @override
-  String get readGuide => 'Read guide';
+      'In Apple Maps, open the guide and share it, then choose Copy Link. Paste it below and Wren will read the places it already holds. A link to a reel or a post works here too.';
 
   @override
   String get importGuideNotALink =>
@@ -322,7 +310,7 @@ class LEn extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren reads screenshots, not links to posts. Screenshot the post and share that instead.';
+      'Wren cannot read posts from there. Screenshot the post and share the screenshots instead — that always works.';
 
   @override
   String get importGuideNothing => 'That guide holds nothing Wren can add to.';
@@ -546,4 +534,99 @@ class LEn extends L {
   @override
   String get compExpiring =>
       'Wren could not confirm your complimentary access. Connect to the internet in the next few days to keep it.';
+
+  @override
+  String get reelsTitle => 'Places from a post';
+
+  @override
+  String get reelsExplain =>
+      'Share a reel or a post to Wren and it reads the places out of it, ready to check and save. Wren never keeps the video.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Everything for $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Add posts for $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Also reads places out of a shared post.';
+
+  @override
+  String get readingPost => 'Reading that post…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count posts left this month',
+      one: '1 post left this month',
+      zero: 'no posts left this month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'That is all the posts for this month. The allowance comes back on $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'a few weeks';
+
+  @override
+  String get reelBusy =>
+      'Wren is still reading the last post. Try again in a moment.';
+
+  @override
+  String get reelUnavailable =>
+      'That post could not be opened. It may be private, deleted, or not available here.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren could not read that post. Screenshot it and share the screenshots instead — that always works.';
+
+  @override
+  String get reelNoPlaces =>
+      'Nothing in that post looked like a place you could visit.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren could not reach the server to read that post. Nothing was charged against your allowance.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Tap Restore purchase first, so Wren can show the store your receipt.';
+
+  @override
+  String get compEnabledEverything =>
+      'Complimentary access enabled, including places from a post.';
+
+  @override
+  String get restoredEverything =>
+      'Restored. Guides of any size, and places from a post.';
+
+  @override
+  String get fromGuideOrPost => 'From a link';
+
+  @override
+  String get fromPost => 'From a post';
+
+  @override
+  String get importLinkTitle => 'Add from a link';
+
+  @override
+  String get importPostBody =>
+      'Paste a link to a reel or a post and Wren will read the places out of it. Wren never keeps the video.';
+
+  @override
+  String get linkLabel => 'Link';
+
+  @override
+  String get readLink => 'Read it';
 }

@@ -16,7 +16,7 @@ class LTh extends L {
 
   @override
   String get emptyBody =>
-      'แคปหน้าจอสิ่งที่คนแนะนำคุณ — รีล โพสต์ ข้อความ หรือหน้าหนังสือนำเที่ยว Wren จะอ่านชื่อแล้วใส่ลงใน Apple Maps ให้';
+      'แชร์รีลหรือโพสต์มาที่ Wren แล้วมันจะอ่านสถานที่ออกมาให้ หรือแคปหน้าจออะไรก็ได้ — ข้อความ หน้าหนึ่งของคู่มือท่องเที่ยว — แล้ว Wren จะอ่านให้ ชื่อจะไปอยู่ในแผนที่';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LTh extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'แคปหน้าจอสิ่งที่คนแนะนำคุณ — รีล โพสต์ ข้อความ หรือหน้าหนังสือนำเที่ยว Wren จะอ่านชื่อแล้วส่งไปยังแอปแผนที่ในโทรศัพท์ของคุณ';
+      'แชร์รีลหรือโพสต์มาที่ Wren แล้วมันจะอ่านสถานที่ออกมาให้ หรือแคปหน้าจออะไรก็ได้ — ข้อความ หน้าหนึ่งของคู่มือท่องเที่ยว — แล้ว Wren จะอ่านให้ ชื่อจะไปอยู่ในแอปแผนที่บนเครื่องของคุณ';
 
   @override
   String get emptyNoteAndroid =>
@@ -78,7 +78,7 @@ class LTh extends L {
 
   @override
   String get regionNotDetected =>
-      'ในภาพหน้าจอไม่ได้บอกว่าอยู่ที่ไหน ถ้าใส่ชื่อเมือง การค้นหาจะแม่นยำขึ้นมาก';
+      'ไม่มีตรงไหนบอกว่าสถานที่เหล่านี้อยู่ที่ไหน ระบุเมืองจะช่วยให้ค้นหาได้แม่นยำขึ้นมาก';
 
   @override
   String get cityOrRegion => 'เมืองหรือภูมิภาค';
@@ -281,20 +281,8 @@ class LTh extends L {
   String get fromFile => 'จากไฟล์';
 
   @override
-  String get fromExistingGuide => 'จากไกด์ที่มีอยู่';
-
-  @override
-  String get importGuideTitle => 'เพิ่มลงในไกด์ที่มีอยู่';
-
-  @override
   String get importGuideBody =>
-      'ใน Apple Maps เปิดไกด์นั้นแล้วแชร์ จากนั้นเลือก “คัดลอกลิงก์” วางลงข้างล่างนี้ แล้ว Wren จะอ่านที่ที่อยู่ในไกด์นั้นให้';
-
-  @override
-  String get guideLinkLabel => 'ลิงก์ไกด์';
-
-  @override
-  String get readGuide => 'อ่านไกด์';
+      'ใน Apple Maps เปิดไกด์นั้นแล้วแชร์ จากนั้นเลือก “คัดลอกลิงก์” วางลงข้างล่างนี้ แล้ว Wren จะอ่านที่ที่อยู่ในไกด์นั้นให้ ลิงก์รีลหรือโพสต์ก็ใช้ได้ที่นี่';
 
   @override
   String get importGuideNotALink =>
@@ -302,7 +290,7 @@ class LTh extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren อ่านภาพหน้าจอ ไม่ใช่ลิงก์โพสต์ ถ่ายภาพหน้าจอของโพสต์แล้วแชร์ภาพนั้นแทน';
+      'Wren อ่านโพสต์จากที่นั่นไม่ได้ ให้แคปหน้าจอโพสต์แล้วแชร์ภาพแทน วิธีนี้ได้ผลเสมอ';
 
   @override
   String get importGuideNothing => 'ไกด์นั้นไม่มีอะไรที่ Wren เพิ่มได้';
@@ -509,4 +497,89 @@ class LTh extends L {
   @override
   String get compExpiring =>
       'Wren ไม่สามารถยืนยันสิทธิ์การใช้งานฟรีของคุณได้ โปรดเชื่อมต่ออินเทอร์เน็ตภายในไม่กี่วันข้างหน้าเพื่อรักษาสิทธิ์ไว้';
+
+  @override
+  String get reelsTitle => 'สถานที่จากโพสต์';
+
+  @override
+  String get reelsExplain =>
+      'แชร์รีลหรือโพสต์มาที่ Wren แล้วมันจะอ่านสถานที่ออกมาให้ พร้อมตรวจและบันทึก Wren ไม่เก็บวิดีโอไว้เลย';
+
+  @override
+  String everythingFor(String price) {
+    return 'ทั้งหมดในราคา $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'เพิ่มโพสต์ในราคา $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts => 'อ่านสถานที่จากโพสต์ที่แชร์มาได้ด้วย';
+
+  @override
+  String get readingPost => 'กำลังอ่านโพสต์…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'โพสต์ที่เหลือเดือนนี้: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'หมดโควตาโพสต์ของเดือนนี้แล้ว โควตาจะกลับมาวันที่ $date';
+  }
+
+  @override
+  String get reelQuotaSoon => 'อีกไม่กี่สัปดาห์';
+
+  @override
+  String get reelBusy => 'Wren ยังอ่านโพสต์ก่อนหน้าอยู่ ลองใหม่อีกสักครู่';
+
+  @override
+  String get reelUnavailable =>
+      'เปิดโพสต์นั้นไม่ได้ อาจเป็นโพสต์ส่วนตัว ถูกลบ หรือไม่พร้อมใช้งานที่นี่';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren อ่านโพสต์นั้นไม่ได้ ให้แคปหน้าจอแล้วแชร์ภาพแทน วิธีนี้ได้ผลเสมอ';
+
+  @override
+  String get reelNoPlaces => 'ไม่มีอะไรในโพสต์นั้นที่ดูเหมือนสถานที่ที่ไปได้';
+
+  @override
+  String get reelUnreachable =>
+      'Wren ติดต่อเซิร์ฟเวอร์เพื่ออ่านโพสต์ไม่ได้ ไม่มีการหักโควตาของคุณ';
+
+  @override
+  String get reelNeedsRestore =>
+      'แตะกู้คืนการซื้อก่อน เพื่อให้ Wren แสดงใบเสร็จของคุณกับสโตร์ได้';
+
+  @override
+  String get compEnabledEverything =>
+      'เปิดสิทธิ์ใช้งานฟรีแล้ว รวมถึงสถานที่จากโพสต์';
+
+  @override
+  String get restoredEverything =>
+      'กู้คืนแล้ว ไกด์ขนาดใดก็ได้ และสถานที่จากโพสต์';
+
+  @override
+  String get fromGuideOrPost => 'จากลิงก์';
+
+  @override
+  String get fromPost => 'จากโพสต์';
+
+  @override
+  String get importLinkTitle => 'เพิ่มจากลิงก์';
+
+  @override
+  String get importPostBody =>
+      'วางลิงก์รีลหรือโพสต์ แล้ว Wren จะอ่านสถานที่ออกมาให้ Wren ไม่เก็บวิดีโอไว้เลย';
+
+  @override
+  String get linkLabel => 'ลิงก์';
+
+  @override
+  String get readLink => 'อ่านเลย';
 }

@@ -16,7 +16,7 @@ class LDa extends L {
 
   @override
   String get emptyBody =>
-      'Tag et skærmbillede af det, folk anbefaler dig — en reel, et opslag, en besked, en side i en rejseguide. Wren læser navnene og lægger dem i Apple Kort.';
+      'Del et reel eller et opslag med Wren, så læser Wren stederne ud af det. Eller tag et skærmbillede af hvad som helst — en besked, en side i en rejseguide — så læser Wren det. Navnene ender i Kort.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LDa extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Tag et skærmbillede af det, folk anbefaler dig — en reel, et opslag, en besked, en side i en rejseguide. Wren læser navnene og sender dem til kort-appen på din telefon.';
+      'Del et reel eller et opslag med Wren, så læser Wren stederne ud af det. Eller tag et skærmbillede af hvad som helst — en besked, en side i en rejseguide — så læser Wren det. Navnene ender i kortappen på din telefon.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LDa extends L {
 
   @override
   String get regionNotDetected =>
-      'Der stod ikke i skærmbillederne, hvor de ligger. Med en by bliver søgningen langt mere præcis.';
+      'Der stod ingen steder, hvor de her steder ligger. En by gør søgningen langt mere præcis.';
 
   @override
   String get cityOrRegion => 'By eller område';
@@ -294,20 +294,8 @@ class LDa extends L {
   String get fromFile => 'Fra en fil';
 
   @override
-  String get fromExistingGuide => 'Fra en eksisterende guide';
-
-  @override
-  String get importGuideTitle => 'Føj til en eksisterende guide';
-
-  @override
   String get importGuideBody =>
-      'Åbn guiden i Apple Kort, del den, og vælg »Kopier link«. Indsæt linket nedenfor, så læser Wren de steder, den allerede indeholder.';
-
-  @override
-  String get guideLinkLabel => 'Link til guiden';
-
-  @override
-  String get readGuide => 'Læs guide';
+      'Åbn guiden i Apple Kort, del den, og vælg »Kopier link«. Indsæt linket nedenfor, så læser Wren de steder, den allerede indeholder. Et link til et reel eller et opslag virker også her.';
 
   @override
   String get importGuideNotALink =>
@@ -315,7 +303,7 @@ class LDa extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren læser skærmbilleder, ikke links til opslag. Tag et skærmbillede af opslaget, og del det i stedet.';
+      'Opslag derfra kan Wren ikke læse. Tag skærmbilleder af opslaget og del dem — det virker altid.';
 
   @override
   String get importGuideNothing =>
@@ -537,4 +525,92 @@ class LDa extends L {
   @override
   String get compExpiring =>
       'Wren kunne ikke bekræfte din gratis adgang. Opret forbindelse til internettet i løbet af de næste par dage for at beholde den.';
+
+  @override
+  String get reelsTitle => 'Steder fra et opslag';
+
+  @override
+  String get reelsExplain =>
+      'Del et reel eller et opslag med Wren, så læser Wren stederne ud af det, klar til at tjekke og gemme. Wren beholder aldrig videoen.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Det hele for $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Tilføj opslag for $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Læser også steder ud af et delt opslag.';
+
+  @override
+  String get readingPost => 'Læser opslaget…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'opslag tilbage denne måned: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Det var alle opslag for denne måned. Din kvote vender tilbage den $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'et par uger';
+
+  @override
+  String get reelBusy =>
+      'Wren læser stadig det forrige opslag. Prøv igen om et øjeblik.';
+
+  @override
+  String get reelUnavailable =>
+      'Opslaget kunne ikke åbnes. Det er måske privat, slettet eller ikke tilgængeligt her.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren kunne ikke læse det opslag. Tag skærmbilleder af det og del dem i stedet – det virker altid.';
+
+  @override
+  String get reelNoPlaces =>
+      'Intet i det opslag lignede et sted, man kan besøge.';
+
+  @override
+  String get reelUnreachable =>
+      'Wren kunne ikke nå serveren for at læse opslaget. Der blev ikke trukket noget fra din kvote.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Tryk på Gendan køb først, så Wren kan vise din kvittering til butikken.';
+
+  @override
+  String get compEnabledEverything =>
+      'Gratis adgang slået til, inklusive steder fra et opslag.';
+
+  @override
+  String get restoredEverything =>
+      'Gendannet. Guider i alle størrelser og steder fra et opslag.';
+
+  @override
+  String get fromGuideOrPost => 'Fra et link';
+
+  @override
+  String get fromPost => 'Fra et opslag';
+
+  @override
+  String get importLinkTitle => 'Tilføj fra et link';
+
+  @override
+  String get importPostBody =>
+      'Indsæt linket til et reel eller et opslag, så læser Wren stederne ud af det. Wren beholder aldrig videoen.';
+
+  @override
+  String get linkLabel => 'Link';
+
+  @override
+  String get readLink => 'Læs det';
 }

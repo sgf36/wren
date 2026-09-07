@@ -16,7 +16,7 @@ class LEl extends L {
 
   @override
   String get emptyBody =>
-      'Βγάλε στιγμιότυπο οθόνης απ\' ό,τι σου προτείνουν — ένα reel, μια ανάρτηση, ένα μήνυμα, μια σελίδα από ταξιδιωτικό οδηγό. Το Wren διαβάζει τα ονόματα και τα βάζει στους Χάρτες της Apple.';
+      'Μοιράσου ένα reel ή μια ανάρτηση με το Wren και θα διαβάσει τα μέρη από μέσα. Ή βγάλε στιγμιότυπο οθόνης από οτιδήποτε — ένα μήνυμα, μια σελίδα ταξιδιωτικού οδηγού — και το Wren το διαβάζει. Τα ονόματα καταλήγουν στους Χάρτες.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LEl extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Βγάλε στιγμιότυπο οθόνης απ\' ό,τι σου προτείνουν — ένα reel, μια ανάρτηση, ένα μήνυμα, μια σελίδα από ταξιδιωτικό οδηγό. Το Wren διαβάζει τα ονόματα και τα στέλνει στην εφαρμογή χαρτών του τηλεφώνου.';
+      'Μοιράσου ένα reel ή μια ανάρτηση με το Wren και θα διαβάσει τα μέρη από μέσα. Ή βγάλε στιγμιότυπο οθόνης από οτιδήποτε — ένα μήνυμα, μια σελίδα ταξιδιωτικού οδηγού — και το Wren το διαβάζει. Τα ονόματα καταλήγουν στην εφαρμογή χαρτών του κινητού σου.';
 
   @override
   String get emptyNoteAndroid =>
@@ -80,7 +80,7 @@ class LEl extends L {
 
   @override
   String get regionNotDetected =>
-      'Στα στιγμιότυπα δεν έλεγε πού βρίσκονται. Με μια πόλη η αναζήτηση γίνεται πολύ πιο ακριβής.';
+      'Πουθενά δεν έλεγε πού βρίσκονται αυτά τα μέρη. Μια πόλη κάνει την αναζήτηση πολύ πιο ακριβή.';
 
   @override
   String get cityOrRegion => 'Πόλη ή περιοχή';
@@ -304,20 +304,8 @@ class LEl extends L {
   String get fromFile => 'Από αρχείο';
 
   @override
-  String get fromExistingGuide => 'Από υπάρχοντα οδηγό';
-
-  @override
-  String get importGuideTitle => 'Προσθήκη σε υπάρχοντα οδηγό';
-
-  @override
   String get importGuideBody =>
-      'Άνοιξε τον οδηγό στους Χάρτες της Apple, κοινοποίησέ τον και διάλεξε «Αντιγραφή συνδέσμου». Επικόλλησέ τον παρακάτω και το Wren θα διαβάσει τα μέρη που έχει ήδη μέσα.';
-
-  @override
-  String get guideLinkLabel => 'Σύνδεσμος οδηγού';
-
-  @override
-  String get readGuide => 'Ανάγνωση οδηγού';
+      'Άνοιξε τον οδηγό στους Χάρτες της Apple, κοινοποίησέ τον και διάλεξε «Αντιγραφή συνδέσμου». Επικόλλησέ τον παρακάτω και το Wren θα διαβάσει τα μέρη που έχει ήδη μέσα. Ένας σύνδεσμος προς reel ή ανάρτηση δουλεύει κι εδώ.';
 
   @override
   String get importGuideNotALink =>
@@ -325,7 +313,7 @@ class LEl extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Το Wren διαβάζει στιγμιότυπα οθόνης, όχι συνδέσμους σε αναρτήσεις. Τράβηξε στιγμιότυπο της ανάρτησης και μοιράσου το.';
+      'Το Wren δεν μπορεί να διαβάσει αναρτήσεις από εκεί. Βγάλε στιγμιότυπα οθόνης της ανάρτησης και μοιράσου αυτά — δουλεύει πάντα.';
 
   @override
   String get importGuideNothing =>
@@ -550,4 +538,92 @@ class LEl extends L {
   @override
   String get compExpiring =>
       'Το Wren δεν μπόρεσε να επιβεβαιώσει τη δωρεάν πρόσβασή σας. Συνδεθείτε στο διαδίκτυο τις επόμενες ημέρες για να τη διατηρήσετε.';
+
+  @override
+  String get reelsTitle => 'Μέρη από μια ανάρτηση';
+
+  @override
+  String get reelsExplain =>
+      'Μοιράσου ένα reel ή μια ανάρτηση με το Wren και θα διαβάσει τα μέρη από μέσα, έτοιμα για έλεγχο και αποθήκευση. Το Wren δεν κρατάει ποτέ το βίντεο.';
+
+  @override
+  String everythingFor(String price) {
+    return 'Όλα με $price';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'Πρόσθεσε τις αναρτήσεις με $price';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'Διαβάζει επίσης μέρη από μια ανάρτηση που σου μοιράστηκαν.';
+
+  @override
+  String get readingPost => 'Διαβάζω την ανάρτηση…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'αναρτήσεις που απομένουν αυτόν τον μήνα: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'Αυτές ήταν οι αναρτήσεις για αυτόν τον μήνα. Το όριό σου επιστρέφει στις $date.';
+  }
+
+  @override
+  String get reelQuotaSoon => 'λίγες εβδομάδες';
+
+  @override
+  String get reelBusy =>
+      'Το Wren διαβάζει ακόμα την προηγούμενη ανάρτηση. Δοκίμασε σε λίγο.';
+
+  @override
+  String get reelUnavailable =>
+      'Η ανάρτηση δεν άνοιξε. Μπορεί να είναι ιδιωτική, διαγραμμένη ή μη διαθέσιμη εδώ.';
+
+  @override
+  String get reelCouldNotRead =>
+      'Το Wren δεν μπόρεσε να διαβάσει την ανάρτηση. Βγάλε στιγμιότυπα οθόνης και μοιράσου αυτά – δουλεύει πάντα.';
+
+  @override
+  String get reelNoPlaces =>
+      'Τίποτα σε αυτή την ανάρτηση δεν έμοιαζε με μέρος που μπορείς να επισκεφθείς.';
+
+  @override
+  String get reelUnreachable =>
+      'Το Wren δεν έφτασε στον διακομιστή για να διαβάσει την ανάρτηση. Δεν χρεώθηκε τίποτα από το όριό σου.';
+
+  @override
+  String get reelNeedsRestore =>
+      'Πάτα πρώτα Επαναφορά αγοράς, για να δείξει το Wren την απόδειξή σου στο κατάστημα.';
+
+  @override
+  String get compEnabledEverything =>
+      'Δωρεάν πρόσβαση ενεργή, μαζί με τα μέρη από ανάρτηση.';
+
+  @override
+  String get restoredEverything =>
+      'Έγινε επαναφορά. Οδηγοί κάθε μεγέθους και μέρη από ανάρτηση.';
+
+  @override
+  String get fromGuideOrPost => 'Από σύνδεσμο';
+
+  @override
+  String get fromPost => 'Από ανάρτηση';
+
+  @override
+  String get importLinkTitle => 'Προσθήκη από σύνδεσμο';
+
+  @override
+  String get importPostBody =>
+      'Επικόλλησε τον σύνδεσμο ενός reel ή μιας ανάρτησης και το Wren θα διαβάσει τα μέρη. Το Wren δεν κρατάει ποτέ το βίντεο.';
+
+  @override
+  String get linkLabel => 'Σύνδεσμος';
+
+  @override
+  String get readLink => 'Διάβασέ το';
 }

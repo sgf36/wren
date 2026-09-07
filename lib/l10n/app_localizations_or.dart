@@ -16,7 +16,7 @@ class LOr extends L {
 
   @override
   String get emptyBody =>
-      'କେହି ଯାହା ସୁପାରିଶ କରନ୍ତି ତାହାର ସ୍କ୍ରିନଶଟ୍ ନିଅନ୍ତୁ — ଏକ ରିଲ୍, ଏକ ପୋଷ୍ଟ, ଏକ ବାର୍ତ୍ତା, କିମ୍ବା ଗାଇଡ୍‌ବୁକ୍‌ର ଗୋଟିଏ ପୃଷ୍ଠା। Wren ନାମଗୁଡ଼ିକ ପଢ଼ି ସେଗୁଡ଼ିକୁ Apple Maps‌ରେ ରଖିଦିଏ।';
+      'ଗୋଟିଏ ରିଲ୍ କିମ୍ବା ପୋଷ୍ଟ Wren ସହ ଶେୟାର୍ କରନ୍ତୁ, ସେ ସେଥିରୁ ସ୍ଥାନ ପଢ଼ି ନେବ। କିମ୍ବା ଯେକୌଣସି ଜିନିଷର ସ୍କ୍ରିନ୍‌ସଟ୍ ନିଅନ୍ତୁ — ଏକ ବାର୍ତ୍ତା, ଭ୍ରମଣ ପୁସ୍ତିକାର ଏକ ପୃଷ୍ଠା — Wren ତାହା ମଧ୍ୟ ପଢ଼େ। ନାମଗୁଡ଼ିକ ମାନଚିତ୍ରକୁ ଯାଏ।';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LOr extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'କେହି ଯାହା ସୁପାରିଶ କରନ୍ତି ତାହାର ସ୍କ୍ରିନଶଟ୍ ନିଅନ୍ତୁ — ଏକ ରିଲ୍, ଏକ ପୋଷ୍ଟ, ଏକ ବାର୍ତ୍ତା, କିମ୍ବା ଗାଇଡ୍‌ବୁକ୍‌ର ଗୋଟିଏ ପୃଷ୍ଠା। Wren ନାମଗୁଡ଼ିକ ପଢ଼ି ସେଗୁଡ଼ିକୁ ଆପଣଙ୍କ ଫୋନର ମାନଚିତ୍ର ଆପ୍‌କୁ ପଠାଇଦିଏ।';
+      'ଗୋଟିଏ ରିଲ୍ କିମ୍ବା ପୋଷ୍ଟ Wren ସହ ଶେୟାର୍ କରନ୍ତୁ, ସେ ସେଥିରୁ ସ୍ଥାନ ପଢ଼ି ନେବ। କିମ୍ବା ଯେକୌଣସି ଜିନିଷର ସ୍କ୍ରିନ୍‌ସଟ୍ ନିଅନ୍ତୁ — ଏକ ବାର୍ତ୍ତା, ଭ୍ରମଣ ପୁସ୍ତିକାର ଏକ ପୃଷ୍ଠା — Wren ତାହା ମଧ୍ୟ ପଢ଼େ। ନାମଗୁଡ଼ିକ ଆପଣଙ୍କ ଫୋନର ମାନଚିତ୍ର ଆପ୍‌କୁ ଯାଏ।';
 
   @override
   String get emptyNoteAndroid =>
@@ -79,7 +79,7 @@ class LOr extends L {
 
   @override
   String get regionNotDetected =>
-      'ଏଗୁଡ଼ିକ କେଉଁଠି ଅଛି ତାହା ସ୍କ୍ରିନଶଟ୍‌ରେ ଲେଖା ନଥିଲା। ସହର ଦେଲେ ଖୋଜା ବହୁତ ଠିକ୍ ହୁଏ।';
+      'ଏହି ସ୍ଥାନଗୁଡ଼ିକ କେଉଁଠି ଅଛି ତାହା କେଉଁଠି ଲେଖା ନ ଥିଲା। ସହର ଜଣାଇଲେ ଖୋଜା ବହୁତ ସଠିକ ହୁଏ।';
 
   @override
   String get cityOrRegion => 'ସହର କିମ୍ବା ଅଞ୍ଚଳ';
@@ -288,20 +288,8 @@ class LOr extends L {
   String get fromFile => 'ଏକ ଫାଇଲ୍‌ରୁ';
 
   @override
-  String get fromExistingGuide => 'ପୂର୍ବରୁ ଥିବା ଗାଇଡ୍‌ରୁ';
-
-  @override
-  String get importGuideTitle => 'ପୂର୍ବରୁ ଥିବା ଗାଇଡ୍‌ରେ ଯୋଡ଼ନ୍ତୁ';
-
-  @override
   String get importGuideBody =>
-      'Apple Maps‌ରେ ଗାଇଡ୍ ଖୋଲି ଶେୟାର୍ କରନ୍ତୁ, ତା\'ପରେ ଲିଙ୍କ୍ କପି କରନ୍ତୁ ବିକଳ୍ପଟି ବାଛନ୍ତୁ। ତାହା ତଳେ ପେଷ୍ଟ କଲେ, ଏଥିରେ ପୂର୍ବରୁ ଥିବା ସ୍ଥାନଗୁଡ଼ିକୁ Wren ପଢ଼ିଦେବ।';
-
-  @override
-  String get guideLinkLabel => 'ଗାଇଡ୍‌ର ଲିଙ୍କ୍';
-
-  @override
-  String get readGuide => 'ଗାଇଡ୍ ପଢ଼ନ୍ତୁ';
+      'Apple Maps‌ରେ ଗାଇଡ୍ ଖୋଲି ଶେୟାର୍ କରନ୍ତୁ, ତା\'ପରେ ଲିଙ୍କ୍ କପି କରନ୍ତୁ ବିକଳ୍ପଟି ବାଛନ୍ତୁ। ତାହା ତଳେ ପେଷ୍ଟ କଲେ, ଏଥିରେ ପୂର୍ବରୁ ଥିବା ସ୍ଥାନଗୁଡ଼ିକୁ Wren ପଢ଼ିଦେବ। ରିଲ୍ କିମ୍ବା ପୋଷ୍ଟର ଲିଙ୍କ ମଧ୍ୟ ଏଠାରେ କାମ କରେ।';
 
   @override
   String get importGuideNotALink =>
@@ -309,7 +297,7 @@ class LOr extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren ସ୍କ୍ରିନସଟ୍ ପଢ଼େ, ପୋଷ୍ଟର ଲିଙ୍କ ନୁହେଁ। ପୋଷ୍ଟର ସ୍କ୍ରିନସଟ୍ ନିଅନ୍ତୁ ଏବଂ ତାହା ସେୟାର କରନ୍ତୁ।';
+      'ସେଠାର ପୋଷ୍ଟ Wren ପଢ଼ିପାରେ ନାହିଁ। ପୋଷ୍ଟର ସ୍କ୍ରିନ୍‌ସଟ୍ ନେଇ ଶେୟାର୍ କରନ୍ତୁ — ତାହା ସବୁବେଳେ କାମ କରେ।';
 
   @override
   String get importGuideNothing =>
@@ -531,4 +519,91 @@ class LOr extends L {
   @override
   String get compExpiring =>
       'Wren ଆପଣଙ୍କ ମାଗଣା ଆକ୍ସେସ୍ ନିଶ୍ଚିତ କରିପାରିଲା ନାହିଁ। ଏହା ରଖିବା ପାଇଁ ଆଗାମୀ କିଛି ଦିନ ମଧ୍ୟରେ ଇଣ୍ଟରନେଟ୍ ସହ ସଂଯୋଗ କରନ୍ତୁ।';
+
+  @override
+  String get reelsTitle => 'ପୋଷ୍ଟରୁ ସ୍ଥାନ';
+
+  @override
+  String get reelsExplain =>
+      'ଗୋଟିଏ ରିଲ୍ କିମ୍ବା ପୋଷ୍ଟ Wren ସହ ଶେୟାର୍ କରନ୍ତୁ, ସେ ସେଥିରୁ ସ୍ଥାନଗୁଡ଼ିକ ପଢ଼ି ନେବ — କେବଳ ଯାଞ୍ଚ କରି ସାଇତି ରଖନ୍ତୁ। Wren ଭିଡିଓ କେବେ ରଖେ ନାହିଁ।';
+
+  @override
+  String everythingFor(String price) {
+    return 'ସବୁକିଛି $priceରେ';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'ପୋଷ୍ଟ ଯୋଡ଼ନ୍ତୁ $priceରେ';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts =>
+      'ଶେୟାର୍ ହୋଇଥିବା ପୋଷ୍ଟରୁ ମଧ୍ୟ ସ୍ଥାନ ପଢ଼େ।';
+
+  @override
+  String get readingPost => 'ପୋଷ୍ଟ ପଢ଼ାଯାଉଛି…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'ଏହି ମାସରେ ବଳକା ପୋଷ୍ଟ: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'ଏହି ମାସର ପୋଷ୍ଟ ଏତିକି। ଆପଣଙ୍କ ସୀମା $dateରେ ଫେରିବ।';
+  }
+
+  @override
+  String get reelQuotaSoon => 'କିଛି ସପ୍ତାହ';
+
+  @override
+  String get reelBusy =>
+      'Wren ଏବେ ବି ପୂର୍ବ ପୋଷ୍ଟ ପଢ଼ୁଛି। ଟିକିଏ ପରେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।';
+
+  @override
+  String get reelUnavailable =>
+      'ସେହି ପୋଷ୍ଟ ଖୋଲିହେଲା ନାହିଁ। ତାହା ବ୍ୟକ୍ତିଗତ ହୋଇପାରେ, ଡିଲିଟ୍ ହୋଇଥାଇପାରେ, କିମ୍ବା ଏଠାରେ ଉପଲବ୍ଧ ନ ଥାଇପାରେ।';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren ସେହି ପୋଷ୍ଟ ପଢ଼ିପାରିଲା ନାହିଁ। ତାହାର ସ୍କ୍ରିନ୍‌ସଟ୍ ନେଇ ଶେୟାର୍ କରନ୍ତୁ — ତାହା ସବୁବେଳେ କାମ କରେ।';
+
+  @override
+  String get reelNoPlaces =>
+      'ସେହି ପୋଷ୍ଟରେ ଯିବା ପାଇଁ ସ୍ଥାନ ଭଳି କିଛି ଦେଖାଗଲା ନାହିଁ।';
+
+  @override
+  String get reelUnreachable =>
+      'ପୋଷ୍ଟ ପଢ଼ିବାକୁ Wren ସର୍ଭର ପର୍ଯ୍ୟନ୍ତ ପହଞ୍ଚିପାରିଲା ନାହିଁ। ଆପଣଙ୍କ ସୀମାରୁ କିଛି କଟିନାହିଁ।';
+
+  @override
+  String get reelNeedsRestore =>
+      'ପ୍ରଥମେ କ୍ରୟ ପୁନଃସ୍ଥାପନ ଟ୍ୟାପ୍ କରନ୍ତୁ, ତେବେ Wren ଷ୍ଟୋର୍‌କୁ ଆପଣଙ୍କ ରସିଦ ଦେଖାଇପାରିବ।';
+
+  @override
+  String get compEnabledEverything => 'ମାଗଣା ପ୍ରବେଶ ଚାଲୁ, ପୋଷ୍ଟରୁ ସ୍ଥାନ ସହିତ।';
+
+  @override
+  String get restoredEverything =>
+      'ପୁନଃସ୍ଥାପିତ। ଯେକୌଣସି ଆକାରର ଗାଇଡ୍, ଏବଂ ପୋଷ୍ଟରୁ ସ୍ଥାନ।';
+
+  @override
+  String get fromGuideOrPost => 'ଏକ ଲିଙ୍କରୁ';
+
+  @override
+  String get fromPost => 'ଏକ ପୋଷ୍ଟରୁ';
+
+  @override
+  String get importLinkTitle => 'ଲିଙ୍କରୁ ଯୋଡ଼ନ୍ତୁ';
+
+  @override
+  String get importPostBody =>
+      'ଏକ ରିଲ୍ କିମ୍ବା ପୋଷ୍ଟର ଲିଙ୍କ ପେଷ୍ଟ କରନ୍ତୁ, Wren ସେଥିରୁ ସ୍ଥାନ ପଢ଼ି ନେବ। Wren ଭିଡିଓ କେବେ ରଖେ ନାହିଁ।';
+
+  @override
+  String get linkLabel => 'ଲିଙ୍କ';
+
+  @override
+  String get readLink => 'ପଢ଼ନ୍ତୁ';
 }

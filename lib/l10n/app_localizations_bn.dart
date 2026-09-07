@@ -16,7 +16,7 @@ class LBn extends L {
 
   @override
   String get emptyBody =>
-      'কেউ যা বলল তার স্ক্রিনশট নিন — একটা রিল, একটা পোস্ট, একটা বার্তা, ভ্রমণ-গাইডের একটা পাতা। Wren নামগুলো পড়ে নেয় আর Apple Maps-এ রেখে দেয়।';
+      'কোনও রিল বা পোস্ট Wren-এ শেয়ার করুন, ও সেখান থেকে জায়গাগুলো পড়ে নেবে। বা যেকোনও কিছুর স্ক্রিনশট নিন — একটা মেসেজ, ভ্রমণ গাইডের একটা পাতা — Wren সেটাও পড়ে। নামগুলো ম্যাপ-এ চলে যায়।';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LBn extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'কেউ যা বলল তার স্ক্রিনশট নিন — একটা রিল, একটা পোস্ট, একটা বার্তা, ভ্রমণ-গাইডের একটা পাতা। Wren নামগুলো পড়ে নেয় আর সেগুলো ফোনের ম্যাপ অ্যাপে পাঠিয়ে দেয়।';
+      'কোনও রিল বা পোস্ট Wren-এ শেয়ার করুন, ও সেখান থেকে জায়গাগুলো পড়ে নেবে। বা যেকোনও কিছুর স্ক্রিনশট নিন — একটা মেসেজ, ভ্রমণ গাইডের একটা পাতা — Wren সেটাও পড়ে। নামগুলো আপনার ফোনের ম্যাপ অ্যাপে চলে যায়।';
 
   @override
   String get emptyNoteAndroid =>
@@ -79,7 +79,7 @@ class LBn extends L {
 
   @override
   String get regionNotDetected =>
-      'স্ক্রিনশটে লেখা ছিল না এগুলো কোথায়। শহরের নাম দিলে খোঁজা অনেক বেশি নিখুঁত হয়।';
+      'কোথাও বলা ছিল না এই জায়গাগুলো কোথায়। শহরের নাম দিলে খোঁজা অনেক বেশি নির্ভুল হয়।';
 
   @override
   String get cityOrRegion => 'শহর বা অঞ্চল';
@@ -287,20 +287,8 @@ class LBn extends L {
   String get fromFile => 'ফাইল থেকে';
 
   @override
-  String get fromExistingGuide => 'আগের কোনো গাইড থেকে';
-
-  @override
-  String get importGuideTitle => 'আগের কোনো গাইডে যোগ করুন';
-
-  @override
   String get importGuideBody =>
-      'Apple Maps-এ গাইডটি খুলে শেয়ার করুন, তারপর “লিঙ্ক কপি করুন” বেছে নিন। সেটি নিচে পেস্ট করুন, Wren তাতে আগে থেকেই থাকা জায়গাগুলো পড়ে নেবে।';
-
-  @override
-  String get guideLinkLabel => 'গাইডের লিঙ্ক';
-
-  @override
-  String get readGuide => 'গাইড পড়ুন';
+      'Apple Maps-এ গাইডটি খুলে শেয়ার করুন, তারপর “লিঙ্ক কপি করুন” বেছে নিন। সেটি নিচে পেস্ট করুন, Wren তাতে আগে থেকেই থাকা জায়গাগুলো পড়ে নেবে। রিল বা পোস্টের লিঙ্কও এখানে চলে।';
 
   @override
   String get importGuideNotALink =>
@@ -308,7 +296,7 @@ class LBn extends L {
 
   @override
   String get importGuideSocialPost =>
-      'Wren স্ক্রিনশট পড়ে, পোস্টের লিঙ্ক নয়। পোস্টটির স্ক্রিনশট নিন এবং সেটি শেয়ার করুন।';
+      'ওখানকার পোস্ট Wren পড়তে পারে না। পোস্টের স্ক্রিনশট নিয়ে সেগুলো শেয়ার করুন — এটা সবসময় কাজ করে।';
 
   @override
   String get importGuideNothing => 'ওই গাইডে Wren যোগ করতে পারে এমন কিছু নেই।';
@@ -531,4 +519,90 @@ class LBn extends L {
   @override
   String get compExpiring =>
       'Wren আপনার বিনামূল্যের অ্যাক্সেস নিশ্চিত করতে পারেনি। এটি ধরে রাখতে আগামী কয়েক দিনের মধ্যে ইন্টারনেটে সংযুক্ত হোন।';
+
+  @override
+  String get reelsTitle => 'পোস্ট থেকে জায়গা';
+
+  @override
+  String get reelsExplain =>
+      'কোনও রিল বা পোস্ট Wren-এ শেয়ার করুন, ও সেখান থেকে জায়গাগুলো পড়ে নেবে — শুধু দেখে নিয়ে সেভ করুন। Wren ভিডিও কখনও রাখে না।';
+
+  @override
+  String everythingFor(String price) {
+    return 'সবকিছু $price-এ';
+  }
+
+  @override
+  String addPostsFor(String price) {
+    return 'পোস্ট যোগ করুন $price-এ';
+  }
+
+  @override
+  String get everythingAlsoReadsPosts => 'শেয়ার করা পোস্ট থেকেও জায়গা পড়ে।';
+
+  @override
+  String get readingPost => 'পোস্ট পড়া হচ্ছে…';
+
+  @override
+  String reelsLeftThisMonth(int count) {
+    return 'এ মাসে বাকি পোস্ট: $count';
+  }
+
+  @override
+  String reelQuotaUsedUp(String date) {
+    return 'এ মাসের পোস্ট এটুকুই। আপনার কোটা ফিরবে $date তারিখে।';
+  }
+
+  @override
+  String get reelQuotaSoon => 'কয়েক সপ্তাহ';
+
+  @override
+  String get reelBusy =>
+      'Wren এখনও আগের পোস্টটা পড়ছে। একটু পরে আবার চেষ্টা করুন।';
+
+  @override
+  String get reelUnavailable =>
+      'ওই পোস্টটা খোলা গেল না। সেটা ব্যক্তিগত হতে পারে, মুছে ফেলা হতে পারে, বা এখানে না-ও থাকতে পারে।';
+
+  @override
+  String get reelCouldNotRead =>
+      'Wren ওই পোস্টটা পড়তে পারেনি। স্ক্রিনশট নিয়ে সেগুলো শেয়ার করুন — এটা সবসময় কাজ করে।';
+
+  @override
+  String get reelNoPlaces => 'ওই পোস্টে যাওয়ার মতো কোনও জায়গা চোখে পড়ল না।';
+
+  @override
+  String get reelUnreachable =>
+      'পোস্টটা পড়তে Wren সার্ভারে পৌঁছতে পারেনি। আপনার কোটা থেকে কিছু কাটা যায়নি।';
+
+  @override
+  String get reelNeedsRestore =>
+      'আগে কেনাকাটা ফেরান-এ চাপুন, যাতে Wren দোকানকে আপনার রসিদ দেখাতে পারে।';
+
+  @override
+  String get compEnabledEverything =>
+      'বিনামূল্যে অ্যাক্সেস চালু, পোস্ট থেকে জায়গাসহ।';
+
+  @override
+  String get restoredEverything =>
+      'ফেরানো হয়েছে। যেকোনও আকারের গাইড, আর পোস্ট থেকে জায়গা।';
+
+  @override
+  String get fromGuideOrPost => 'লিঙ্ক থেকে';
+
+  @override
+  String get fromPost => 'পোস্ট থেকে';
+
+  @override
+  String get importLinkTitle => 'লিঙ্ক থেকে যোগ করুন';
+
+  @override
+  String get importPostBody =>
+      'কোনও রিল বা পোস্টের লিঙ্ক সাঁটুন, Wren সেখান থেকে জায়গাগুলো পড়ে নেবে। Wren ভিডিও কখনও রাখে না।';
+
+  @override
+  String get linkLabel => 'লিঙ্ক';
+
+  @override
+  String get readLink => 'পড়ুন';
 }
