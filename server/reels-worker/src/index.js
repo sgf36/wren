@@ -238,6 +238,9 @@ export async function verifiedComp(env, token) {
  * that one, so adding a role there cannot silently grant a paid feature here.
  */
 export const COMP_ROLES_WITH_REELS = Object.freeze(['everything', 'admin']);
+/** What each service account may reach, and nothing wider. */
+export const PLAY_SCOPE = 'https://www.googleapis.com/auth/androidpublisher';
+export const VERTEX_SCOPE = 'https://www.googleapis.com/auth/cloud-platform';
 export const REEL_PRODUCTS = Object.freeze([
   'com.spencerfields.littlebird.everything',
   'com.spencerfields.littlebird.reels.upgrade',
@@ -330,7 +333,7 @@ export async function verifyPlay(env, purchaseToken, productId) {
   if (!REEL_PRODUCTS.includes(productId)) return null;
   if (!purchaseToken) return null;
 
-  const token = await playAccessToken(env);
+  const token = await accessToken(env.PLAY_SA_KEY, PLAY_SCOPE);
   if (!token) return null;
 
   const url = 'https://androidpublisher.googleapis.com/androidpublisher/v3/'
@@ -351,25 +354,30 @@ export async function verifyPlay(env, purchaseToken, productId) {
 }
 
 /**
- * A service-account bearer token for androidpublisher, minted here.
+ * A service-account bearer token for a Google API, minted here.
  *
  * Google's Node SDK is large and mostly concerned with things a Worker cannot
  * do. What is actually needed is one RS256 JWT and one form post, both of which
- * WebCrypto does. The service account behind PLAY_SA_KEY should hold
- * androidpublisher read access and nothing else — not the key that publishes
- * releases, which can also replace the app.
+ * WebCrypto does.
+ *
+ * Takes the key and the scope rather than reading one variable, because two
+ * different service accounts use this: androidpublisher for verifying Play
+ * purchases, and cloud-platform for calling Vertex. They are deliberately
+ * separate accounts — the one that reads purchases has no business reaching a
+ * model, and neither should be the key that publishes releases, which can also
+ * replace the app.
  */
-async function playAccessToken(env) {
-  if (!env.PLAY_SA_KEY) return null;
+export async function accessToken(saKeyB64, scope) {
+  if (!saKeyB64) return null;
 
-  const sa = JSON.parse(new TextDecoder().decode(fromB64(env.PLAY_SA_KEY)));
+  const sa = JSON.parse(new TextDecoder().decode(fromB64(saKeyB64)));
   const now = Math.floor(Date.now() / 1000);
 
   const seg = (o) => btoa(JSON.stringify(o))
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const unsigned = `${seg({ alg: 'RS256', typ: 'JWT' })}.${seg({
     iss: sa.client_email,
-    scope: 'https://www.googleapis.com/auth/androidpublisher',
+    scope,
     aud: 'https://oauth2.googleapis.com/token',
     iat: now,
     exp: now + 3600,
@@ -529,6 +537,76 @@ export function modelRequest(env, parts) {
       },
     },
   };
+}
+
+/**
+ * Where the model is called, and why it is not AI Studio.
+ *
+ * AI Studio bills Gemini through a separate prepay payments account, even when
+ * the Cloud billing account behind it is postpay. That prepay account is
+ * created by one dialog, that dialog does not render, and no other surface can
+ * create or fund what it never made — confirmed with Google support on
+ * 6 September 2026, and a GBP 10 payment landed as Cloud credit rather than
+ * Gemini prepay because of it.
+ *
+ * Vertex serves the same models and bills through the ordinary Cloud billing
+ * account, which works. So the prepay mechanism is not worked around here, it
+ * is simply not in the path.
+ *
+ * The cost of the two is expected to match and is NOT yet verified: Google's
+ * pricing pages would not give it up, and the account's own SKU browser does
+ * not filter. The honest way to settle it is the first real call — the cost
+ * table then shows the SKU and rate actually charged, in the right currency and
+ * region. Do that before assuming §12 still holds.
+ */
+export function vertexEndpoint(env, model) {
+  const project = env.VERTEX_PROJECT;
+  const location = env.VERTEX_LOCATION || 'europe-west1';
+  if (!project) return null;
+  return `https://${location}-aiplatform.googleapis.com/v1/projects/`
+    + `${project}/locations/${location}/publishers/google/models/`
+    + `${model}:generateContent`;
+}
+
+/**
+ * One model call, with the cost guards already applied by modelRequest.
+ *
+ * Returns the parsed candidates, or throws a Refusal the client can localise.
+ * Nothing from Google's error body reaches the caller: it can name a project, a
+ * region and a service account, none of which is the user's business.
+ */
+export async function readPlaces(env, parts) {
+  const { model, body } = modelRequest(env, parts);
+  const url = vertexEndpoint(env, model);
+  const token = await accessToken(env.VERTEX_SA_KEY, VERTEX_SCOPE);
+  if (!url || !token) throw new Refusal(FAILURES.modelFailed, 503);
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    console.error('model call failed', res.status);
+    throw new Refusal(FAILURES.modelFailed, 502);
+  }
+
+  const answer = await res.json();
+  const text = answer?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Refusal(FAILURES.modelFailed, 502);
+
+  let places;
+  try {
+    places = JSON.parse(text);
+  } catch {
+    // responseSchema asks for JSON, so this means the model ignored it. Better
+    // a refusal the app can explain than a half-parsed list of place names.
+    throw new Refusal(FAILURES.modelFailed, 502);
+  }
+  return Array.isArray(places) ? places.filter((p) => p && p.name) : [];
 }
 
 /* ------------------------------------------------------------- the vendors */

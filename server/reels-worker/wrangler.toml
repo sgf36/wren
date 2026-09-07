@@ -51,6 +51,18 @@ ACCEPT_SANDBOX = "false"
 # that raising it costs a deploy and not a release.
 QUOTA_PER_30_DAYS = "250"
 
+# Vertex, which is where the model is actually called.
+#
+# Not AI Studio: it bills Gemini through a separate prepay payments account
+# even when the Cloud billing account behind it is postpay, that account is
+# created by a dialog which does not render, and nothing else can fund what it
+# never created. Vertex serves the same models through ordinary Cloud billing.
+#
+# The region is part of the hostname as well as the path, and Vertex prices by
+# region, so changing this changes both where the call goes and what it costs.
+VERTEX_PROJECT = "gen-lang-client-0475397099"
+VERTEX_LOCATION = "europe-west1"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "wren-reels"
