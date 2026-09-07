@@ -34,6 +34,10 @@ on:
         description: 'Attempt the Apple Maps payoff shot'
         type: boolean
         default: true
+      iap:
+        description: 'Also take the in-app purchase review images'
+        type: boolean
+        default: true
       verbose:
         description: 'Log every simctl command and its output'
         type: boolean
@@ -79,7 +83,7 @@ jobs:
           /tmp/shots/bin/python -u store/shoot.py \
             ${{ inputs.locale && format('--locale {0}', inputs.locale) || '' }} \
             ${{ inputs.verbose && '--verbose' || '' }} \
-            ${{ !inputs.maps && '--no-maps' || '' }}  # inverted deliberately: an empty string is FALSY in a GitHub
+            ${{ !inputs.maps && '--no-maps' || '' }} ${{ !inputs.iap && '--no-iap' || '' }}  # inverted deliberately: an empty string is FALSY in a GitHub
             # expression, so `inputs.maps && '' || '--no-maps'` falls through
             # to the || branch even when maps is true, and always passed
             # --no-maps. The Apple Maps shot was skipped on every run.
@@ -117,7 +121,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: store/screenshots/*/APP_IPHONE_67/*.png
+          path: |
+            store/screenshots/*/APP_IPHONE_67/*.png
+            store/screenshots/IAP/*.png
           if-no-files-found: warn
 
       - name: Upload to App Store Connect
@@ -141,3 +147,12 @@ jobs:
           WREN_ASC_KEY_ID="$ASC_KEY_ID" \
           WREN_ASC_ISSUER="$ASC_ISSUER_ID" \
             /tmp/shots/bin/python store/push_screenshots.py --all
+          # The purchases' own review images: a different resource
+          # with a different upload, and the thing that keeps a new
+          # purchase at MISSING_METADATA. Uploaded in the same run
+          # because the images have just been taken and are otherwise
+          # only in an artifact nobody will remember to open.
+          WREN_ASC_KEY=/tmp/asc/key.p8 \
+          WREN_ASC_KEY_ID="$ASC_KEY_ID" \
+          WREN_ASC_ISSUER="$ASC_ISSUER_ID" \
+            /tmp/shots/bin/python store/push_iap_screenshot.py --write
