@@ -35,7 +35,20 @@ class FileSourceUnavailable implements Exception {
 class PickedFile {
   final String name;
   final String text;
-  const PickedFile({required this.name, required this.text});
+
+  /// The raw bytes, when the file turned out to be a picture rather than an
+  /// export. Null for everything else, because nothing else needs them and
+  /// carrying a whole KMZ twice would be wasteful.
+  final Uint8List? imageBytes;
+
+  const PickedFile({
+    required this.name,
+    required this.text,
+    this.imageBytes,
+  });
+
+  /// True when the picker handed back a photograph or screenshot.
+  bool get isImage => imageBytes != null;
 }
 
 abstract class FileSource {
@@ -48,6 +61,51 @@ abstract class FileSource {
 /// extension is not reliable enough to tell them apart — users rename things,
 /// and some exporters write `.kml` for a zipped file.
 const _zipMagic = [0x50, 0x4b, 0x03, 0x04];
+
+/// Whether these bytes are a picture, by their own magic numbers.
+///
+/// **Why this exists.** The document picker is deliberately unfiltered — see
+/// PickFilePlugin — so every screenshot on the device is selectable under "From
+/// a file". Choosing one is not a perverse thing to do: the app's own first
+/// screen tells people to screenshot things, and "from a file" is a fair
+/// description of a picture sitting in Downloads. Before this, that produced
+/// "Wren could not read that file. It reads CSV, KML, KMZ, GPX, GeoJSON and
+/// Google Takeout exports" — technically true, unhelpful, and phrased as though
+/// the picture were malformed rather than simply in the wrong doorway.
+///
+/// Magic numbers rather than the extension, for the reason the zip check gives:
+/// people rename things, and a content URI's display name is not a promise.
+bool looksLikeImage(Uint8List b) {
+  bool at(int i, List<int> want) {
+    if (b.length < i + want.length) return false;
+    for (var n = 0; n < want.length; n++) {
+      if (b[i + n] != want[n]) return false;
+    }
+    return true;
+  }
+
+  // PNG, and JPEG in all its flavours: Android screenshots are PNG, most
+  // cameras and every messaging app produce JPEG.
+  if (at(0, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return true;
+  if (at(0, [0xff, 0xd8, 0xff])) return true;
+  if (at(0, [0x47, 0x49, 0x46, 0x38])) return true; // GIF8
+  if (at(0, [0x42, 0x4d])) return true; // BM
+  // RIFF....WEBP — the size sits between the two markers.
+  if (at(0, [0x52, 0x49, 0x46, 0x46]) && at(8, [0x57, 0x45, 0x42, 0x50])) {
+    return true;
+  }
+  // HEIC and HEIF, which is what an iPhone screenshot can be: an ISO-BMFF box
+  // whose type is `ftyp`, carrying one of a family of brands.
+  if (at(4, [0x66, 0x74, 0x79, 0x70])) {
+    const brands = ['heic', 'heix', 'hevc', 'heim', 'heis', 'hevm', 'hevs',
+                    'mif1', 'msf1', 'avif'];
+    if (b.length >= 12) {
+      final brand = String.fromCharCodes(b.sublist(8, 12));
+      if (brands.contains(brand)) return true;
+    }
+  }
+  return false;
+}
 
 /// Turns the bytes of a picked file into text.
 ///
@@ -142,6 +200,13 @@ class DocumentFileSource implements FileSource {
       final bytes = m['bytes'] as Uint8List?;
       if (bytes == null) return null;
       final name = (m['name'] as String?) ?? '';
+      // Checked before decoding, not after. Decoding a PNG as text succeeds --
+      // latin1 always does -- and produces a screenful of mojibake that then
+      // fails in the parser, where it is indistinguishable from a corrupt
+      // export. The bytes are the only place the truth is still intact.
+      if (looksLikeImage(bytes)) {
+        return PickedFile(name: name, text: '', imageBytes: bytes);
+      }
       return PickedFile(
         name: name,
         text: decodeFileBytes(bytes, name: name),

@@ -12,6 +12,67 @@ import 'package:wren/src/place_files.dart';
 void main() {
   Uint8List bytes(List<int> b) => Uint8List.fromList(b);
 
+  group('a picture is recognised as one, so it can be read rather than refused', () {
+    // Reported by a tester on 2026-09-07: choosing a screenshot under "From a
+    // file" answered "Wren could not read that file. It reads CSV, KML, KMZ,
+    // GPX, GeoJSON and Google Takeout exports." The picker is unfiltered by
+    // necessity, so the app has to recognise a picture and route it to OCR.
+    test('PNG, which is what an Android screenshot is', () {
+      expect(
+        looksLikeImage(bytes([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+                              0, 0, 0, 13])),
+        isTrue,
+      );
+    });
+
+    test('JPEG, which is what it becomes once it has been through a chat app',
+        () {
+      expect(looksLikeImage(bytes([0xff, 0xd8, 0xff, 0xe0, 0, 16])), isTrue);
+    });
+
+    test('HEIC, which is what an iPhone screenshot can be', () {
+      // ISO-BMFF: a four-byte size, then `ftyp`, then the brand.
+      final heic = <int>[
+        0, 0, 0, 24,
+        ...utf8.encode('ftyp'),
+        ...utf8.encode('heic'),
+        ...List.filled(8, 0),
+      ];
+      expect(looksLikeImage(bytes(heic)), isTrue);
+    });
+
+    test('WebP needs both markers, not just RIFF', () {
+      final webp = <int>[
+        ...utf8.encode('RIFF'), 0, 0, 0, 0, ...utf8.encode('WEBP'),
+      ];
+      expect(looksLikeImage(bytes(webp)), isTrue);
+      // A RIFF that is not a WebP -- a WAV, say -- must not be taken for one.
+      final wav = <int>[
+        ...utf8.encode('RIFF'), 0, 0, 0, 0, ...utf8.encode('WAVE'),
+      ];
+      expect(looksLikeImage(bytes(wav)), isFalse);
+    });
+
+    test('the exports Wren actually reads are NOT taken for pictures', () {
+      // The expensive failure is the other direction: a CSV routed to OCR
+      // would read as a picture of nothing and lose a real import.
+      expect(looksLikeImage(bytes(utf8.encode('name,lat'))), isFalse);
+      expect(looksLikeImage(bytes(utf8.encode('<?xml version="1.0"?><kml/>'))),
+          isFalse);
+      expect(looksLikeImage(bytes(utf8.encode('{"type":"FeatureCollection"}'))),
+          isFalse);
+      // A KMZ is a zip, and zips must keep going to the KML reader.
+      expect(looksLikeImage(bytes([0x50, 0x4b, 0x03, 0x04, 0, 0])), isFalse);
+    });
+
+    test('a truncated header does not read off the end', () {
+      expect(looksLikeImage(bytes([])), isFalse);
+      expect(looksLikeImage(bytes([0x89])), isFalse);
+      expect(looksLikeImage(bytes([0xff, 0xd8])), isFalse);
+      expect(looksLikeImage(bytes([0x52, 0x49, 0x46, 0x46])), isFalse);
+    });
+  });
+
   test('plain UTF-8', () {
     expect(decodeFileBytes(bytes(utf8.encode('name\nBao'))), 'name\nBao');
   });

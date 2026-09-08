@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'dart:io' show Directory, File, Platform;
+import 'dart:typed_data' show Uint8List;
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1336,6 +1337,36 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     });
   }
 
+  /// Reads a picture the user chose from the file picker, as a screenshot.
+  ///
+  /// Separate from _importScreenshots only because the bytes have to become a
+  /// path first. Everything after that is the ordinary screenshot path, so a
+  /// picture picked this way gets the same city question, the same ranked
+  /// candidates and the same correction list as one picked properly.
+  ///
+  /// Takes the bytes and the name rather than the PickedFile they came from:
+  /// image_picker exports a legacy `PickedFile` of its own, so naming ours in
+  /// this file is an ambiguous import.
+  Future<void> _readPickedImage(Uint8List bytes, String name) async {
+    // A name of our own: the picker's display name can contain anything, and
+    // this file exists for a few hundred milliseconds.
+    final suffix = name.toLowerCase().endsWith('.jpg') ? 'jpg' : 'png';
+    final file = File(
+      '${Directory.systemTemp.path}/wren-picked-'
+      '${DateTime.now().microsecondsSinceEpoch}.$suffix',
+    );
+    try {
+      await file.writeAsBytes(bytes, flush: true);
+      await _importScreenshots(paths: [file.path]);
+    } finally {
+      // Best effort. A leftover temporary file is untidy; a crash here would
+      // lose a reading that has already happened.
+      try {
+        if (file.existsSync()) await file.delete();
+      } catch (_) {}
+    }
+  }
+
   /// Imports a list exported from another app.
   ///
   /// The file gives names and, usually, coordinates — never Apple place ids, so
@@ -1358,6 +1389,23 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       final picked = await _files.pick();
       if (picked == null || !mounted) {
         setState(() => _busy = false);
+        return;
+      }
+      // A picture chosen from "From a file" is not a mistake worth punishing.
+      // The picker is unfiltered by necessity (Android has no MIME type for
+      // .gpx or .geojson), the first screen tells people to screenshot things,
+      // and "from a file" is a fair description of a PNG sitting in Downloads.
+      // Reported by a tester on 2026-09-07, who got "Wren could not read that
+      // file" for doing something entirely reasonable.
+      //
+      // So do what was meant rather than explaining what was typed: hand it to
+      // the same reader the screenshot route uses. OCR takes a path and the
+      // picker gives bytes, so the bytes go to a temporary file first; it is
+      // deleted once read, whatever happened.
+      final image = picked.imageBytes;
+      if (image != null) {
+        setState(() => _busy = false);
+        await _readPickedImage(image, picked.name);
         return;
       }
       pickedName = picked.name;
