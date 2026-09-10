@@ -41,11 +41,7 @@ class PickedFile {
   /// carrying a whole KMZ twice would be wasteful.
   final Uint8List? imageBytes;
 
-  const PickedFile({
-    required this.name,
-    required this.text,
-    this.imageBytes,
-  });
+  const PickedFile({required this.name, required this.text, this.imageBytes});
 
   /// True when the picker handed back a photograph or screenshot.
   bool get isImage => imageBytes != null;
@@ -97,8 +93,18 @@ bool looksLikeImage(Uint8List b) {
   // HEIC and HEIF, which is what an iPhone screenshot can be: an ISO-BMFF box
   // whose type is `ftyp`, carrying one of a family of brands.
   if (at(4, [0x66, 0x74, 0x79, 0x70])) {
-    const brands = ['heic', 'heix', 'hevc', 'heim', 'heis', 'hevm', 'hevs',
-                    'mif1', 'msf1', 'avif'];
+    const brands = [
+      'heic',
+      'heix',
+      'hevc',
+      'heim',
+      'heis',
+      'hevm',
+      'hevs',
+      'mif1',
+      'msf1',
+      'avif',
+    ];
     if (b.length >= 12) {
       final brand = String.fromCharCodes(b.sublist(8, 12));
       if (brands.contains(brand)) return true;
