@@ -7,5 +7,5 @@
     "name": "Ghiduri mari și existente",
     "description": "Ghiduri mari și adăugare la cele existente."
   },
-  "whatsNew": "Trimite un reel sau o postare către Wren și scoate locurile din ea.\n\nCineva îți trimite cinci restaurante din Roma. Trimite postarea către Wren — fără capturi de ecran, fără tastat — și numele revin gata de verificat și de salvat pe harta ta. Serverul Wren aduce postarea, o citește și o aruncă. Videoclipul nu ajunge niciodată pe telefonul tău și Wren nu îl păstrează.\n\nCapturile de ecran funcționează exact ca înainte și rămân gratuite.\n\nCitirea postărilor este o achiziție unică, cu o limită rezonabilă de 250 de postări pe lună. Dacă ai deja „Ghiduri mari și existente”, prețul de adăugare este mai mic."
+  "whatsNew": "Alegeți o captură de ecran din „Dintr-un fișier” – Wren o citește acum.\n\nÎnainte refuza și enumera formatele de export pe care le poate citi. Era adevărat și nu ajuta deloc: selectorul arată fiecare imagine de pe dispozitiv, iar primul ecran vă cere să faceți capturi. Wren recunoaște acum o imagine după conținut și o trimite aceluiași cititor ca „Adăugați capturi de ecran”: aceeași întrebare despre oraș, aceleași sugestii ordonate, aceleași corecturi."
 }

@@ -7,5 +7,5 @@
     "name": "Nagyobb és meglévő útikalauzok",
     "description": "Nagyobb útikalauzok és a meglévők bővítése."
   },
-  "whatsNew": "Oszd meg a Wrennel a reelt vagy a bejegyzést, és kiolvassa belőle a helyeket.\n\nValaki küld öt római éttermet. Oszd meg a bejegyzést a Wrennel — képernyőképek és gépelés nélkül — és a nevek visszajönnek, készen az ellenőrzésre és a térképedre mentésre. A Wren kiszolgálója lehívja a bejegyzést, elolvassa és eldobja. A videó soha nem kerül a telefonodra, és a Wren nem tartja meg.\n\nA képernyőképek pontosan úgy működnek, mint eddig, és továbbra is ingyenesek.\n\nA bejegyzések olvasása egyszeri vásárlás, havi 250 bejegyzés méltányos kerettel. Ha már megvan a „Nagyobb és meglévő útikalauzok”, kisebb áron egészítheted ki."
+  "whatsNew": "Válasszon képernyőképet a „Fájlból” menüpontban – a Wren már beolvassa.\n\nKorábban elutasította, és felsorolta az általa olvasott exportformátumokat. Ez igaz volt, és semmit sem segített: a fájlválasztó az eszköz minden képét megmutatja, az első képernyő pedig épp arra kéri, hogy készítsen képernyőképeket. A Wren most tartalma alapján ismeri fel a képet, és ugyanahhoz az olvasóhoz küldi, mint a „Képernyőképek hozzáadása”: ugyanaz a városkérdés, ugyanazok a rangsorolt találatok, ugyanazok a javítások."
 }

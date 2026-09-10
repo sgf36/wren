@@ -7,5 +7,5 @@
     "name": "Ukuran bebas dan panduan lama",
     "description": "Panduan besar dan menambah ke yang ada."
   },
-  "whatsNew": "Bagikan reel atau unggahan ke Wren, dan Wren membaca tempat-tempatnya.\n\nSeseorang mengirimimu lima restoran di Roma. Bagikan unggahan itu ke Wren — tanpa tangkapan layar, tanpa mengetik — dan nama-namanya kembali, siap diperiksa dan disimpan ke petamu. Server Wren mengambil unggahan itu, membacanya, lalu membuangnya. Videonya tidak pernah sampai ke ponselmu dan Wren tidak menyimpannya.\n\nTangkapan layar bekerja persis seperti sebelumnya, dan tetap gratis.\n\nMembaca unggahan adalah pembelian sekali bayar dengan jatah pemakaian wajar 250 unggahan sebulan. Kalau kamu sudah punya “Ukuran bebas dan panduan lama”, harga menambahkannya lebih rendah."
+  "whatsNew": "Pilih tangkapan layar lewat \"Dari sebuah berkas\" dan Wren kini membacanya.\n\nDulu Wren menolak sambil menyebut format ekspor yang bisa dibacanya. Benar, tapi sama sekali tidak membantu: pemilih berkas menampilkan setiap gambar di perangkat, dan layar pertama justru meminta Anda membuat tangkapan layar. Kini Wren mengenali gambar dari isinya dan mengirimkannya ke pembaca yang sama dengan \"Tambah tangkapan layar\": pertanyaan kota yang sama, kandidat berperingkat yang sama, koreksi yang sama."
 }

@@ -7,5 +7,5 @@
     "name": "Guies grans i ja existents",
     "description": "Guies més grans, i afegir a existents."
   },
-  "whatsNew": "Comparteix un reel o una publicació amb el Wren i en traurà els llocs.\n\nAlgú t'envia cinc restaurants a Roma. Comparteix la publicació amb el Wren — sense captures, sense escriure — i els noms tornen a punt per revisar i desar al teu mapa. El servidor del Wren recupera la publicació, la llegeix i la descarta. El vídeo no arriba mai al teu telèfon i el Wren no el conserva.\n\nLes captures funcionen exactament igual que abans, i continuen sent gratuïtes.\n\nLlegir publicacions és una compra única amb un límit d'ús raonable de 250 publicacions al mes. Si ja tens «Guies grans i ja existents», hi ha un preu menor per afegir-ho."
+  "whatsNew": "Trieu una captura de pantalla a «Des d'un fitxer» i Wren ja la llegeix.\n\nAbans la rebutjava i enumerava els formats d'exportació que sap llegir. Era cert i no ajudava gens: el selector mostra totes les imatges del dispositiu i la primera pantalla us demana que feu captures. Ara Wren reconeix una imatge pel seu contingut i l'envia al mateix lector que «Afegeix captures»: la mateixa pregunta sobre la ciutat, les mateixes propostes ordenades, les mateixes correccions."
 }
