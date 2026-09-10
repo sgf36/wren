@@ -27,7 +27,7 @@ class MainActivity : FlutterActivity() {
   // Handling only onCreate works until the app has been opened once.
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    shareInbox.handleIntent(intent)
+    shareInbox.handleIntent(this, intent)
   }
 
   override fun onNewIntent(intent: Intent) {
@@ -35,6 +35,6 @@ class MainActivity : FlutterActivity() {
     // Replaced, not merely handled: getIntent() keeps returning the launching
     // Intent otherwise, and anything reading it later would see the wrong one.
     setIntent(intent)
-    shareInbox.handleIntent(intent)
+    shareInbox.handleIntent(this, intent)
   }
 }

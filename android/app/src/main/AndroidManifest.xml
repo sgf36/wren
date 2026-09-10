@@ -76,6 +76,37 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="text/plain"/>
             </intent-filter>
+            <!-- Screenshots, shared straight in rather than picked.
+
+                 The iOS share extension has always taken up to twenty images,
+                 so this closes a real gap rather than adding a flourish: an
+                 iPhone user shares screenshots to Wren from Photos and, until
+                 now, an Android user could not. One tester went to "From a
+                 file" with a screenshot instead and was told Wren could not
+                 read it.
+
+                 The earlier note here argued that claiming image types would
+                 put Wren in the share sheet of every photo on the phone "in
+                 exchange for a path the app already has a better route to".
+                 The first half is true and is the price; the second half was
+                 the part that did not survive contact with a user. Reading
+                 pictures IS what this app does, so appearing in that sheet is
+                 honest rather than noisy.
+
+                 SEND_MULTIPLE as well as SEND: Photos sends one image as SEND
+                 and several as SEND_MULTIPLE, and an app claiming only the
+                 first silently vanishes from the sheet the moment a second
+                 picture is selected. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
         </activity>
         <!-- Exports leave through a content:// URI, never a file path.
              A file:// URI grants the receiving app nothing: it launches, matches
