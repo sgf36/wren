@@ -300,7 +300,15 @@ jobs:
           # than being absent.
           K=android/app/src/main/kotlin/com/spencerfields/littlebird
           grep -q 'onNewIntent' "$K/MainActivity.kt" || { echo "::error::MainActivity handles no onNewIntent — launchMode is singleTop, so a share reaching an already-running Wren would be dropped. This works until the app has been opened once."; exit 1; }
-          grep -q 'handleIntent(intent)' "$K/MainActivity.kt" || { echo "::error::MainActivity never hands its Intent to the share inbox"; exit 1; }
+          # Counted, not merely found, and matched without the argument list.
+          # Both onCreate and onNewIntent have to hand the Intent over, and the
+          # previous spelling pinned the arguments -- `handleIntent(intent)` --
+          # so adding a Context parameter made a correct call stop matching and
+          # failed the build on working code. Assert what has to be observable
+          # (the share inbox is told, from both entry points) rather than how
+          # the call happens to be written today.
+          CALLS=$(grep -c 'shareInbox\.handleIntent(' "$K/MainActivity.kt" || true)
+          [ "$CALLS" -ge 2 ] || { echo "::error::MainActivity hands its Intent to the share inbox $CALLS time(s), expected both onCreate and onNewIntent. A share reaching an already-running Wren would be dropped."; exit 1; }
           echo "provider, paths, queries, Custom Tabs and the share receiver all present"
 
       # Every android:name=".Foo" in the manifest is shorthand for
