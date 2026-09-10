@@ -208,23 +208,52 @@ def main():
     items = [("appStoreVersion", vid, "the version")]
     items += [("inAppPurchaseV2", ident, name) for ident, name in wanted]
     for kind, ident, label in items:
-        st, d = call("POST", "reviewSubmissionItems", {
-            "data": {"type": "reviewSubmissionItems",
-                     "relationships": {
-                         "reviewSubmission": {"data": {
-                             "type": "reviewSubmissions", "id": sub_id}},
-                         kind: {"data": {
-                             "type": ("appStoreVersions"
-                                      if kind == "appStoreVersion"
-                                      else "inAppPurchases"),
-                             "id": ident}}}}})
-        print(f"add {label} -> {st}"
-              + ("" if st == 201 else f"  {errs(d)}"))
+        body = {"data": {"type": "reviewSubmissionItems",
+                         "relationships": {
+                             "reviewSubmission": {"data": {
+                                 "type": "reviewSubmissions", "id": sub_id}},
+                             kind: {"data": {
+                                 "type": ("appStoreVersions"
+                                          if kind == "appStoreVersion"
+                                          else "inAppPurchases"),
+                                 "id": ident}}}}}
+        # Apple returns 500 here on a request that WORKED. On 2026-09-10 this
+        # same POST answered 500 three times and then 409 "was already added"
+        # on the fourth -- so every one of those 500s had in fact added the
+        # item and only the response was wrong. Treating the 500 as a failure
+        # abandons a release that has already half happened, which is exactly
+        # what it did that day.
+        #
+        # So a 500 is retried and a 409 "already added" is success. What the
+        # loop is really waiting for is the item being observably present;
+        # the status code describes what Apple felt like returning, not what
+        # Apple did.
+        for attempt in range(1, 6):
+            st, d = call("POST", "reviewSubmissionItems", body)
+            if st in (200, 201):
+                print(f"add {label} -> {st}")
+                break
+            if st == 409 and "already added" in (errs(d) or ""):
+                print(f"add {label} -> already there")
+                break
+            print(f"add {label} -> {st} (attempt {attempt})  {errs(d)}")
+            if st < 500:
+                break
+            time.sleep(5)
+
+    # Read the items back before submitting. Submitting an empty submission
+    # is accepted and then fails with "does not have any items", which names
+    # a problem two steps away from the one that caused it.
+    st, got = call("GET", f"reviewSubmissions/{sub_id}/items?limit=20")
+    on_it = len(got.get("data", []))
+    print(f"\n{on_it} item(s) on the submission, {len(items)} expected")
+    if on_it < len(items):
+        sys.exit("refusing to submit: Apple holds fewer items than were added")
 
     st, d = call("PATCH", f"reviewSubmissions/{sub_id}", {
         "data": {"type": "reviewSubmissions", "id": sub_id,
                  "attributes": {"submitted": True}}})
-    print(f"\nSUBMIT -> {st}" + ("" if st == 200 else f"  {errs(d)}"))
+    print(f"SUBMIT -> {st}" + ("" if st == 200 else f"  {errs(d)}"))
     if st == 200:
         print(f"state: {d['data']['attributes'].get('state')}")
 
