@@ -7,5 +7,5 @@
     "name": "Alla storlekar och dem du har",
     "description": "Större guider, och lägg till i dem du har."
   },
-  "whatsNew": "Dela en reel eller ett inlägg med Wren, så läser Wren ut platserna.\n\nNågon skickar dig fem restauranger i Rom. Dela inlägget med Wren — inga skärmbilder, inget skrivande — och namnen kommer tillbaka, redo att kollas och sparas på din karta. Wrens server hämtar inlägget, läser det och kastar det. Videon når aldrig din telefon och Wren behåller den inte.\n\nSkärmbilder fungerar precis som förut, och är fortfarande gratis.\n\nAtt läsa inlägg är ett engångsköp med en rimlig gräns på 250 inlägg i månaden. Har du redan ”Alla storlekar och dem du har” finns ett lägre pris för att lägga till det."
+  "whatsNew": "Välj en skärmbild under \"Från en fil\" – Wren läser den nu.\n\nTidigare vägrade Wren och räknade upp de exportformat den kan läsa. Det stämde och hjälpte inte alls: filväljaren visar varje bild på enheten, och första skärmen ber dig ta skärmbilder. Wren känner nu igen en bild på innehållet och skickar den till samma läsare som \"Lägg till skärmbilder\": samma fråga om staden, samma rangordnade förslag, samma rättelser."
 }

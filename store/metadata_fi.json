@@ -7,5 +7,5 @@
     "name": "Oppaat ilman rajoituksia",
     "description": "Isommat oppaat ja lisäys olemassa oleviin."
   },
-  "whatsNew": "Jaa reel tai julkaisu Wreniin, niin se lukee paikat siitä.\n\nJoku lähettää sinulle viisi ravintolaa Roomassa. Jaa julkaisu Wreniin — ei kuvakaappauksia, ei kirjoittamista — ja nimet palaavat valmiina tarkistettaviksi ja tallennettaviksi omaan karttaasi. Wrenin palvelin hakee julkaisun, lukee sen ja hylkää sen. Video ei koskaan päädy puhelimeesi eikä Wren säilytä sitä.\n\nKuvakaappaukset toimivat täsmälleen kuten ennenkin, ja ovat yhä ilmaisia.\n\nJulkaisujen lukeminen on kertaosto, jossa on kohtuukäytön raja 250 julkaisua kuukaudessa. Jos sinulla on jo ”Oppaat ilman rajoituksia”, sen lisääminen maksaa vähemmän."
+  "whatsNew": "Valitse kuvakaappaus kohdasta ”Tiedostosta” – Wren lukee sen nyt.\n\nAiemmin Wren kieltäytyi ja luetteli lukemansa vientimuodot. Se piti paikkansa eikä auttanut lainkaan: tiedostonvalitsin näyttää laitteen jokaisen kuvan, ja ensimmäinen näyttö pyytää ottamaan kuvakaappauksia. Wren tunnistaa kuvan nyt sisällöstä ja lähettää sen samaan lukijaan kuin ”Lisää kuvakaappauksia”: sama kysymys kaupungista, samat järjestetyt ehdotukset, samat korjaukset."
 }

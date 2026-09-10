@@ -7,5 +7,5 @@
     "name": "Guide grandi e già esistenti",
     "description": "Guide più grandi e aggiunte alle esistenti."
   },
-  "whatsNew": "Condividi un reel o un post con Wren, e lui ne ricava i luoghi.\n\nQualcuno ti manda cinque ristoranti a Roma. Condividi il post con Wren — niente screenshot, niente da digitare — e i nomi tornano pronti da controllare e salvare sulla tua mappa. Il server di Wren recupera il post, lo legge e lo scarta. Il video non raggiunge mai il telefono e Wren non lo conserva.\n\nGli screenshot funzionano esattamente come prima, e restano gratis.\n\nLeggere i post è un acquisto una tantum con un limite d'uso equo di 250 post al mese. Se hai già «Guide grandi e già esistenti», aggiungerlo costa meno."
+  "whatsNew": "Scegli uno screenshot in «Da un file» e Wren ora lo legge.\n\nPrima rifiutava ed elencava i formati di esportazione che sa leggere: vero e del tutto inutile, perché il selettore mostra ogni immagine del dispositivo e la prima schermata ti chiede di fare screenshot. Ora Wren riconosce un'immagine dal contenuto e la manda allo stesso lettore di «Aggiungi screenshot»: stessa domanda sulla città, stessi candidati ordinati, stesse correzioni."
 }

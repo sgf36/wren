@@ -7,5 +7,5 @@
     "name": "Sans limite, guides existants",
     "description": "Guides plus grands, et ajouts aux existants."
   },
-  "whatsNew": "Partagez un reel ou une publication vers Wren, et il en extrait les lieux.\n\nOn vous envoie cinq restaurants à Rome. Partagez la publication vers Wren — sans capture d'écran, sans rien taper — et les noms reviennent, prêts à vérifier et à enregistrer sur votre carte. Le serveur de Wren récupère la publication, la lit et la jette. La vidéo n'atteint jamais votre téléphone et Wren ne la conserve pas.\n\nLes captures d'écran fonctionnent exactement comme avant, et restent gratuites.\n\nLire les publications est un achat unique, avec un quota d'utilisation raisonnable de 250 publications par mois. Si vous possédez déjà « Des guides sans limite », un prix réduit permet de l'ajouter."
+  "whatsNew": "Choisissez une capture d'écran dans « À partir d'un fichier » : Wren la lit désormais.\n\nAuparavant il refusait en énumérant les formats d'export qu'il sait lire, ce qui était exact et sans aucune utilité — le sélecteur affiche toutes les images de votre appareil, et le premier écran vous invite à faire des captures. Wren reconnaît maintenant une image à son contenu et l'envoie au même lecteur que « Ajouter des captures » : même question sur la ville, mêmes propositions classées, mêmes corrections."
 }

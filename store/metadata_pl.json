@@ -7,5 +7,5 @@
     "name": "Duże i istniejące przewodniki",
     "description": "Większe przewodniki i dopisywanie do nich."
   },
-  "whatsNew": "Udostępnij Wrenowi rolkę albo posta, a wyczyta z nich miejsca.\n\nKtoś przysyła ci pięć restauracji w Rzymie. Udostępnij posta Wrenowi — bez zrzutów ekranu, bez pisania — a nazwy wracają gotowe do sprawdzenia i zapisania na twojej mapie. Serwer Wrena pobiera posta, odczytuje go i odrzuca. Film nigdy nie trafia na twój telefon, a Wren go nie zachowuje.\n\nZrzuty ekranu działają dokładnie tak jak wcześniej i wciąż są darmowe.\n\nOdczytywanie postów to zakup jednorazowy z limitem uczciwego korzystania: 250 postów miesięcznie. Jeśli masz już „Duże i istniejące przewodniki”, dopłata jest niższa."
+  "whatsNew": "Wybierz zrzut ekranu w „Z pliku” – Wren teraz go odczyta.\n\nWcześniej odmawiał i wyliczał formaty eksportu, które potrafi czytać. To była prawda i nic nie dawało: selektor pokazuje każde zdjęcie na urządzeniu, a pierwszy ekran prosi o robienie zrzutów. Wren rozpoznaje teraz obraz po zawartości i przekazuje go temu samemu czytnikowi co „Dodaj zrzuty ekranu”: to samo pytanie o miasto, te same uszeregowane propozycje, te same poprawki."
 }

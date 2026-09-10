@@ -13,5 +13,5 @@
     "name": "Any size, and existing guides",
     "description": "Bigger guides, and adding to existing ones."
   },
-  "whatsNew": "Share a reel or a post to Wren, and it reads the places out of it.\n\nSomebody sends you five restaurants in Rome. Share the post to Wren — no screenshots, no typing — and the names come back ready to check and save to your map. Wren's server fetches the post, reads it and discards it. The video never reaches your phone and Wren never keeps it.\n\nScreenshots work exactly as they did, and are still free.\n\nReading posts is a one-time purchase with a fair-use allowance of 250 posts a month. If you already own Guides of Any Size there is a smaller price to add it."
+  "whatsNew": "Pick a screenshot under \"From a file\" and Wren now reads it.\n\nIt used to refuse and list the export formats it reads, which was true and no help at all — the file picker shows every picture on your device, and the first screen asks you to screenshot things. Wren now recognises a picture by its contents and sends it to the same reader as \"Add screenshots\": same city question, same ranked candidates, same corrections."
 }

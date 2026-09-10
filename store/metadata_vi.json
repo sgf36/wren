@@ -7,5 +7,5 @@
     "name": "Mọi kích cỡ và hướng dẫn cũ",
     "description": "Hướng dẫn lớn hơn, và thêm vào cái đã có."
   },
-  "whatsNew": "Chia sẻ một reel hay bài đăng tới Wren, Wren sẽ đọc ra các địa điểm.\n\nAi đó gửi bạn năm nhà hàng ở Rome. Chia sẻ bài đăng tới Wren — không ảnh chụp màn hình, không gõ chữ — và các tên trở về, sẵn sàng để kiểm và lưu vào bản đồ của bạn. Máy chủ của Wren lấy bài đăng, đọc rồi bỏ đi. Video không bao giờ tới máy bạn và Wren không giữ lại.\n\nẢnh chụp màn hình vẫn hoạt động y như trước, và vẫn miễn phí.\n\nĐọc bài đăng là khoản mua một lần với hạn mức sử dụng hợp lý 250 bài mỗi tháng. Nếu bạn đã có “Mọi kích cỡ và hướng dẫn cũ”, giá để thêm vào sẽ thấp hơn."
+  "whatsNew": "Chọn ảnh chụp màn hình trong “Từ một tệp” và Wren giờ đã đọc được.\n\nTrước đây Wren từ chối và liệt kê các định dạng xuất mà nó đọc được. Điều đó đúng nhưng chẳng giúp được gì: trình chọn tệp hiển thị mọi ảnh trên máy, còn màn hình đầu tiên lại bảo bạn chụp màn hình. Giờ Wren nhận ra ảnh qua nội dung và chuyển tới cùng bộ đọc với “Thêm ảnh chụp màn hình”: cùng câu hỏi về thành phố, cùng danh sách gợi ý đã xếp hạng, cùng cách sửa."
 }

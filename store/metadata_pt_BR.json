@@ -7,5 +7,5 @@
     "name": "Guias grandes e já existentes",
     "description": "Guias maiores e adicionar aos existentes."
   },
-  "whatsNew": "Compartilhe um reel ou uma publicação com o Wren e ele tira os lugares dali.\n\nAlguém te manda cinco restaurantes em Roma. Compartilhe a publicação com o Wren — sem prints, sem digitar — e os nomes voltam prontos para conferir e salvar no seu mapa. O servidor do Wren busca a publicação, lê e descarta. O vídeo nunca chega ao seu celular e o Wren não guarda.\n\nOs prints funcionam exatamente como antes, e continuam grátis.\n\nLer publicações é uma compra única com um limite de uso justo de 250 publicações por mês. Se você já tem “Guias grandes e já existentes”, há um preço menor para adicionar."
+  "whatsNew": "Escolha uma captura de tela em «De um arquivo» e o Wren agora a lê.\n\nAntes ele recusava e listava os formatos de exportação que sabe ler, o que era verdade e não ajudava em nada: o seletor mostra todas as imagens do aparelho e a primeira tela pede que você faça capturas. O Wren agora reconhece uma imagem pelo conteúdo e a envia ao mesmo leitor de «Adicionar capturas»: a mesma pergunta sobre a cidade, os mesmos candidatos ordenados, as mesmas correções."
 }

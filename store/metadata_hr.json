@@ -7,5 +7,5 @@
     "name": "Veći i postojeći vodiči",
     "description": "Veći vodiči i dodavanje u postojeće."
   },
-  "whatsNew": "Podijeli s Wrenom reel ili objavu i on iz nje iščita mjesta.\n\nNetko ti pošalje pet restorana u Rimu. Podijeli objavu s Wrenom — bez snimaka zaslona, bez tipkanja — i nazivi se vrate spremni za provjeru i spremanje na tvoju kartu. Wrenov poslužitelj dohvati objavu, pročita je i odbaci. Videozapis nikad ne dođe na tvoj telefon i Wren ga ne zadržava.\n\nSnimke zaslona rade točno kao i prije i i dalje su besplatne.\n\nČitanje objava jednokratna je kupnja s poštenim ograničenjem od 250 objava mjesečno. Ako već imaš „Veći i postojeći vodiči“, dopuna stoji manje."
+  "whatsNew": "Odaberite snimku zaslona u „Iz datoteke” i Wren je sada čita.\n\nPrije je odbijao i nabrajao izvozne formate koje zna čitati. Bilo je točno i nimalo korisno: birač datoteka prikazuje svaku sliku na uređaju, a prvi zaslon traži da radite snimke. Wren sada prepoznaje sliku po sadržaju i šalje je istom čitaču kao „Dodaj snimke zaslona”: isto pitanje o gradu, isti rangirani prijedlozi, iste ispravke."
 }

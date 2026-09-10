@@ -7,5 +7,5 @@
     "name": "Größere und bestehende Guides",
     "description": "Größere Guides und bestehende ergänzen."
   },
-  "whatsNew": "Teile ein Reel oder einen Beitrag mit Wren, und Wren liest die Orte heraus.\n\nJemand schickt dir fünf Restaurants in Rom. Teile den Beitrag mit Wren — ohne Screenshots, ohne Tippen — und die Namen kommen zurück, bereit zum Prüfen und Speichern auf deiner Karte. Wrens Server holt den Beitrag, liest ihn und verwirft ihn. Das Video erreicht dein Handy nie und Wren behält es nicht.\n\nScreenshots funktionieren genau wie bisher und bleiben kostenlos.\n\nBeiträge zu lesen ist ein einmaliger Kauf mit einem fairen Kontingent von 250 Beiträgen im Monat. Wer „Guides in jeder Größe“ schon hat, zahlt für die Ergänzung weniger."
+  "whatsNew": "Wählen Sie einen Screenshot unter „Aus einer Datei“ – Wren liest ihn jetzt.\n\nFrüher lehnte Wren ab und zählte die Exportformate auf, die es lesen kann. Das stimmte und half überhaupt nicht: Die Dateiauswahl zeigt jedes Bild auf Ihrem Gerät, und der erste Bildschirm bittet Sie, Screenshots zu machen. Wren erkennt ein Bild nun an seinem Inhalt und schickt es an denselben Leser wie „Screenshots hinzufügen“: dieselbe Frage nach der Stadt, dieselben sortierten Vorschläge, dieselben Korrekturen."
 }

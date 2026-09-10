@@ -7,5 +7,5 @@
     "name": "Her boyut ve mevcut rehberler",
     "description": "Daha büyük rehberler ve mevcutlara ekleme."
   },
-  "whatsNew": "Bir reel ya da gönderiyi Wren ile paylaş, içindeki yerleri okusun.\n\nBiri sana Roma'dan beş restoran gönderiyor. Gönderiyi Wren ile paylaş — ekran görüntüsü yok, yazmak yok — ve adlar kontrol edilip haritana kaydedilmeye hazır geri gelsin. Wren'in sunucusu gönderiyi alır, okur ve atar. Video telefonuna hiç ulaşmaz ve Wren onu saklamaz.\n\nEkran görüntüleri tam eskisi gibi çalışır ve hâlâ ücretsizdir.\n\nGönderi okumak, ayda 250 gönderilik makul kullanım sınırı olan tek seferlik bir satın almadır. “Her boyut ve mevcut rehberler” sende zaten varsa eklemesi daha ucuz."
+  "whatsNew": "„Bir dosyadan” bölümünden bir ekran görüntüsü seçin; Wren artık onu okuyor.\n\nEskiden reddeder ve okuyabildiği dışa aktarma biçimlerini sıralardı. Doğruydu ve hiç yardımcı olmuyordu: dosya seçici cihazınızdaki her görseli gösterir, ilk ekran ise sizden ekran görüntüsü almanızı ister. Wren artık bir görseli içeriğinden tanıyor ve „Ekran görüntüsü ekle” ile aynı okuyucuya gönderiyor: aynı şehir sorusu, aynı sıralanmış adaylar, aynı düzeltmeler."
 }

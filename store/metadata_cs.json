@@ -7,5 +7,5 @@
     "name": "Větší i stávající průvodci",
     "description": "Větší průvodci a přidávání ke stávajícím."
   },
-  "whatsNew": "Sdílej Wrenu reel nebo příspěvek a on z něj vyčte místa.\n\nNěkdo ti pošle pět restaurací v Římě. Sdílej příspěvek s Wrenem — bez snímků obrazovky, bez psaní — a názvy se vrátí připravené ke kontrole a uložení na tvou mapu. Server Wrenu příspěvek stáhne, přečte a zahodí. Video se do tvého telefonu nikdy nedostane a Wren si ho nenechává.\n\nSnímky obrazovky fungují přesně jako dřív a jsou stále zdarma.\n\nČtení příspěvků je jednorázový nákup s férovým limitem 250 příspěvků měsíčně. Pokud už máš „Větší i stávající průvodce“, doplatek je nižší."
+  "whatsNew": "Vyberte snímek obrazovky v „Ze souboru“ a Wren ho teď přečte.\n\nDřív odmítl a vyjmenoval exportní formáty, které umí číst. Byla to pravda a vůbec to nepomohlo: výběr souborů ukazuje každý obrázek v zařízení a první obrazovka vás žádá, abyste si dělali snímky. Wren teď pozná obrázek podle obsahu a pošle ho stejné čtečce jako „Přidat snímky obrazovky“: stejná otázka na město, stejné seřazené návrhy, stejné opravy."
 }

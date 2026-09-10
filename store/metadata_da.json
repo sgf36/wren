@@ -7,5 +7,5 @@
     "name": "Alle størrelser og dem du har",
     "description": "Større guider, og tilføj til dem du har."
   },
-  "whatsNew": "Del et reel eller et opslag med Wren, så læser Wren stederne ud af det.\n\nNogen sender dig fem restauranter i Rom. Del opslaget med Wren — ingen skærmbilleder, ingen tastning — og navnene kommer tilbage, klar til at tjekke og gemme på dit kort. Wrens server henter opslaget, læser det og kasserer det. Videoen når aldrig din telefon, og Wren beholder den ikke.\n\nSkærmbilleder virker præcis som før, og er stadig gratis.\n\nAt læse opslag er et engangskøb med en rimelig grænse på 250 opslag om måneden. Har du allerede “Alle størrelser og dem du har”, er der en lavere pris for at føje det til."
+  "whatsNew": "Vælg et skærmbillede under \"Fra en fil\" – Wren læser det nu.\n\nTidligere afviste Wren og remsede de eksportformater op, den kan læse. Det passede og hjalp slet ikke: filvælgeren viser hvert billede på enheden, og den første skærm beder dig tage skærmbilleder. Wren genkender nu et billede på indholdet og sender det til samme læser som \"Tilføj skærmbilleder\": samme spørgsmål om byen, samme rangordnede forslag, samme rettelser."
 }
