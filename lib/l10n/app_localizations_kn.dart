@@ -435,6 +435,21 @@ class LKn extends L {
       'ಬೇರೆ ಅಪ್ಲಿಕೇಶನ್‌ನಿಂದ ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಿದ ಪಟ್ಟಿಯನ್ನೂ ಓದುತ್ತದೆ: CSV, KML, KMZ, GPX, GeoJSON ಅಥವಾ Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'ಸ್ಥಳದ ಹೆಸರುಗಳಿರುವ ಯಾವುದಾದರೂ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆಯಿರಿ, Wren ಅವುಗಳನ್ನು ಓದುತ್ತದೆ.';
+
+  @override
+  String get onboardingReels =>
+      'ರೀಲ್ ಅಥವಾ ಪೋಸ್ಟ್ ಲಿಂಕ್ ಹಂಚಿರಿ — Wren ಅದರಲ್ಲಿ ಸ್ಥಳಗಳನ್ನು ಕಂಡುಹಿಡಿಯುತ್ತದೆ.';
+
+  @override
+  String get onboardingFiles =>
+      'ಇನ್ನೊಂದು ನಕ್ಷೆ ಅಪ್ಲಿಕೇಶನ್‌ನಿಂದ ಫೈಲ್ ಆಮದು ಮಾಡಿ: GPX, CSV, KML ಮತ್ತು ಹೆಚ್ಚು.';
+
+  @override
+  String get onboardingDismiss => 'ಪ್ರಾರಂಭಿಸಿ';
+
+  @override
   String get clearList => 'ಪಟ್ಟಿಯನ್ನು ಖಾಲಿ ಮಾಡಿ';
 
   @override
@@ -515,6 +530,10 @@ class LKn extends L {
 
   @override
   String get sendPlacesFailed => 'ಆ ಆ್ಯಪ್ ಫೈಲ್ ಸ್ವೀಕರಿಸಲಿಲ್ಲ';
+
+  @override
+  String get sendPlacesEmpty =>
+      'ಮೊದಲು ಕೆಲವು ಸ್ಥಳಗಳನ್ನು ಸೇರಿಸಿ — ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆಯಿರಿ ಅಥವಾ Wren ಗೆ ಪೋಸ್ಟ್ ಹಂಚಿರಿ.';
 
   @override
   String fileImportPositioned(int count) {

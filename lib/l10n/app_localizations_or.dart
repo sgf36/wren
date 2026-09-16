@@ -425,6 +425,21 @@ class LOr extends L {
       'ଅନ୍ୟ ଏକ ଆପ୍‌ରୁ ଏକ୍ସପୋର୍ଟ୍ କରାଯାଇଥିବା ତାଲିକା ମଧ୍ୟ ପଢ଼େ: CSV, KML, KMZ, GPX, GeoJSON କିମ୍ବା Google Takeout।';
 
   @override
+  String get onboardingScreenshots =>
+      'ସ୍ଥାନ ନାମ ସହିତ କିଛିର ସ୍କ୍ରିନସଟ୍ ନିଅ ଏବଂ Wren ସେଗୁଡ଼ିକୁ ପଢ଼େ୤';
+
+  @override
+  String get onboardingReels =>
+      'ଏକ ରିଲ୍ ବା ପୋଷ୍ଟ ଲିଙ୍କ ସେୟାର କରନ୍ତୁ — Wren ତାହାରେ ସ୍ଥାନଗୁଡ଼ିକ ଖୋଜେ୤';
+
+  @override
+  String get onboardingFiles =>
+      'ଅନ୍ୟ ଏକ ମ୍ୟାପ୍ ଆପରୁ ଫାଇଲ ଆମଦାନୀ କରନ୍ତୁ: GPX, CSV, KML ଏବଂ ଅଧିକ୤';
+
+  @override
+  String get onboardingDismiss => 'ଆରମ୍ଭ କରନ୍ତୁ';
+
+  @override
   String get clearList => 'ତାଲିକା ଖାଲି କରନ୍ତୁ';
 
   @override
@@ -504,6 +519,10 @@ class LOr extends L {
 
   @override
   String get sendPlacesFailed => 'ସେହି ଆପ୍ ଫାଇଲ୍ ନେଲା ନାହିଁ';
+
+  @override
+  String get sendPlacesEmpty =>
+      'ପ୍ରଥମେ କିଛି ସ୍ଥାନ ଯୋଡ଼ନ୍ତୁ — କିଛିର ସ୍କ୍ରିନସଟ୍ ନିଅନ୍ତୁ କିମ୍ବା Wren କୁ ଏକ ପୋଷ୍ଟ ସେୟାର କରନ୍ତୁ୤';
 
   @override
   String fileImportPositioned(int count) {

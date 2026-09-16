@@ -401,6 +401,18 @@ class LJa extends L {
       '他のアプリから書き出したリストも読み取れます：CSV、KML、KMZ、GPX、GeoJSON、Google Takeout。';
 
   @override
+  String get onboardingScreenshots => '場所の名前が写ったスクリーンショットを撮ると、Wrenが読み取ります。';
+
+  @override
+  String get onboardingReels => 'リールや投稿のリンクを共有すると、Wrenが場所を見つけます。';
+
+  @override
+  String get onboardingFiles => '他の地図アプリからファイルをインポート：GPX、CSV、KMLなど。';
+
+  @override
+  String get onboardingDismiss => 'はじめる';
+
+  @override
   String get clearList => 'リストを空にする';
 
   @override
@@ -475,6 +487,9 @@ class LJa extends L {
 
   @override
   String get sendPlacesFailed => 'そのアプリはファイルを受け取りませんでした';
+
+  @override
+  String get sendPlacesEmpty => 'まず場所を追加してください。スクリーンショットを撮るか、投稿をWrenに共有しましょう。';
 
   @override
   String fileImportPositioned(int count) {

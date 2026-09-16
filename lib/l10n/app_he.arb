@@ -133,5 +133,10 @@
   "importLinkTitle": "הוספה מתוך קישור",
   "importPostBody": "הדביקו קישור לריל או לפוסט ו‑Wren יקרא מהם את המקומות. Wren אף פעם לא שומר את הסרטון.",
   "linkLabel": "קישור",
-  "readLink": "לקרוא"
+  "readLink": "לקרוא",
+  "onboardingScreenshots": "צלמו מסך של כל דבר עם שמות מקומות ו־Wren קורא אותם.",
+  "onboardingReels": "שתפו קישור לריל או פוסט — Wren מוצא את המקומות בו.",
+  "onboardingFiles": "ייבאו קובץ מאפליקציית מפות אחרת: GPX, CSV, KML ועוד.",
+  "onboardingDismiss": "בואו נתחיל",
+  "sendPlacesEmpty": "הוסיפו מקומות קודם — צלמו מסך או שתפו פוסט ל־Wren."
 }

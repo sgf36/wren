@@ -745,6 +745,144 @@ function bytesToB64(bytes) {
   return btoa(out);
 }
 
+/* -------------------------------------------------------- guide resolution */
+
+/**
+ * Resolves Apple Maps muids to place names by fetching the public place page.
+ *
+ * Each muid is fetched from `maps.apple.com/place?auid=<decimal>&lsp=9902`,
+ * which Apple renders server-side. The `<title>` carries the canonical name in
+ * the format "Name - Location - Apple Maps", and the OpenGraph meta tags carry
+ * coordinates.
+ *
+ * **No auth required.** Importing a guide link is a free feature; the cost is
+ * a few dozen HEAD-sized fetches against Apple's CDN, not a vendor with a key.
+ *
+ * **Why this is in the Worker and not in the app.** The parity document (10
+ * September 2026) explains the trade: scraping an undocumented page shape from
+ * inside a shipped binary means a broken importer until a store review clears.
+ * A Worker can be fixed with `wrangler deploy` in minutes.
+ */
+async function resolveGuide(request) {
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return json({ error: 'bad_request' }, 400);
+  }
+
+  const muids = payload?.muids;
+  if (!Array.isArray(muids) || muids.length === 0) {
+    return json({ error: 'bad_request' }, 400);
+  }
+  if (muids.length > 150) {
+    return json({ error: 'too_many' }, 400);
+  }
+
+  const found = {};
+  const failed = [];
+
+  // Resolve in small concurrent batches to avoid hammering Apple.
+  const BATCH = 5;
+  for (let i = 0; i < muids.length; i += BATCH) {
+    const batch = muids.slice(i, i + BATCH);
+    const results = await Promise.allSettled(
+      batch.map(async (muid) => {
+        const decimal = muidToDecimal(muid);
+        if (decimal === null) {
+          failed.push(muid);
+          return;
+        }
+        const url = `https://maps.apple.com/place?auid=${decimal}&lsp=9902`;
+        try {
+          const res = await fetch(url, {
+            headers: { 'User-Agent': UA },
+            redirect: 'follow',
+          });
+          if (!res.ok) {
+            failed.push(muid);
+            return;
+          }
+          const html = await res.text();
+          const place = parsePlacePage(html);
+          if (place) {
+            found[muid] = place;
+          } else {
+            failed.push(muid);
+          }
+        } catch {
+          failed.push(muid);
+        }
+      }),
+    );
+  }
+
+  return json({ found, failed });
+}
+
+/**
+ * Converts "I43FA2531C5B5D635" to the decimal auid Apple's URLs use.
+ * Returns null for anything that does not look like an Apple place id.
+ */
+function muidToDecimal(raw) {
+  if (typeof raw !== 'string') return null;
+  const hex = raw.startsWith('I') || raw.startsWith('i')
+    ? raw.substring(1)
+    : raw;
+  if (!/^[0-9a-fA-F]{1,16}$/.test(hex)) return null;
+  try {
+    return BigInt(`0x${hex}`).toString();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reads name and address from the HTML of an Apple Maps place page.
+ *
+ * The `<title>` format observed 10 September 2026 is:
+ *   "Azteca - Battersea Rise in London, England - Apple Maps"
+ * Split on " - " and drop the last segment ("Apple Maps").
+ *
+ * Coordinates are in Open Graph meta tags when present:
+ *   <meta property="place:location:latitude" content="51.4622" />
+ *   <meta property="place:location:longitude" content="-0.1627" />
+ */
+function parsePlacePage(html) {
+  // Title
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  if (!titleMatch) return null;
+
+  const titleParts = titleMatch[1].split(' - ');
+  // Need at least "Name - ... - Apple Maps"
+  if (titleParts.length < 2) return null;
+  // Drop "Apple Maps" trailer
+  if (titleParts[titleParts.length - 1].trim().toLowerCase().includes('apple maps')) {
+    titleParts.pop();
+  }
+  const name = titleParts[0].trim();
+  const address = titleParts.length > 1
+    ? titleParts.slice(1).join(' - ').trim()
+    : '';
+
+  if (!name) return null;
+
+  // Coordinates from Open Graph place meta tags.
+  const latMatch = html.match(
+    /<meta\s+(?:property|name)="place:location:latitude"\s+content="([^"]+)"/i,
+  );
+  const lonMatch = html.match(
+    /<meta\s+(?:property|name)="place:location:longitude"\s+content="([^"]+)"/i,
+  );
+  const lat = latMatch ? parseFloat(latMatch[1]) : null;
+  const lon = lonMatch ? parseFloat(lonMatch[1]) : null;
+
+  const result = { name, address };
+  if (lat !== null && !isNaN(lat)) result.lat = lat;
+  if (lon !== null && !isNaN(lon)) result.lon = lon;
+  return result;
+}
+
 /* ------------------------------------------------------------------ routes */
 
 async function handleProcess(request, env) {
@@ -841,6 +979,15 @@ export default {
         // has a code above.
         console.error('process failed');
         return json({ error: FAILURES.modelFailed }, 500);
+      }
+    }
+
+    if (url.pathname === '/resolve-guide' && request.method === 'POST') {
+      try {
+        return await resolveGuide(request);
+      } catch (err) {
+        console.error('resolve-guide failed');
+        return json({ error: 'resolve_failed' }, 500);
       }
     }
 

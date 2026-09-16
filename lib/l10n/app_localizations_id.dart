@@ -417,6 +417,21 @@ class LId extends L {
       'Juga membaca daftar yang diekspor dari aplikasi lain: CSV, KML, KMZ, GPX, GeoJSON atau Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Ambil tangkapan layar berisi nama tempat dan Wren membacanya.';
+
+  @override
+  String get onboardingReels =>
+      'Bagikan tautan reel atau pos — Wren menemukan tempat-tempatnya.';
+
+  @override
+  String get onboardingFiles =>
+      'Impor file dari aplikasi peta lain: GPX, CSV, KML, dan lainnya.';
+
+  @override
+  String get onboardingDismiss => 'Mulai';
+
+  @override
   String get clearList => 'Kosongkan daftar';
 
   @override
@@ -492,6 +507,10 @@ class LId extends L {
 
   @override
   String get sendPlacesFailed => 'Aplikasi itu tidak menerima berkas';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Tambahkan beberapa tempat dulu — ambil tangkapan layar atau bagikan pos ke Wren.';
 
   @override
   String fileImportPositioned(int count) {

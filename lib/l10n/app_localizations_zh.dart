@@ -394,6 +394,18 @@ class LZh extends L {
       '也能读别的应用导出的列表：CSV、KML、KMZ、GPX、GeoJSON 或 Google Takeout。';
 
   @override
+  String get onboardingScreenshots => '截取包含地点名称的任何内容，Wren 会读取它们。';
+
+  @override
+  String get onboardingReels => '分享帖子或视频链接，Wren 会找到其中的地点。';
+
+  @override
+  String get onboardingFiles => '从其他地图应用导入文件：GPX、CSV、KML 等。';
+
+  @override
+  String get onboardingDismiss => '开始使用';
+
+  @override
   String get clearList => '清空列表';
 
   @override
@@ -467,6 +479,9 @@ class LZh extends L {
 
   @override
   String get sendPlacesFailed => '该应用没有接收文件';
+
+  @override
+  String get sendPlacesEmpty => '先添加一些地点 — 截取屏幕或将帖子分享给 Wren。';
 
   @override
   String fileImportPositioned(int count) {
@@ -950,6 +965,18 @@ class LZhHant extends LZh {
       '也能讀別的應用程式匯出的列表：CSV、KML、KMZ、GPX、GeoJSON 或 Google Takeout。';
 
   @override
+  String get onboardingScreenshots => '截取包含地點名稱的任何內容，Wren 會讀取它們。';
+
+  @override
+  String get onboardingReels => '分享貼文或影片連結，Wren 會找到其中的地點。';
+
+  @override
+  String get onboardingFiles => '從其他地圖應用程式匯入檔案：GPX、CSV、KML 等。';
+
+  @override
+  String get onboardingDismiss => '開始使用';
+
+  @override
   String get clearList => '清空列表';
 
   @override
@@ -1023,6 +1050,9 @@ class LZhHant extends LZh {
 
   @override
   String get sendPlacesFailed => '該應用程式沒有接收檔案';
+
+  @override
+  String get sendPlacesEmpty => '先新增一些地點 — 截取螢幕或將貼文分享給 Wren。';
 
   @override
   String fileImportPositioned(int count) {

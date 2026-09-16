@@ -133,5 +133,10 @@
   "importLinkTitle": "Aus einem Link hinzufügen",
   "importPostBody": "Füge den Link zu einem Reel oder Beitrag ein, und Wren liest die Orte heraus. Wren behält das Video nie.",
   "linkLabel": "Link",
-  "readLink": "Lesen"
+  "readLink": "Lesen",
+  "onboardingScreenshots": "Mach einen Screenshot von etwas mit Ortsnamen und Wren liest sie.",
+  "onboardingReels": "Teile einen Reel- oder Beitragslink — Wren findet die Orte darin.",
+  "onboardingFiles": "Importiere eine Datei aus einer anderen Karten-App: GPX, CSV, KML und mehr.",
+  "onboardingDismiss": "Los geht’s",
+  "sendPlacesEmpty": "Füge zuerst Orte hinzu — mach einen Screenshot oder teile einen Beitrag mit Wren."
 }

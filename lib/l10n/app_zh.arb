@@ -133,5 +133,10 @@
   "importLinkTitle": "从链接添加",
   "importPostBody": "粘贴 Reels 或帖子的链接，Wren 会从中读出地点。Wren 从不保留视频。",
   "linkLabel": "链接",
-  "readLink": "读取"
+  "readLink": "读取",
+  "onboardingScreenshots": "截取包含地点名称的任何内容，Wren 会读取它们。",
+  "onboardingReels": "分享帖子或视频链接，Wren 会找到其中的地点。",
+  "onboardingFiles": "从其他地图应用导入文件：GPX、CSV、KML 等。",
+  "onboardingDismiss": "开始使用",
+  "sendPlacesEmpty": "先添加一些地点 — 截取屏幕或将帖子分享给 Wren。"
 }

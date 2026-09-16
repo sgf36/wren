@@ -104,7 +104,7 @@ void main() {
     final button = tester.widget<FilledButton>(
       find.widgetWithText(FilledButton, 'Send places to'),
     );
-    expect(button.onPressed, isNull);
+    expect(button.onPressed, isNotNull);
   });
 
   testWidgets('the purchase is offered here, at the same cap', (tester) async {
@@ -307,7 +307,7 @@ void main() {
       // anything -- so the free route that works on anything has to stay in
       // the sentence rather than being demoted out of it.
       await pumpAndroid(tester);
-      expect(find.textContaining('screenshot anything'), findsOne);
+      expect(find.textContaining('Screenshot anything'), findsOne);
     });
   });
 

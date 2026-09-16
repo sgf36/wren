@@ -80,6 +80,7 @@ const reel = 'https://www.instagram.com/reel/Cx1yZ_aBcDe/';
 /// stores it. Seeded rather than bought, because what is under test here is
 /// what happens after the purchase, and paywall_test covers the purchase.
 Map<String, Object> entitled({String store = 'appstore'}) => {
+  'onboarding-shown': true,
   'owned_products': [everythingProductId],
   'reel_purchase_proof': jsonEncode({
     'productId': everythingProductId,
@@ -122,7 +123,9 @@ Future<void> paste(
 }
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() => SharedPreferences.setMockInitialValues({
+    'onboarding-shown': true,
+  }));
 
   group('a post reaches the reader, and a guide still reaches the parser', () {
     testWidgets('an unentitled post raises the paywall and sends nothing', (

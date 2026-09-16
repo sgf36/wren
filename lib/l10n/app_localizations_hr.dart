@@ -442,6 +442,21 @@ class LHr extends L {
       'Čita i popis izvezen iz druge aplikacije: CSV, KML, KMZ, GPX, GeoJSON ili Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Napravite snimku zaslona s imenima mjesta i Wren ih čita.';
+
+  @override
+  String get onboardingReels =>
+      'Podijelite poveznicu reela ili objave — Wren pronalazi mjesta u njoj.';
+
+  @override
+  String get onboardingFiles =>
+      'Uvezite datoteku iz druge aplikacije za karte: GPX, CSV, KML i više.';
+
+  @override
+  String get onboardingDismiss => 'Započnite';
+
+  @override
   String get clearList => 'Očisti popis';
 
   @override
@@ -525,6 +540,10 @@ class LHr extends L {
 
   @override
   String get sendPlacesFailed => 'Ta aplikacija nije prihvatila datoteku';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Najprije dodajte mjesta — napravite snimku zaslona ili podijelite objavu u Wren.';
 
   @override
   String fileImportPositioned(int count) {

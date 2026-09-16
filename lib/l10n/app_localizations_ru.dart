@@ -461,6 +461,21 @@ class LRu extends L {
       'Также читает список, выгруженный из другого приложения: CSV, KML, KMZ, GPX, GeoJSON или Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Сделайте снимок экрана с названиями мест, и Wren их прочитает.';
+
+  @override
+  String get onboardingReels =>
+      'Поделитесь ссылкой на рилс или пост — Wren найдёт в нём места.';
+
+  @override
+  String get onboardingFiles =>
+      'Импортируйте файл из другого картографического приложения: GPX, CSV, KML и другие.';
+
+  @override
+  String get onboardingDismiss => 'Начать';
+
+  @override
   String get clearList => 'Очистить список';
 
   @override
@@ -548,6 +563,10 @@ class LRu extends L {
 
   @override
   String get sendPlacesFailed => 'Это приложение не приняло файл';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Сначала добавьте места — сделайте снимок экрана или поделитесь постом в Wren.';
 
   @override
   String fileImportPositioned(int count) {

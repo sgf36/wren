@@ -445,6 +445,21 @@ class LRo extends L {
       'Citește și o listă exportată din altă aplicație: CSV, KML, KMZ, GPX, GeoJSON sau Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Faceți o captură de ecran cu nume de locuri și Wren le citește.';
+
+  @override
+  String get onboardingReels =>
+      'Partajați un link de reel sau postare — Wren găsește locurile din el.';
+
+  @override
+  String get onboardingFiles =>
+      'Importați un fișier dintr-o altă aplicație de hărți: GPX, CSV, KML și altele.';
+
+  @override
+  String get onboardingDismiss => 'Începeți';
+
+  @override
   String get clearList => 'Golește lista';
 
   @override
@@ -528,6 +543,10 @@ class LRo extends L {
 
   @override
   String get sendPlacesFailed => 'Acea aplicație nu a acceptat fișierul';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Adăugați mai întâi câteva locuri — faceți o captură de ecran sau partajați o postare în Wren.';
 
   @override
   String fileImportPositioned(int count) {

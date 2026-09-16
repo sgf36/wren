@@ -454,6 +454,21 @@ class LCs extends L {
       'Přečte i seznam vyexportovaný z jiné aplikace: CSV, KML, KMZ, GPX, GeoJSON nebo Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Vyfoťte obrazovku s názvy míst a Wren je přečte.';
+
+  @override
+  String get onboardingReels =>
+      'Sdílejte odkaz na reel nebo příspěvek — Wren v něm najde místa.';
+
+  @override
+  String get onboardingFiles =>
+      'Importujte soubor z jiné mapové aplikace: GPX, CSV, KML a další.';
+
+  @override
+  String get onboardingDismiss => 'Začít';
+
+  @override
   String get clearList => 'Vymazat seznam';
 
   @override
@@ -541,6 +556,10 @@ class LCs extends L {
 
   @override
   String get sendPlacesFailed => 'Tato aplikace soubor nepřijala';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Nejdřív přidejte místa — vyfoťte obrazovku nebo sdílejte příspěvek do Wren.';
 
   @override
   String fileImportPositioned(int count) {

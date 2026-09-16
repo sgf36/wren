@@ -133,5 +133,10 @@
   "importLinkTitle": "Tilføj fra et link",
   "importPostBody": "Indsæt linket til et reel eller et opslag, så læser Wren stederne ud af det. Wren beholder aldrig videoen.",
   "linkLabel": "Link",
-  "readLink": "Læs det"
+  "readLink": "Læs det",
+  "onboardingScreenshots": "Tag et skærmbillede af noget med stednavne, og Wren læser dem.",
+  "onboardingReels": "Del et link til et reel eller opslag — Wren finder stederne i det.",
+  "onboardingFiles": "Importér en fil fra en anden kortapp: GPX, CSV, KML og mere.",
+  "onboardingDismiss": "Kom i gang",
+  "sendPlacesEmpty": "Tilføj nogle steder først — tag et skærmbillede eller del et opslag med Wren."
 }

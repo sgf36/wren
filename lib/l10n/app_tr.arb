@@ -133,5 +133,10 @@
   "importLinkTitle": "Bağlantıdan ekle",
   "importPostBody": "Bir reel ya da gönderi bağlantısı yapıştır, Wren içindeki yerleri okusun. Wren videoyu asla saklamaz.",
   "linkLabel": "Bağlantı",
-  "readLink": "Oku"
+  "readLink": "Oku",
+  "onboardingScreenshots": "Yer adları içeren herhangi bir şeyin ekran görüntüsünü alın, Wren okur.",
+  "onboardingReels": "Bir reel veya gönderi bağlantısı paylaşın — Wren içindeki yerleri bulur.",
+  "onboardingFiles": "Başka bir harita uygulamasından dosya içe aktarın: GPX, CSV, KML ve daha fazlası.",
+  "onboardingDismiss": "Başla",
+  "sendPlacesEmpty": "Önce birkaç yer ekleyin — ekran görüntüsü alın ya da Wren’e bir gönderi paylaşın."
 }

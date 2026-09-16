@@ -133,5 +133,10 @@
   "importLinkTitle": "Dodaj s poveznice",
   "importPostBody": "Zalijepi poveznicu na reel ili objavu i Wren će iz nje iščitati mjesta. Wren nikad ne zadržava videozapis.",
   "linkLabel": "Poveznica",
-  "readLink": "Pročitaj"
+  "readLink": "Pročitaj",
+  "onboardingScreenshots": "Napravite snimku zaslona s imenima mjesta i Wren ih čita.",
+  "onboardingReels": "Podijelite poveznicu reela ili objave — Wren pronalazi mjesta u njoj.",
+  "onboardingFiles": "Uvezite datoteku iz druge aplikacije za karte: GPX, CSV, KML i više.",
+  "onboardingDismiss": "Započnite",
+  "sendPlacesEmpty": "Najprije dodajte mjesta — napravite snimku zaslona ili podijelite objavu u Wren."
 }

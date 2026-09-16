@@ -457,6 +457,21 @@ class LSl extends L {
       'Prebere tudi seznam, izvožen iz druge aplikacije: CSV, KML, KMZ, GPX, GeoJSON ali Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Naredite posnetek zaslona z imeni krajev in Wren jih prebere.';
+
+  @override
+  String get onboardingReels =>
+      'Delite povezavo do reela ali objave — Wren v njej najde kraje.';
+
+  @override
+  String get onboardingFiles =>
+      'Uvozite datoteko iz druge aplikacije za zemljevide: GPX, CSV, KML in več.';
+
+  @override
+  String get onboardingDismiss => 'Začnite';
+
+  @override
   String get clearList => 'Počisti seznam';
 
   @override
@@ -544,6 +559,10 @@ class LSl extends L {
 
   @override
   String get sendPlacesFailed => 'Ta aplikacija ni sprejela datoteke';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Najprej dodajte nekaj krajev — naredite posnetek zaslona ali delite objavo v Wren.';
 
   @override
   String fileImportPositioned(int count) {

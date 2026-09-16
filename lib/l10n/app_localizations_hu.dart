@@ -429,6 +429,21 @@ class LHu extends L {
       'Más appból exportált listát is beolvas: CSV, KML, KMZ, GPX, GeoJSON vagy Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Készíts képernyőképet helyek nevéről és a Wren kiolvassa őket.';
+
+  @override
+  String get onboardingReels =>
+      'Oszd meg egy reel vagy poszt linkjét — a Wren megtalálja benne a helyeket.';
+
+  @override
+  String get onboardingFiles =>
+      'Importálj fájlt egy másik térkép alkalmazásból: GPX, CSV, KML és több.';
+
+  @override
+  String get onboardingDismiss => 'Kezdés';
+
+  @override
   String get clearList => 'Lista kiürítése';
 
   @override
@@ -508,6 +523,10 @@ class LHu extends L {
 
   @override
   String get sendPlacesFailed => 'Az alkalmazás nem fogadta el a fájlt';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Először adj hozzá helyeket — készíts képernyőképet vagy ossz meg egy bejegyzést a Wrennel.';
 
   @override
   String fileImportPositioned(int count) {

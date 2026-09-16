@@ -133,5 +133,10 @@
   "importLinkTitle": "Agregar desde un enlace",
   "importPostBody": "Pega el enlace de un reel o una publicación y Wren sacará los lugares. Wren nunca conserva el video.",
   "linkLabel": "Enlace",
-  "readLink": "Leerlo"
+  "readLink": "Leerlo",
+  "onboardingScreenshots": "Toma una captura de pantalla con nombres de lugares y Wren los lee.",
+  "onboardingReels": "Comparte un enlace de reel o publicación — Wren encuentra los lugares.",
+  "onboardingFiles": "Importa un archivo de otra app de mapas: GPX, CSV, KML y más.",
+  "onboardingDismiss": "Comenzar",
+  "sendPlacesEmpty": "Agrega lugares primero — toma una captura de pantalla o comparte una publicación en Wren."
 }

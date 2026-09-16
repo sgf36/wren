@@ -133,5 +133,10 @@
   "importLinkTitle": "Hozzáadás hivatkozásból",
   "importPostBody": "Illeszd be egy reel vagy egy bejegyzés hivatkozását, és a Wren kiolvassa belőle a helyeket. A Wren soha nem tartja meg a videót.",
   "linkLabel": "Hivatkozás",
-  "readLink": "Olvasd be"
+  "readLink": "Olvasd be",
+  "onboardingScreenshots": "Készíts képernyőképet helyek nevéről és a Wren kiolvassa őket.",
+  "onboardingReels": "Oszd meg egy reel vagy poszt linkjét — a Wren megtalálja benne a helyeket.",
+  "onboardingFiles": "Importálj fájlt egy másik térkép alkalmazásból: GPX, CSV, KML és több.",
+  "onboardingDismiss": "Kezdés",
+  "sendPlacesEmpty": "Először adj hozzá helyeket — készíts képernyőképet vagy ossz meg egy bejegyzést a Wrennel."
 }

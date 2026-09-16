@@ -133,5 +133,10 @@
   "importLinkTitle": "링크에서 추가",
   "importPostBody": "릴스나 게시물 링크를 붙여 넣으면 Wren이 그 안의 장소를 읽습니다. Wren은 영상을 보관하지 않습니다.",
   "linkLabel": "링크",
-  "readLink": "읽기"
+  "readLink": "읽기",
+  "onboardingScreenshots": "장소 이름이 포함된 무엇이든 스크린샷을 찍으면 Wren이 읽어냅니다.",
+  "onboardingReels": "릴이나 게시물 링크를 공유하면 Wren이 그 안의 장소를 찾아줍니다.",
+  "onboardingFiles": "다른 지도 앱에서 파일 가져오기: GPX, CSV, KML 등.",
+  "onboardingDismiss": "시작하기",
+  "sendPlacesEmpty": "먼저 장소를 추가하세요. 스크린샷을 찍거나 게시물을 Wren에 공유하세요."
 }

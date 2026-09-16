@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:io' show Directory, File, Platform;
+import 'dart:convert';
+import 'dart:io' show ContentType, Directory, File, HttpClient, Platform;
 import 'dart:typed_data' show Uint8List;
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ import 'src/reel_import.dart';
 import 'src/place_share.dart';
 import 'src/region_hint.dart';
 import 'src/resolver.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'src/review_prompt.dart';
 import 'src/share_inbox.dart';
 import 'src/admin_sheet.dart';
@@ -398,7 +400,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     // A link may be waiting from before the app was even running.
-    WidgetsBinding.instance.addPostFrameCallback((_) => _takeSharedGuide());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _takeSharedGuide();
+      if (mounted) _maybeShowOnboarding();
+    });
     // Seeded products have to reach the entitlement NOW, not when the first
     // disk read lands: a scene opens its sheet in the post-frame callback
     // below, which runs first. Without this both purchase scenes photographed
@@ -995,6 +1000,58 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     }
   }
 
+  static const _onboardingShown = 'onboarding-shown';
+
+  Future<void> _maybeShowOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(_onboardingShown) ?? false) return;
+    if (!mounted || _pending.isNotEmpty || _busy) return;
+    await prefs.setBool(_onboardingShown, true);
+    if (!mounted) return;
+    final l = L.of(context);
+    final t = Theme.of(context).textTheme;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l.emptyTitle, style: t.titleMedium),
+              const SizedBox(height: 20),
+              _OnboardingStep(
+                icon: Icons.screenshot_outlined,
+                text: l.onboardingScreenshots,
+              ),
+              const SizedBox(height: 14),
+              _OnboardingStep(
+                icon: Icons.share_outlined,
+                text: l.onboardingReels,
+              ),
+              const SizedBox(height: 14),
+              _OnboardingStep(
+                icon: Icons.insert_drive_file_outlined,
+                text: l.onboardingFiles,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l.onboardingDismiss),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   /// Asks the Worker to read a shared post, and puts what it says on the list.
   ///
   /// The app cannot read one itself. A share sheet hands over a URL and never
@@ -1281,9 +1338,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// count appears immediately and the labels arrive when they arrive. Making
   /// the user wait on a lookup for something cosmetic would be the wrong trade.
   Future<void> _nameCarriedPlaces() async {
-    // Carried places come out of a guide link, so every one of them has an
-    // Apple id and nothing else -- that is the whole payload. The id filter is
-    // a type requirement rather than a real condition.
     final nameless = _pending
         .where(
           (p) =>
@@ -1294,21 +1348,19 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         .toList();
     if (nameless.isEmpty) return;
 
-    final result = await _resolver.lookup([
-      for (final p in nameless) p.match!.id!,
-    ]);
+    final ids = [for (final p in nameless) p.match!.id!];
+    var result = await _resolver.lookup(ids);
+
+    // On Android the resolver has no lookup — every id comes back as failed.
+    // Fall back to the Worker, which resolves muids by fetching Apple's public
+    // place pages. The Worker can be fixed with a deploy if Apple changes the
+    // page shape; a binary fix would wait on a store review.
+    if (result.found.isEmpty && result.gone.isEmpty && result.failed.isNotEmpty) {
+      result = await _lookupViaWorker(ids);
+    }
     if (result.isEmpty || !mounted) return;
     final l = L.of(context);
 
-    // Only `gone` is evidence. Apple answered about these and has no record, so
-    // they cannot appear in any guide made from this list — Apple drops them on
-    // arrival, silently, which is why an 82-place guide came back as 80 with
-    // nothing to explain the difference. Dropping them here makes the count the
-    // user is shown the count they actually get.
-    //
-    // `failed` is never pruned. Those requests did not complete, which says
-    // nothing about whether the place exists, and treating a network hiccup as
-    // proof of death would delete places that are perfectly alive.
     final gone = nameless.where((p) => result.gone.contains(p.match!.id));
 
     setState(() {
@@ -1318,11 +1370,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       }
       if (gone.isNotEmpty) {
         final dropped = gone.length;
-        // Logged by identifier, because that is the only thing left of them.
-        // Apple has no record, so there is no name to show and nothing to look
-        // up: a dropped place is a bare muid or it is nothing. Printed rather
-        // than shown, since the alternative is putting raw hex in front of
-        // someone who wanted a list of restaurants.
         debugPrint(
           'WREN-GONE ${result.gone.length} place(s) Apple no longer serves: '
           '${result.gone.map((id) => id.toString()).join(', ')}',
@@ -1335,6 +1382,68 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         ].join(' ');
       }
     });
+  }
+
+  Future<PlaceLookup> _lookupViaWorker(List<PlaceId> ids) async {
+    try {
+      final uri = Uri.parse('$reelsEndpoint/resolve-guide');
+      final client = HttpClient()
+        ..connectionTimeout = const Duration(seconds: 15);
+      try {
+        final request = await client.postUrl(uri);
+        request.headers.contentType = ContentType.json;
+        request.write(jsonEncode({
+          'muids': [for (final id in ids) id.toString()],
+        }));
+        final response = await request.close().timeout(
+          const Duration(seconds: 60),
+        );
+        if (response.statusCode != 200) {
+          return PlaceLookup(failed: ids.toSet());
+        }
+        final body = jsonDecode(
+          await response.transform(utf8.decoder).join(),
+        ) as Map<String, Object?>;
+
+        final found = <PlaceId, PlaceMatch>{};
+        final rawFound = body['found'];
+        if (rawFound is Map) {
+          for (final entry in rawFound.entries) {
+            final key = entry.key?.toString();
+            final val = entry.value;
+            if (key == null || val is! Map) continue;
+            try {
+              final id = PlaceId.parse(key);
+              found[id] = PlaceMatch(
+                id: id,
+                name: (val['name'] as String?) ?? '',
+                address: (val['address'] as String?) ?? '',
+                lat: (val['lat'] as num?)?.toDouble(),
+                lon: (val['lon'] as num?)?.toDouble(),
+              );
+            } on FormatException {
+              continue;
+            }
+          }
+        }
+        final failed = <PlaceId>{};
+        final rawFailed = body['failed'];
+        if (rawFailed is List) {
+          for (final s in rawFailed.whereType<String>()) {
+            try {
+              failed.add(PlaceId.parse(s));
+            } on FormatException {
+              continue;
+            }
+          }
+        }
+        return PlaceLookup(found: found, failed: failed);
+      } finally {
+        client.close(force: true);
+      }
+    } on Object {
+      return PlaceLookup(failed: ids.toSet());
+    }
   }
 
   /// Reads a picture the user chose from the file picker, as a screenshot.
@@ -2402,8 +2511,14 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               if (v == 'unlock') _unlockFromMenu(PaywallReason.places);
               if (v == 'reels') _unlockFromMenu(PaywallReason.reels);
               if (v == 'clear') _clearList();
+              if (v == 'export') _sendPlacesElsewhere();
             },
             itemBuilder: (context) => [
+              if (_makesGuides && sendable > 0)
+                PopupMenuItem(
+                  value: 'export',
+                  child: Text(l.sendPlacesTo),
+                ),
               if (_pending.isNotEmpty)
                 PopupMenuItem(value: 'clear', child: Text(l.clearList)),
               // The purchases, and the restore that belongs with them.
@@ -2595,11 +2710,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                             ),
                           )
                         : FilledButton.icon(
-                            // Counts what can be exported, not what Apple
-                            // matched: a place a file positioned is ready to
-                            // send without any lookup having succeeded.
                             onPressed: sendable == 0
-                                ? null
+                                ? () => setState(
+                                    () => _status = l.sendPlacesEmpty,
+                                  )
                                 : _sendPlacesElsewhere,
                             icon: const Icon(Icons.place_outlined, size: 20),
                             label: Text(l.sendPlacesTo),
@@ -2990,6 +3104,27 @@ class _Empty extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _OnboardingStep extends StatelessWidget {
+  const _OnboardingStep({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 22, color: Wren.gold),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ],
     );
   }
 }

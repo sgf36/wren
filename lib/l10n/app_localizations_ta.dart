@@ -437,6 +437,21 @@ class LTa extends L {
       'மற்றொரு செயலியிலிருந்து ஏற்றுமதி செய்யப்பட்ட பட்டியலையும் படிக்கும்: CSV, KML, KMZ, GPX, GeoJSON அல்லது Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'இடப்பெயர்கள் உள்ள எதையாவது திரைப்பிடிப்பு எடுக்கவும், Wren அவற்றை வாசிக்கும்.';
+
+  @override
+  String get onboardingReels =>
+      'ரீல் அல்லது பதிவு இணைப்பைப் பகிரவும் — Wren அதில் இடங்களைக் கண்டறியும்.';
+
+  @override
+  String get onboardingFiles =>
+      'மற்றொரு வரைபட பயன்பாட்டிலிருந்து கோப்பை இறக்குமதி செய்யுங்கள்: GPX, CSV, KML மற்றும் பல.';
+
+  @override
+  String get onboardingDismiss => 'தொடங்குங்கள்';
+
+  @override
   String get clearList => 'பட்டியலைக் காலி செய்யவும்';
 
   @override
@@ -516,6 +531,10 @@ class LTa extends L {
 
   @override
   String get sendPlacesFailed => 'அந்த ஆப் கோப்பை ஏற்கவில்லை';
+
+  @override
+  String get sendPlacesEmpty =>
+      'முதலில் சில இடங்களைச் சேர்க்கவும் — திரைப்பிடிப்பு எடுக்கவும் அல்லது Wren-க்கு ஒரு பதிவைப் பகிரவும்.';
 
   @override
   String fileImportPositioned(int count) {

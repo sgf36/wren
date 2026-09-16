@@ -437,6 +437,21 @@ class LPa extends L {
       'ਕਿਸੇ ਹੋਰ ਐਪ ਤੋਂ ਐਕਸਪੋਰਟ ਕੀਤੀ ਸੂਚੀ ਵੀ ਪੜ੍ਹਦਾ ਹੈ: CSV, KML, KMZ, GPX, GeoJSON ਜਾਂ Google Takeout।';
 
   @override
+  String get onboardingScreenshots =>
+      'ਥਾਵਾਂ ਦੇ ਨਾਮ ਵਾਲੀ ਕਿਸੇ ਵੀ ਚੀਜ਼ ਦਾ ਸਕ੍ਰੀਨਸ਼ੌਟ ਲਓ ਅਤੇ Wren ਉਨ੍ਹਾਂ ਨੂੰ ਪੜ੍ਹ ਲਵੇਗਾ।';
+
+  @override
+  String get onboardingReels =>
+      'ਰੀਲ ਜਾਂ ਪੋਸਟ ਲਿੰਕ ਸਾਂਝਾ ਕਰੋ — Wren ਉਸ ਵਿੱਚ ਥਾਵਾਂ ਲੱਭ ਲਵੇਗਾ।';
+
+  @override
+  String get onboardingFiles =>
+      'ਕਿਸੇ ਹੋਰ ਮੈਪ ਐਪ ਤੋਂ ਫ਼ਾਇਲ ਆਯਾਤ ਕਰੋ: GPX, CSV, KML ਅਤੇ ਹੋਰ।';
+
+  @override
+  String get onboardingDismiss => 'ਸ਼ੁਰੂ ਕਰੋ';
+
+  @override
   String get clearList => 'ਸੂਚੀ ਖ਼ਾਲੀ ਕਰੋ';
 
   @override
@@ -516,6 +531,10 @@ class LPa extends L {
 
   @override
   String get sendPlacesFailed => 'ਉਸ ਐਪ ਨੇ ਫ਼ਾਈਲ ਨਹੀਂ ਲਈ';
+
+  @override
+  String get sendPlacesEmpty =>
+      'ਪਹਿਲਾਂ ਕੁਝ ਥਾਵਾਂ ਜੋੜੋ — ਕਿਸੇ ਚੀਜ਼ ਦਾ ਸਕ੍ਰੀਨਸ਼ੌਟ ਲਓ ਜਾਂ Wren ਨੂੰ ਪੋਸਟ ਸਾਂਝੀ ਕਰੋ।';
 
   @override
   String fileImportPositioned(int count) {

@@ -133,5 +133,10 @@
   "importLinkTitle": "Lägg till från en länk",
   "importPostBody": "Klistra in länken till en reel eller ett inlägg, så läser Wren ut platserna. Wren behåller aldrig videon.",
   "linkLabel": "Länk",
-  "readLink": "Läs den"
+  "readLink": "Läs den",
+  "onboardingScreenshots": "Ta en skärmbild av något med platsnamn, och Wren läser dem.",
+  "onboardingReels": "Dela en reel- eller inläggslänk — Wren hittar platserna i den.",
+  "onboardingFiles": "Importera en fil från en annan kartapp: GPX, CSV, KML och mer.",
+  "onboardingDismiss": "Kom igång",
+  "sendPlacesEmpty": "Lägg till platser först — ta en skärmbild eller dela ett inlägg med Wren."
 }

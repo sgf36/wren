@@ -133,5 +133,10 @@
   "importLinkTitle": "เพิ่มจากลิงก์",
   "importPostBody": "วางลิงก์รีลหรือโพสต์ แล้ว Wren จะอ่านสถานที่ออกมาให้ Wren ไม่เก็บวิดีโอไว้เลย",
   "linkLabel": "ลิงก์",
-  "readLink": "อ่านเลย"
+  "readLink": "อ่านเลย",
+  "onboardingScreenshots": "ถ่ายภาพหน้าจอที่มีชื่อสถานที่แล้ว Wren จะอ่านให้",
+  "onboardingReels": "แชร์ลิงก์รีลหรือโพสต์ — Wren จะค้นหาสถานที่ในนั้น",
+  "onboardingFiles": "นำเข้าไฟล์จากแอปแผนที่อื่น: GPX, CSV, KML และอื่น ๆ",
+  "onboardingDismiss": "เริ่มต้น",
+  "sendPlacesEmpty": "เพิ่มสถานที่ก่อน — ถ่ายภาพหน้าจอหรือแชร์โพสต์ไปที่ Wren"
 }

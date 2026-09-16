@@ -435,6 +435,21 @@ class LCa extends L {
       'També llegeix una llista exportada d\'una altra app: CSV, KML, KMZ, GPX, GeoJSON o Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Fes una captura de pantalla amb noms de llocs i Wren els llegirà.';
+
+  @override
+  String get onboardingReels =>
+      'Comparteix un enllaç de reel o publicació — Wren hi troba els llocs.';
+
+  @override
+  String get onboardingFiles =>
+      'Importa un fitxer d’una altra aplicació de mapes: GPX, CSV, KML i més.';
+
+  @override
+  String get onboardingDismiss => 'Comença';
+
+  @override
   String get clearList => 'Buidar la llista';
 
   @override
@@ -514,6 +529,10 @@ class LCa extends L {
 
   @override
   String get sendPlacesFailed => 'Aquesta app no ha acceptat el fitxer';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Afegeix uns llocs primer — fes una captura de pantalla o comparteix una publicació a Wren.';
 
   @override
   String fileImportPositioned(int count) {

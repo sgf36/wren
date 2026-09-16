@@ -438,6 +438,21 @@ class LUr extends L {
       'کسی دوسری ایپ سے ایکسپورٹ کی گئی فہرست بھی پڑھتا ہے: CSV، KML، KMZ، GPX، GeoJSON یا Google Takeout۔';
 
   @override
+  String get onboardingScreenshots =>
+      'جگہوں کے ناموں والی کسی بھی چیز کا اسکرین شاٹ لیں اور Wren انہیں پڑھ لے گا۔';
+
+  @override
+  String get onboardingReels =>
+      'ریل یا پوسٹ کا لنک شیئر کریں — Wren اس میں جگہیں ڈھونڈ لے گا۔';
+
+  @override
+  String get onboardingFiles =>
+      'کسی اور نقشے کی ایپ سے فائل درآمد کریں: GPX، CSV، KML اور مزید۔';
+
+  @override
+  String get onboardingDismiss => 'شروع کریں';
+
+  @override
   String get clearList => 'فہرست خالی کریں';
 
   @override
@@ -517,6 +532,10 @@ class LUr extends L {
 
   @override
   String get sendPlacesFailed => 'اُس ایپ نے فائل نہیں لی';
+
+  @override
+  String get sendPlacesEmpty =>
+      'پہلے کچھ جگہیں شامل کریں — کسی چیز کا اسکرین شاٹ لیں یا Wren پر پوسٹ شیئر کریں۔';
 
   @override
   String fileImportPositioned(int count) {

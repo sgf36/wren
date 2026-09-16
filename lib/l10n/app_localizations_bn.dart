@@ -423,6 +423,21 @@ class LBn extends L {
       'অন্য কোনো অ্যাপ থেকে এক্সপোর্ট করা তালিকাও পড়ে: CSV, KML, KMZ, GPX, GeoJSON বা Google Takeout।';
 
   @override
+  String get onboardingScreenshots =>
+      'জায়গার নাম সহ যেকোনো কিছুর স্ক্রিনশট নিন, Wren সেগুলো পড়বে।';
+
+  @override
+  String get onboardingReels =>
+      'একটি রিল বা পোস্ট লিংক শেয়ার করুন — Wren এতে জায়গাগুলো খুঁজে নেয়।';
+
+  @override
+  String get onboardingFiles =>
+      'অন্য একটি মানচিত্র অ্যাপ থেকে ফাইল আমদানি করুন: GPX, CSV, KML এবং আরও।';
+
+  @override
+  String get onboardingDismiss => 'শুরু করুন';
+
+  @override
   String get clearList => 'তালিকা খালি করুন';
 
   @override
@@ -502,6 +517,10 @@ class LBn extends L {
 
   @override
   String get sendPlacesFailed => 'সেই অ্যাপ ফাইলটি নিল না';
+
+  @override
+  String get sendPlacesEmpty =>
+      'আগে কিছু জায়গা যোগ করুন — কিছুর স্ক্রিনশট নিন বা Wren-এ একটি পোস্ট শেয়ার করুন।';
 
   @override
   String fileImportPositioned(int count) {

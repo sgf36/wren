@@ -412,6 +412,21 @@ class LVi extends L {
       'Cũng đọc được danh sách xuất ra từ ứng dụng khác: CSV, KML, KMZ, GPX, GeoJSON hoặc Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Chụp ảnh màn hình có tên địa điểm và Wren sẽ đọc chúng.';
+
+  @override
+  String get onboardingReels =>
+      'Chia sẻ liên kết reel hoặc bài đăng — Wren sẽ tìm các địa điểm.';
+
+  @override
+  String get onboardingFiles =>
+      'Nhập tệp từ ứng dụng bản đồ khác: GPX, CSV, KML và nhiều hơn.';
+
+  @override
+  String get onboardingDismiss => 'Bắt đầu';
+
+  @override
   String get clearList => 'Xoá danh sách';
 
   @override
@@ -487,6 +502,10 @@ class LVi extends L {
 
   @override
   String get sendPlacesFailed => 'Ứng dụng đó không nhận tệp';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Thêm một số địa điểm trước — chụp ảnh màn hình hoặc chia sẻ bài đăng tới Wren.';
 
   @override
   String fileImportPositioned(int count) {

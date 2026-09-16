@@ -133,5 +133,10 @@
   "importLinkTitle": "Thêm từ một liên kết",
   "importPostBody": "Dán liên kết của một reel hay một bài đăng, Wren sẽ đọc ra các địa điểm. Wren không bao giờ giữ lại video.",
   "linkLabel": "Liên kết",
-  "readLink": "Đọc đi"
+  "readLink": "Đọc đi",
+  "onboardingScreenshots": "Chụp ảnh màn hình có tên địa điểm và Wren sẽ đọc chúng.",
+  "onboardingReels": "Chia sẻ liên kết reel hoặc bài đăng — Wren sẽ tìm các địa điểm.",
+  "onboardingFiles": "Nhập tệp từ ứng dụng bản đồ khác: GPX, CSV, KML và nhiều hơn.",
+  "onboardingDismiss": "Bắt đầu",
+  "sendPlacesEmpty": "Thêm một số địa điểm trước — chụp ảnh màn hình hoặc chia sẻ bài đăng tới Wren."
 }

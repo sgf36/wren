@@ -417,6 +417,21 @@ class LMs extends L {
       'Juga membaca senarai yang dieksport daripada aplikasi lain: CSV, KML, KMZ, GPX, GeoJSON atau Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Ambil tangkapan skrin dengan nama tempat dan Wren membacanya.';
+
+  @override
+  String get onboardingReels =>
+      'Kongsi pautan reel atau siaran — Wren mencari tempatnya.';
+
+  @override
+  String get onboardingFiles =>
+      'Import fail dari aplikasi peta lain: GPX, CSV, KML dan lagi.';
+
+  @override
+  String get onboardingDismiss => 'Mula';
+
+  @override
   String get clearList => 'Kosongkan senarai';
 
   @override
@@ -492,6 +507,10 @@ class LMs extends L {
 
   @override
   String get sendPlacesFailed => 'Apl itu tidak menerima fail';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Tambah beberapa tempat dahulu — ambil tangkapan skrin atau kongsi siaran ke Wren.';
 
   @override
   String fileImportPositioned(int count) {

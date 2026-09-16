@@ -133,5 +133,10 @@
   "importLinkTitle": "Dodaj iz povezave",
   "importPostBody": "Prilepi povezavo do reela ali objave in Wren bo iz nje prebral kraje. Wren videa nikoli ne obdrži.",
   "linkLabel": "Povezava",
-  "readLink": "Preberi"
+  "readLink": "Preberi",
+  "onboardingScreenshots": "Naredite posnetek zaslona z imeni krajev in Wren jih prebere.",
+  "onboardingReels": "Delite povezavo do reela ali objave — Wren v njej najde kraje.",
+  "onboardingFiles": "Uvozite datoteko iz druge aplikacije za zemljevide: GPX, CSV, KML in več.",
+  "onboardingDismiss": "Začnite",
+  "sendPlacesEmpty": "Najprej dodajte nekaj krajev — naredite posnetek zaslona ali delite objavo v Wren."
 }

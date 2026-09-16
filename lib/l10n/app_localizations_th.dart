@@ -408,6 +408,21 @@ class LTh extends L {
       'อ่านรายการที่ส่งออกจากแอปอื่นได้ด้วย: CSV, KML, KMZ, GPX, GeoJSON หรือ Google Takeout';
 
   @override
+  String get onboardingScreenshots =>
+      'ถ่ายภาพหน้าจอที่มีชื่อสถานที่แล้ว Wren จะอ่านให้';
+
+  @override
+  String get onboardingReels =>
+      'แชร์ลิงก์รีลหรือโพสต์ — Wren จะค้นหาสถานที่ในนั้น';
+
+  @override
+  String get onboardingFiles =>
+      'นำเข้าไฟล์จากแอปแผนที่อื่น: GPX, CSV, KML และอื่น ๆ';
+
+  @override
+  String get onboardingDismiss => 'เริ่มต้น';
+
+  @override
   String get clearList => 'ล้างรายการ';
 
   @override
@@ -483,6 +498,10 @@ class LTh extends L {
 
   @override
   String get sendPlacesFailed => 'แอปนั้นไม่รับไฟล์';
+
+  @override
+  String get sendPlacesEmpty =>
+      'เพิ่มสถานที่ก่อน — ถ่ายภาพหน้าจอหรือแชร์โพสต์ไปที่ Wren';
 
   @override
   String fileImportPositioned(int count) {

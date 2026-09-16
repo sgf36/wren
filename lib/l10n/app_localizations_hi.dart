@@ -429,6 +429,21 @@ class LHi extends L {
       'किसी दूसरे ऐप से एक्सपोर्ट की गई सूची भी पढ़ता है: CSV, KML, KMZ, GPX, GeoJSON या Google Takeout।';
 
   @override
+  String get onboardingScreenshots =>
+      'जगहों के नाम वाली किसी भी चीज़ का स्क्रीनशॉट लें और Wren उन्हें पढ़ लेगा।';
+
+  @override
+  String get onboardingReels =>
+      'रील या पोस्ट का लिंक शेयर करें — Wren उसमें जगहें ढूँढ लेगा।';
+
+  @override
+  String get onboardingFiles =>
+      'किसी अन्य मैप ऐप से फ़ाइल आयात करें: GPX, CSV, KML और अधिक।';
+
+  @override
+  String get onboardingDismiss => 'शुरू करें';
+
+  @override
   String get clearList => 'सूची खाली करें';
 
   @override
@@ -508,6 +523,10 @@ class LHi extends L {
 
   @override
   String get sendPlacesFailed => 'उस ऐप ने फ़ाइल नहीं ली';
+
+  @override
+  String get sendPlacesEmpty =>
+      'पहले कुछ जगहें जोड़ें — किसी चीज़ का स्क्रीनशॉट लें या Wren पर पोस्ट शेयर करें।';
 
   @override
   String fileImportPositioned(int count) {

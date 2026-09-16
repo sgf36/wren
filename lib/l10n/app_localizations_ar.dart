@@ -466,6 +466,21 @@ class LAr extends L {
       'يقرأ أيضاً قائمة مُصدَّرة من تطبيق آخر: CSV أو KML أو KMZ أو GPX أو GeoJSON أو Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'التقط لقطة شاشة لأي شيء يحتوي على أسماء أماكن وسيقرأها Wren.';
+
+  @override
+  String get onboardingReels =>
+      'شارك رابط ريل أو منشور — يجد Wren الأماكن فيه.';
+
+  @override
+  String get onboardingFiles =>
+      'استورد ملفًا من تطبيق خرائط آخر: GPX و CSV و KML والمزيد.';
+
+  @override
+  String get onboardingDismiss => 'ابدأ';
+
+  @override
   String get clearList => 'إفراغ القائمة';
 
   @override
@@ -561,6 +576,10 @@ class LAr extends L {
 
   @override
   String get sendPlacesFailed => 'لم يقبل هذا التطبيق الملف';
+
+  @override
+  String get sendPlacesEmpty =>
+      'أضف بعض الأماكن أولاً — التقط لقطة شاشة لشيء ما أو شارك منشورًا إلى Wren.';
 
   @override
   String fileImportPositioned(int count) {

@@ -133,5 +133,10 @@
   "importLinkTitle": "Přidat z odkazu",
   "importPostBody": "Vlož odkaz na reel nebo příspěvek a Wren z něj vyčte místa. Wren si video nikdy nenechává.",
   "linkLabel": "Odkaz",
-  "readLink": "Přečíst"
+  "readLink": "Přečíst",
+  "onboardingScreenshots": "Vyfoťte obrazovku s názvy míst a Wren je přečte.",
+  "onboardingReels": "Sdílejte odkaz na reel nebo příspěvek — Wren v něm najde místa.",
+  "onboardingFiles": "Importujte soubor z jiné mapové aplikace: GPX, CSV, KML a další.",
+  "onboardingDismiss": "Začít",
+  "sendPlacesEmpty": "Nejdřív přidejte místa — vyfoťte obrazovku nebo sdílejte příspěvek do Wren."
 }

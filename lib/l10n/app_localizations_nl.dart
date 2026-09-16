@@ -434,6 +434,21 @@ class LNl extends L {
       'Leest ook een lijst die uit een andere app is geëxporteerd: CSV, KML, KMZ, GPX, GeoJSON of Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Maak een schermafbeelding met plaatsnamen en Wren leest ze.';
+
+  @override
+  String get onboardingReels =>
+      'Deel een reel- of berichtlink — Wren vindt de plaatsen erin.';
+
+  @override
+  String get onboardingFiles =>
+      'Importeer een bestand uit een andere kaart-app: GPX, CSV, KML en meer.';
+
+  @override
+  String get onboardingDismiss => 'Aan de slag';
+
+  @override
   String get clearList => 'Lijst wissen';
 
   @override
@@ -514,6 +529,10 @@ class LNl extends L {
 
   @override
   String get sendPlacesFailed => 'Die app nam het bestand niet aan';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Voeg eerst plaatsen toe — maak een schermafbeelding of deel een bericht met Wren.';
 
   @override
   String fileImportPositioned(int count) {

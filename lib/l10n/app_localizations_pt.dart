@@ -432,6 +432,21 @@ class LPt extends L {
       'Também lê uma lista exportada de outro app: CSV, KML, KMZ, GPX, GeoJSON ou Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Faça uma captura de tela com nomes de lugares e o Wren lê todos.';
+
+  @override
+  String get onboardingReels =>
+      'Compartilhe o link de um reel ou post — o Wren encontra os lugares.';
+
+  @override
+  String get onboardingFiles =>
+      'Importe um arquivo de outro app de mapas: GPX, CSV, KML e mais.';
+
+  @override
+  String get onboardingDismiss => 'Começar';
+
+  @override
   String get clearList => 'Limpar a lista';
 
   @override
@@ -511,6 +526,10 @@ class LPt extends L {
 
   @override
   String get sendPlacesFailed => 'Esse app não aceitou o arquivo';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Adicione lugares primeiro — faça uma captura de tela ou compartilhe um post no Wren.';
 
   @override
   String fileImportPositioned(int count) {
@@ -1047,6 +1066,21 @@ class LPtPt extends LPt {
       'Também lê uma lista exportada de outra app: CSV, KML, KMZ, GPX, GeoJSON ou Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Faça uma captura de ecrã com nomes de locais e o Wren lê-os.';
+
+  @override
+  String get onboardingReels =>
+      'Partilhe o link de um reel ou publicação — o Wren encontra os locais.';
+
+  @override
+  String get onboardingFiles =>
+      'Importe um ficheiro de outra aplicação de mapas: GPX, CSV, KML e mais.';
+
+  @override
+  String get onboardingDismiss => 'Começar';
+
+  @override
   String get clearList => 'Limpar a lista';
 
   @override
@@ -1126,6 +1160,10 @@ class LPtPt extends LPt {
 
   @override
   String get sendPlacesFailed => 'Essa aplicação não aceitou o ficheiro';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Adicione locais primeiro — faça uma captura de ecrã ou partilhe uma publicação no Wren.';
 
   @override
   String fileImportPositioned(int count) {

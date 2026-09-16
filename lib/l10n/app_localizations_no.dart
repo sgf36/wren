@@ -432,6 +432,21 @@ class LNo extends L {
       'Leser også en liste eksportert fra en annen app: CSV, KML, KMZ, GPX, GeoJSON eller Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Ta et skjermbilde av noe med stedsnavn, og Wren leser dem.';
+
+  @override
+  String get onboardingReels =>
+      'Del en reel- eller innleggslenke — Wren finner stedene i den.';
+
+  @override
+  String get onboardingFiles =>
+      'Importér en fil fra en annen kartapp: GPX, CSV, KML og mer.';
+
+  @override
+  String get onboardingDismiss => 'Kom i gang';
+
+  @override
   String get clearList => 'Tøm listen';
 
   @override
@@ -511,6 +526,10 @@ class LNo extends L {
 
   @override
   String get sendPlacesFailed => 'Appen tok ikke imot filen';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Legg til noen steder først — ta et skjermbilde eller del et innlegg med Wren.';
 
   @override
   String fileImportPositioned(int count) {

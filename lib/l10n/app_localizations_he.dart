@@ -447,6 +447,21 @@ class LHe extends L {
       'קורא גם רשימה שמייצאים מאפליקציה אחרת: CSV, KML, KMZ, GPX, GeoJSON או Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'צלמו מסך של כל דבר עם שמות מקומות ו־Wren קורא אותם.';
+
+  @override
+  String get onboardingReels =>
+      'שתפו קישור לריל או פוסט — Wren מוצא את המקומות בו.';
+
+  @override
+  String get onboardingFiles =>
+      'ייבאו קובץ מאפליקציית מפות אחרת: GPX, CSV, KML ועוד.';
+
+  @override
+  String get onboardingDismiss => 'בואו נתחיל';
+
+  @override
   String get clearList => 'ניקוי הרשימה';
 
   @override
@@ -532,6 +547,10 @@ class LHe extends L {
 
   @override
   String get sendPlacesFailed => 'האפליקציה לא קיבלה את הקובץ';
+
+  @override
+  String get sendPlacesEmpty =>
+      'הוסיפו מקומות קודם — צלמו מסך או שתפו פוסט ל־Wren.';
 
   @override
   String fileImportPositioned(int count) {

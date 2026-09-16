@@ -403,6 +403,18 @@ class LKo extends L {
       '다른 앱에서 내보낸 목록도 읽습니다: CSV, KML, KMZ, GPX, GeoJSON, Google Takeout.';
 
   @override
+  String get onboardingScreenshots => '장소 이름이 포함된 무엇이든 스크린샷을 찍으면 Wren이 읽어냅니다.';
+
+  @override
+  String get onboardingReels => '릴이나 게시물 링크를 공유하면 Wren이 그 안의 장소를 찾아줍니다.';
+
+  @override
+  String get onboardingFiles => '다른 지도 앱에서 파일 가져오기: GPX, CSV, KML 등.';
+
+  @override
+  String get onboardingDismiss => '시작하기';
+
+  @override
   String get clearList => '목록 비우기';
 
   @override
@@ -477,6 +489,9 @@ class LKo extends L {
 
   @override
   String get sendPlacesFailed => '그 앱이 파일을 받지 않았습니다';
+
+  @override
+  String get sendPlacesEmpty => '먼저 장소를 추가하세요. 스크린샷을 찍거나 게시물을 Wren에 공유하세요.';
 
   @override
   String fileImportPositioned(int count) {

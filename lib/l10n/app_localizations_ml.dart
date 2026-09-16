@@ -433,6 +433,21 @@ class LMl extends L {
       'മറ്റൊരു ആപ്പിൽനിന്ന് എക്‌സ്‌പോർട്ട് ചെയ്ത പട്ടികയും വായിക്കും: CSV, KML, KMZ, GPX, GeoJSON അല്ലെങ്കിൽ Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'സ്ഥലപ്പേരുകളുള്ള എന്തിന്റെയെങ്കിലും സ്ക്രീൻഷോട്ട് എടുക്കൂ, Wren അവ വായിക്കും.';
+
+  @override
+  String get onboardingReels =>
+      'ഒരു റീൽ അല്ലെങ്കിൽ പോസ്റ്റ് ലിങ്ക് പങ്കിടൂ — Wren അതിലെ സ്ഥലങ്ങൾ കണ്ടെത്തും.';
+
+  @override
+  String get onboardingFiles =>
+      'മറ്റൊരു മാപ്പ് ആപ്പിൽ നിന്ന് ഫയൽ ഇമ്പോർട്ട് ചെയ്യൂ: GPX, CSV, KML എന്നിവയും മറ്റും.';
+
+  @override
+  String get onboardingDismiss => 'തുടങ്ങൂ';
+
+  @override
   String get clearList => 'പട്ടിക മായ്ക്കുക';
 
   @override
@@ -512,6 +527,10 @@ class LMl extends L {
 
   @override
   String get sendPlacesFailed => 'ആ ആപ്പ് ഫയൽ സ്വീകരിച്ചില്ല';
+
+  @override
+  String get sendPlacesEmpty =>
+      'ആദ്യം ചില സ്ഥലങ്ങൾ ചേർക്കൂ — സ്ക്രീൻഷോട്ട് എടുക്കുക അല്ലെങ്കിൽ Wren-ലേക്ക് ഒരു പോസ്റ്റ് പങ്കിടുക.';
 
   @override
   String fileImportPositioned(int count) {

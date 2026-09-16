@@ -195,10 +195,10 @@ abstract class L {
   /// **'Places, kept.'**
   String get emptyTitle;
 
-  /// Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video. Sharing a post leads because it is what the app is now for; screenshots stay in the same sentence because they are free, they work on anything, and they are what most people will use first.
+  /// Explains the app on the empty screen. 'Wren' is the app name and is never translated. 'Reel' means a short social video. Screenshots lead because they are free and work on anything; reels are the paid path and come second. Keep the same structure across translations.
   ///
   /// In en, this message translates to:
-  /// **'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to Apple Maps.'**
+  /// **'Screenshot anything — a message, a page of a guidebook — and Wren reads the places out of it. Share a reel or a post and Wren reads those too. The names go to Apple Maps.'**
   String get emptyBody;
 
   /// A limitation of Apple Maps, stated up front. 'Guide' is Apple's own feature name — use whatever Apple Maps calls it in this language.
@@ -207,10 +207,10 @@ abstract class L {
   /// **'One place joins a guide you already have. Several become a new one — Apple Maps cannot merge guides.'**
   String get emptyNote;
 
-  /// The opening line of the first screen, on a platform that cannot make guides. It mirrors emptyBody, which ends in Apple Maps; this one ends in whichever map app is installed. Everything before that clause is the same, and should read the same way in translation.
+  /// The opening line of the first screen, on a platform that cannot make guides. It mirrors emptyBody, which ends in the map app rather than Apple Maps. Screenshots lead because they are free and work on anything; reels are the paid path and come second. Keep the same structure across translations.
   ///
   /// In en, this message translates to:
-  /// **'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to the map app on your phone.'**
+  /// **'Screenshot anything — a message, a page of a guidebook — and Wren reads the places out of it. Share a reel or a post and Wren reads those too. The names go to the map app on your phone.'**
   String get emptyBodyAndroid;
 
   /// The quieter second line of the first screen, on a platform that cannot make guides. It replaces emptyNote, which is about Apple Maps refusing to merge guides. Two things: a file is a way in as well as a screenshot, and nothing is sent until the user has seen the list. Name no map app here — the sheet that sends the places names them, and only the ones actually installed.
@@ -741,6 +741,30 @@ abstract class L {
   /// **'Also reads a list exported from another app: CSV, KML, KMZ, GPX, GeoJSON or Google Takeout.'**
   String get acceptedFormats;
 
+  /// Onboarding item explaining screenshot OCR. Shown once on first launch.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshot anything with place names and Wren reads them.'**
+  String get onboardingScreenshots;
+
+  /// Onboarding item explaining the reel/post share feature.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a reel or post link — Wren finds the places in it.'**
+  String get onboardingReels;
+
+  /// Onboarding item explaining file import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a file from another map app: GPX, CSV, KML and more.'**
+  String get onboardingFiles;
+
+  /// Button that dismisses the first-launch onboarding sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingDismiss;
+
   /// Menu item that removes every place from the app's list.
   ///
   /// In en, this message translates to:
@@ -836,6 +860,12 @@ abstract class L {
   /// In en, this message translates to:
   /// **'That app would not take the file'**
   String get sendPlacesFailed;
+
+  /// Shown when the user taps the send button but no places have been imported yet. Guides them toward the two free input paths.
+  ///
+  /// In en, this message translates to:
+  /// **'Add some places first — screenshot something or share a post to Wren.'**
+  String get sendPlacesEmpty;
 
   /// Shown after importing a file when the places carried their own coordinates and no map lookup was possible — they can be sent to another map app, but not put in an Apple Maps guide.
   ///

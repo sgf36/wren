@@ -431,6 +431,21 @@ class LDa extends L {
       'Læser også en liste eksporteret fra en anden app: CSV, KML, KMZ, GPX, GeoJSON eller Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Tag et skærmbillede af noget med stednavne, og Wren læser dem.';
+
+  @override
+  String get onboardingReels =>
+      'Del et link til et reel eller opslag — Wren finder stederne i det.';
+
+  @override
+  String get onboardingFiles =>
+      'Importér en fil fra en anden kortapp: GPX, CSV, KML og mere.';
+
+  @override
+  String get onboardingDismiss => 'Kom i gang';
+
+  @override
   String get clearList => 'Ryd listen';
 
   @override
@@ -510,6 +525,10 @@ class LDa extends L {
 
   @override
   String get sendPlacesFailed => 'Den app ville ikke tage filen';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Tilføj nogle steder først — tag et skærmbillede eller del et opslag med Wren.';
 
   @override
   String fileImportPositioned(int count) {

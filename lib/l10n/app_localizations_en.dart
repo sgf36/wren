@@ -16,7 +16,7 @@ class LEn extends L {
 
   @override
   String get emptyBody =>
-      'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to Apple Maps.';
+      'Screenshot anything — a message, a page of a guidebook — and Wren reads the places out of it. Share a reel or a post and Wren reads those too. The names go to Apple Maps.';
 
   @override
   String get emptyNote =>
@@ -24,7 +24,7 @@ class LEn extends L {
 
   @override
   String get emptyBodyAndroid =>
-      'Share a reel or a post to Wren and it reads the places out of it. Or screenshot anything — a message, a page of a guidebook — and Wren reads that. The names go to the map app on your phone.';
+      'Screenshot anything — a message, a page of a guidebook — and Wren reads the places out of it. Share a reel or a post and Wren reads those too. The names go to the map app on your phone.';
 
   @override
   String get emptyNoteAndroid =>
@@ -439,6 +439,21 @@ class LEn extends L {
       'Also reads a list exported from another app: CSV, KML, KMZ, GPX, GeoJSON or Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Screenshot anything with place names and Wren reads them.';
+
+  @override
+  String get onboardingReels =>
+      'Share a reel or post link — Wren finds the places in it.';
+
+  @override
+  String get onboardingFiles =>
+      'Import a file from another map app: GPX, CSV, KML and more.';
+
+  @override
+  String get onboardingDismiss => 'Get started';
+
+  @override
   String get clearList => 'Clear the list';
 
   @override
@@ -518,6 +533,10 @@ class LEn extends L {
 
   @override
   String get sendPlacesFailed => 'That app would not take the file';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Add some places first — screenshot something or share a post to Wren.';
 
   @override
   String fileImportPositioned(int count) {

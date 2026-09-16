@@ -432,6 +432,21 @@ class LTe extends L {
       'మరో యాప్ నుంచి ఎక్స్‌పోర్ట్ చేసిన జాబితాను కూడా చదువుతుంది: CSV, KML, KMZ, GPX, GeoJSON లేదా Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'ప్రదేశాల పేర్లు ఉన్న దేని స్క్రీన్‌షాట్ అయినా తీయండి, Wren వాటిని చదువుతుంది.';
+
+  @override
+  String get onboardingReels =>
+      'రీల్ లేదా పోస్ట్ లింక్ షేర్ చేయండి — Wren అందులోని ప్రదేశాలను కనుగొంటుంది.';
+
+  @override
+  String get onboardingFiles =>
+      'మరో మ్యాప్ యాప్ నుండి ఫైల్ దిగుమతి చేయండి: GPX, CSV, KML మరియు మరిన్ని.';
+
+  @override
+  String get onboardingDismiss => 'ప్రారంభించండి';
+
+  @override
   String get clearList => 'జాబితాను ఖాళీ చేయండి';
 
   @override
@@ -511,6 +526,10 @@ class LTe extends L {
 
   @override
   String get sendPlacesFailed => 'ఆ యాప్ ఫైల్‌ను తీసుకోలేదు';
+
+  @override
+  String get sendPlacesEmpty =>
+      'ముందుగా కొన్ని ప్రదేశాలు జోడించండి — స్క్రీన్‌షాట్ తీయండి లేదా Wren కు పోస్ట్ షేర్ చేయండి.';
 
   @override
   String fileImportPositioned(int count) {

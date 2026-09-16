@@ -133,5 +133,10 @@
   "importLinkTitle": "Afegeix des d'un enllaç",
   "importPostBody": "Enganxa l'enllaç d'un reel o d'una publicació i el Wren en traurà els llocs. El Wren no conserva mai el vídeo.",
   "linkLabel": "Enllaç",
-  "readLink": "Llegeix-ho"
+  "readLink": "Llegeix-ho",
+  "onboardingScreenshots": "Fes una captura de pantalla amb noms de llocs i Wren els llegirà.",
+  "onboardingReels": "Comparteix un enllaç de reel o publicació — Wren hi troba els llocs.",
+  "onboardingFiles": "Importa un fitxer d’una altra aplicació de mapes: GPX, CSV, KML i més.",
+  "onboardingDismiss": "Comença",
+  "sendPlacesEmpty": "Afegeix uns llocs primer — fes una captura de pantalla o comparteix una publicació a Wren."
 }

@@ -435,6 +435,21 @@ class LFr extends L {
       'Lit aussi une liste exportée depuis une autre app : CSV, KML, KMZ, GPX, GeoJSON ou Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Faites une capture d’écran avec des noms de lieux et Wren les lit.';
+
+  @override
+  String get onboardingReels =>
+      'Partagez un lien de reel ou de publication — Wren y trouve les lieux.';
+
+  @override
+  String get onboardingFiles =>
+      'Importez un fichier d’une autre app de cartes : GPX, CSV, KML et plus.';
+
+  @override
+  String get onboardingDismiss => 'C’est parti';
+
+  @override
   String get clearList => 'Vider la liste';
 
   @override
@@ -515,6 +530,10 @@ class LFr extends L {
 
   @override
   String get sendPlacesFailed => 'Cette app n’a pas accepté le fichier';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Ajoutez d’abord des lieux — faites une capture d’écran ou partagez une publication vers Wren.';
 
   @override
   String fileImportPositioned(int count) {
@@ -1052,6 +1071,21 @@ class LFrCa extends LFr {
       'Lit aussi une liste exportée depuis une autre app : CSV, KML, KMZ, GPX, GeoJSON ou Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Prenez une capture d’écran avec des noms de lieux et Wren les lit.';
+
+  @override
+  String get onboardingReels =>
+      'Partagez un lien de reel ou de publication — Wren y trouve les lieux.';
+
+  @override
+  String get onboardingFiles =>
+      'Importez un fichier d’une autre application de cartes : GPX, CSV, KML et plus.';
+
+  @override
+  String get onboardingDismiss => 'Commencer';
+
+  @override
   String get clearList => 'Vider la liste';
 
   @override
@@ -1132,6 +1166,10 @@ class LFrCa extends LFr {
 
   @override
   String get sendPlacesFailed => 'Cette application n’a pas pris le fichier';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Ajoutez d’abord des lieux — prenez une capture d’écran ou partagez une publication vers Wren.';
 
   @override
   String fileImportPositioned(int count) {

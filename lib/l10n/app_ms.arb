@@ -133,5 +133,10 @@
   "importLinkTitle": "Tambah daripada pautan",
   "importPostBody": "Tampal pautan reel atau siaran, dan Wren akan membaca tempat-tempatnya. Wren tidak pernah menyimpan videonya.",
   "linkLabel": "Pautan",
-  "readLink": "Baca"
+  "readLink": "Baca",
+  "onboardingScreenshots": "Ambil tangkapan skrin dengan nama tempat dan Wren membacanya.",
+  "onboardingReels": "Kongsi pautan reel atau siaran — Wren mencari tempatnya.",
+  "onboardingFiles": "Import fail dari aplikasi peta lain: GPX, CSV, KML dan lagi.",
+  "onboardingDismiss": "Mula",
+  "sendPlacesEmpty": "Tambah beberapa tempat dahulu — ambil tangkapan skrin atau kongsi siaran ke Wren."
 }

@@ -133,5 +133,10 @@
   "importLinkTitle": "Toevoegen uit een link",
   "importPostBody": "Plak de link van een reel of een post en Wren haalt de plekken eruit. Wren bewaart de video nooit.",
   "linkLabel": "Link",
-  "readLink": "Lezen"
+  "readLink": "Lezen",
+  "onboardingScreenshots": "Maak een schermafbeelding met plaatsnamen en Wren leest ze.",
+  "onboardingReels": "Deel een reel- of berichtlink — Wren vindt de plaatsen erin.",
+  "onboardingFiles": "Importeer een bestand uit een andere kaart-app: GPX, CSV, KML en meer.",
+  "onboardingDismiss": "Aan de slag",
+  "sendPlacesEmpty": "Voeg eerst plaatsen toe — maak een schermafbeelding of deel een bericht met Wren."
 }

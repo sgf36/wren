@@ -424,6 +424,21 @@ class LTr extends L {
       'Başka bir uygulamadan aktarılan listeleri de okur: CSV, KML, KMZ, GPX, GeoJSON ya da Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Yer adları içeren herhangi bir şeyin ekran görüntüsünü alın, Wren okur.';
+
+  @override
+  String get onboardingReels =>
+      'Bir reel veya gönderi bağlantısı paylaşın — Wren içindeki yerleri bulur.';
+
+  @override
+  String get onboardingFiles =>
+      'Başka bir harita uygulamasından dosya içe aktarın: GPX, CSV, KML ve daha fazlası.';
+
+  @override
+  String get onboardingDismiss => 'Başla';
+
+  @override
   String get clearList => 'Listeyi boşalt';
 
   @override
@@ -503,6 +518,10 @@ class LTr extends L {
 
   @override
   String get sendPlacesFailed => 'O uygulama dosyayı kabul etmedi';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Önce birkaç yer ekleyin — ekran görüntüsü alın ya da Wren’e bir gönderi paylaşın.';
 
   @override
   String fileImportPositioned(int count) {

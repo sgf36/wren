@@ -133,5 +133,10 @@
   "importLinkTitle": "リンクから追加",
   "importPostBody": "リールや投稿のリンクを貼り付けると、Wren がそこから場所を読み取ります。Wren が動画を保管することはありません。",
   "linkLabel": "リンク",
-  "readLink": "読み取る"
+  "readLink": "読み取る",
+  "onboardingScreenshots": "場所の名前が写ったスクリーンショットを撮ると、Wrenが読み取ります。",
+  "onboardingReels": "リールや投稿のリンクを共有すると、Wrenが場所を見つけます。",
+  "onboardingFiles": "他の地図アプリからファイルをインポート：GPX、CSV、KMLなど。",
+  "onboardingDismiss": "はじめる",
+  "sendPlacesEmpty": "まず場所を追加してください。スクリーンショットを撮るか、投稿をWrenに共有しましょう。"
 }

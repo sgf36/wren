@@ -426,6 +426,21 @@ class LGu extends L {
       'બીજી ઍપમાંથી એક્સપોર્ટ કરેલી યાદી પણ વાંચે છે: CSV, KML, KMZ, GPX, GeoJSON કે Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'સ્થળોના નામ સાથે કંઈપણનો સ્ક્રીનશોટ લો અને Wren તેમને વાંચે છે.';
+
+  @override
+  String get onboardingReels =>
+      'રીલ અથવા પોસ્ટ લિંક શેર કરો — Wren તેમાંથી સ્થળો શોધે છે.';
+
+  @override
+  String get onboardingFiles =>
+      'બીજી નકશા એપમાંથી ફાઇલ આયાત કરો: GPX, CSV, KML અને વધુ.';
+
+  @override
+  String get onboardingDismiss => 'શરૂ કરો';
+
+  @override
   String get clearList => 'યાદી ખાલી કરો';
 
   @override
@@ -505,6 +520,10 @@ class LGu extends L {
 
   @override
   String get sendPlacesFailed => 'તે ઍપે ફાઇલ સ્વીકારી નહીં';
+
+  @override
+  String get sendPlacesEmpty =>
+      'પહેલાં કેટલાંક સ્થળો ઉમેરો — કંઈકનો સ્ક્રીનશોટ લો અથવા Wren પર પોસ્ટ શેર કરો.';
 
   @override
   String fileImportPositioned(int count) {

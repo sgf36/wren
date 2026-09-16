@@ -133,5 +133,10 @@
   "importLinkTitle": "الإضافة من رابط",
   "importPostBody": "الصق رابط ريل أو منشور فيقرأ Wren منه الأماكن. لا يحتفظ Wren بالفيديو أبدًا.",
   "linkLabel": "رابط",
-  "readLink": "اقرأه"
+  "readLink": "اقرأه",
+  "onboardingScreenshots": "التقط لقطة شاشة لأي شيء يحتوي على أسماء أماكن وسيقرأها Wren.",
+  "onboardingReels": "شارك رابط ريل أو منشور — يجد Wren الأماكن فيه.",
+  "onboardingFiles": "استورد ملفًا من تطبيق خرائط آخر: GPX و CSV و KML والمزيد.",
+  "onboardingDismiss": "ابدأ",
+  "sendPlacesEmpty": "أضف بعض الأماكن أولاً — التقط لقطة شاشة لشيء ما أو شارك منشورًا إلى Wren."
 }

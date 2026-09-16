@@ -133,5 +133,10 @@
   "importLinkTitle": "લિંકમાંથી ઉમેરો",
   "importPostBody": "કોઈ રીલ કે પોસ્ટની લિંક ચોંટાડો, Wren એમાંથી જગ્યાઓ વાંચી લેશે. Wren વીડિયો ક્યારેય રાખતું નથી.",
   "linkLabel": "લિંક",
-  "readLink": "વાંચો"
+  "readLink": "વાંચો",
+  "onboardingScreenshots": "સ્થળોના નામ સાથે કંઈપણનો સ્ક્રીનશોટ લો અને Wren તેમને વાંચે છે.",
+  "onboardingReels": "રીલ અથવા પોસ્ટ લિંક શેર કરો — Wren તેમાંથી સ્થળો શોધે છે.",
+  "onboardingFiles": "બીજી નકશા એપમાંથી ફાઇલ આયાત કરો: GPX, CSV, KML અને વધુ.",
+  "onboardingDismiss": "શરૂ કરો",
+  "sendPlacesEmpty": "પહેલાં કેટલાંક સ્થળો ઉમેરો — કંઈકનો સ્ક્રીનશોટ લો અથવા Wren પર પોસ્ટ શેર કરો."
 }

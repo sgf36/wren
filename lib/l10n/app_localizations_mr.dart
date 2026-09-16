@@ -433,6 +433,21 @@ class LMr extends L {
       'दुसऱ्या ॲपमधून एक्सपोर्ट केलेली यादीही वाचतो: CSV, KML, KMZ, GPX, GeoJSON किंवा Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'ठिकाणांची नावे असलेल्या कशाचाही स्क्रीनशॉट घ्या, Wren ती वाचतो.';
+
+  @override
+  String get onboardingReels =>
+      'रील किंवा पोस्टचा लिंक शेअर करा — Wren त्यातील ठिकाणे शोधतो.';
+
+  @override
+  String get onboardingFiles =>
+      'दुसऱ्या नकाशा अॅपमधून फाइल आयात करा: GPX, CSV, KML आणि अधिक.';
+
+  @override
+  String get onboardingDismiss => 'सुरू करा';
+
+  @override
   String get clearList => 'यादी रिकामी करा';
 
   @override
@@ -512,6 +527,10 @@ class LMr extends L {
 
   @override
   String get sendPlacesFailed => 'त्या ॲपने फाइल घेतली नाही';
+
+  @override
+  String get sendPlacesEmpty =>
+      'आधी काही ठिकाणे जोडा — कशाचा तरी स्क्रीनशॉट घ्या किंवा Wren वर पोस्ट शेअर करा.';
 
   @override
   String fileImportPositioned(int count) {

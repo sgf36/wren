@@ -133,5 +133,10 @@
   "importLinkTitle": "Adaugă dintr-un link",
   "importPostBody": "Lipește linkul unui reel sau al unei postări, iar Wren scoate locurile din ea. Wren nu păstrează niciodată videoclipul.",
   "linkLabel": "Link",
-  "readLink": "Citește-l"
+  "readLink": "Citește-l",
+  "onboardingScreenshots": "Faceți o captură de ecran cu nume de locuri și Wren le citește.",
+  "onboardingReels": "Partajați un link de reel sau postare — Wren găsește locurile din el.",
+  "onboardingFiles": "Importați un fișier dintr-o altă aplicație de hărți: GPX, CSV, KML și altele.",
+  "onboardingDismiss": "Începeți",
+  "sendPlacesEmpty": "Adăugați mai întâi câteva locuri — faceți o captură de ecran sau partajați o postare în Wren."
 }

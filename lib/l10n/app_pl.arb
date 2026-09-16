@@ -133,5 +133,10 @@
   "importLinkTitle": "Dodaj z linku",
   "importPostBody": "Wklej link do rolki lub posta, a Wren wyczyta z niego miejsca. Wren nigdy nie zatrzymuje filmu.",
   "linkLabel": "Link",
-  "readLink": "Odczytaj"
+  "readLink": "Odczytaj",
+  "onboardingScreenshots": "Zrób zrzut ekranu z nazwami miejsc, a Wren je odczyta.",
+  "onboardingReels": "Udostępnij link do reela lub posta — Wren znajdzie w nim miejsca.",
+  "onboardingFiles": "Zaimportuj plik z innej aplikacji map: GPX, CSV, KML i inne.",
+  "onboardingDismiss": "Zacznij",
+  "sendPlacesEmpty": "Najpierw dodaj miejsca — zrób zrzut ekranu lub udostępnij post w Wren."
 }

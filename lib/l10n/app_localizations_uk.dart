@@ -459,6 +459,21 @@ class LUk extends L {
       'Також читає список, експортований з іншого застосунку: CSV, KML, KMZ, GPX, GeoJSON або Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Зробіть знімок екрана з назвами місць, і Wren їх прочитає.';
+
+  @override
+  String get onboardingReels =>
+      'Поділіться посиланням на рілс або допис — Wren знайде в ньому місця.';
+
+  @override
+  String get onboardingFiles =>
+      'Імпортуйте файл з іншого картографічного додатка: GPX, CSV, KML та інші.';
+
+  @override
+  String get onboardingDismiss => 'Почати';
+
+  @override
   String get clearList => 'Очистити список';
 
   @override
@@ -546,6 +561,10 @@ class LUk extends L {
 
   @override
   String get sendPlacesFailed => 'Цей застосунок не прийняв файл';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Спочатку додайте місця — зробіть знімок екрана або поділіться дописом у Wren.';
 
   @override
   String fileImportPositioned(int count) {

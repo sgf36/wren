@@ -133,5 +133,10 @@
   "importLinkTitle": "Lisää linkistä",
   "importPostBody": "Liitä reelin tai julkaisun linkki, niin Wren lukee paikat siitä. Wren ei säilytä videota koskaan.",
   "linkLabel": "Linkki",
-  "readLink": "Lue se"
+  "readLink": "Lue se",
+  "onboardingScreenshots": "Kuvakaappaa mitä tahansa paikannimien kanssa ja Wren lukee ne.",
+  "onboardingReels": "Jaa reel- tai julkaisulinkki — Wren löytää siitä paikat.",
+  "onboardingFiles": "Tuo tiedosto toisesta karttasovelluksesta: GPX, CSV, KML ja muut.",
+  "onboardingDismiss": "Aloita",
+  "sendPlacesEmpty": "Lisää ensin paikkoja — kuvakaappaa jotain tai jaa julkaisu Wreniin."
 }

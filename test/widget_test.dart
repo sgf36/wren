@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wren/main.dart';
 import 'package:wren/src/splash.dart';
 import 'package:wren/src/wren_mark.dart';
@@ -7,13 +8,17 @@ import 'package:wren/src/wren_mark.dart';
 import 'harness.dart';
 
 void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({
+    'onboarding-shown': true,
+  }));
+
   group('empty state', () {
     testWidgets('opens with nothing to publish', (tester) async {
       await tester.pumpWidget(app(const CapturePage()));
       await tester.pump();
 
       expect(
-        find.textContaining('Share a reel or a post to Wren'),
+        find.textContaining('Screenshot anything'),
         findsOneWidget,
       );
       // "Add", not "Add screenshots": screenshots are now one of three sources,

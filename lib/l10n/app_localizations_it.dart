@@ -434,6 +434,21 @@ class LIt extends L {
       'Legge anche un elenco esportato da un\'altra app: CSV, KML, KMZ, GPX, GeoJSON o Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Fai uno screenshot con nomi di posti e Wren li legge.';
+
+  @override
+  String get onboardingReels =>
+      'Condividi il link di un reel o post — Wren trova i posti al suo interno.';
+
+  @override
+  String get onboardingFiles =>
+      'Importa un file da un’altra app di mappe: GPX, CSV, KML e altro.';
+
+  @override
+  String get onboardingDismiss => 'Inizia';
+
+  @override
   String get clearList => 'Svuota l\'elenco';
 
   @override
@@ -514,6 +529,10 @@ class LIt extends L {
 
   @override
   String get sendPlacesFailed => 'Quell’app non ha accettato il file';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Aggiungi prima dei posti — fai uno screenshot o condividi un post su Wren.';
 
   @override
   String fileImportPositioned(int count) {

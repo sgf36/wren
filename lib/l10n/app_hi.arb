@@ -133,5 +133,10 @@
   "importLinkTitle": "लिंक से जोड़ें",
   "importPostBody": "किसी रील या पोस्ट का लिंक चिपकाइए, Wren उसमें से जगहें पढ़ लेगा। Wren वीडियो कभी नहीं रखता।",
   "linkLabel": "लिंक",
-  "readLink": "पढ़ें"
+  "readLink": "पढ़ें",
+  "onboardingScreenshots": "जगहों के नाम वाली किसी भी चीज़ का स्क्रीनशॉट लें और Wren उन्हें पढ़ लेगा।",
+  "onboardingReels": "रील या पोस्ट का लिंक शेयर करें — Wren उसमें जगहें ढूँढ लेगा।",
+  "onboardingFiles": "किसी अन्य मैप ऐप से फ़ाइल आयात करें: GPX, CSV, KML और अधिक।",
+  "onboardingDismiss": "शुरू करें",
+  "sendPlacesEmpty": "पहले कुछ जगहें जोड़ें — किसी चीज़ का स्क्रीनशॉट लें या Wren पर पोस्ट शेयर करें।"
 }

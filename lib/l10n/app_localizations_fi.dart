@@ -425,6 +425,21 @@ class LFi extends L {
       'Lukee myös toisesta appista viedyn listan: CSV, KML, KMZ, GPX, GeoJSON tai Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Kuvakaappaa mitä tahansa paikannimien kanssa ja Wren lukee ne.';
+
+  @override
+  String get onboardingReels =>
+      'Jaa reel- tai julkaisulinkki — Wren löytää siitä paikat.';
+
+  @override
+  String get onboardingFiles =>
+      'Tuo tiedosto toisesta karttasovelluksesta: GPX, CSV, KML ja muut.';
+
+  @override
+  String get onboardingDismiss => 'Aloita';
+
+  @override
   String get clearList => 'Tyhjennä lista';
 
   @override
@@ -504,6 +519,10 @@ class LFi extends L {
 
   @override
   String get sendPlacesFailed => 'Sovellus ei ottanut tiedostoa vastaan';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Lisää ensin paikkoja — kuvakaappaa jotain tai jaa julkaisu Wreniin.';
 
   @override
   String fileImportPositioned(int count) {

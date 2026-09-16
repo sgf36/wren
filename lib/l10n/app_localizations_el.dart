@@ -442,6 +442,21 @@ class LEl extends L {
       'Διαβάζει και λίστα που έχεις εξαγάγει από άλλη εφαρμογή: CSV, KML, KMZ, GPX, GeoJSON ή Google Takeout.';
 
   @override
+  String get onboardingScreenshots =>
+      'Τραβήξτε στιγμιότυπο με ονόματα τόπων και το Wren τα διαβάζει.';
+
+  @override
+  String get onboardingReels =>
+      'Μοιραστείτε σύνδεσμο reel ή ανάρτησης — το Wren βρίσκει τα μέρη.';
+
+  @override
+  String get onboardingFiles =>
+      'Εισαγωγή αρχείου από άλλη εφαρμογή χαρτών: GPX, CSV, KML και άλλα.';
+
+  @override
+  String get onboardingDismiss => 'Ξεκινήστε';
+
+  @override
   String get clearList => 'Άδειασμα της λίστας';
 
   @override
@@ -521,6 +536,10 @@ class LEl extends L {
 
   @override
   String get sendPlacesFailed => 'Αυτή η εφαρμογή δεν δέχτηκε το αρχείο';
+
+  @override
+  String get sendPlacesEmpty =>
+      'Προσθέστε μερικά μέρη πρώτα — τραβήξτε στιγμιότυπο ή μοιραστείτε μια ανάρτηση στο Wren.';
 
   @override
   String fileImportPositioned(int count) {
