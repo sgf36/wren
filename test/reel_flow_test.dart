@@ -123,9 +123,9 @@ Future<void> paste(
 }
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({
-    'onboarding-shown': true,
-  }));
+  setUp(
+    () => SharedPreferences.setMockInitialValues({'onboarding-shown': true}),
+  );
 
   group('a post reaches the reader, and a guide still reaches the parser', () {
     testWidgets('an unentitled post raises the paywall and sends nothing', (

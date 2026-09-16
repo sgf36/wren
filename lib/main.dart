@@ -1355,7 +1355,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // Fall back to the Worker, which resolves muids by fetching Apple's public
     // place pages. The Worker can be fixed with a deploy if Apple changes the
     // page shape; a binary fix would wait on a store review.
-    if (result.found.isEmpty && result.gone.isEmpty && result.failed.isNotEmpty) {
+    if (result.found.isEmpty &&
+        result.gone.isEmpty &&
+        result.failed.isNotEmpty) {
       result = await _lookupViaWorker(ids);
     }
     if (result.isEmpty || !mounted) return;
@@ -1392,18 +1394,20 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       try {
         final request = await client.postUrl(uri);
         request.headers.contentType = ContentType.json;
-        request.write(jsonEncode({
-          'muids': [for (final id in ids) id.toString()],
-        }));
+        request.write(
+          jsonEncode({
+            'muids': [for (final id in ids) id.toString()],
+          }),
+        );
         final response = await request.close().timeout(
           const Duration(seconds: 60),
         );
         if (response.statusCode != 200) {
           return PlaceLookup(failed: ids.toSet());
         }
-        final body = jsonDecode(
-          await response.transform(utf8.decoder).join(),
-        ) as Map<String, Object?>;
+        final body =
+            jsonDecode(await response.transform(utf8.decoder).join())
+                as Map<String, Object?>;
 
         final found = <PlaceId, PlaceMatch>{};
         final rawFound = body['found'];
@@ -2515,10 +2519,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             },
             itemBuilder: (context) => [
               if (_makesGuides && sendable > 0)
-                PopupMenuItem(
-                  value: 'export',
-                  child: Text(l.sendPlacesTo),
-                ),
+                PopupMenuItem(value: 'export', child: Text(l.sendPlacesTo)),
               if (_pending.isNotEmpty)
                 PopupMenuItem(value: 'clear', child: Text(l.clearList)),
               // The purchases, and the restore that belongs with them.

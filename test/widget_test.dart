@@ -8,19 +8,16 @@ import 'package:wren/src/wren_mark.dart';
 import 'harness.dart';
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({
-    'onboarding-shown': true,
-  }));
+  setUp(
+    () => SharedPreferences.setMockInitialValues({'onboarding-shown': true}),
+  );
 
   group('empty state', () {
     testWidgets('opens with nothing to publish', (tester) async {
       await tester.pumpWidget(app(const CapturePage()));
       await tester.pump();
 
-      expect(
-        find.textContaining('Screenshot anything'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('Screenshot anything'), findsOneWidget);
       // "Add", not "Add screenshots": screenshots are now one of three sources,
       // alongside a file and an existing guide, so the button opens a menu.
       expect(find.text('Add'), findsOneWidget);
