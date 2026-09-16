@@ -13,5 +13,5 @@
     "name": "Any size, and existing guides",
     "description": "Bigger guides, and adding to existing ones."
   },
-  "whatsNew": "Pick a screenshot under \"From a file\" and Wren now reads it.\n\nIt used to refuse and list the export formats it reads, which was true and no help at all — the file picker shows every picture on your device, and the first screen asks you to screenshot things. Wren now recognises a picture by its contents and sends it to the same reader as \"Add screenshots\": same city question, same ranked candidates, same corrections."
+  "whatsNew": "A GPX export of your places, straight from the overflow menu. It was already there on Android; now it is on iPhone too, so any app that reads GPX can have what you found.\n\nA short welcome the first time you open Wren, showing the three ways places come in — screenshots, posts and files — so nobody has to work it out from a blank screen.\n\nThe empty state now leads with screenshots, which is what most people try first, and tells you plainly when a feature is not available rather than greying out a button."
 }
