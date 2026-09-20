@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Mọi kích cỡ và hướng dẫn cũ",
     "description": "Hướng dẫn lớn hơn, và thêm vào cái đã có."
-  },
-  "whatsNew": "Xuất các địa điểm của bạn ra GPX, ngay từ menu thêm (⋯). Tính năng này đã có trên Android; giờ iPhone cũng có, nên bất kỳ ứng dụng nào đọc được GPX đều nhận được những gì bạn tìm thấy.\n\nLần đầu mở Wren sẽ thấy một màn chào ngắn, cho biết ba cách đưa địa điểm vào — ảnh chụp màn hình, bài đăng và tệp — không ai phải tự mò từ một màn hình trống.\n\nMàn hình trống giờ bắt đầu bằng ảnh chụp màn hình, vì đó là thứ hầu hết mọi người thử trước. Và khi một tính năng không khả dụng, Wren nói thẳng thay vì làm mờ nút bấm."
+  }
 }

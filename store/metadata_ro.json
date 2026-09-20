@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Ghiduri mari și existente",
     "description": "Ghiduri mari și adăugare la cele existente."
-  },
-  "whatsNew": "Export GPX al locurilor, direct din meniul cu trei puncte. Era deja pe Android; acum este și pe iPhone, așa că orice aplicație care citește GPX poate avea ce ați găsit.\n\nO primire scurtă la prima deschidere a Wren, arătând cele trei moduri în care ajung locurile — capturi de ecran, postări și fișiere — ca să nu trebuiască să le descoperiți singur dintr-un ecran gol.\n\nEcranul gol începe acum cu capturile, adică ce încearcă majoritatea mai întâi, și vă spune clar când o funcție nu este disponibilă în loc să estompeze un buton."
+  }
 }

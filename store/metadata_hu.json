@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Nagyobb és meglévő útikalauzok",
     "description": "Nagyobb útikalauzok és a meglévők bővítése."
-  },
-  "whatsNew": "GPX-exportálás a helyeidről, közvetlenül a hárompontos menüből. Androidon már megvolt; most iPhone-on is ott van, így bármelyik GPX-t olvasó alkalmazás megkaphatja, amit találtál.\n\nRövid köszöntés, amikor először nyitod meg a Wrent, megmutatja a helyek három beviteli módját — képernyőképek, bejegyzések és fájlok —, hogy senkinek se kelljen üres képernyőből kiokoskodnia.\n\nAz üres képernyő most a képernyőképekkel indul, mert a legtöbben azt próbálják először, és nyíltan megmondja, ha egy funkció nem elérhető, ahelyett hogy kiszürkítene egy gombot."
+  }
 }

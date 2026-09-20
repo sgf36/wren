@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Größere und bestehende Guides",
     "description": "Größere Guides und bestehende ergänzen."
-  },
-  "whatsNew": "Ein GPX-Export deiner Orte, direkt aus dem Dreipunktemenü. Auf Android gab es das schon; jetzt auch auf dem iPhone, sodass jede App, die GPX liest, haben kann, was du gefunden hast.\n\nEine kurze Begrüßung beim ersten Öffnen von Wren, die zeigt, auf welchen drei Wegen Orte hereinkommen — Screenshots, Beiträge und Dateien — damit niemand vor einem leeren Bildschirm herausfinden muss, wie es funktioniert.\n\nDer leere Zustand beginnt jetzt mit Screenshots, weil die meisten damit anfangen, und sagt dir klar, wenn eine Funktion nicht verfügbar ist, statt einen Knopf auszugrauen."
+  }
 }

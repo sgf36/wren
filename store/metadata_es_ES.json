@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Guías grandes y ya existentes",
     "description": "Guías más grandes, y añadir a existentes."
-  },
-  "whatsNew": "Exportación GPX de tus lugares, directamente desde el menú de opciones. Ya estaba en Android; ahora también en iPhone, así que cualquier app que lea GPX puede llevarse lo que encontraste.\n\nUna bienvenida breve la primera vez que abres Wren, mostrando las tres formas de añadir lugares — capturas, publicaciones y archivos — para que nadie tenga que adivinarlo desde una pantalla vacía.\n\nLa pantalla vacía ahora empieza por las capturas, que es lo que la mayoría prueba primero, y te dice con claridad cuándo una función no está disponible en lugar de atenuar un botón."
+  }
 }

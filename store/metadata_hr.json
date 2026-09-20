@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Veći i postojeći vodiči",
     "description": "Veći vodiči i dodavanje u postojeće."
-  },
-  "whatsNew": "GPX izvoz vaših mjesta, ravno iz izbornika opcija. Na Androidu je već bio; sada je i na iPhoneu, pa svaka aplikacija koja čita GPX može dobiti ono što ste pronašli.\n\nKratka dobrodošlica pri prvom otvaranju Wrena pokazuje tri načina na koje mjesta ulaze — snimke zaslona, objave i datoteke — tako da nitko ne mora sam zaključivati s praznog zaslona.\n\nPrazno stanje sada počinje sa snimkama zaslona, jer to većina ljudi isproba prvo, i otvoreno vam kaže kada neka značajka nije dostupna umjesto da samo zasivi gumb."
+  }
 }

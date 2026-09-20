@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Guies grans i ja existents",
     "description": "Guies més grans, i afegir a existents."
-  },
-  "whatsNew": "Una exportació GPX dels teus llocs, directament des del menú de tres punts. A Android ja hi era; ara també hi és a iPhone, així que qualsevol app que llegeixi GPX pot tenir el que has trobat.\n\nUna benvinguda breu el primer cop que obris el Wren, que mostra les tres maneres d'afegir llocs — captures, publicacions i fitxers — perquè ningú ho hagi d'endevinar davant d'una pantalla en blanc.\n\nL'estat buit ara comença per les captures, que és el que la majoria de gent prova primer, i t'avisa amb claredat quan una funció no està disponible en lloc d'atenuar un botó."
+  }
 }

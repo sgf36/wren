@@ -13,5 +13,5 @@
     "name": "Any size, and existing guides",
     "description": "Bigger guides, and adding to existing ones."
   },
-  "whatsNew": "A GPX export of your places, straight from the overflow menu. It was already there on Android; now it is on iPhone too, so any app that reads GPX can have what you found.\n\nA short welcome the first time you open Wren, showing the three ways places come in — screenshots, posts and files — so nobody has to work it out from a blank screen.\n\nThe empty state now leads with screenshots, which is what most people try first, and tells you plainly when a feature is not available rather than greying out a button."
+  "whatsNew": "A GPX export of your places, straight from the overflow menu, so any app that reads GPX can have what you found.\n\nA short welcome the first time you open Wren, showing the three ways places come in — screenshots, posts and files — so nobody has to work it out from a blank screen.\n\nThe empty state now leads with screenshots, which is what most people try first, and tells you plainly when a feature is not available rather than greying out a button."
 }

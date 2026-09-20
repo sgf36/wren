@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Oppaat ilman rajoituksia",
     "description": "Isommat oppaat ja lisäys olemassa oleviin."
-  },
-  "whatsNew": "GPX-vienti paikoistasi suoraan kolmen pisteen valikosta. Se oli Androidilla jo ennestään; nyt se on myös iPhonessa, joten mikä tahansa GPX:ää lukeva sovellus saa löytämäsi paikat.\n\nLyhyt tervetulotoivotus, kun avaat Wrenin ensimmäistä kertaa: se näyttää kolme tapaa tuoda paikkoja — kuvakaappaukset, julkaisut ja tiedostot —, joten kenenkään ei tarvitse arvailla tyhjän näytön edessä.\n\nTyhjä näkymä alkaa nyt kuvakaappauksista, koska useimmat kokeilevat sitä ensin, ja kertoo sinulle suoraan, kun ominaisuus ei ole käytettävissä, sen sijaan että himmentäisi painikkeen."
+  }
 }

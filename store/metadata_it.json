@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Guide grandi e già esistenti",
     "description": "Guide più grandi e aggiunte alle esistenti."
-  },
-  "whatsNew": "Esportazione GPX dei tuoi luoghi, direttamente dal menu con i tre puntini. C'era già su Android; ora c'è anche su iPhone, così qualsiasi app che legga GPX può avere ciò che hai trovato.\n\nUn breve benvenuto la prima volta che apri Wren, con le tre vie di ingresso per i luoghi — screenshot, post e file — così nessuno deve capirlo da solo davanti a uno schermo vuoto.\n\nLo stato vuoto ora parte dagli screenshot, che è quello che la maggior parte delle persone prova per primo, e ti dice chiaramente quando una funzione non è disponibile invece di sbiadire un pulsante."
+  }
 }

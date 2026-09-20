@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Večji in obstoječi vodniki",
     "description": "Večji vodniki in dodajanje v obstoječe."
-  },
-  "whatsNew": "GPX izvoz vaših krajev, naravnost iz dodatnega menija. Na Androidu je že bil; zdaj je tudi na iPhonu, tako da lahko vsaka aplikacija, ki bere GPX, dobi, kar ste našli.\n\nKratek pozdrav ob prvem odprtju Wrena pokaže tri načine, kako kraji pridejo — posnetki zaslona, objave in datoteke — tako da nikomur ni treba ugotavljati s praznega zaslona.\n\nPrazno stanje zdaj vodi s posnetki zaslona, ker to večina ljudi poskusi najprej, in jasno pove, ko funkcija ni na voljo, namesto da bi le zatemnil gumb."
+  }
 }

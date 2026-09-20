@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Duże i istniejące przewodniki",
     "description": "Większe przewodniki i dopisywanie do nich."
-  },
-  "whatsNew": "Eksport GPX twoich miejsc, wprost z menu opcji. Na Androidzie już był; teraz jest też na iPhonie, więc każda aplikacja czytająca GPX może dostać to, co znalazłeś.\n\nKrótkie powitanie przy pierwszym otwarciu Wrena pokazuje trzy sposoby dodawania miejsc — zrzuty ekranu, posty i pliki — żeby nikt nie musiał się domyślać przed pustym ekranem.\n\nPusty widok zaczyna teraz od zrzutów ekranu, bo to próbuje większość ludzi w pierwszej kolejności, i mówi wprost, kiedy funkcja jest niedostępna, zamiast wyszarzać przycisk."
+  }
 }

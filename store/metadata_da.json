@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Alle størrelser og dem du har",
     "description": "Større guider, og tilføj til dem du har."
-  },
-  "whatsNew": "GPX-eksport af dine steder, direkte fra menuen med de tre prikker. Den var der allerede på Android; nu er den også på iPhone, så enhver app der læser GPX kan få det du har fundet.\n\nEn kort velkomst første gang du åbner Wren, der viser de tre måder steder kommer ind på — skærmbilleder, opslag og filer — så ingen behøver at gætte sig frem fra en tom skærm.\n\nDen tomme skærm starter nu med skærmbilleder, som er det de fleste prøver først, og fortæller dig rent ud når en funktion ikke er tilgængelig i stedet for at gråtone en knap."
+  }
 }

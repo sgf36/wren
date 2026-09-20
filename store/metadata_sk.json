@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Väčší aj existujúci sprievodca",
     "description": "Väčší sprievodcovia a pridávanie k nim."
-  },
-  "whatsNew": "GPX export vašich miest, priamo z menu možností. Na Androide už bol; teraz je aj na iPhone, takže každá aplikácia, ktorá číta GPX, môže dostať to, čo ste našli.\n\nKrátke privítanie pri prvom otvorení Wrenu ukáže tri spôsoby, akými miesta prichádzajú — snímky obrazovky, príspevky a súbory — aby to nikto nemusel zisťovať z prázdnej obrazovky.\n\nPrázdny stav teraz začína snímkami obrazovky, pretože to väčšina ľudí skúsi ako prvé, a namiesto stlmeného tlačidla vám rovno povie, keď funkcia nie je k dispozícii."
+  }
 }

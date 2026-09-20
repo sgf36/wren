@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Větší i stávající průvodci",
     "description": "Větší průvodci a přidávání ke stávajícím."
-  },
-  "whatsNew": "GPX export tvých míst, přímo z nabídky se třemi tečkami. Na Androidu tam byl odjakživa; teď je i na iPhonu, takže cokoli, co čte GPX, dostane tvoje nálezy.\n\nKrátké přivítání při prvním otevření Wrenu, které ukáže tři způsoby, jak místa přicházejí — snímky obrazovky, příspěvky a soubory —, takže z prázdné obrazovky nikdo nemusí nic luštit.\n\nPrázdná obrazovka teď začíná snímky, protože většina lidí to zkouší nejdřív, a řekne ti rovnou, když funkce není k dispozici, místo aby ztlumila tlačítko."
+  }
 }

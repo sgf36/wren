@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Her boyut ve mevcut rehberler",
     "description": "Daha büyük rehberler ve mevcutlara ekleme."
-  },
-  "whatsNew": "Yerlerinin GPX dışa aktarımı, doğrudan üç nokta menüsünden. Android'de zaten vardı; artık iPhone'da da var, böylece GPX okuyan herhangi bir uygulama senin bulduklarına sahip olabilir.\n\nWren'i ilk açtığında kısa bir karşılama, yerlerin üç giriş yolunu gösteriyor — ekran görüntüleri, gönderiler ve dosyalar — böylece kimse boş bir ekrandan çözmeye çalışmak zorunda kalmıyor.\n\nBoş ekran artık ekran görüntüleriyle başlıyor, çünkü çoğu kişinin ilk denediği bu; ve bir özellik kullanılamadığında bir düğmeyi soluklaştırıp geçmek yerine sana bunu açıkça söylüyor."
+  }
 }

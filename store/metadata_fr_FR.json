@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Sans limite, guides existants",
     "description": "Guides plus grands, et ajouts aux existants."
-  },
-  "whatsNew": "Un export GPX de vos lieux, directement depuis le menu à trois points. C'était déjà là sur Android ; maintenant c'est aussi sur iPhone, pour que toute app qui lit le GPX puisse récupérer ce que vous avez trouvé.\n\nUn bref écran de bienvenue la première fois que vous ouvrez Wren, montrant les trois façons dont les lieux arrivent — captures, publications et fichiers — pour que personne n'ait à deviner depuis un écran vide.\n\nL'écran vide commence maintenant par les captures, parce que c'est ce que la plupart des gens essaient en premier, et vous dit clairement quand une fonction n'est pas disponible au lieu de griser un bouton."
+  }
 }

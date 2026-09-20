@@ -7,6 +7,5 @@
     "productId": "com.spencerfields.littlebird.unlimited",
     "name": "Ukuran bebas dan panduan lama",
     "description": "Panduan besar dan menambah ke yang ada."
-  },
-  "whatsNew": "Ekspor GPX tempat-tempatmu, langsung dari menu titik tiga. Di Android sudah ada; sekarang di iPhone juga, jadi aplikasi apa pun yang membaca GPX bisa mendapatkan apa yang kamu temukan.\n\nSambutan singkat saat pertama kali membuka Wren, menunjukkan tiga cara memasukkan tempat — tangkapan layar, unggahan, dan berkas — supaya tidak perlu menebak-nebak dari layar kosong.\n\nTampilan kosong sekarang dimulai dengan tangkapan layar, yang biasanya dicoba orang lebih dulu, dan memberi tahu dengan jelas kalau suatu fitur tidak tersedia alih-alih meredupkan tombol begitu saja."
+  }
 }
