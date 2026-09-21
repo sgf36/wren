@@ -2716,8 +2716,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(l.sendPlacesEmpty),
-                                        duration:
-                                            const Duration(seconds: 4),
+                                        duration: const Duration(seconds: 4),
                                       ),
                                     );
                                   }
