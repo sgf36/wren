@@ -128,6 +128,17 @@
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Wren reads the text in screenshots you choose, so it can find the places they name. Screenshots are read on this device and are not uploaded.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wren</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.spencerfields.littlebird</string>
+		</dict>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>maps</string>

@@ -129,26 +129,20 @@ class ShareViewController: UIViewController {
   }
 
 
-  /// Says so, briefly, and then goes.
+  /// Shows what happened and offers to open Wren.
   ///
-  /// This used to try to open Wren. It cannot, and neither can any other share
-  /// extension: iOS 18 refuses both routes deliberately. Sending openURL: to
-  /// whatever answers it on the responder chain — what every app that does this
-  /// has historically shipped — is met with "BUG IN CLIENT OF UIKIT ... Force
-  /// returning false", and NSExtensionContext.open is documented and enforced
-  /// as a Today-widget call and answers false here. Apple's guidance is that an
-  /// extension wanting attention should post a local notification instead.
+  /// The card stays until the user taps "Open Wren" or dismisses. Replacing
+  /// the old 0.9-second auto-dismiss, because a sheet that vanishes in silence
+  /// tells the user nothing — especially when iOS prevents a share extension
+  /// from opening its own app automatically.
   ///
-  /// Do not try it again. Both were tried on device, in builds 164 and 165.
-  ///
-  /// So the problem is solved the other way round. The share worked; it simply
-  /// looked as though it had not, because a sheet that vanishes in silence is
-  /// what failure looks like too. A tick that lingers for a moment says the
-  /// thing was taken, and the app finds it on next launch as it always has.
-  ///
-  /// No words, deliberately. The app is translated into forty-seven languages
-  /// and this extension has no localisation of its own; a tick and the app's
-  /// own name need none.
+  /// "Open Wren" tries extensionContext.open with a custom URL scheme. On iOS
+  /// 18.0–18.1, Apple blocked this entirely ("BUG IN CLIENT OF UIKIT ...
+  /// Force returning false"). Later point releases relaxed the restriction for
+  /// registered URL schemes owned by the same team. If the open succeeds, the
+  /// extension completes. If it fails, the extension still completes — the
+  /// user is back at the source app and can switch to Wren from the app
+  /// switcher, with their share waiting in the inbox.
   private func confirm() {
     let card = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
     card.layer.cornerRadius = 22
@@ -160,7 +154,7 @@ class ShareViewController: UIViewController {
 
     let tick = UIImageView(
       image: UIImage(systemName: "checkmark.circle.fill"))
-    tick.tintColor = .label
+    tick.tintColor = .systemGreen
     tick.contentMode = .scaleAspectFit
     tick.preferredSymbolConfiguration = UIImage.SymbolConfiguration(
       pointSize: 34, weight: .regular)
@@ -171,21 +165,40 @@ class ShareViewController: UIViewController {
     name.font = .preferredFont(forTextStyle: .headline)
     name.adjustsFontForContentSizeCategory = true
 
-    let stack = UIStackView(arrangedSubviews: [tick, name])
+    let openButton = UIButton(type: .system)
+    openButton.setTitle("Open Wren", for: .normal)
+    openButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+    openButton.titleLabel?.adjustsFontForContentSizeCategory = true
+    openButton.backgroundColor = .label
+    openButton.setTitleColor(.systemBackground, for: .normal)
+    openButton.layer.cornerRadius = 14
+    openButton.layer.cornerCurve = .continuous
+    openButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 28, bottom: 10, right: 28)
+    openButton.addTarget(self, action: #selector(openApp), for: .touchUpInside)
+
+    let doneButton = UIButton(type: .system)
+    doneButton.setTitle("Done", for: .normal)
+    doneButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
+    doneButton.titleLabel?.adjustsFontForContentSizeCategory = true
+    doneButton.setTitleColor(.secondaryLabel, for: .normal)
+    doneButton.addTarget(self, action: #selector(dismissExtension), for: .touchUpInside)
+
+    let stack = UIStackView(arrangedSubviews: [tick, name, openButton, doneButton])
     stack.axis = .vertical
     stack.alignment = .center
-    stack.spacing = 10
+    stack.spacing = 12
+    stack.setCustomSpacing(16, after: name)
     stack.translatesAutoresizingMaskIntoConstraints = false
     card.contentView.addSubview(stack)
 
     NSLayoutConstraint.activate([
       card.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       card.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-      card.widthAnchor.constraint(greaterThanOrEqualToConstant: 150),
+      card.widthAnchor.constraint(greaterThanOrEqualToConstant: 180),
       stack.topAnchor.constraint(equalTo: card.contentView.topAnchor,
                                  constant: 26),
       stack.bottomAnchor.constraint(equalTo: card.contentView.bottomAnchor,
-                                    constant: -26),
+                                    constant: -20),
       stack.leadingAnchor.constraint(equalTo: card.contentView.leadingAnchor,
                                      constant: 30),
       stack.trailingAnchor.constraint(equalTo: card.contentView.trailingAnchor,
@@ -195,16 +208,29 @@ class ShareViewController: UIViewController {
     UIView.animate(withDuration: 0.18) { card.alpha = 1 }
   }
 
-  /// Confirms, then completes. Completing tears the process down, so the tick
-  /// has to be on screen for its own moment before that happens.
+  @objc private func openApp() {
+    guard let url = URL(string: "wren://shared") else {
+      extensionContext?.completeRequest(returningItems: nil)
+      return
+    }
+    extensionContext?.open(url) { [weak self] success in
+      // Whether it opened or not, the share is already saved to the App Group
+      // container. Complete the extension either way.
+      self?.extensionContext?.completeRequest(returningItems: nil)
+    }
+  }
+
+  @objc private func dismissExtension() {
+    extensionContext?.completeRequest(returningItems: nil)
+  }
+
+  /// Confirms, then waits for the user. If no confirmation is needed, tears
+  /// down immediately.
   private func finish(showing confirmation: Bool = true) {
     guard confirmation else {
       extensionContext?.completeRequest(returningItems: nil)
       return
     }
     confirm()
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
-      self?.extensionContext?.completeRequest(returningItems: nil)
-    }
   }
 }

@@ -17,7 +17,7 @@
   "name": "Wren",
   "supportUrl": "https://wren.spencerfields.com/support.html",
   "marketingUrl": "https://wren.spencerfields.com/",
-  "whatsNew": "A GPX export of your places, straight from the overflow menu, so any app that reads GPX can have what you found.\n\nA short welcome the first time you open Wren, showing the three ways places come in — screenshots, posts and files — so nobody has to work it out from a blank screen.\n\nThe empty state now leads with screenshots, which is what most people try first, and tells you plainly when a feature is not available rather than greying out a button.",
+  "whatsNew": "When you share a reel or a post to Wren, the share sheet now stays open with an Open Wren button so you can go straight to your places.\n\nClearer feedback when places are not yet ready to send to a map app.",
 
   "_privacyPolicyUrl": [
     "Required, and its absence is not obvious: the version simply refuses to",

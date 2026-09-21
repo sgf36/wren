@@ -2712,9 +2712,15 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                           )
                         : FilledButton.icon(
                             onPressed: sendable == 0
-                                ? () => setState(
-                                    () => _status = l.sendPlacesEmpty,
-                                  )
+                                ? () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(l.sendPlacesEmpty),
+                                        duration:
+                                            const Duration(seconds: 4),
+                                      ),
+                                    );
+                                  }
                                 : _sendPlacesElsewhere,
                             icon: const Icon(Icons.place_outlined, size: 20),
                             label: Text(l.sendPlacesTo),
