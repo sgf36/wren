@@ -34,7 +34,26 @@ CONTACT = {
     "demoAccountRequired": False,
 }
 
+UNSHIPPABLE = HERE / "unshippable-builds.txt"
+
 _tok = {"v": None, "exp": 0}
+
+
+def unshippable():
+    """Build numbers that must never be attached to an App Store version.
+
+    A missing file is an empty set rather than an error: the check is a
+    tripwire on a rare situation, and a submission that fails because a
+    tripwire file was deleted would be a worse failure than the one it guards
+    against. It exists in the repository, so its absence is visible in a diff.
+    """
+    if not UNSHIPPABLE.exists():
+        return set()
+    return {
+        line.split("#", 1)[0].strip()
+        for line in UNSHIPPABLE.read_text(encoding="utf-8").splitlines()
+        if line.split("#", 1)[0].strip()
+    }
 
 
 def token():
@@ -110,10 +129,28 @@ def main():
         print("content rights already declared")
 
     # --- 2. attach the newest build ----------------------------------
+    # Newest by upload, and NOT blindly: a build made with the `reels_url`
+    # dispatch input points at a preview Worker that accepts sandbox purchases,
+    # so every paid feature in it is free. Such a build is uploaded to
+    # TestFlight on purpose and would be the newest one for as long as testing
+    # lasts -- so the dangerous case is not somebody choosing to ship it, it is
+    # this function taking it without being asked.
+    #
+    # The guard belongs in App Store Connect, as buildAudienceType
+    # INTERNAL_ONLY, and cannot go there: the API answers
+    # "The attribute 'buildAudienceType' can not be included in a 'UPDATE'
+    # operation", and altool offers no way to set it at upload. Hence a file.
     st, builds = call("GET", f"builds?filter[app]={APP}"
                              "&limit=1&sort=-uploadedDate")
     build = builds["data"][0]
     bver = build["attributes"]["version"]
+    if bver in unshippable():
+        sys.exit(
+            f"\nrefusing to attach build {bver}: it is listed in "
+            f"{UNSHIPPABLE.name} as built against a sandbox Worker, which "
+            f"gives away every paid feature.\n"
+            f"Upload a production build, or take it off that list if it is "
+            f"there by mistake.")
     st, cur = call("GET", f"appStoreVersions/{vid}/build")
     attached = (cur.get("data") or {}).get("id")
     if attached == build["id"]:
