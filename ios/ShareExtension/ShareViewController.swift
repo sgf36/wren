@@ -45,6 +45,10 @@ class ShareViewController: UIViewController {
   /// files it lists, a directory listing cannot.
   static let inboxName = "shared-images"
 
+  /// The confirmation card's stack, kept so its buttons can be replaced when
+  /// opening Wren turns out not to be possible. Held weakly: the view owns it,
+  /// and a strong reference here would outlive the card it describes.
+  private weak var confirmationStack: UIStackView?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -136,13 +140,16 @@ class ShareViewController: UIViewController {
   /// tells the user nothing — especially when iOS prevents a share extension
   /// from opening its own app automatically.
   ///
-  /// "Open Wren" tries extensionContext.open with a custom URL scheme. On iOS
-  /// 18.0–18.1, Apple blocked this entirely ("BUG IN CLIENT OF UIKIT ...
-  /// Force returning false"). Later point releases relaxed the restriction for
-  /// registered URL schemes owned by the same team. If the open succeeds, the
-  /// extension completes. If it fails, the extension still completes — the
-  /// user is back at the source app and can switch to Wren from the app
-  /// switcher, with their share waiting in the inbox.
+  /// "Open Wren" is handled by `openApp`, which tries two routes and, if both
+  /// fail, replaces these buttons with an instruction rather than closing.
+  ///
+  /// It used to close regardless, which made a failed open and a successful
+  /// one identical from the outside — the card vanished, Instagram came back,
+  /// and "Open Wren" behaved exactly like "Done". An earlier note here claimed
+  /// later iOS point releases had relaxed the restriction on
+  /// `extensionContext.open` for a registered scheme owned by the same team.
+  /// On a device running iOS 26 it still returns false, so that claim is
+  /// removed rather than left to mislead the next person.
   private func confirm() {
     let card = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
     card.layer.cornerRadius = 22
@@ -190,6 +197,7 @@ class ShareViewController: UIViewController {
     stack.setCustomSpacing(16, after: name)
     stack.translatesAutoresizingMaskIntoConstraints = false
     card.contentView.addSubview(stack)
+    confirmationStack = stack
 
     NSLayoutConstraint.activate([
       card.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -208,16 +216,95 @@ class ShareViewController: UIViewController {
     UIView.animate(withDuration: 0.18) { card.alpha = 1 }
   }
 
+  /// Opens Wren, or says plainly that it could not.
+  ///
+  /// The previous version discarded the `success` flag and completed the
+  /// extension either way, so a failed open and a successful one did exactly
+  /// the same visible thing: the card vanished and you were back in Instagram.
+  /// "Open Wren" and "Done" were the same button. That is what "it doesn't do
+  /// anything" looked like from the outside, and it hid the real problem for a
+  /// week.
+  ///
+  /// Two routes are tried, because `extensionContext.open` is documented for a
+  /// subset of extension points that has never reliably included share
+  /// extensions -- it returns false, silently, on the device this was tested
+  /// on. The responder-chain route is the long-standing way round it: walk up
+  /// to the UIApplication and ask it directly. `openURL:` is public API; it is
+  /// sent with `perform` because the Swift method carries an
+  /// `iOSApplicationExtension, unavailable` annotation that would otherwise
+  /// refuse to compile here.
   @objc private func openApp() {
     guard let url = URL(string: "wren://shared") else {
       extensionContext?.completeRequest(returningItems: nil)
       return
     }
     extensionContext?.open(url) { [weak self] success in
-      // Whether it opened or not, the share is already saved to the App Group
-      // container. Complete the extension either way.
-      self?.extensionContext?.completeRequest(returningItems: nil)
+      guard let self else { return }
+      DispatchQueue.main.async {
+        if success || self.openViaResponderChain(url) {
+          self.extensionContext?.completeRequest(returningItems: nil)
+          return
+        }
+        // Neither route worked. The share is already in the App Group
+        // container, so nothing is lost -- but saying nothing and closing is
+        // what made this look broken, so the card says what to do instead.
+        self.explainCouldNotOpen()
+      }
     }
+  }
+
+  /// Asks the UIApplication to open a URL, from inside an extension.
+  ///
+  /// Returns whether anything was found to ask. It cannot report what the app
+  /// then did, because `openURL:` predates completion handlers -- so a true
+  /// here means "handed over", not "Wren is on screen".
+  private func openViaResponderChain(_ url: URL) -> Bool {
+    // Matched on the type rather than on `responds(to:)`. Several things in a
+    // responder chain will answer to a selector named `openURL:` and mean
+    // something else by it; only UIApplication means this.
+    let selector = NSSelectorFromString("openURL:")
+    var responder: UIResponder? = self
+    while let current = responder {
+      if let application = current as? UIApplication,
+         application.responds(to: selector) {
+        application.perform(selector, with: url)
+        return true
+      }
+      responder = current.next
+    }
+    return false
+  }
+
+  /// Replaces the card's buttons with an instruction that actually works.
+  private func explainCouldNotOpen() {
+    guard let stack = confirmationStack else {
+      extensionContext?.completeRequest(returningItems: nil)
+      return
+    }
+    for view in stack.arrangedSubviews where view is UIButton {
+      view.removeFromSuperview()
+    }
+
+    let advice = UILabel()
+    advice.text = "Saved. Open Wren from the Home Screen to finish."
+    advice.textColor = .secondaryLabel
+    advice.font = .preferredFont(forTextStyle: .subheadline)
+    advice.adjustsFontForContentSizeCategory = true
+    advice.numberOfLines = 0
+    advice.textAlignment = .center
+
+    let close = UIButton(type: .system)
+    close.setTitle("Done", for: .normal)
+    close.titleLabel?.font = .preferredFont(forTextStyle: .body)
+    close.titleLabel?.adjustsFontForContentSizeCategory = true
+    close.setTitleColor(.secondaryLabel, for: .normal)
+    close.addTarget(self, action: #selector(dismissExtension),
+                    for: .touchUpInside)
+
+    stack.addArrangedSubview(advice)
+    stack.addArrangedSubview(close)
+    advice.widthAnchor.constraint(
+      lessThanOrEqualToConstant: 240).isActive = true
   }
 
   @objc private func dismissExtension() {
