@@ -60,6 +60,20 @@
       "surface": "apps.html",
       "creative": "The App Store badge and text link on the Apps page",
       "notes": "Separate from site-wren-hero. Somebody who reached the Apps page went looking; somebody who clicked the hero was offered. Those are different intents and worth telling apart."
+    },
+    {
+      "token": "alternativeto-listing",
+      "channel": "AlternativeTo",
+      "surface": "listing",
+      "creative": "AlternativeTo app listing page",
+      "notes": "If AlternativeTo links to the App Store anywhere on the listing, use this attributed link."
+    },
+    {
+      "token": "reddit-organic-sideproject",
+      "channel": "Reddit",
+      "surface": "organic",
+      "creative": "r/SideProject launch post",
+      "notes": "One token for Reddit organic across all subreddits, not per post."
     }
   ]
 }
