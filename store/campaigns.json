@@ -74,6 +74,20 @@
       "surface": "organic",
       "creative": "r/SideProject launch post",
       "notes": "One token for Reddit organic across all subreddits, not per post."
+    },
+    {
+      "token": "tt-paid-app-install",
+      "channel": "TikTok",
+      "surface": "paid",
+      "creative": "TikTok Ads app install campaign",
+      "notes": "One token for all TikTok paid campaigns, not per ad group."
+    },
+    {
+      "token": "meta-paid-app-install",
+      "channel": "Meta",
+      "surface": "paid",
+      "creative": "Meta Ads app install campaign",
+      "notes": "One token for all Meta paid campaigns (Instagram Reels, Stories, Feed), not per ad set."
     }
   ]
 }
