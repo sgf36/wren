@@ -28,6 +28,15 @@ HERE = pathlib.Path(__file__).resolve().parent
 LIMITS = {
     "name": 30, "subtitle": 30, "promotionalText": 170,
     "keywords": 100, "description": 4000, "whatsNew": 4000,
+    # Added after a submission went out with stale review notes. This field is
+    # sent by submit.py rather than from here, so it was never length-checked,
+    # and Apple's refusal ("Review Notes cannot be longer than 4000
+    # characters") arrives mid-submission -- after the build is attached, when
+    # the run reads as a success apart from one line. The repo copy had drifted
+    # 1224 characters past what App Store Connect held, and every push of it
+    # had been failing for long enough that nobody knew which text reviewers
+    # were reading.
+    "reviewNotes": 4000,
 }
 
 # The in-app purchase has its own, much tighter caps — 45 characters for the
