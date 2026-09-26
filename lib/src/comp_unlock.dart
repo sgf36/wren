@@ -267,6 +267,30 @@ Future<RedeemOutcome> redeem(
   return RedeemOutcome.unlocked;
 }
 
+/// Apple's signed statement that this Apple Account downloaded this app.
+///
+/// Null on Android, on iOS below 18.4, and whenever StoreKit declines to
+/// produce one. Every one of those is an ordinary answer rather than a fault:
+/// the caller's response to null is the paywall it would have shown anyway.
+///
+/// It lives here because this file already owns the `littlebird/identity`
+/// channel, and is deliberately not the device id beside it — that one is a
+/// UUID this app invents, which answers "has this install redeemed that code"
+/// and must never answer anything that costs money per call, because a
+/// reinstall mints a new one.
+Future<String?> appTransactionJws() async {
+  if (!Platform.isIOS) return null;
+  try {
+    return await _channel.invokeMethod<String>('appTransaction');
+  } on PlatformException {
+    return null;
+  } on MissingPluginException {
+    // A build without the handler, which is every build before 2.1. Older
+    // clients simply have no free sample.
+    return null;
+  }
+}
+
 /// Whether this device holds a valid complimentary unlock. Offline, every time
 /// after the first.
 ///

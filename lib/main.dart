@@ -1073,12 +1073,28 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // ordinary case rather than an edge one: a cold start is what a share does.
     await _entitlementSettled;
     if (!mounted) return;
-    if (!_entitlement.reels) {
+
+    // Somebody who has bought nothing gets one read before being asked to pay,
+    // and the selling happens further down when the server refuses the second.
+    //
+    // The order matters commercially and is the whole point of this route. The
+    // paywall used to open here, before the Worker was ever asked, so the first
+    // time anybody saw what £14.99 buys was after they had paid for it. Thirteen
+    // people downloaded Wren in its first month and not one of them bought
+    // anything.
+    //
+    // Whether a free read is still available is the server's to answer, not
+    // this. A counter kept here would be wrong the moment the app was
+    // reinstalled, and would have to be believed by the thing it is lying to.
+    var auth = await _reelAuth();
+    if (auth == null && !_entitlement.reels) {
+      // No free sample to be had — Android, iOS below 18.4, or StoreKit
+      // declined. The paywall opens exactly as it did before any of this
+      // existed, which is worse for them and not wrong.
       if (await _sell(PaywallReason.reels) != _Gate.through) return;
       if (!mounted) return;
+      auth = await _reelAuth();
     }
-
-    final auth = await _reelAuth();
     if (!mounted) return;
     if (auth == null) {
       // Entitled by something that left no proof: a purchase made before this
@@ -1088,21 +1104,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       return;
     }
 
-    setState(() {
-      _busy = true;
-      _status = l.readingPost;
-    });
-    final ReelReading reading;
-    try {
-      reading = await readReel(link, auth: auth, send: widget.reelSender);
-    } on ReelFailed catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _busy = false;
-        _status = _reelFailure(l, e);
-      });
-      return;
-    }
+    final reading = await _readSellingOnRefusal(link, auth, l);
+    if (reading == null) return;
     if (!mounted) return;
 
     // The city, confirmed rather than assumed, exactly as for screenshots — a
@@ -1165,9 +1168,88 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           ? ReelAuth.play(proof.proof, proof.productId)
           : ReelAuth.appStore(proof.proof);
     }
-    if (!_entitlement.reels) return null;
-    final token = await comp.heldToken();
-    return token == null ? null : ReelAuth.comp(token);
+    if (_entitlement.reels) {
+      final token = await comp.heldToken();
+      if (token != null) return ReelAuth.comp(token);
+      // Entitled, but by something that left no proof to send. The caller says
+      // so and offers Restore; falling through to the free sample would hand
+      // somebody who has paid a single read and then a paywall.
+      return null;
+    }
+
+    // Nothing owned. Apple's own statement that this account downloaded the app
+    // buys one read, and the server decides whether one is still going. Null on
+    // Android and below iOS 18.4, where the caller sells as it always did.
+    final jws = await comp.appTransactionJws();
+    return jws == null ? null : ReelAuth.appTransaction(jws);
+  }
+
+  /// Reads the post, and opens the paywall if the server says it is spent.
+  ///
+  /// Null means stop: either it failed, or the purchase sheet was dismissed.
+  /// The status line is already set by the time it returns, so the caller has
+  /// nothing left to say.
+  ///
+  /// The selling happens *here*, after a refusal, rather than before the call.
+  /// That is the point of the whole route: somebody who has just watched Wren
+  /// read a post they chose themselves has seen the argument for the price, and
+  /// no listing screenshot makes it half as well. Asking first is what the app
+  /// did until 2026-09-26, and it sold nothing at all.
+  ///
+  /// `notEntitled` is the signal because the Worker deliberately refuses a spent
+  /// free sample that way rather than as an exhausted allowance — an allowance
+  /// that never refills would name a reset date that never arrives and offer no
+  /// way to buy.
+  Future<ReelReading?> _readSellingOnRefusal(
+    String link,
+    ReelAuth auth,
+    L l,
+  ) async {
+    setState(() {
+      _busy = true;
+      _status = l.readingPost;
+    });
+    try {
+      return await readReel(link, auth: auth, send: widget.reelSender);
+    } on ReelFailed catch (e) {
+      if (!mounted) return null;
+      if (e.reason != ReelFailure.notEntitled) {
+        setState(() {
+          _busy = false;
+          _status = _reelFailure(l, e);
+        });
+        return null;
+      }
+    }
+
+    setState(() => _busy = false);
+    if (await _sell(PaywallReason.reels) != _Gate.through) return null;
+    if (!mounted) return null;
+
+    final bought = await _reelAuth();
+    if (!mounted) return null;
+    if (bought == null) {
+      setState(() => _status = l.reelNeedsRestore);
+      return null;
+    }
+
+    setState(() {
+      _busy = true;
+      _status = l.readingPost;
+    });
+    try {
+      return await readReel(link, auth: bought, send: widget.reelSender);
+    } on ReelFailed catch (e) {
+      // Once, never in a loop. A purchase that is still refused is not going to
+      // be accepted on the third attempt, and retrying would spend the vendor's
+      // money to tell somebody nothing.
+      if (!mounted) return null;
+      setState(() {
+        _busy = false;
+        _status = _reelFailure(l, e);
+      });
+      return null;
+    }
   }
 
   /// What to say when a post could not be read.

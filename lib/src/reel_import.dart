@@ -193,6 +193,22 @@ class ReelAuth {
       _b = productId;
   const ReelAuth.comp(String token) : _kind = 'comp', _a = token, _b = null;
 
+  /// The free sample, for somebody who has bought nothing.
+  ///
+  /// Apple's `AppTransaction` — its signed statement that this Apple Account
+  /// downloaded this app, issued for a free download exactly as a receipt is
+  /// for a paid one. It buys one read for the life of the account, and the
+  /// server decides that, not this.
+  ///
+  /// It is on this list rather than beside it because it belongs to the same
+  /// category: a signature the server checks against Apple, not a claim the app
+  /// makes about itself. An id the app generated would be a free feature with
+  /// extra steps.
+  const ReelAuth.appTransaction(String jws)
+    : _kind = 'apptransaction',
+      _a = jws,
+      _b = null;
+
   final String _kind;
   final String _a;
   final String? _b;
@@ -200,6 +216,7 @@ class ReelAuth {
   Map<String, Object?> toJson() => switch (_kind) {
     'appstore' => {'kind': 'appstore', 'jws': _a},
     'play' => {'kind': 'play', 'purchaseToken': _a, 'productId': _b},
+    'apptransaction' => {'kind': 'apptransaction', 'jws': _a},
     _ => {'kind': 'comp', 'token': _a},
   };
 }

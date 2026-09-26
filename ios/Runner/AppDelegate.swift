@@ -1,5 +1,6 @@
 import Flutter
 import MapKit
+import StoreKit
 import UIKit
 import UniformTypeIdentifiers
 import Vision
@@ -396,6 +397,10 @@ class IdentityPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall,
                      result: @escaping FlutterResult) {
+    if call.method == "appTransaction" {
+      IdentityPlugin.appTransaction(result)
+      return
+    }
     guard call.method == "deviceId" else {
       result(FlutterMethodNotImplemented)
       return
@@ -411,6 +416,51 @@ class IdentityPlugin: NSObject, FlutterPlugin {
       result(FlutterError(code: "keychain",
                           message: "could not store a device identifier",
                           details: nil))
+    }
+  }
+
+  /// Apple's signed statement that this Apple Account downloaded this app.
+  ///
+  /// Handed to the reels Worker so that somebody who has bought nothing can
+  /// still be given one read — the feature is the entire pitch, and until this
+  /// existed the first time anybody saw it work was after paying for it.
+  ///
+  /// `AppTransaction` is issued for a free download exactly as a receipt is for
+  /// a paid one, and the JWS is verified server-side against Apple's
+  /// certificate chain. Nothing here is trusted: this returns a signature the
+  /// app cannot forge, not an identifier the app invents.
+  ///
+  /// Deliberately NOT the keychain id above. That one is a random UUID this app
+  /// made up, which is right for "has this phone already redeemed that comp
+  /// code" — a question about this install — and wrong for anything that costs
+  /// money per call, because a reinstall makes a new one.
+  ///
+  /// Failure is a nil result rather than a FlutterError. Dart's only sensible
+  /// response is the paywall it would have shown anyway, and an error would
+  /// make a missing free sample look like a fault.
+  private static func appTransaction(_ result: @escaping FlutterResult) {
+    // iOS 18.4 is where appTransactionId arrives, and it is the only field the
+    // Worker will key on. Below that Apple mints no such id, so there is
+    // nothing to send and the paywall behaves as it did before this shipped.
+    guard #available(iOS 18.4, *) else {
+      result(nil)
+      return
+    }
+    Task {
+      do {
+        let shared = try await AppTransaction.shared
+        // `.jwsRepresentation` is taken from the envelope without unwrapping
+        // it. Whether the signature is good is the server's question, asked
+        // against Apple's root rather than against whatever this device
+        // happens to trust, and a client that pre-judged it could only ever
+        // be wrong in the generous direction.
+        switch shared {
+        case .verified(_), .unverified(_, _):
+          result(shared.jwsRepresentation)
+        }
+      } catch {
+        result(nil)
+      }
     }
   }
 

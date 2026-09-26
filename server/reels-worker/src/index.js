@@ -320,6 +320,75 @@ export async function verifyApple(env, jws) {
 }
 
 /**
+ * The free sample, for somebody who has bought nothing.
+ *
+ * Wren's whole pitch is that a shared post becomes places on a map, and until
+ * 2026-09-26 the first time anybody saw that happen was after paying £14.99 for
+ * it. Thirteen people downloaded the app and none of them bought anything, which
+ * is what a paywall in front of the demonstration produces. This grants one read
+ * so the pitch can prove itself.
+ *
+ * **It is not a weakened gate.** A free identity is still an Apple-signed one:
+ * `AppTransaction` is issued for a free download exactly as a receipt is for a
+ * paid one, and it is verified here through the same library, the same trust
+ * anchor and the same environment rules as a purchase. The client hands over a
+ * signature it cannot forge, not a number it made up. The first attempt at this
+ * did use a number the app made up, and `schema.sql` had already written down
+ * why that is wrong -- a key the client chooses is a free feature with extra
+ * steps.
+ *
+ * The identity is `appTransactionId`: Apple's own globally unique id for this
+ * Apple Account's download of this app. It survives deleting the app, restoring
+ * a backup and moving to a new phone, because it belongs to the account rather
+ * than to the hardware -- so "one free read" means one, not one per reinstall.
+ *
+ * It requires iOS 18.4. Below that Apple does not mint one and there is no
+ * fallback here on purpose: `deviceVerification` is the obvious candidate and is
+ * not an identity at all -- it is a hash over a nonce the *client* chooses, so
+ * it is stable only if the server pins the nonce, and it reduces to
+ * identifierForVendor, which resets when the last app from this vendor is
+ * deleted. Refusing is the honest answer. Somebody on 18.0 sees exactly the
+ * paywall they saw before this existed, which is a worse experience and not a
+ * wrong one.
+ */
+export async function verifyAppTransaction(env, jws) {
+  const { SignedDataVerifier, Environment } = await import(
+    '@apple/app-store-server-library');
+
+  const environments = String(env.ACCEPT_SANDBOX) === 'true'
+    ? [Environment.PRODUCTION, Environment.SANDBOX]
+    : [Environment.PRODUCTION];
+
+  let claim = null;
+  for (const environment of environments) {
+    const verifier = new SignedDataVerifier(
+      appleRootCertificates(env),
+      false,
+      environment,
+      BUNDLE_ID,
+    );
+    try {
+      claim = await verifier.verifyAndDecodeAppTransaction(jws);
+      break;
+    } catch {
+      claim = null;
+    }
+  }
+  if (!claim) return null;
+
+  // Re-checked rather than trusted from the signature, for the reason the
+  // purchase verifier gives: a valid signature proves Apple issued this, not
+  // that Apple issued it for this app.
+  if (claim.bundleId !== BUNDLE_ID) return null;
+
+  // No id, no free read. See the note above on why there is no fallback.
+  const id = claim.appTransactionId;
+  if (typeof id !== 'string' || !id) return null;
+
+  return { key: `free:${id}`, store: 'free', productId: null };
+}
+
+/**
  * Apple's root certificate, as DER.
  *
  * Held as configuration rather than fetched, because a verifier that downloads
@@ -454,6 +523,15 @@ export async function identify(env, auth) {
     if (auth?.kind === 'play') {
       return await verifyPlay(env, auth.purchaseToken, auth.productId);
     }
+    // The free sample. Signed by Apple like everything else on this list, so it
+    // sits here rather than beside a special case somewhere earlier. Switched
+    // off by setting FREE_REELS to 0, which takes the identity away rather than
+    // granting one with nothing behind it -- a zero allowance would reach the
+    // quota check and refuse there, and the refusal would say the wrong thing.
+    if (auth?.kind === 'apptransaction') {
+      if (Number(env.FREE_REELS ?? 1) < 1) return null;
+      return await verifyAppTransaction(env, auth.jws);
+    }
   } catch {
     return null;
   }
@@ -464,16 +542,31 @@ export async function identify(env, auth) {
 
 export const THIRTY_DAYS = 30 * 24 * 60 * 60;
 
+/** A free identity, granted by `verifyAppTransaction` rather than a purchase. */
+export function isFree(key) {
+  return typeof key === 'string' && key.startsWith('free:');
+}
+
 /**
  * What this identity has spent in the trailing thirty days.
  *
  * Rolling rather than calendar. A calendar month resets everybody at midnight
  * on the first, which concentrates the whole user base's cost into one day and
  * hands somebody who buys on the 30th a full quota for two days.
+ *
+ * A free identity is counted differently: for its whole life, never rolling.
+ * Putting the sample on the same thirty-day window would not be a free first
+ * read, it would be a free read every month for ever — a change to the price
+ * rather than a demonstration of the product.
  */
 export async function quotaState(env, db, key, now = Date.now()) {
-  const limit = Number(env.QUOTA_PER_30_DAYS || 250);
-  const since = Math.floor(now / 1000) - THIRTY_DAYS;
+  const free = isFree(key);
+  const limit = free
+    ? Number(env.FREE_REELS ?? 1)
+    : Number(env.QUOTA_PER_30_DAYS || 250);
+  // Everything ever, for a lifetime allowance. `ts >= 0` rather than a separate
+  // query so that both paths run the same statement and the same index.
+  const since = free ? 0 : Math.floor(now / 1000) - THIRTY_DAYS;
   const row = await db.prepare(
     'SELECT COUNT(*) AS n, MIN(ts) AS oldest FROM usage '
     + 'WHERE auth_key = ?1 AND ts >= ?2',
@@ -481,12 +574,14 @@ export async function quotaState(env, db, key, now = Date.now()) {
 
   const used = Number(row?.n || 0);
   // Quota frees up when the oldest call in the window ages out, not on a fixed
-  // date. That is what "rolling" means, and what the copy has to say.
-  const resetsAt = row?.oldest
+  // date. That is what "rolling" means, and what the copy has to say. A free
+  // allowance never frees up, and a date that never arrives is worse copy than
+  // no date at all.
+  const resetsAt = (!free && row?.oldest)
     ? (Number(row.oldest) + THIRTY_DAYS) * 1000
     : null;
 
-  return { used, limit, resetsAt, exhausted: used >= limit };
+  return { used, limit, free, resetsAt, exhausted: used >= limit };
 }
 
 /**
@@ -915,7 +1010,17 @@ async function handleProcess(request, env) {
   }
 
   const quota = await quotaState(env, db, who.key, now);
-  if (quota.exhausted) throw new Refusal(FAILURES.quotaExceeded, 429, { quota });
+  if (quota.exhausted) {
+    // A spent free sample is not somebody who has run out for the month. It is
+    // somebody who has now seen the feature work and has not bought it, which
+    // is the one moment the paywall is worth showing -- so it refuses as
+    // `not_entitled`, which every shipped client already turns into the
+    // purchase sheet. `quota_exceeded` would instead say "you have used your
+    // allowance", offer a reset date that a lifetime allowance never reaches,
+    // and show no way to buy.
+    if (quota.free) throw new Refusal(FAILURES.notEntitled, 402);
+    throw new Refusal(FAILURES.quotaExceeded, 429, { quota });
+  }
 
   // Checked after the per-identity quota so an exhausted customer still gets
   // the accurate answer about their own allowance, and before the vendor call
@@ -944,11 +1049,25 @@ async function handleProcess(request, env) {
     // the kind of thing that becomes a refund request.
     await db.prepare('INSERT INTO usage (auth_key, ts) VALUES (?1, ?2)')
       .bind(who.key, seconds).run();
-    await db.prepare(
-      'INSERT INTO verifications (auth_key, store, product_id, verified_at) '
-      + 'VALUES (?1, ?2, ?3, ?4) '
-      + 'ON CONFLICT (auth_key) DO UPDATE SET verified_at = ?4',
-    ).bind(who.key, who.store, who.productId, seconds).run();
+
+    // Purchases only. `verifications` exists to save re-asking Google about a
+    // Play token and to answer "which product does this identity own", and a
+    // free identity owns nothing and is verified offline -- so there is nothing
+    // to cache and no question to answer.
+    //
+    // It also must not be attempted: the live table constrains `store` to the
+    // three purchase kinds, SQLite cannot alter a CHECK, and this write happens
+    // after the usage row and after the vendor has been paid. Writing 'free'
+    // here would spend the sample, do the work, and then fail the request on
+    // the way out -- "it failed and used one anyway", which the comment above
+    // exists to prevent.
+    if (!isFree(who.key)) {
+      await db.prepare(
+        'INSERT INTO verifications (auth_key, store, product_id, verified_at) '
+        + 'VALUES (?1, ?2, ?3, ?4) '
+        + 'ON CONFLICT (auth_key) DO UPDATE SET verified_at = ?4',
+      ).bind(who.key, who.store, who.productId, seconds).run();
+    }
 
     return json({ ...result, quota: await quotaState(env, db, who.key, now) });
   } finally {
