@@ -200,6 +200,26 @@ void main() {
       });
     });
 
+    test('the free sample goes as a signature, not as a claim', () async {
+      // Apple's AppTransaction, forwarded whole. The wire name matters as much
+      // as the value: the Worker routes on `kind`, and an unrecognised one is
+      // refused, so a rename here is a free sample that silently stops working.
+      final http = replying(200, {
+        'candidates': [
+          {'name': 'A'},
+        ],
+      });
+      await readReel(
+        'https://www.instagram.com/p/ABC/',
+        auth: const ReelAuth.appTransaction('ey.signed.jws'),
+        send: http.send,
+      );
+      expect(http.sent.single, {
+        'url': 'https://www.instagram.com/p/ABC/',
+        'auth': {'kind': 'apptransaction', 'jws': 'ey.signed.jws'},
+      });
+    });
+
     test('no region is a real answer, not a missing one', () async {
       // A post naming ten castles across seven countries has no single region,
       // and guessing one aims every lookup at the wrong place.

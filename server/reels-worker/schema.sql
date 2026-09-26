@@ -27,6 +27,19 @@ CREATE TABLE IF NOT EXISTS verifications (
 -- and Play's purchase token both survive a reinstall, and an Android device UUID
 -- does not — so a device key would hand anybody an unlimited quota for the price
 -- of clearing app data.
+--
+-- The free sample added on 2026-09-26 keys on `free:<appTransactionId>` and does
+-- not break that rule, which is why it was allowed to exist. appTransactionId is
+-- Apple's id for this *Apple Account's* download of this app: it is issued and
+-- signed by Apple, survives deleting the app, restoring a backup and changing
+-- phone, and is not a device id. One free read means one.
+--
+-- An earlier attempt keyed it on a random id the app generated and sent. That is
+-- the thing this paragraph already forbade — a key the client chooses is a free
+-- feature with extra steps — and it was stopped before it shipped. If a future
+-- free tier needs Android, Play Integrity attests the app and device but issues
+-- no stable per-account id, so it is NOT the equivalent of this and needs its
+-- own answer rather than a device UUID with a nicer name.
 CREATE TABLE IF NOT EXISTS usage (
   auth_key TEXT    NOT NULL,
   ts       INTEGER NOT NULL

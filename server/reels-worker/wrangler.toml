@@ -107,6 +107,22 @@ at+qIxUCMG1mihDK1A3UT82NQz60imOlM27jbdoXt2QfyFMm+YhidDkLF1vLUagM
 # that raising it costs a deploy and not a release.
 QUOTA_PER_30_DAYS = "250"
 
+# Reads given to somebody who has bought nothing, for the life of their Apple
+# Account rather than per month. The sample exists because Wren's entire pitch
+# is that a shared post becomes places on a map, and until 2026-09-26 nobody saw
+# that happen without paying £14.99 first — thirteen downloads, no purchases.
+#
+# The cost of being wrong about this is bounded and known: one read is a
+# ScrapeCreators credit and a Flash-Lite call at low media resolution, which is
+# pence, and the 24-hour global ceiling below still caps the whole account
+# regardless of how many new accounts turn up.
+#
+# "0" switches the sample off without a code change, and does it by refusing the
+# identity rather than granting one with nothing behind it — so somebody who
+# never had an allowance is told they have not bought the feature, which is
+# true, instead of that they have used up an allowance, which is not.
+FREE_REELS = "1"
+
 # Vertex, which is where the model is actually called.
 #
 # Not AI Studio: it bills Gemini through a separate prepay payments account
