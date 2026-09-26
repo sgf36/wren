@@ -19,6 +19,27 @@ on:
         description: 'Also build signed and upload to TestFlight'
         type: boolean
         default: false
+      # A TestFlight build cannot exercise the free first read against the real
+      # Worker, and the reason is not a bug in either. StoreKit runs TestFlight
+      # installs in Apple's SANDBOX environment, so the AppTransaction such a
+      # build presents is sandbox-signed; the production Worker verifies against
+      # PRODUCTION only, on purpose, because a sandbox transaction is free to
+      # mint and one that accepted them would sell nothing. The verification
+      # fails, the app is told it is not entitled, and the tester sees the
+      # paywall and concludes the feature is broken.
+      #
+      # So a sandbox-accepting Worker version is uploaded WITHOUT being
+      # deployed -- `wrangler versions upload --var ACCEPT_SANDBOX:true
+      # --preview-alias sandbox` -- and the build is pointed at its preview URL
+      # instead. Production keeps serving the version it was serving.
+      #
+      # A build made this way must never reach the App Store: its Worker
+      # accepts sandbox purchases, so every paid feature in it is free. Leave
+      # this empty for anything you might ship.
+      reels_url:
+        description: 'Override WREN_REELS_URL (sandbox testing only — NEVER ship a build made with this)'
+        type: string
+        default: ''
 
 env:
   FLUTTER_VERSION: '3.44.8'
@@ -610,10 +631,29 @@ jobs:
       # unused and can be deleted.
       - name: Build signed IPA
         if: steps.signing.outputs.ready == 'true'
+        env:
+          REELS_URL: ${{ inputs.reels_url }}
         run: |
-          flutter build ipa --release \
-            --export-options-plist=ios/ExportOptions.plist \
-            --build-number=${{ github.run_number }}
+          # Written as two whole commands rather than one with a built-up
+          # argument list. Empty is the normal case and must produce the
+          # ordinary build, NOT a --dart-define of the empty string:
+          # String.fromEnvironment returns '' rather than its default once the
+          # key is defined at all, so passing it unconditionally would point
+          # every release at no Worker. The obvious way to avoid that -- an
+          # array expanded as "${DEFINES[@]}" -- is a trap on these runners,
+          # which use bash 3.2 and mishandle an empty array. Duplicating four
+          # lines is cheaper than a release built against nothing.
+          if [ -n "$REELS_URL" ]; then
+            echo "::warning::Built against $REELS_URL, not the production Worker. It accepts sandbox purchases, so every paid feature in this build is free. Never ship it."
+            flutter build ipa --release \
+              --export-options-plist=ios/ExportOptions.plist \
+              --build-number=${{ github.run_number }} \
+              --dart-define=WREN_REELS_URL="$REELS_URL"
+          else
+            flutter build ipa --release \
+              --export-options-plist=ios/ExportOptions.plist \
+              --build-number=${{ github.run_number }}
+          fi
 
       - name: Keep the IPA even if upload fails
         if: steps.signing.outputs.ready == 'true'
