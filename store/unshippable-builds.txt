@@ -1,0 +1,24 @@
+# Builds that must never reach the App Store, one number per line.
+#
+# A build made with the `reels_url` dispatch input is pointed at a preview
+# Worker running ACCEPT_SANDBOX=true. That Worker accepts sandbox purchases, so
+# every paid feature in such a build is free to anybody who installs it. It is
+# fine in TestFlight, where the testers are known, and ruinous on the App Store.
+#
+# This file exists because App Store Connect will not let the guard live where
+# it belongs. `buildAudienceType` is exactly the right control -- INTERNAL_ONLY
+# makes a build unattachable to a version -- and the API refuses to set it:
+#
+#     PATCH /v1/builds/<id> {"buildAudienceType": "INTERNAL_ONLY"}
+#     409  The attribute 'buildAudienceType' can not be included in a
+#          'UPDATE' operation
+#
+# It can only be chosen at upload time, by Xcode's organiser, and altool does
+# not offer it. So the guard is here instead, and submit.py refuses to attach
+# any build listed below.
+#
+# Add a line the moment a sandbox build is uploaded, not later. The danger is
+# not somebody deciding to ship one -- it is submit.py taking the newest build
+# without being asked which, which is what it does.
+
+221
