@@ -74,6 +74,20 @@
       "surface": "organic",
       "creative": "r/SideProject launch post",
       "notes": "One token for Reddit organic across all subreddits, not per post."
+    },
+    {
+      "token": "tt-paid-app-install",
+      "channel": "TikTok",
+      "surface": "paid",
+      "creative": "TikTok Ads app install campaign",
+      "notes": "One token for all TikTok paid campaigns, not per ad group. Paid and organic TikTok are separated because the question each answers is different: tt-organic-* asks whether the creative earns attention, this asks what attention costs."
+    },
+    {
+      "token": "meta-paid-app-install",
+      "channel": "Meta",
+      "surface": "paid",
+      "creative": "Meta Ads app install campaign (Instagram Reels, Stories, Feed)",
+      "notes": "One token for all Meta paid campaigns, not per ad set. Kept apart from ig-organic-* for the same reason as TikTok."
     }
   ]
 }
