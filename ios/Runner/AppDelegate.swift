@@ -3,6 +3,7 @@ import MapKit
 import StoreKit
 import UIKit
 import UniformTypeIdentifiers
+import UserNotifications
 import Vision
 
 @main
@@ -36,6 +37,16 @@ import Vision
     if let registrar = registrar(forPlugin: "ShareInboxPlugin") {
       ShareInboxPlugin.register(with: registrar)
     }
+
+    // The share extension schedules a local notification so the user can tap it
+    // to open Wren after sharing. That needs permission. Requesting it here,
+    // once, on first launch: provisional delivers silently to the notification
+    // centre without an interruptive prompt, which is all the share extension
+    // needs — a banner that the user taps. If the user later turns notifications
+    // off, the extension's `add` call silently fails and the fallback message in
+    // the share sheet still works.
+    UNUserNotificationCenter.current().requestAuthorization(
+      options: [.alert, .provisional]) { _, _ in }
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
