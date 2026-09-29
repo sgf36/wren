@@ -2,6 +2,7 @@ import MobileCoreServices
 import Social
 import UIKit
 import UniformTypeIdentifiers
+import UserNotifications
 
 /// Wren in the iOS share sheet.
 ///
@@ -311,9 +312,45 @@ class ShareViewController: UIViewController {
     extensionContext?.completeRequest(returningItems: nil)
   }
 
+  /// Schedules a local notification so the user can tap it to open Wren.
+  ///
+  /// Share extensions cannot open their containing app — `extensionContext.open`
+  /// returns false, and the responder-chain workaround broke in iOS 18. A local
+  /// notification is Apple's documented alternative: the extension schedules one,
+  /// the user taps it, iOS opens the app, and the existing App Group pickup in
+  /// `_takeSharedGuide` handles the rest.
+  ///
+  /// The notification fires after one second rather than immediately, so it
+  /// arrives after the share sheet has dismissed — a notification while the sheet
+  /// is still up is swallowed by the host app.
+  ///
+  /// Permission is requested by the main app on first launch. If the user has
+  /// not granted it, or has it off, this silently does nothing and the fallback
+  /// message in `explainCouldNotOpen` still tells them to open from the Home
+  /// Screen. Nothing breaks; they just do not get the shortcut.
+  private func scheduleOpenNotification() {
+    let content = UNMutableNotificationContent()
+    content.title = "Wren"
+    content.body = "Tap to finish importing."
+    content.sound = .none
+
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+    let request = UNNotificationRequest(
+      identifier: "com.spencerfields.littlebird.share-open",
+      content: content,
+      trigger: trigger)
+
+    UNUserNotificationCenter.current().add(request) { error in
+      if let error = error {
+        NSLog("WREN-SHARE notification failed: \(error.localizedDescription)")
+      }
+    }
+  }
+
   /// Confirms, then waits for the user. If no confirmation is needed, tears
   /// down immediately.
   private func finish(showing confirmation: Bool = true) {
+    scheduleOpenNotification()
     guard confirmation else {
       extensionContext?.completeRequest(returningItems: nil)
       return
