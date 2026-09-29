@@ -32,10 +32,10 @@ export const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
  *
  * A carousel can hold twenty slides and each is a few hundred kilobytes. The
  * cap is on bytes rather than count because that is what actually costs: a
- * Worker has 128MB and Gemini charges by the token, and eleven slides came to
- * 2.6MB, so twelve megabytes is generous without being unbounded.
+ * Worker has 128MB and Gemini charges by the token. Twenty megabytes covers
+ * most video reels while staying within the Vertex AI inline-data ceiling.
  */
-export const MEDIA_BUDGET = 12 * 1024 * 1024;
+export const MEDIA_BUDGET = 20 * 1024 * 1024;
 
 /** Slides beyond this are ignored however small they are. */
 export const MAX_SLIDES = 20;
@@ -49,7 +49,7 @@ export const MAX_SLIDES = 20;
  * decides what an empty post means, and it has better information for that.
  */
 export function readInstagram(body) {
-  const m = body?.data?.xdt_shortcode_media;
+  const m = body?.data?.xdt_shortcode_media ?? body?.data?.shortcode_media ?? null;
   if (!m) return null;
 
   const caption = m.edge_media_to_caption?.edges?.[0]?.node?.text ?? '';
@@ -99,16 +99,26 @@ export async function fetchPost(env, target, fetcher = fetch) {
   const res = await fetcher(url, {
     headers: { 'x-api-key': env.SCRAPECREATORS_API_KEY, 'User-Agent': UA },
   });
-  if (!res.ok) return null;
+  if (!res.ok) {
+    console.error('vendor http', res.status, target.canonical);
+    return null;
+  }
 
   const body = await res.json();
-  if (body?.success === false) return null;
+  if (body?.success === false) {
+    console.error('vendor refused', target.canonical, body?.error ?? '(no detail)');
+    return null;
+  }
 
   // Only Instagram is read in detail so far. The others answer with their own
   // shapes and are added as they are tested against a real post, rather than
   // guessed at from documentation.
   const post = target.platform === 'instagram' ? readInstagram(body) : null;
-  if (!post) return null;
+  if (!post) {
+    const keys = body?.data ? Object.keys(body.data) : [];
+    console.error('unreadable shape', target.canonical, keys);
+    return null;
+  }
   return { ...post, credits: body?.credits_charged ?? null };
 }
 
