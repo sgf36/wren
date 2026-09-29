@@ -56,6 +56,21 @@ test('a single image post is one slide, not zero', () => {
   assert.equal(post.caption, 'Padella, London');
 });
 
+test('the older shortcode_media shape is read the same way', () => {
+  const old = {
+    data: {
+      shortcode_media: {
+        __typename: 'XDTGraphImage',
+        display_url: 'https://example.invalid/one.jpg',
+        edge_media_to_caption: { edges: [{ node: { text: 'Bar Brutal, Barcelona' } }] },
+      },
+    },
+  };
+  const post = readInstagram(old);
+  assert.equal(post.images.length, 1);
+  assert.equal(post.caption, 'Bar Brutal, Barcelona');
+});
+
 test('a video post yields a video and no images', () => {
   const reel = {
     data: {
