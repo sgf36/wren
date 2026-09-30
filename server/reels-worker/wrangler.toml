@@ -144,29 +144,21 @@ VERTEX_LOCATION = "global"
 # video refuses with fetch_failed, exactly as it did before this existed --
 # not a crash, just the old ceiling.
 #
-# Setting this up (one-time, in the Cloud Console or Cloud Shell -- no local
-# gcloud needed):
-#   1. Create a bucket, e.g. `gsutil mb -l EU gs://wren-reels-tmp` (any region
-#      is fine; Vertex reads cross-region). A short lifecycle rule -- delete
-#      objects older than 1 day -- is worth adding as a backstop, in case the
-#      Worker's own delete ever fails to run:
-#        gsutil lifecycle set - gs://wren-reels-tmp <<< \
-#          '{"rule":[{"action":{"type":"Delete"},"condition":{"age":1}}]}'
-#   2. Grant the SAME service account already stored in VERTEX_SA_KEY
-#      Storage Object Admin ON THIS BUCKET ONLY, not project-wide:
-#        gsutil iam ch serviceAccount:<the account's email>:roles/storage.objectAdmin \
-#          gs://wren-reels-tmp
-#      The account's email is inside that secret's JSON (`client_email`).
-#      NOT VERIFIED against a real call: generateContent may read a gs://
-#      object using a separate Vertex AI Service Agent
-#      (service-<project-number>@gcp-sa-aiplatform.iam.gserviceaccount.com)
-#      rather than the credential that authenticated the API call. If the
-#      first real upload gets PERMISSION_DENIED from Vertex (not from the
-#      upload itself, which is this Worker's own call), also grant that
-#      agent Storage Object Viewer on the same bucket and it should clear.
-#   3. `wrangler deploy` after uncommenting the line below with the real name.
-#
-# VERTEX_GCS_BUCKET = "wren-reels-tmp"
+# Set up 2026-09-30, EU multi-region (data privacy: this project's users are
+# UK/EU): bucket `wren-reels-tmp`, public access blocked, a lifecycle rule
+# deleting objects older than 1 day as a backstop for the Worker's own delete.
+# Two IAM grants, both scoped to this bucket only, never project-wide:
+#   - wren-reels-vertex@gen-lang-client-0475397099.iam.gserviceaccount.com
+#     (the account in VERTEX_SA_KEY) -- Storage Object Admin, so this Worker
+#     can upload and delete.
+#   - service-382885902626@gcp-sa-aiplatform.iam.gserviceaccount.com (the
+#     Vertex AI Service Agent for this project) -- Storage Object Viewer,
+#     granted defensively in case generateContent reads a gs:// object using
+#     this identity rather than the one that authenticated the call, per the
+#     uncertainty this comment used to flag. NOT YET CONFIRMED which of the
+#     two grants is actually load-bearing -- the first real upload against a
+#     genuinely oversized reel is what settles it.
+VERTEX_GCS_BUCKET = "wren-reels-tmp"
 
 [[d1_databases]]
 binding = "DB"
