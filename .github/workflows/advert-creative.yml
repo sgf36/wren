@@ -91,7 +91,7 @@ jobs:
           BEAT_ARGS=""
           if [ -n "$BEATS" ]; then
             for b in $BEATS; do
-              BEAT_ARGS="$BEAT_ARGS --beat \"$b\""
+              BEAT_ARGS="$BEAT_ARGS --beat $b"
             done
           fi
 
