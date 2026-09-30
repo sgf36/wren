@@ -157,6 +157,13 @@ VERTEX_LOCATION = "global"
 #        gsutil iam ch serviceAccount:<the account's email>:roles/storage.objectAdmin \
 #          gs://wren-reels-tmp
 #      The account's email is inside that secret's JSON (`client_email`).
+#      NOT VERIFIED against a real call: generateContent may read a gs://
+#      object using a separate Vertex AI Service Agent
+#      (service-<project-number>@gcp-sa-aiplatform.iam.gserviceaccount.com)
+#      rather than the credential that authenticated the API call. If the
+#      first real upload gets PERMISSION_DENIED from Vertex (not from the
+#      upload itself, which is this Worker's own call), also grant that
+#      agent Storage Object Viewer on the same bucket and it should clear.
 #   3. `wrangler deploy` after uncommenting the line below with the real name.
 #
 # VERTEX_GCS_BUCKET = "wren-reels-tmp"
