@@ -235,15 +235,27 @@ class ShareViewController: UIViewController {
   /// `iOSApplicationExtension, unavailable` annotation that would otherwise
   /// refuse to compile here.
   ///
-  /// **Both routes are raced against a one-second deadline.** Observed on a
-  /// device: tapping the button produced no visible change at all -- not even
-  /// the fallback text below, which only runs inside `open`'s completion
-  /// handler. That handler is not documented to fire for a share extension,
-  /// and evidently does not always. Waiting on it unconditionally is how a
-  /// silent non-callback becomes a button that does nothing; the deadline
-  /// guarantees the card says something within a second either way. A `resolved`
-  /// flag, checked and set only on the main queue, stops both routes from
-  /// firing once the card has already moved on.
+  /// **`openViaResponderChain`'s return value is never trusted as success**,
+  /// however tempting that is once `extensionContext.open` is confirmed dead.
+  /// Screen-recorded on a device: the card vanished and Instagram reappeared
+  /// in under half a second -- faster than `open`'s own completion handler had
+  /// ever been observed to fire, and without Wren ever appearing. That is
+  /// `success || openViaResponderChain(url)` doing exactly what its own doc
+  /// comment warns it cannot: `perform(openURL:)` on whatever answered the
+  /// selector reported "handed over" as true, this code read that as "Wren is
+  /// open," and completed the request -- closing the sheet and returning to
+  /// Instagram while believing the job was done. Closing on a false positive
+  /// is worse than the fallback text, because both look identical from the
+  /// outside: gone, and back in Instagram. So the responder-chain route is
+  /// still attempted, in case it ever does something on some iOS point
+  /// release, but only `success` -- Apple's own, actually-a-callback signal --
+  /// is allowed to complete the request. Everything else shows the fallback.
+  ///
+  /// Raced against a one-second deadline regardless, because `open`'s
+  /// completion handler is not documented to fire for a share extension at
+  /// all, and a silent non-callback must not leave the button looking dead. A
+  /// `resolved` flag, checked and set only on the main queue, stops the
+  /// deadline from double-firing once `open` has already answered.
   @objc private func openApp() {
     guard let url = URL(string: "wren://shared") else {
       extensionContext?.completeRequest(returningItems: nil)
@@ -255,14 +267,16 @@ class ShareViewController: UIViewController {
       DispatchQueue.main.async {
         guard let self, !resolved else { return }
         resolved = true
-        if success || self.openViaResponderChain(url) {
+        if success {
           self.extensionContext?.completeRequest(returningItems: nil)
           return
         }
-        // Neither route worked, or neither answered in time. The share is
-        // already in the App Group container, so nothing is lost -- but saying
-        // nothing and closing is what made this look broken, so the card says
-        // what to do instead.
+        // Fired and forgotten: worth trying in case it helps on some device,
+        // but its return value proves nothing, so it never gates completion.
+        _ = self.openViaResponderChain(url)
+        // The share is already in the App Group container, so nothing is
+        // lost -- but saying nothing and closing is what made this look
+        // broken, so the card says what to do instead.
         self.explainCouldNotOpen()
       }
     }
