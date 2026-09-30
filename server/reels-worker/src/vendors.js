@@ -129,20 +129,10 @@ export function readTikTok(body) {
  * The free Data API (`videos.list`), not ScrapeCreators -- no vendor credit
  * spent, and a Short's own description regularly lists every place named on
  * screen, the same pattern that carried the first Instagram carousel and the
- * TikTok listicle both did. Video-only here: no `video` or `images`, so a
- * post whose description does not cooperate falls straight through to
- * `placesFromPost`'s "nothing to read" refusal rather than a guessed-at
- * media path.
- *
- * That fallback was tried and abandoned, not skipped for convenience.
- * ScrapeCreators' own YouTube endpoint returns a `downloadOptions` object
- * whose `formats` array and both manifest URLs came back empty on two
- * different real videos, 2026-09-30 -- confirmed, not assumed, and its own
- * response says why: "some videos may only expose signature-ciphered URLs."
- * Building a video path against an extraction that fails this consistently
- * would spend a credit per attempt for a payoff that has not been observed
- * once. If ScrapeCreators' YouTube extraction improves, this is the function
- * to extend -- not a new one.
+ * TikTok listicle both did. Video-only here: no `video` or `images` -- a post
+ * whose description does not cooperate goes to `fetchYouTubeTranscript` next,
+ * not a guessed-at media path. See that function's comment for why there is
+ * no path onto the actual video.
  */
 export async function fetchYouTubeSnippet(env, videoId, fetcher = fetch) {
   if (!env.YOUTUBE_API_KEY) return null;
@@ -164,6 +154,59 @@ export async function fetchYouTubeSnippet(env, videoId, fetcher = fetch) {
     images: [],
     alts: [],
   };
+}
+
+/**
+ * How much transcript text may be sent to the model in one call.
+ *
+ * Plain text costs far less per byte than the image and video tokens
+ * everywhere else in this file, but a long-form video's transcript can run to
+ * tens of thousands of characters -- the one real example captured while
+ * building this ran 25,701. This is a generous cap on a genuine cost, not an
+ * arbitrary one: at Flash-Lite's per-token price even the full cap is a
+ * fraction of a cent, and a Short is a minute at most, so anything this long
+ * is already most of a real transcript's worth of narration.
+ */
+export const MAX_TRANSCRIPT_CHARS = 20000;
+
+/**
+ * YouTube's transcript, tried when the title and description say nothing.
+ *
+ * Free-ish -- `credits_charged` came back 0 on both real calls made while
+ * building this -- and it catches a Short whose voiceover names places its
+ * on-screen text and its description both leave out. `transcript_only_text`
+ * is ScrapeCreators' own flattened field, confirmed against a real caption
+ * track (Arabic, auto-generated, 2026-09-30) rather than assembled from the
+ * timed `transcript` array this endpoint also returns.
+ *
+ * This is not the video. It is the honest second-best available today: the
+ * actual on-screen text a Short like the one that prompted this file's
+ * existence relies on ("3. Sky Garden") is invisible to a transcript, and
+ * that specific video turned out to have no transcript at all -- confirmed,
+ * not assumed; `captionTracks` came back empty for it. A video with genuine
+ * narration is what this is for.
+ */
+export async function fetchYouTubeTranscript(env, canonicalUrl, fetcher = fetch) {
+  if (!env.SCRAPECREATORS_API_KEY) return null;
+  const url = `${SCRAPER}/v1/youtube/video/transcript`
+    + `?url=${encodeURIComponent(canonicalUrl)}`;
+  const res = await fetcher(url, {
+    headers: { 'x-api-key': env.SCRAPECREATORS_API_KEY, 'User-Agent': UA },
+  });
+  if (!res.ok) {
+    console.error('youtube transcript http', res.status);
+    return null;
+  }
+
+  const body = await res.json();
+  if (body?.success === false) {
+    console.error('youtube transcript refused', body?.error ?? '(no detail)');
+    return null;
+  }
+
+  const text = body?.transcript_only_text;
+  if (!text || !text.trim()) return null;
+  return text.trim().slice(0, MAX_TRANSCRIPT_CHARS);
 }
 
 /**

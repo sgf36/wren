@@ -34,8 +34,9 @@
  */
 
 import {
-  fetchPost, fetchYouTubeSnippet, fetchImages, regionOf, UA, MEDIA_BUDGET,
-  MAX_VIDEO_BYTES, CAPTION_PROMPT, MEDIA_PROMPT, isGenericPlace,
+  fetchPost, fetchYouTubeSnippet, fetchYouTubeTranscript, fetchImages,
+  regionOf, UA, MEDIA_BUDGET, MAX_VIDEO_BYTES, CAPTION_PROMPT, MEDIA_PROMPT,
+  isGenericPlace,
 } from './vendors.js';
 
 const CORS = {
@@ -889,6 +890,22 @@ async function placesFromPost(env, target) {
     const found = (await readPlaces(env, [{ text }])).filter((p) => !isGenericPlace(p));
     if (found.length) {
       return { candidates: found, regionHint: regionOf(found), read: 'caption' };
+    }
+  }
+
+  // YouTube has no video path yet (see fetchYouTubeSnippet), so its transcript
+  // is tried next -- free-ish narration text that catches a Short whose
+  // voiceover names places its title and description both left out. Not
+  // reached for other platforms, which have real media to fall through to
+  // below instead.
+  if (target.platform === 'youtube') {
+    const transcript = await fetchYouTubeTranscript(env, target.canonical);
+    if (transcript && transcript.length > 20) {
+      const text = [CAPTION_PROMPT, '', transcript].join(NEWLINE);
+      const found = (await readPlaces(env, [{ text }])).filter((p) => !isGenericPlace(p));
+      if (found.length) {
+        return { candidates: found, regionHint: regionOf(found), read: 'transcript' };
+      }
     }
   }
 

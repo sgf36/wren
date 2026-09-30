@@ -16,8 +16,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  readInstagram, readTikTok, fetchPost, fetchYouTubeSnippet, fetchImages,
-  regionOf, isGenericPlace, MAX_SLIDES, MEDIA_BUDGET,
+  readInstagram, readTikTok, fetchPost, fetchYouTubeSnippet,
+  fetchYouTubeTranscript, fetchImages, regionOf, isGenericPlace,
+  MAX_SLIDES, MEDIA_BUDGET, MAX_TRANSCRIPT_CHARS,
 } from '../src/vendors.js';
 
 const CAROUSEL = JSON.parse(readFileSync(
@@ -42,6 +43,14 @@ const TIKTOK_VIDEO = JSON.parse(readFileSync(
 const YOUTUBE_EMPTY_DESCRIPTION = JSON.parse(readFileSync(
   new URL('./fixtures/youtube-video-empty-description.json', import.meta.url),
   'utf8'));
+
+// Real ScrapeCreators transcript response for that same Short, confirming it
+// has no captions at all -- `captionTracks` is genuinely empty, not merely
+// unfetched. This is what proves the transcript path is not a full
+// replacement for reading the video: some Shorts have neither a caption nor
+// a transcript, only on-screen text a transcript cannot see.
+const YOUTUBE_NO_TRANSCRIPT = JSON.parse(readFileSync(
+  new URL('./fixtures/youtube-transcript-none.json', import.meta.url), 'utf8'));
 
 test('a real carousel reads as eleven slides and its caption', () => {
   const post = readInstagram(CAROUSEL);
@@ -265,6 +274,57 @@ test('no video found is null, not a half-read snippet', async () => {
     () => ({ ok: false, status: 403 }),
   );
   assert.equal(httpFailure, null);
+});
+
+test('a Short with real narration reads its transcript', async () => {
+  // Same confirmed field (transcript_only_text) as the real capture, with a
+  // short synthetic value in place of the real 25,701-character Arabic
+  // transcript that confirmed the shape -- committing that one whole would
+  // bloat this repo for no test benefit, and it names an unrelated video.
+  const withTranscript = { transcript_only_text: '  Stop here first: Trevi Fountain, then the Pantheon.  ' };
+  const text = await fetchYouTubeTranscript(
+    { SCRAPECREATORS_API_KEY: 'k' }, 'x',
+    () => ({ ok: true, json: async () => withTranscript }),
+  );
+  assert.equal(text, 'Stop here first: Trevi Fountain, then the Pantheon.');
+});
+
+test('the real reported Short has no transcript at all, not merely an unfetched one', async () => {
+  const text = await fetchYouTubeTranscript(
+    { SCRAPECREATORS_API_KEY: 'k' }, 'https://youtube.com/shorts/ikO_b8Wmtcc',
+    () => ({ ok: true, json: async () => YOUTUBE_NO_TRANSCRIPT }),
+  );
+  assert.equal(text, null);
+});
+
+test('no SCRAPECREATORS key means no transcript call', async () => {
+  let called = false;
+  const text = await fetchYouTubeTranscript({}, 'x', () => { called = true; });
+  assert.equal(text, null);
+  assert.equal(called, false);
+});
+
+test('a vendor refusal or HTTP failure is null, not a thrown error', async () => {
+  const refused = await fetchYouTubeTranscript(
+    { SCRAPECREATORS_API_KEY: 'k' }, 'x',
+    () => ({ ok: true, json: async () => ({ success: false, error: 'nope' }) }),
+  );
+  assert.equal(refused, null);
+
+  const httpFailure = await fetchYouTubeTranscript(
+    { SCRAPECREATORS_API_KEY: 'k' }, 'x',
+    () => ({ ok: false, status: 500 }),
+  );
+  assert.equal(httpFailure, null);
+});
+
+test('a transcript longer than the cap is cut, not sent in full', async () => {
+  const huge = { transcript_only_text: 'x'.repeat(MAX_TRANSCRIPT_CHARS + 5000) };
+  const text = await fetchYouTubeTranscript(
+    { SCRAPECREATORS_API_KEY: 'k' }, 'x',
+    () => ({ ok: true, json: async () => huge }),
+  );
+  assert.equal(text.length, MAX_TRANSCRIPT_CHARS);
 });
 
 test('one unreachable slide does not lose the other ten', async () => {
