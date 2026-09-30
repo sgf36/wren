@@ -1,0 +1,100 @@
+{
+  "_doc": "Localised strings for the composed advert. Each problem line becomes its own text card; solution is one card; cta is the end card. Keyed by the --locale value passed to record.py and compose.py.",
+  "problem": {
+    "en-GB": [
+      "Someone sends you five places.",
+      "You mean to remember.",
+      "A few days later, they are gone."
+    ],
+    "ja": [
+      "誰かが5つの場所を送ってくる。",
+      "覚えておこうと思う。",
+      "数日後、忘れている。"
+    ],
+    "da": [
+      "Nogen sender dig fem steder.",
+      "Du vil huske dem.",
+      "Et par dage senere er de væk."
+    ],
+    "nb": [
+      "Noen sender deg fem steder.",
+      "Du tenker å huske dem.",
+      "Noen dager senere er de borte."
+    ],
+    "sv": [
+      "Någon skickar dig fem platser.",
+      "Du tänker komma ihåg dem.",
+      "Några dagar senare är de borta."
+    ],
+    "zh-Hant": [
+      "有人傳了五個地方給你。",
+      "你想記住它們。",
+      "幾天後，全忘了。"
+    ],
+    "de-DE": [
+      "Jemand schickt dir fünf Orte.",
+      "Du willst sie dir merken.",
+      "Ein paar Tage später sind sie weg."
+    ],
+    "fr-FR": [
+      "On vous envoie cinq adresses.",
+      "Vous comptez les retenir.",
+      "Quelques jours plus tard, envolées."
+    ],
+    "nl": [
+      "Iemand stuurt je vijf plekken.",
+      "Je wilt ze onthouden.",
+      "Een paar dagen later zijn ze weg."
+    ],
+    "ko": [
+      "누군가 다섯 곳을 보내줍니다.",
+      "기억해 두려고 합니다.",
+      "며칠 후, 잊어버립니다."
+    ],
+    "it": [
+      "Qualcuno ti manda cinque posti.",
+      "Pensi di ricordarli.",
+      "Qualche giorno dopo, spariti."
+    ],
+    "ar-SA": [
+      "يرسل لك أحدهم خمسة أماكن.",
+      "تنوي أن تتذكرها.",
+      "بعد أيام قليلة، تختفي."
+    ],
+    "ru": [
+      "Кто-то присылает пять мест.",
+      "Вы хотите их запомнить.",
+      "Через пару дней они забыты."
+    ]
+  },
+  "solution": {
+    "en-GB": "Wren reads them\noff a screenshot\nand puts them in a guide\nin Apple Maps.",
+    "ja": "Wrenがスクリーンショットから\nすべての場所を読み取り\nApple Mapsのガイドに追加。",
+    "da": "Wren læser dem\nfra et skærmbillede\nog lægger dem i en guide\ni Apple Maps.",
+    "nb": "Wren leser dem\nfra et skjermbilde\nog legger dem i en guide\ni Apple Maps.",
+    "sv": "Wren läser dem\nfrån en skärmbild\noch lägger dem i en guide\ni Apple Maps.",
+    "zh-Hant": "Wren從截圖中\n讀取每個地方\n並放入Apple Maps的指南中。",
+    "de-DE": "Wren liest sie\naus einem Screenshot\nund erstellt einen Reiseführer\nin Apple Maps.",
+    "fr-FR": "Wren les retrouve\ndans une capture d'écran\net les place dans un guide\nApple Maps.",
+    "nl": "Wren leest ze\nuit een screenshot\nen zet ze in een gids\nin Apple Maps.",
+    "ko": "Wren이 스크린샷에서\n모든 장소를 읽어\nApple Maps 가이드에\n추가합니다.",
+    "it": "Wren li trova\nin uno screenshot\ne li mette in una guida\nsu Apple Maps.",
+    "ar-SA": "Wren يقرأها\nمن لقطة شاشة\nويضعها في دليل\nعلى Apple Maps.",
+    "ru": "Wren находит их\nна скриншоте\nи добавляет в путеводитель\nв Apple Maps."
+  },
+  "cta": {
+    "en-GB": "Wren.\nFree on the App Store.",
+    "ja": "Wren。\nApp Storeで無料。",
+    "da": "Wren.\nGratis i App Store.",
+    "nb": "Wren.\nGratis i App Store.",
+    "sv": "Wren.\nGratis i App Store.",
+    "zh-Hant": "Wren。\n在App Store免費下載。",
+    "de-DE": "Wren.\nKostenlos im App Store.",
+    "fr-FR": "Wren.\nGratuit sur l'App Store.",
+    "nl": "Wren.\nGratis in de App Store.",
+    "ko": "Wren.\nApp Store에서 무료.",
+    "it": "Wren.\nGratis sull'App Store.",
+    "ar-SA": "Wren.\nمجّاناً على App Store.",
+    "ru": "Wren.\nБесплатно в App Store."
+  }
+}

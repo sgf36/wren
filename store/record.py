@@ -342,7 +342,11 @@ def main():
         sys.exit(f"no such beat: {', '.join(unknown)}. "
                  f"This build has: {', '.join(available)}")
 
-    language = args.locale.split("-")[0]
+    parts = args.locale.split("-")
+    if len(parts) >= 2 and len(parts[1]) == 4 and parts[1][0].isupper():
+        language = "-".join(parts[:2])
+    else:
+        language = parts[0]
     out_dir = FOOTAGE / args.locale
     out_dir.mkdir(parents=True, exist_ok=True)
 

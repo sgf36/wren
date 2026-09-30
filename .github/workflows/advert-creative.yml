@@ -1,0 +1,158 @@
+name: Advert creative
+
+# Records app footage in a simulator, generates text cards and composites a
+# ready-to-publish advert video. The output is one 1080x1920 MP4 per locale,
+# uploaded as a workflow artifact.
+#
+#   gh workflow run advert-creative.yml                          # en-GB
+#   gh workflow run advert-creative.yml -f locale=fr-FR          # French
+#   gh workflow run advert-creative.yml -f locale=all            # every locale in advert_strings.json
+#   gh workflow run advert-creative.yml -f beats="advert-the-list advert-which-city"
+#
+# This repo is public, so macOS runners are free.
+#
+# WHAT THIS CANNOT PRODUCE: the Apple Maps payoff shot. A simulator ignores
+# maps://guide links (opens Safari instead). The advert ends on the
+# matched-places list, which is the proof the app works. The Maps shot is a
+# device capture, permanently -- see store/record.py and SCREENSHOTS-RUNBOOK.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      locale:
+        description: 'Locale (e.g. en-GB, fr-FR, or "all" for every locale in advert_strings.json)'
+        type: string
+        default: 'en-GB'
+      beats:
+        description: 'Beat names, space-separated (blank = advert-the-list)'
+        type: string
+        default: ''
+      verbose:
+        description: 'Log every command and its output'
+        type: boolean
+        default: true
+
+env:
+  FLUTTER_VERSION: '3.44.8'
+
+jobs:
+  creative:
+    name: Build advert (${{ inputs.locale || 'en-GB' }})
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Check every scene renders
+        run: flutter test test/scene_render_test.dart --reporter compact
+
+      - name: Check the beats can be performed
+        run: flutter test test/advert_choreography_test.dart --reporter compact
+
+      - name: Install compose dependencies
+        run: pip3 install Pillow arabic-reshaper python-bidi
+
+      - name: Resolve locales
+        id: locales
+        run: |
+          INPUT="${{ inputs.locale || 'en-GB' }}"
+          if [ "$INPUT" = "all" ]; then
+            LOCALES=$(python3 -c "
+          import json
+          d = json.load(open('store/advert_strings.json'))
+          print(' '.join(d.get('problem', {}).keys()))
+          ")
+          else
+            LOCALES="$INPUT"
+          fi
+          echo "list=$LOCALES" >> "$GITHUB_OUTPUT"
+          echo "Locales: $LOCALES"
+
+      - name: Build the app once
+        run: |
+          flutter build ios --simulator --debug --dart-define=WREN_SHOTS=true
+
+      - name: Record and compose
+        run: |
+          BEATS="${{ inputs.beats }}"
+          BEAT_ARGS=""
+          if [ -n "$BEATS" ]; then
+            for b in $BEATS; do
+              BEAT_ARGS="$BEAT_ARGS --beat \"$b\""
+            done
+          fi
+
+          for LOCALE in ${{ steps.locales.outputs.list }}; do
+            echo ""
+            echo "=== $LOCALE ==="
+
+            # Record the beats (--keep-build: app already built above)
+            python3 -u store/record.py \
+              --keep-build \
+              $BEAT_ARGS \
+              --locale "$LOCALE" \
+              ${{ inputs.verbose && '--verbose' || '' }}
+
+            # Compose the final video
+            COMPOSE_BEATS=""
+            if [ -n "$BEATS" ]; then
+              COMPOSE_BEATS="--beats $BEATS"
+            fi
+            python3 -u store/compose.py \
+              --locale "$LOCALE" \
+              $COMPOSE_BEATS
+          done
+
+      - name: Clip report
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import pathlib
+          adverts = pathlib.Path("store/adverts")
+          if not adverts.exists():
+              print("No adverts produced.")
+          else:
+              print("| locale | file | size |")
+              print("| --- | --- | --- |")
+              for f in sorted(adverts.rglob("*.mp4")):
+                  locale = f.parent.name
+                  size = f.stat().st_size / 1e6
+                  print(f"| {locale} | {f.name} | {size:.1f} MB |")
+          print()
+
+          footage = pathlib.Path("store/footage")
+          if footage.exists():
+              import sys
+              sys.path.insert(0, "store")
+              from record import probe
+              print("| beat clip | seconds | frames | peak fps | size |")
+              print("| --- | --- | --- | --- | --- |")
+              for f in sorted(footage.rglob("*.mov")):
+                  secs, frames, ok, peak = probe(f)
+                  flag = "" if ok else " **NOT FINALISED**"
+                  print(f"| {f.relative_to(footage)}{flag} | {secs:.1f} "
+                        f"| {frames} | {peak:.0f} | {f.stat().st_size / 1e6:.1f} MB |")
+          PY
+
+      - name: Upload adverts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: adverts-${{ inputs.locale || 'en-GB' }}
+          path: store/adverts/**/*.mp4
+          if-no-files-found: warn
+
+      - name: Upload raw footage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: footage-${{ inputs.locale || 'en-GB' }}
+          path: store/footage/**/*.mov
+          if-no-files-found: warn
