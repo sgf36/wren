@@ -95,6 +95,11 @@ MIN_PEAK_FPS = 30.0
 # The window the peak is measured over.
 PEAK_WINDOW = 2.0
 
+# The beats compose.py actually stitches into the final video. When `--beat` is
+# not given, record only these — the others are available but recording them
+# wastes CI time and hitting their quality gate blocks the whole run.
+DEFAULT_BEATS = ["advert-intro", "advert-add", "advert-the-list"]
+
 
 def beats():
     """Beat names and lengths, read out of the Dart file rather than duplicated.
@@ -316,10 +321,23 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         shoot.say(f"only {length:.1f}s of video for a {seconds:.0f}s beat", indent=1)
         return False
     if peak < MIN_PEAK_FPS:
-        shoot.say(f"the busiest {PEAK_WINDOW:.0f}s of this clip ran at "
-                  f"{peak:.0f} fps, which is stutter. No still will show it.",
+        # simctl only writes a frame when the display changes. A beat that is
+        # mostly deliberate holds (empty state, menu open) produces very few
+        # frames — not because the GPU is stuttering but because nothing is
+        # moving. Distinguish the two: avg >= 5 means something WAS animating
+        # and the GPU could not keep up; avg < 5 means the content was still.
+        if average >= 5.0:
+            shoot.say(f"the busiest {PEAK_WINDOW:.0f}s of this clip ran at "
+                      f"{peak:.0f} fps, which is stutter. No still will "
+                      f"show it.", indent=1)
+            return False
+        if frames < 20:
+            shoot.say(f"only {frames} frames in {length:.1f}s — the app "
+                      f"may not have rendered", indent=1)
+            return False
+        shoot.say(f"static beat ({average:.0f} fps avg, "
+                  f"{peak:.0f} fps peak, {frames} frames) — accepted",
                   indent=1)
-        return False
     return True
 
 
@@ -347,7 +365,7 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--beat", action="append",
-                   help="one beat by name; repeatable (default: all)")
+                   help="one beat by name; repeatable (default: compose beats)")
     p.add_argument("--locale", default="en-GB",
                    help="device language for the recording (default en-GB)")
     p.add_argument("--keep-build", action="store_true",
@@ -359,7 +377,7 @@ def main():
     shoot.VERBOSE = args.verbose
 
     available = beats()
-    wanted = args.beat or list(available)
+    wanted = args.beat or list(DEFAULT_BEATS)
     unknown = [b for b in wanted if b not in available]
     if unknown:
         sys.exit(f"no such beat: {', '.join(unknown)}. "

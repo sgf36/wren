@@ -81,7 +81,10 @@ def _font_for_locale(locale):
     _font_cache[locale] = FONT
     return FONT
 
-DEFAULT_BEATS = ["advert-intro", "advert-add", "advert-the-list"]
+try:
+    from record import DEFAULT_BEATS
+except ImportError:
+    DEFAULT_BEATS = ["advert-intro", "advert-add", "advert-the-list"]
 
 PROBLEM_HOLD = 1.8
 SOLUTION_HOLD = 2.8
