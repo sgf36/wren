@@ -208,6 +208,17 @@ Widget? sceneFor(String name) {
         initialOverlay: ScreenshotOverlay.reelsPaywall,
       );
 
+    // The fresh app, empty. Used by the advert to show the first-launch state
+    // before any places have been added.
+    case 'empty':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        initialPending: const [],
+        skipOnboarding: true,
+      );
+
     // The launch screen, at rest: the bird, the name, the idiom under it.
     //
     // It used to be the empty state, whose copy says where places end up and

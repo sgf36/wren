@@ -67,6 +67,7 @@ const advertLeadIn = 3.0;
 /// that list and must never try to photograph one of these.
 const advertBeats = <String, AdvertBeat>{
   'advert-intro': AdvertBeat('splash', 4.0, _intro),
+  'advert-add': AdvertBeat('empty', 4.0, _add),
   'advert-the-list': AdvertBeat('01-the-list', 8.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 8.0, _whichCity),
   'advert-correct-a-place': AdvertBeat(
@@ -94,8 +95,16 @@ Widget? advertFor(String name) {
 // --- the scripts -------------------------------------------------------------
 
 Future<void> _intro(Choreography c) async {
-  // The splash animation runs its own controller; this holds the recorder open.
   await c.hold(4.0);
+}
+
+Future<void> _add(Choreography c) async {
+  // Read before the first await — the context may be gone afterwards.
+  final addPlaces = L.of(c.context).addPlaces;
+  // The lead-in already showed the empty state for 3 seconds; tap immediately.
+  await c.tapText(addPlaces);
+  // The three-option menu: screenshots, file, link.
+  await c.hold(3.0);
 }
 
 Future<void> _theList(Choreography c) async {
@@ -147,15 +156,14 @@ class _Stage extends StatefulWidget {
 
 class _StageState extends State<_Stage> {
   Choreography? _choreography;
+  final _touch = ValueNotifier<Offset?>(null);
 
   @override
   void initState() {
     super.initState();
-    // After the first frame, so the scene's own post-frame work — the region
-    // dialog among it — has been queued before the script starts.
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      final choreography = Choreography(context);
+      final choreography = Choreography(context, touchIndicator: _touch);
       _choreography = choreography;
       await choreography.hold(advertLeadIn);
       if (!mounted) return;
@@ -165,21 +173,34 @@ class _StageState extends State<_Stage> {
 
   @override
   void dispose() {
-    // A beat outlives its tree otherwise. On a device that does not matter —
-    // the process is killed — but it strands a pending timer in a widget test,
-    // which fails the whole file on `!timersPending` rather than on anything
-    // to do with the beat.
     _choreography?.stop();
+    _touch.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) => Stack(
+    children: [
+      Positioned.fill(child: widget.child),
+      ValueListenableBuilder<Offset?>(
+        valueListenable: _touch,
+        builder: (context, position, _) {
+          if (position == null) return const SizedBox.shrink();
+          return IgnorePointer(
+            child: CustomPaint(
+              painter: _TouchDot(position),
+              size: Size.infinite,
+            ),
+          );
+        },
+      ),
+    ],
+  );
 }
 
 /// Drives one beat: waits, drags and taps, posted as real pointer events.
 class Choreography {
-  Choreography(this.context)
+  Choreography(this.context, {this.touchIndicator})
     : _clock = Stopwatch()..start(),
       _centre = _centreOf(context);
 
@@ -190,9 +211,13 @@ class Choreography {
   /// context that is no longer mounted.
   final Offset _centre;
 
+  /// Set by [_Stage] to show a gold dot at the active pointer position.
+  final ValueNotifier<Offset?>? touchIndicator;
+
   int _pointer = 1;
 
   Timer? _pending;
+  Timer? _touchFade;
   bool _stopped = false;
 
   Duration get _now => _clock.elapsed;
@@ -200,6 +225,16 @@ class Choreography {
   void _post(PointerEvent event) {
     if (_stopped) return;
     GestureBinding.instance.handlePointerEvent(event);
+    if (touchIndicator != null) {
+      if (event is PointerDownEvent || event is PointerMoveEvent) {
+        _touchFade?.cancel();
+        touchIndicator!.value = event.position;
+      } else if (event is PointerUpEvent) {
+        _touchFade = Timer(const Duration(milliseconds: 300), () {
+          touchIndicator?.value = null;
+        });
+      }
+    }
   }
 
   /// Hold the shot. Ordinary real time — the app is drawing on its own vsync.
@@ -223,6 +258,9 @@ class Choreography {
     _stopped = true;
     _pending?.cancel();
     _pending = null;
+    _touchFade?.cancel();
+    _touchFade = null;
+    touchIndicator?.value = null;
   }
 
   /// A tap on the first widget whose text reads [label].
@@ -306,4 +344,26 @@ class Choreography {
 
   static String? _textOf(Text widget) =>
       widget.data ?? widget.textSpan?.toPlainText();
+}
+
+/// A gold circle drawn at the active touch position.
+class _TouchDot extends CustomPainter {
+  _TouchDot(this.position);
+  final Offset position;
+
+  static const _radius = 28.0;
+  static final _fill = Paint()..color = const Color(0x59F2C879);
+  static final _ring = Paint()
+    ..color = const Color(0xB3F2C879)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.0;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawCircle(position, _radius, _fill);
+    canvas.drawCircle(position, _radius, _ring);
+  }
+
+  @override
+  bool shouldRepaint(_TouchDot old) => position != old.position;
 }

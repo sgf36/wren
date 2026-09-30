@@ -81,7 +81,7 @@ def _font_for_locale(locale):
     _font_cache[locale] = FONT
     return FONT
 
-DEFAULT_BEATS = ["advert-intro", "advert-the-list"]
+DEFAULT_BEATS = ["advert-intro", "advert-add", "advert-the-list"]
 
 PROBLEM_HOLD = 1.8
 SOLUTION_HOLD = 2.8
@@ -318,7 +318,7 @@ def main():
 
             if scene == 'splash':
                 trim_s = RECORDER_LEAD_IN if beat_info else 2.0
-                trim_d = min(beat_secs + 3.0, max(0, clip_secs - trim_s))
+                trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
             elif beat_info and clip_secs > beat_secs + 2.0:
                 trim_s = max(0, clip_secs - beat_secs - 0.5)
                 trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))

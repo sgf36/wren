@@ -185,6 +185,7 @@ class CapturePage extends StatefulWidget {
     this.initialGuideName,
     this.initialOwned,
     this.initialOverlay = ScreenshotOverlay.none,
+    this.skipOnboarding = false,
   });
 
   /// Injectable so the paywall, the list and the importers can be tested
@@ -279,6 +280,11 @@ class CapturePage extends StatefulWidget {
   /// same field the cache fills, so the sheet that appears is the one
   /// `offersFor` really produces rather than a picture of one.
   final Set<String>? initialOwned;
+
+  /// Skips the first-launch onboarding sheet. For the advert build, where the
+  /// choreography needs a predictable empty state without a bottom sheet
+  /// appearing on a timer.
+  final bool skipOnboarding;
 
   @override
   State<CapturePage> createState() => _CapturePageState();
@@ -1003,6 +1009,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   static const _onboardingShown = 'onboarding-shown';
 
   Future<void> _maybeShowOnboarding() async {
+    if (widget.skipOnboarding) return;
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(_onboardingShown) ?? false) return;
     if (!mounted || _pending.isNotEmpty || _busy) return;
