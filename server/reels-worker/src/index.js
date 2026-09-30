@@ -814,7 +814,14 @@ async function placesFromPost(env, target) {
     const res = await fetch(post.video, { headers: { 'User-Agent': UA } });
     if (!res.ok) throw new Refusal(FAILURES.fetchFailed, 502);
     const bytes = new Uint8Array(await res.arrayBuffer());
-    if (bytes.length > MEDIA_BUDGET) throw new Refusal(FAILURES.fetchFailed, 413);
+    if (bytes.length > MEDIA_BUDGET) {
+      // The only way to learn the real distribution of reel sizes is to log
+      // the ones that do not fit -- guessing at a bigger budget number twice
+      // already (12MB, then 20MB) without this is how the same 413 came back
+      // a third time on a longer post.
+      console.error('video too large', bytes.length, target.canonical);
+      throw new Refusal(FAILURES.fetchFailed, 413);
+    }
     parts.push({
       inlineData: {
         mimeType: res.headers.get('content-type')?.split(';')[0] || 'video/mp4',
