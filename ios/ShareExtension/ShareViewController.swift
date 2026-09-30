@@ -66,12 +66,28 @@ class ShareViewController: UIViewController {
     let group = DispatchGroup()
     var imageIndex = 0
 
+    // Whether anything was actually written to the App Group -- not merely
+    // whether a provider *looked* shareable. Observed on a real share from
+    // YouTube: a provider conforming to the URL type answered `loadItem` with
+    // a value that was neither a `URL` nor a `String`, `hand(over:)` was never
+    // called, and the confirmation card still showed its usual checkmark.
+    // Wren then had nothing to import and said nothing was wrong, which from
+    // the outside is indistinguishable from working. Safe to read after
+    // `group.notify` without a lock: entering and leaving the group already
+    // establishes the ordering, the same guarantee `openApp`'s `resolved`
+    // flag relies on by funnelling through the main queue instead.
+    var capturedAnything = false
+
     for provider in providers {
       if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
         group.enter()
-        provider.loadItem(forTypeIdentifier: UTType.url.identifier) { [weak self] value, _ in
+        provider.loadItem(forTypeIdentifier: UTType.url.identifier) { [weak self] value, error in
           if let url = (value as? URL) ?? (value as? String).flatMap(URL.init(string:)) {
             self?.hand(over: url)
+            capturedAnything = true
+          } else {
+            NSLog("WREN-SHARE url provider produced no URL: "
+                  + "\(String(describing: value)) \(String(describing: error))")
           }
           group.leave()
         }
@@ -83,14 +99,21 @@ class ShareViewController: UIViewController {
         // the closure returns, so it is copied synchronously inside it. An async
         // hop here loses the file, and loses it silently.
         provider.loadFileRepresentation(forTypeIdentifier: UTType.image.identifier) {
-          [weak self] url, _ in
-          if let url = url { self?.copy(image: url, index: index) }
+          [weak self] url, error in
+          if let url = url {
+            self?.copy(image: url, index: index)
+            capturedAnything = true
+          } else {
+            NSLog("WREN-SHARE image provider produced no file: \(String(describing: error))")
+          }
           group.leave()
         }
       }
     }
 
-    group.notify(queue: .main) { [weak self] in self?.finish() }
+    group.notify(queue: .main) { [weak self] in
+      self?.finish(captured: capturedAnything)
+    }
   }
 
   /// The App Group container, or nil with a note in the log.
@@ -392,12 +415,81 @@ class ShareViewController: UIViewController {
 
   /// Confirms, then waits for the user. If no confirmation is needed, tears
   /// down immediately.
-  private func finish(showing confirmation: Bool = true) {
-    scheduleOpenNotification()
+  ///
+  /// `captured` decides which card: a real success, or the honest admission
+  /// that nothing was actually written despite a provider looking shareable
+  /// (see `capturedAnything` in `viewDidLoad`). Scheduling the "tap to finish
+  /// importing" notification is skipped when nothing was captured -- there is
+  /// nothing waiting in the App Group for it to finish importing.
+  private func finish(showing confirmation: Bool = true, captured: Bool = true) {
     guard confirmation else {
       extensionContext?.completeRequest(returningItems: nil)
       return
     }
-    confirm()
+    if captured {
+      scheduleOpenNotification()
+      confirm()
+    } else {
+      explainNothingCaptured()
+    }
+  }
+
+  /// Shown when a provider looked shareable but produced nothing usable.
+  ///
+  /// The previous behaviour showed the ordinary success card regardless,
+  /// which is the same mistake `openApp`'s old success check made: a signal
+  /// that always looks like success is worse than an honest failure, because
+  /// there is then no way to tell the two apart from the outside. Nothing was
+  /// lost -- there was nothing to lose, since nothing was written -- so this
+  /// only needs to say what to do next.
+  private func explainNothingCaptured() {
+    let card = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+    card.layer.cornerRadius = 22
+    card.layer.cornerCurve = .continuous
+    card.clipsToBounds = true
+    card.alpha = 0
+    card.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(card)
+
+    let icon = UIImageView(image: UIImage(systemName: "exclamationmark.circle"))
+    icon.tintColor = .secondaryLabel
+    icon.contentMode = .scaleAspectFit
+    icon.preferredSymbolConfiguration = UIImage.SymbolConfiguration(
+      pointSize: 34, weight: .regular)
+
+    let message = UILabel()
+    message.text = "Wren could not read that. Try a screenshot instead — that always works."
+    message.textColor = .label
+    message.font = .preferredFont(forTextStyle: .subheadline)
+    message.adjustsFontForContentSizeCategory = true
+    message.numberOfLines = 0
+    message.textAlignment = .center
+
+    let close = UIButton(type: .system)
+    close.setTitle("Done", for: .normal)
+    close.titleLabel?.font = .preferredFont(forTextStyle: .body)
+    close.titleLabel?.adjustsFontForContentSizeCategory = true
+    close.setTitleColor(.secondaryLabel, for: .normal)
+    close.addTarget(self, action: #selector(dismissExtension), for: .touchUpInside)
+
+    let stack = UIStackView(arrangedSubviews: [icon, message, close])
+    stack.axis = .vertical
+    stack.alignment = .center
+    stack.spacing = 12
+    stack.setCustomSpacing(16, after: message)
+    stack.translatesAutoresizingMaskIntoConstraints = false
+    card.contentView.addSubview(stack)
+
+    NSLayoutConstraint.activate([
+      card.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      card.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+      card.widthAnchor.constraint(greaterThanOrEqualToConstant: 180),
+      stack.topAnchor.constraint(equalTo: card.contentView.topAnchor, constant: 26),
+      stack.bottomAnchor.constraint(equalTo: card.contentView.bottomAnchor, constant: -20),
+      stack.leadingAnchor.constraint(equalTo: card.contentView.leadingAnchor, constant: 30),
+      stack.trailingAnchor.constraint(equalTo: card.contentView.trailingAnchor, constant: -30),
+    ])
+
+    UIView.animate(withDuration: 0.18) { card.alpha = 1 }
   }
 }
