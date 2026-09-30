@@ -35,7 +35,7 @@
 
 import {
   fetchPost, fetchImages, regionOf, UA, MEDIA_BUDGET,
-  CAPTION_PROMPT, MEDIA_PROMPT,
+  CAPTION_PROMPT, MEDIA_PROMPT, isGenericPlace,
 } from './vendors.js';
 
 const CORS = {
@@ -797,9 +797,12 @@ async function placesFromPost(env, target) {
   if (!post) throw new Refusal(FAILURES.postUnavailable, 404);
 
   // The caption, if there is one worth asking about. Two words is not a list.
+  // Generic hits (the city restated as the place) are dropped before deciding
+  // whether the caption was enough -- one of those passing as "found" is what
+  // used to skip the video and answer with the city itself.
   if (post.caption && post.caption.length > 20) {
     const text = [CAPTION_PROMPT, '', post.caption, ...post.alts].join(NEWLINE);
-    const found = await readPlaces(env, [{ text }]);
+    const found = (await readPlaces(env, [{ text }])).filter((p) => !isGenericPlace(p));
     if (found.length) {
       return { candidates: found, regionHint: regionOf(found), read: 'caption' };
     }
@@ -824,7 +827,7 @@ async function placesFromPost(env, target) {
 
   if (parts.length < 2) throw new Refusal(FAILURES.fetchFailed, 502);
 
-  const found = await readPlaces(env, parts);
+  const found = (await readPlaces(env, parts)).filter((p) => !isGenericPlace(p));
   if (!found.length) throw new Refusal(FAILURES.postUnavailable, 404);
   return { candidates: found, regionHint: regionOf(found), read: 'media' };
 }

@@ -173,6 +173,9 @@ function toB64(bytes) {
 export const CAPTION_PROMPT =
   'This is the caption of a social media post. List every place a person could '
   + 'visit that it names: restaurants, bars, cafes, hotels, shops, landmarks. '
+  + 'A city, region or country named by itself is not a place somebody can walk '
+  + 'into -- only list it as the "city" of a specific business, venue or '
+  + 'landmark named alongside it, never as a place in its own right. '
   + 'Include the city or country if the caption states it. Ignore hashtags, '
   + 'usernames and anything that is not a place somebody could go. If it names '
   + 'no such place, return an empty list.';
@@ -180,9 +183,30 @@ export const CAPTION_PROMPT =
 export const MEDIA_PROMPT =
   'These are the slides or frames of one social media post, in order. Read the '
   + 'text in them, and any speech, and list every place a person could visit: '
-  + 'restaurants, bars, cafes, hotels, shops, landmarks. Include the city or '
-  + 'country where it is stated. Ignore usernames, hashtags and app interface '
-  + 'text. If a city is named once, it applies to the places after it.';
+  + 'restaurants, bars, cafes, hotels, shops, landmarks. A city, region or '
+  + 'country named by itself is not a place somebody can walk into -- only list '
+  + 'it as the "city" of a specific business, venue or landmark named alongside '
+  + 'it, never as a place in its own right. Include the city or country where '
+  + 'it is stated. Ignore usernames, hashtags and app interface text. If a city '
+  + 'is named once, it applies to the places after it.';
+
+/**
+ * Whether a "place" the model returned is really just the city or region
+ * restated, not somewhere a person can walk into.
+ *
+ * Found on a real post: a caption that only said where it was filmed came back
+ * from the model as one candidate, `{name: "London", city: "London"}`. Because
+ * the caption path treats any non-empty answer as proof the caption was enough,
+ * that single self-referential entry passed as a reading and skipped the video
+ * entirely -- where the actual venues were. The two prompts above now say not
+ * to do this; this filter is the backstop for when the model does it anyway,
+ * on either path.
+ */
+export function isGenericPlace(p) {
+  const name = String(p?.name || '').trim().toLowerCase();
+  const city = String(p?.city || '').trim().toLowerCase();
+  return Boolean(name) && Boolean(city) && name === city;
+}
 
 /**
  * The city the whole post is about, or nothing.

@@ -16,7 +16,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  readInstagram, fetchPost, fetchImages, regionOf,
+  readInstagram, fetchPost, fetchImages, regionOf, isGenericPlace,
   MAX_SLIDES, MEDIA_BUDGET,
 } from '../src/vendors.js';
 
@@ -204,6 +204,23 @@ test('the region needs a majority, not merely the most common answer', () => {
 
   assert.equal(regionOf([{ name: 'A' }]), null);
   assert.equal(regionOf([]), null);
+});
+
+test('a place that is just the city restated is not a place', () => {
+  // The real failure: a caption naming only where a reel was filmed came back
+  // as one candidate, {name: "London", city: "London"}, and the app resolved
+  // it literally, searching for "London, London". This is the filter that
+  // catches it, whichever path the model answered on.
+  assert.equal(isGenericPlace({ name: 'London', city: 'London' }), true);
+  assert.equal(isGenericPlace({ name: 'london', city: 'London' }), true);
+  assert.equal(isGenericPlace({ name: '  Paris ', city: ' paris ' }), true);
+});
+
+test('a real venue in its own city is not caught by the same filter', () => {
+  assert.equal(isGenericPlace({ name: 'Tower of London', city: 'London' }), false);
+  assert.equal(isGenericPlace({ name: 'Padella', city: 'London' }), false);
+  assert.equal(isGenericPlace({ name: 'London' }), false);
+  assert.equal(isGenericPlace({ name: 'London', city: '' }), false);
 });
 
 test('the media budget is a real number, not a placeholder', () => {
