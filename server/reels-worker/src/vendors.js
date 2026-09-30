@@ -28,14 +28,26 @@ export const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
   + 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
 
 /**
- * How much media may be read in one post.
+ * How much media may be INLINED in one request.
  *
- * A carousel can hold twenty slides and each is a few hundred kilobytes. The
- * cap is on bytes rather than count because that is what actually costs: a
- * Worker has 128MB and Gemini charges by the token. Twenty megabytes covers
- * most video reels while staying within the Vertex AI inline-data ceiling.
+ * A carousel can hold twenty slides and each is a few hundred kilobytes, and
+ * those always fit here. Video is the case this stops covering: this number
+ * has already been raised once (12MB to 20MB) for a longer reel to hit the
+ * same wall a second time. It is Vertex's own request-size ceiling, not a
+ * guess this Worker gets to make bigger -- a video over this goes to Cloud
+ * Storage instead (see `MAX_VIDEO_BYTES` and `uploadToGCS` in index.js),
+ * which has no comparable limit.
  */
 export const MEDIA_BUDGET = 20 * 1024 * 1024;
+
+/**
+ * The absolute ceiling on a video, even through Cloud Storage.
+ *
+ * Not a technical limit -- a GCS object can be far larger -- a cost and abuse
+ * ceiling. A reel is at most a few minutes; something claiming to be 200MB is
+ * not a reel, and reading it would spend a Vertex call finding that out.
+ */
+export const MAX_VIDEO_BYTES = 200 * 1024 * 1024;
 
 /** Slides beyond this are ignored however small they are. */
 export const MAX_SLIDES = 20;

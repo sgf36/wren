@@ -17,6 +17,7 @@ import assert from 'node:assert/strict';
 import {
   vertexEndpoint, readPlaces, accessToken,
   PLAY_SCOPE, VERTEX_SCOPE, FAILURES,
+  uploadToGCS, deleteFromGCS,
 } from '../src/index.js';
 
 const parts = [{ text: 'read the places' }];
@@ -83,5 +84,23 @@ test('a model nobody costed is refused before any network call', async () => {
       parts,
     ),
     (err) => err.code === FAILURES.modelFailed,
+  );
+});
+
+test('no bucket means no upload, rather than one with no destination', async () => {
+  // The feature being off (VERTEX_GCS_BUCKET unset) must look identical to it
+  // never having been built, not attempt a call that can only fail.
+  assert.equal(
+    await uploadToGCS({ VERTEX_SA_KEY: 'x' }, new Uint8Array([1, 2, 3]), 'video/mp4'),
+    null,
+  );
+});
+
+test('deleting with nothing to delete is a no-op, not a throw', async () => {
+  // Called unconditionally from a finally in placesFromPost -- it must never
+  // itself be the reason a request fails.
+  await assert.doesNotReject(() => deleteFromGCS({}, null));
+  await assert.doesNotReject(
+    () => deleteFromGCS({ VERTEX_SA_KEY: 'x' }, 'tmp/some-id'),
   );
 });

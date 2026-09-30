@@ -139,6 +139,28 @@ VERTEX_PROJECT = "gen-lang-client-0475397099"
 # like a wrong model name.
 VERTEX_LOCATION = "global"
 
+# Where a video goes when it is too large to inline (see MEDIA_BUDGET /
+# MAX_VIDEO_BYTES in src/vendors.js). Unset means that path is off and a large
+# video refuses with fetch_failed, exactly as it did before this existed --
+# not a crash, just the old ceiling.
+#
+# Setting this up (one-time, in the Cloud Console or Cloud Shell -- no local
+# gcloud needed):
+#   1. Create a bucket, e.g. `gsutil mb -l EU gs://wren-reels-tmp` (any region
+#      is fine; Vertex reads cross-region). A short lifecycle rule -- delete
+#      objects older than 1 day -- is worth adding as a backstop, in case the
+#      Worker's own delete ever fails to run:
+#        gsutil lifecycle set - gs://wren-reels-tmp <<< \
+#          '{"rule":[{"action":{"type":"Delete"},"condition":{"age":1}}]}'
+#   2. Grant the SAME service account already stored in VERTEX_SA_KEY
+#      Storage Object Admin ON THIS BUCKET ONLY, not project-wide:
+#        gsutil iam ch serviceAccount:<the account's email>:roles/storage.objectAdmin \
+#          gs://wren-reels-tmp
+#      The account's email is inside that secret's JSON (`client_email`).
+#   3. `wrangler deploy` after uncommenting the line below with the real name.
+#
+# VERTEX_GCS_BUCKET = "wren-reels-tmp"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "wren-reels"

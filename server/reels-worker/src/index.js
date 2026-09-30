@@ -34,7 +34,7 @@
  */
 
 import {
-  fetchPost, fetchImages, regionOf, UA, MEDIA_BUDGET,
+  fetchPost, fetchImages, regionOf, UA, MEDIA_BUDGET, MAX_VIDEO_BYTES,
   CAPTION_PROMPT, MEDIA_PROMPT, isGenericPlace,
 } from './vendors.js';
 
@@ -760,6 +760,85 @@ export async function readPlaces(env, parts) {
   return Array.isArray(places) ? places.filter((p) => p && p.name) : [];
 }
 
+/* ---------------------------------------------------------- cloud storage */
+
+/**
+ * Where a video goes when it is too large to inline.
+ *
+ * The Storage JSON API rather than a client library, for the same reason as
+ * everywhere else here: one HTTP call needs no SDK weight. `uploadType=media`
+ * is the simple, single-request upload -- fine at these sizes, unlike the
+ * resumable protocol GCS wants past a few hundred MB.
+ */
+const GCS_UPLOAD = (bucket, name) =>
+  `https://storage.googleapis.com/upload/storage/v1/b/${encodeURIComponent(bucket)}`
+  + `/o?uploadType=media&name=${encodeURIComponent(name)}`;
+const GCS_OBJECT = (bucket, name) =>
+  `https://storage.googleapis.com/storage/v1/b/${encodeURIComponent(bucket)}`
+  + `/o/${encodeURIComponent(name)}`;
+
+/**
+ * Puts a video in the bucket this Worker was given, so Vertex can read it by
+ * reference (`fileData.fileUri`) instead of the request carrying every byte.
+ *
+ * Named with a random id under `tmp/` -- never the post's shortcode or
+ * platform, because the object's own name must not be the thing that leaks
+ * which post was processed, matching the "log lines stay content-free" rule
+ * the rest of this Worker follows.
+ *
+ * Uses the same service-account token `readPlaces` already mints for Vertex:
+ * `cloud-platform` is broad enough to cover Storage too, so this needed a
+ * bucket-scoped IAM grant on the existing account rather than a new secret.
+ * `VERTEX_GCS_BUCKET` unset means the feature is off, not misconfigured --
+ * the caller falls back to refusing the video as too large, which is exactly
+ * what happened before this existed.
+ *
+ * Returns `{uri, name}`, or null on any failure -- nothing here is worth a
+ * distinct error code to the client, which only ever sees "could not read
+ * that post" for this path either way.
+ */
+export async function uploadToGCS(env, bytes, mimeType) {
+  const bucket = env.VERTEX_GCS_BUCKET;
+  if (!bucket) return null;
+  const token = await accessToken(env.VERTEX_SA_KEY, VERTEX_SCOPE);
+  if (!token) return null;
+
+  const name = `tmp/${crypto.randomUUID()}`;
+  const res = await fetch(GCS_UPLOAD(bucket, name), {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': mimeType },
+    body: bytes,
+  });
+  if (!res.ok) {
+    console.error('gcs upload failed', res.status);
+    return null;
+  }
+  return { uri: `gs://${bucket}/${name}`, name };
+}
+
+/**
+ * Removes the object `uploadToGCS` created.
+ *
+ * Called from a `finally` regardless of what the model call did. The privacy
+ * copy promises a shared post is "processed transiently, never stored" --
+ * deleting only on the success path would make that true only when nothing
+ * went wrong, which is not the same promise.
+ */
+export async function deleteFromGCS(env, name) {
+  const bucket = env.VERTEX_GCS_BUCKET;
+  if (!bucket || !name) return;
+  const token = await accessToken(env.VERTEX_SA_KEY, VERTEX_SCOPE);
+  if (!token) return;
+  const res = await fetch(GCS_OBJECT(bucket, name), {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  // 404 is fine -- it means the object is already gone, which is the goal.
+  if (!res.ok && res.status !== 404) {
+    console.error('gcs delete failed', res.status);
+  }
+}
+
 /* ------------------------------------------------------------- the vendors */
 
 /**
@@ -810,33 +889,50 @@ async function placesFromPost(env, target) {
 
   // Otherwise the media, which is what most reels need.
   const parts = [{ text: MEDIA_PROMPT }];
+  // Set only when the video went to Cloud Storage, so its object gets deleted
+  // whatever readPlaces below does with it.
+  let cleanup = null;
+
   if (post.video) {
     const res = await fetch(post.video, { headers: { 'User-Agent': UA } });
     if (!res.ok) throw new Refusal(FAILURES.fetchFailed, 502);
     const bytes = new Uint8Array(await res.arrayBuffer());
-    if (bytes.length > MEDIA_BUDGET) {
-      // The only way to learn the real distribution of reel sizes is to log
-      // the ones that do not fit -- guessing at a bigger budget number twice
-      // already (12MB, then 20MB) without this is how the same 413 came back
-      // a third time on a longer post.
-      console.error('video too large', bytes.length, target.canonical);
+    const mimeType = res.headers.get('content-type')?.split(';')[0] || 'video/mp4';
+
+    if (bytes.length <= MEDIA_BUDGET) {
+      parts.push({ inlineData: { mimeType, data: bytesToB64(bytes) } });
+    } else if (bytes.length <= MAX_VIDEO_BYTES) {
+      // Too big for Vertex's inline request ceiling -- already raised once
+      // (12MB to 20MB) only for a longer reel to hit the same wall a second
+      // time. Goes to Cloud Storage and is referenced by URI instead, which
+      // has no comparable size limit.
+      const uploaded = await uploadToGCS(env, bytes, mimeType);
+      if (!uploaded) {
+        // No bucket configured, or the upload itself failed. Either way this
+        // is the same answer the caller got before this path existed.
+        console.error('video too large to inline, and Cloud Storage unavailable',
+          bytes.length, target.canonical);
+        throw new Refusal(FAILURES.fetchFailed, 413);
+      }
+      parts.push({ fileData: { mimeType, fileUri: uploaded.uri } });
+      cleanup = () => deleteFromGCS(env, uploaded.name);
+    } else {
+      console.error('video too large even for Cloud Storage', bytes.length, target.canonical);
       throw new Refusal(FAILURES.fetchFailed, 413);
     }
-    parts.push({
-      inlineData: {
-        mimeType: res.headers.get('content-type')?.split(';')[0] || 'video/mp4',
-        data: bytesToB64(bytes),
-      },
-    });
   } else {
     parts.push(...await fetchImages(post.images));
   }
 
   if (parts.length < 2) throw new Refusal(FAILURES.fetchFailed, 502);
 
-  const found = (await readPlaces(env, parts)).filter((p) => !isGenericPlace(p));
-  if (!found.length) throw new Refusal(FAILURES.postUnavailable, 404);
-  return { candidates: found, regionHint: regionOf(found), read: 'media' };
+  try {
+    const found = (await readPlaces(env, parts)).filter((p) => !isGenericPlace(p));
+    if (!found.length) throw new Refusal(FAILURES.postUnavailable, 404);
+    return { candidates: found, regionHint: regionOf(found), read: 'media' };
+  } finally {
+    if (cleanup) await cleanup();
+  }
 }
 
 const NEWLINE = String.fromCharCode(10);
