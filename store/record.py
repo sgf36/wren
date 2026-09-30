@@ -105,19 +105,22 @@ def beats():
     """
     if not BEATS_DART.exists():
         sys.exit(f"no beats file at {BEATS_DART}")
+    dart = BEATS_DART.read_text(encoding="utf-8")
     found = re.findall(
         r"'([A-Za-z0-9-]+)':\s*AdvertBeat\(\s*'([^']+)'\s*,\s*([0-9.]+)",
-        BEATS_DART.read_text(encoding="utf-8"))
+        dart)
     if not found:
         sys.exit(f"found no AdvertBeat entries in {BEATS_DART}")
-    lead = re.search(r"const advertLeadIn = ([0-9.]+);",
-                     BEATS_DART.read_text(encoding="utf-8"))
+    lead = re.search(r"const advertLeadIn = ([0-9.]+);", dart)
     if not lead:
         sys.exit("advertLeadIn is not declared in the beats file")
     lead_in = float(lead.group(1))
-    # The app waits this out before every beat, so the recorder must too.
-    return {name: (scene, float(seconds) + lead_in)
-            for name, scene, seconds in found}
+    result = {}
+    for name, scene, seconds in found:
+        secs = float(seconds)
+        # The splash runs from launch; it has no lead-in hold.
+        result[name] = (scene, secs if scene == 'splash' else secs + lead_in)
+    return result
 
 
 # --- reading the movie back, without asking the operating system anything -----
@@ -285,7 +288,8 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         if shoot.VERBOSE:
             shoot.say(f"launchd has it after {waited:.0f}s", indent=2)
 
-        time.sleep(FIRST_FRAME_SETTLE + seconds)
+        settle = 2.0 if scene == 'splash' else FIRST_FRAME_SETTLE
+        time.sleep(settle + seconds)
     finally:
         # Terminate before stopping the recorder, so the last frame is the app
         # rather than the home screen sliding back in.
@@ -317,6 +321,25 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
                   indent=1)
         return False
     return True
+
+
+def _boot_first_iphone():
+    """Boot the first available iPhone without probing screen dimensions.
+
+    compose.py scales every clip to 1080x1920, so the simulator's native size
+    does not matter. This replaces shoot.boot_simulator(), which probed five or
+    more devices for App Store screenshot dimensions and took over twenty
+    minutes on a CI runner.
+    """
+    candidates = shoot.iphones()
+    if not candidates:
+        sys.exit("no iPhone simulators are available on this runner")
+    name, udid = candidates[0]
+    shoot.say(f"booting {name}")
+    shoot.run("xcrun", "simctl", "boot", udid, check=False, quiet=True)
+    shoot.run("xcrun", "simctl", "bootstatus", udid, "-b",
+              check=False, quiet=True)
+    return udid, name
 
 
 def main():
@@ -358,8 +381,8 @@ def main():
         sys.exit(f"no app at {APP}")
 
     shoot.say(f"recording {len(wanted)} beat(s) in {args.locale}")
-    udid, native, _ = shoot.boot_simulator()
-    shoot.say(f"recording at {native[0]}x{native[1]}")
+    udid, sim_name = _boot_first_iphone()
+    shoot.say(f"recording on {sim_name}")
     shoot.run("xcrun", "simctl", "install", udid, str(APP))
     shoot.set_language(udid, language, args.locale.replace("-", "_"))
     # A real clock dates the footage, and a battery percentage differs between

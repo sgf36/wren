@@ -31,6 +31,8 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 import 'screenshots.dart';
+import 'splash.dart';
+import 'theme.dart';
 
 /// One beat: the scene it dresses, how long it runs, and what happens.
 class AdvertBeat {
@@ -64,6 +66,7 @@ const advertLeadIn = 3.0;
 /// The `advert-` prefix keeps these clear of [sceneNames]; `shoot.py` iterates
 /// that list and must never try to photograph one of these.
 const advertBeats = <String, AdvertBeat>{
+  'advert-intro': AdvertBeat('splash', 4.0, _intro),
   'advert-the-list': AdvertBeat('01-the-list', 8.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 8.0, _whichCity),
   'advert-correct-a-place': AdvertBeat(
@@ -78,12 +81,22 @@ const advertBeats = <String, AdvertBeat>{
 Widget? advertFor(String name) {
   final beat = advertBeats[name];
   if (beat == null) return null;
+  if (beat.scene == 'splash') {
+    return const SplashGate(
+      child: ColoredBox(color: Wren.ground, child: SizedBox.expand()),
+    );
+  }
   final scene = sceneFor(beat.scene);
   if (scene == null) return null;
   return _Stage(script: beat.script, child: scene);
 }
 
 // --- the scripts -------------------------------------------------------------
+
+Future<void> _intro(Choreography c) async {
+  // The splash animation runs its own controller; this holds the recorder open.
+  await c.hold(4.0);
+}
 
 Future<void> _theList(Choreography c) async {
   // Long enough to read two rows before anything moves. The whole claim of the

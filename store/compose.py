@@ -81,7 +81,7 @@ def _font_for_locale(locale):
     _font_cache[locale] = FONT
     return FONT
 
-DEFAULT_BEATS = ["advert-the-list"]
+DEFAULT_BEATS = ["advert-intro", "advert-the-list"]
 
 PROBLEM_HOLD = 1.8
 SOLUTION_HOLD = 2.8
@@ -181,7 +181,8 @@ def _render_end_card(cta_text, out_path, font_path=None):
     img.save(out_path, "PNG")
 
 
-def _encode(src, dst, duration=None, vf_extra="", is_image=False):
+def _encode(src, dst, duration=None, vf_extra="", is_image=False,
+            trim_start=None, trim_duration=None):
     """Encode any source to a standardised 1080x1920 h264 segment."""
     vf = ("scale=%d:%d:force_original_aspect_ratio=increase,"
           "crop=%d:%d,fps=%d" % (W, H, W, H, FPS))
@@ -189,10 +190,14 @@ def _encode(src, dst, duration=None, vf_extra="", is_image=False):
         vf += "," + vf_extra
 
     cmd = ["ffmpeg", "-y"]
+    if trim_start is not None:
+        cmd += ["-ss", str(trim_start)]
     if is_image:
         cmd += ["-loop", "1"]
     cmd += ["-i", str(src)]
-    if duration is not None:
+    if trim_duration is not None:
+        cmd += ["-t", str(trim_duration)]
+    elif duration is not None:
         cmd += ["-t", str(duration)]
     cmd += ["-vf", vf,
             "-c:v", "libx264", "-pix_fmt", "yuv420p",
@@ -282,11 +287,11 @@ def main():
             png = tmp / ("problem_%d.png" % i)
             _render([line], TEAL, CREAM, 58, png, font_path=font_path)
             mp4 = tmp / ("seg_%02d.mp4" % idx)
-            fade_in = "fade=in:0:%d" % FADE
-            end_frame = int(PROBLEM_HOLD * FPS) - FADE
-            fade_out = "fade=out:%d:%d" % (end_frame, FADE)
+            # Fade in on the first card only; the teal background stays
+            # continuous across all problem cards and the solution card.
+            vf = "fade=in:0:%d" % FADE if i == 0 else ""
             _encode(png, mp4, duration=PROBLEM_HOLD,
-                    vf_extra="%s,%s" % (fade_in, fade_out), is_image=True)
+                    vf_extra=vf, is_image=True)
             segments.append(mp4)
             idx += 1
 
@@ -294,15 +299,42 @@ def main():
         sol_png = tmp / "solution.png"
         _render(solution_text, TEAL, GOLD, 50, sol_png, font_path=font_path)
         sol_mp4 = tmp / ("seg_%02d.mp4" % idx)
-        _encode(sol_png, sol_mp4, duration=SOLUTION_HOLD,
-                vf_extra="fade=in:0:%d" % FADE, is_image=True)
+        _encode(sol_png, sol_mp4, duration=SOLUTION_HOLD, is_image=True)
         segments.append(sol_mp4)
         idx += 1
 
-        for clip in clips:
-            say("  beat: %s" % clip.name)
+        beat_info = {}
+        try:
+            from record import beats as _get_beats, RECORDER_LEAD_IN
+            beat_info = _get_beats()
+        except Exception:
+            pass
+
+        for beat_name, clip in zip(args.beats, clips):
+            clip_secs = _duration(clip)
+            info = beat_info.get(beat_name)
+            beat_secs = info[1] if info else clip_secs
+            scene = info[0] if info else ""
+
+            if scene == 'splash':
+                trim_s = RECORDER_LEAD_IN if beat_info else 2.0
+                trim_d = min(beat_secs + 3.0, max(0, clip_secs - trim_s))
+            elif beat_info and clip_secs > beat_secs + 2.0:
+                trim_s = max(0, clip_secs - beat_secs - 0.5)
+                trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
+            else:
+                trim_s = None
+                trim_d = None
+
+            if trim_s is not None:
+                say("  beat: %s  (%.1fs from %.1fs clip)"
+                    % (clip.name, trim_d, clip_secs))
+            else:
+                say("  beat: %s  (%.1fs)" % (clip.name, clip_secs))
+
             seg = tmp / ("seg_%02d.mp4" % idx)
-            _encode(clip, seg, vf_extra="fade=in:0:%d" % FADE)
+            _encode(clip, seg, trim_start=trim_s, trim_duration=trim_d,
+                    vf_extra="fade=in:0:%d" % FADE)
             segments.append(seg)
             idx += 1
 
