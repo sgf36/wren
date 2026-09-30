@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "credits_charged": 1,
+  "aweme_detail": {
+    "aweme_id": "7649367104226872608",
+    "desc": "London you have to experience at least once  🌟 Camden Market - A buzzing maze of street food, vintage stalls and creative energy. Perfect for wandering and snacking your way through London. 🍝 Mercato Mayfair - A stunning church-turned-food hall serving global eats under breathtaking architecture. 🌿 Sky Garden - A lush indoor garden in the sky with panoramic views of the city skyline. 🏛️ The Royal Exchange - Historic architecture meets luxury shopping in the heart of the City. 🧭 Neal’s Yard -  A hidden, colorful courtyard packed with wellness spots and cosy cafés. ⚡ Battersea Power Station - An iconic industrial landmark reborn with shops, dining and riverside views. 🏨 Hotel Café Royal - Experience their famous afternoon tea inside The Grill Room, a luxurious, historic dining space. 🦖 Natural History Museum - A world-famous museum filled with dinosaurs, gems and natural wonders. 🍷 Clos Maggiore - One of London’s most romantic restaurants, known for its fairy-tale blossom ceiling. 🏙️ Canary Wharf - Sleek skyscrapers, waterfront views and a modern business district vibe. 🕰️ Leadenhall Market - A stunning Victorian market hidden in the City, full of charm and history. #my_ldn #thingstodoinlondon #londonhotspots #londontown #visitlondon ",
+    "video": {
+      "download_no_watermark_addr": {
+        "url_list": [
+          "https://example.invalid/tiktok-video-no-watermark.mp4"
+        ]
+      },
+      "play_addr_h264": {
+        "url_list": [
+          "https://example.invalid/tiktok-video-h264.mp4"
+        ]
+      },
+      "play_addr": {
+        "url_list": [
+          "https://example.invalid/tiktok-video.mp4"
+        ]
+      }
+    }
+  }
+}

@@ -16,12 +16,21 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  readInstagram, fetchPost, fetchImages, regionOf, isGenericPlace,
+  readInstagram, readTikTok, fetchPost, fetchImages, regionOf, isGenericPlace,
   MAX_SLIDES, MEDIA_BUDGET,
 } from '../src/vendors.js';
 
 const CAROUSEL = JSON.parse(readFileSync(
   new URL('./fixtures/instagram-carousel.json', import.meta.url), 'utf8'));
+
+// Real ScrapeCreators response to a real TikTok share, captured 2026-09-30
+// while diagnosing "that post could not be opened" on every TikTok link ever
+// shared -- the platform was accepted as valid input and never actually
+// readable. Trimmed to the fields readTikTok uses; the CDN video urls are
+// replaced for the same reason as the Instagram fixture. The real post is a
+// London listicle whose caption already names all eleven venues.
+const TIKTOK_VIDEO = JSON.parse(readFileSync(
+  new URL('./fixtures/tiktok-video.json', import.meta.url), 'utf8'));
 
 test('a real carousel reads as eleven slides and its caption', () => {
   const post = readInstagram(CAROUSEL);
@@ -138,15 +147,59 @@ test('a vendor failure is null, not a half-read post', async () => {
 });
 
 test('an unknown platform is not guessed at', async () => {
-  // TikTok and YouTube answer with their own shapes. Reading them from
-  // documentation rather than a real response is how the Instagram reader got
-  // written wrong three times, so they wait for a captured example.
+  // YouTube answers with its own shape. Reading it from documentation rather
+  // than a real response is how the Instagram reader got written wrong three
+  // times, so it waits for a captured example.
   const post = await fetchPost(
     { SCRAPECREATORS_API_KEY: 'k' },
-    { platform: 'tiktok', canonical: 'x' },
+    { platform: 'youtube', canonical: 'x' },
     () => ({ ok: true, json: async () => ({ success: true }) }),
   );
   assert.equal(post, null);
+});
+
+test('a real TikTok video reads as its caption and its video url', () => {
+  const post = readTikTok(TIKTOK_VIDEO);
+  assert.ok(post.caption.includes('Camden Market'));
+  assert.ok(post.caption.includes('Battersea Power Station'));
+  assert.equal(post.video, 'https://example.invalid/tiktok-video-no-watermark.mp4');
+  assert.equal(post.images.length, 0);
+});
+
+test('a TikTok shape with no known video field is unreadable, not guessed at', () => {
+  // aweme_detail with no video, and no captured example of the photo-mode
+  // shape -- see readTikTok's own comment. Reading nothing is the honest
+  // answer here, not inventing a field name.
+  assert.equal(readTikTok({ aweme_detail: { desc: 'hello' } }), null);
+  assert.equal(readTikTok({}), null);
+  assert.equal(readTikTok(null), null);
+});
+
+test('TikTok is asked at v2, not v1 -- the endpoint that 404s with no body', async () => {
+  // Confirmed against the real API 2026-09-30: /v1/tiktok/video 404s with a
+  // bare "Not Found", no JSON, on every TikTok link ever shared. /v2 is the
+  // one ScrapeCreators' own docs describe.
+  let seenUrl = null;
+  await fetchPost(
+    { SCRAPECREATORS_API_KEY: 'k' },
+    { platform: 'tiktok', canonical: 'https://www.tiktok.com/@x/video/1' },
+    (url) => {
+      seenUrl = url;
+      return { ok: true, json: async () => TIKTOK_VIDEO };
+    },
+  );
+  assert.ok(seenUrl.includes('/v2/tiktok/video'));
+  assert.ok(!seenUrl.includes('/v1/tiktok'));
+});
+
+test('a TikTok post is read end to end through fetchPost', async () => {
+  const post = await fetchPost(
+    { SCRAPECREATORS_API_KEY: 'k' },
+    { platform: 'tiktok', canonical: 'https://www.tiktok.com/@x/video/1' },
+    () => ({ ok: true, json: async () => TIKTOK_VIDEO }),
+  );
+  assert.ok(post.caption.includes('Camden Market'));
+  assert.equal(post.video, 'https://example.invalid/tiktok-video-no-watermark.mp4');
 });
 
 test('one unreachable slide does not lose the other ten', async () => {

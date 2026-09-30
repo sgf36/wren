@@ -21,7 +21,7 @@
  * One credit per request, and a cache hit costs nothing — so a post two people
  * share on the same day is paid for once.
  */
-const SCRAPER = 'https://api.scrapecreators.com/v1';
+const SCRAPER = 'https://api.scrapecreators.com';
 
 /** A browser user agent, because Cloudflare edges answer 1010 to the defaults. */
 export const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -90,11 +90,51 @@ export function readInstagram(body) {
   };
 }
 
-/** The vendor path for each platform. */
+/**
+ * What ScrapeCreators' TikTok endpoint returns, reduced to what matters.
+ *
+ * Captured against a real share, 2026-09-30 -- a London listicle whose
+ * caption already named all eleven venues, the same "the caption is the
+ * cheap half" shape the first Instagram carousel had. TikTok's own field is
+ * `desc`, not `caption`.
+ *
+ * Video-only for now. TikTok also has a photo-mode ("slideshow") post shape,
+ * presumably under `image_infos` -- it was `null` on the one real post
+ * available, so its actual structure is unverified. Guessing at it is
+ * exactly how the Instagram reader got written wrong three times; a post
+ * with no video and no confirmed image shape reads as unreadable here, and
+ * the caller offers screenshots instead, until a real example exists.
+ */
+export function readTikTok(body) {
+  const a = body?.aweme_detail;
+  if (!a) return null;
+
+  const video = a.video?.download_no_watermark_addr?.url_list?.[0]
+    ?? a.video?.play_addr_h264?.url_list?.[0]
+    ?? a.video?.play_addr?.url_list?.[0]
+    ?? null;
+  if (!video) return null;
+
+  return {
+    caption: a.desc ?? '',
+    video,
+    images: [],
+    alts: [],
+  };
+}
+
+/**
+ * The vendor path for each platform, versioned per-platform because the
+ * versions do not agree. `/v1/tiktok/video` looks like a URL that should
+ * exist and instead 404s with a bare "Not Found" (no JSON, no error body) --
+ * confirmed 2026-09-30 against a real share that had never worked. TikTok's
+ * video endpoint is `/v2`; ScrapeCreators' own docs, not this file, are the
+ * only place that says so.
+ */
 const PATHS = {
-  instagram: '/instagram/post',
-  tiktok: '/tiktok/video',
-  youtube: '/youtube/video',
+  instagram: '/v1/instagram/post',
+  tiktok: '/v2/tiktok/video',
+  youtube: '/v1/youtube/video',
 };
 
 /**
@@ -122,12 +162,18 @@ export async function fetchPost(env, target, fetcher = fetch) {
     return null;
   }
 
-  // Only Instagram is read in detail so far. The others answer with their own
-  // shapes and are added as they are tested against a real post, rather than
-  // guessed at from documentation.
-  const post = target.platform === 'instagram' ? readInstagram(body) : null;
+  // Instagram and TikTok are read in detail. YouTube answers with its own
+  // shape and is added once it is tested against a real post, rather than
+  // guessed at from documentation -- the same rule that made the Instagram
+  // reader wrong three times before a captured example fixed it.
+  const post = target.platform === 'instagram' ? readInstagram(body)
+    : target.platform === 'tiktok' ? readTikTok(body)
+    : null;
   if (!post) {
-    const keys = body?.data ? Object.keys(body.data) : [];
+    // Instagram's shape nests under `data`; TikTok's does not. Falling back
+    // to the top-level keys means this stays useful for whichever platform
+    // just failed, instead of reporting `[]` for every TikTok miss.
+    const keys = Object.keys(body?.data ?? body ?? {});
     console.error('unreadable shape', target.canonical, keys);
     return null;
   }
