@@ -57,7 +57,10 @@ jobs:
         run: flutter test test/advert_choreography_test.dart --reporter compact
 
       - name: Install compose dependencies
-        run: pip3 install Pillow arabic-reshaper python-bidi
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install Pillow arabic-reshaper python-bidi
 
       - name: Resolve locales
         id: locales
@@ -81,6 +84,8 @@ jobs:
 
       - name: Record and compose
         run: |
+          source .venv/bin/activate
+
           BEATS="${{ inputs.beats }}"
           BEAT_ARGS=""
           if [ -n "$BEATS" ]; then
