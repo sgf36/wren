@@ -234,24 +234,41 @@ class ShareViewController: UIViewController {
   /// sent with `perform` because the Swift method carries an
   /// `iOSApplicationExtension, unavailable` annotation that would otherwise
   /// refuse to compile here.
+  ///
+  /// **Both routes are raced against a one-second deadline.** Observed on a
+  /// device: tapping the button produced no visible change at all -- not even
+  /// the fallback text below, which only runs inside `open`'s completion
+  /// handler. That handler is not documented to fire for a share extension,
+  /// and evidently does not always. Waiting on it unconditionally is how a
+  /// silent non-callback becomes a button that does nothing; the deadline
+  /// guarantees the card says something within a second either way. A `resolved`
+  /// flag, checked and set only on the main queue, stops both routes from
+  /// firing once the card has already moved on.
   @objc private func openApp() {
     guard let url = URL(string: "wren://shared") else {
       extensionContext?.completeRequest(returningItems: nil)
       return
     }
-    extensionContext?.open(url) { [weak self] success in
-      guard let self else { return }
+
+    var resolved = false
+    let decide: (Bool) -> Void = { [weak self] success in
       DispatchQueue.main.async {
+        guard let self, !resolved else { return }
+        resolved = true
         if success || self.openViaResponderChain(url) {
           self.extensionContext?.completeRequest(returningItems: nil)
           return
         }
-        // Neither route worked. The share is already in the App Group
-        // container, so nothing is lost -- but saying nothing and closing is
-        // what made this look broken, so the card says what to do instead.
+        // Neither route worked, or neither answered in time. The share is
+        // already in the App Group container, so nothing is lost -- but saying
+        // nothing and closing is what made this look broken, so the card says
+        // what to do instead.
         self.explainCouldNotOpen()
       }
     }
+
+    extensionContext?.open(url) { success in decide(success) }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { decide(false) }
   }
 
   /// Asks the UIApplication to open a URL, from inside an extension.
@@ -324,25 +341,37 @@ class ShareViewController: UIViewController {
   /// arrives after the share sheet has dismissed — a notification while the sheet
   /// is still up is swallowed by the host app.
   ///
-  /// Permission is requested by the main app on first launch. If the user has
-  /// not granted it, or has it off, this silently does nothing and the fallback
-  /// message in `explainCouldNotOpen` still tells them to open from the Home
-  /// Screen. Nothing breaks; they just do not get the shortcut.
+  /// The main app also requests permission on launch, but that is not enough on
+  /// its own: somebody who installs or updates Wren and only ever uses it by
+  /// sharing into it — never opening it from the Home Screen — will have shared
+  /// before the main app's `didFinishLaunchingWithOptions` ever runs, so nothing
+  /// will have asked yet. Requesting again here, from the extension itself,
+  /// closes that gap; `.provisional` does not prompt on a repeat call, so asking
+  /// twice costs nothing. If the user has notifications off entirely, this
+  /// still silently does nothing and the fallback message in
+  /// `explainCouldNotOpen` still tells them to open from the Home Screen.
   private func scheduleOpenNotification() {
-    let content = UNMutableNotificationContent()
-    content.title = "Wren"
-    content.body = "Tap to finish importing."
-    content.sound = .none
-
-    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-    let request = UNNotificationRequest(
-      identifier: "com.spencerfields.littlebird.share-open",
-      content: content,
-      trigger: trigger)
-
-    UNUserNotificationCenter.current().add(request) { error in
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options: [.alert, .provisional]) { _, error in
       if let error = error {
-        NSLog("WREN-SHARE notification failed: \(error.localizedDescription)")
+        NSLog("WREN-SHARE notification permission failed: \(error.localizedDescription)")
+      }
+
+      let content = UNMutableNotificationContent()
+      content.title = "Wren"
+      content.body = "Tap to finish importing."
+      content.sound = .none
+
+      let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+      let request = UNNotificationRequest(
+        identifier: "com.spencerfields.littlebird.share-open",
+        content: content,
+        trigger: trigger)
+
+      center.add(request) { error in
+        if let error = error {
+          NSLog("WREN-SHARE notification failed: \(error.localizedDescription)")
+        }
       }
     }
   }
