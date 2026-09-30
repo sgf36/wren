@@ -34,8 +34,8 @@
  */
 
 import {
-  fetchPost, fetchImages, regionOf, UA, MEDIA_BUDGET, MAX_VIDEO_BYTES,
-  CAPTION_PROMPT, MEDIA_PROMPT, isGenericPlace,
+  fetchPost, fetchYouTubeSnippet, fetchImages, regionOf, UA, MEDIA_BUDGET,
+  MAX_VIDEO_BYTES, CAPTION_PROMPT, MEDIA_PROMPT, isGenericPlace,
 } from './vendors.js';
 
 const CORS = {
@@ -872,7 +872,12 @@ export async function deleteFromGCS(env, name) {
  * a good share of them the expensive half never runs.
  */
 async function placesFromPost(env, target) {
-  const post = await fetchPost(env, target);
+  // YouTube reads through the free Data API, not ScrapeCreators -- see
+  // fetchYouTubeSnippet's own comment for why there is no video fallback yet.
+  // Same shape either way, so everything below treats every platform alike.
+  const post = target.platform === 'youtube'
+    ? await fetchYouTubeSnippet(env, target.id)
+    : await fetchPost(env, target);
   if (!post) throw new Refusal(FAILURES.postUnavailable, 404);
 
   // The caption, if there is one worth asking about. Two words is not a list.

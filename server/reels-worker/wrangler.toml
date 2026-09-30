@@ -10,18 +10,30 @@ compatibility_date = "2026-09-06"
 compatibility_flags = ["nodejs_compat"]
 
 # Four secrets, set with `wrangler secret put <NAME>` and never committed:
-#   SCRAPECREATORS_API_KEY  the ONLY video vendor. There is no fallback: an
-#                           APIFY_TOKEN was planned and never built, and
+#   SCRAPECREATORS_API_KEY  the ONLY video vendor, for Instagram and TikTok.
+#                           An APIFY_TOKEN was planned and never built, and
 #                           `fetchPost` in vendors.js calls ScrapeCreators and
 #                           nothing else. Setting an Apify token would do
 #                           nothing. If a second vendor is ever wanted, the work
 #                           is the code path and the two privacy policies, which
 #                           name ScrapeCreators explicitly in sixteen languages
 #                           -- not the account.
-#   GEMINI_API_KEY          paid tier, not the free one — the free tier trains
-#                           on what it is sent
+#   VERTEX_SA_KEY           Google service-account JSON, base64, Vertex AI --
+#                           this line used to say GEMINI_API_KEY, from when the
+#                           model was called through AI Studio's API key rather
+#                           than Vertex's service account. That key is gone;
+#                           this comment just never caught up until now.
 #   PLAY_SA_KEY             Google service-account JSON, base64, androidpublisher
 #                           read only
+#   YOUTUBE_API_KEY         YouTube Data API v3, restricted to that API only.
+#                           Free, and asked first for a YouTube Short: the
+#                           title and description are often enough on their
+#                           own, and cost no ScrapeCreators credit. See
+#                           fetchYouTubeSnippet's own comment for why there is
+#                           no video fallback for YouTube -- tried against two
+#                           real videos, 2026-09-30, and abandoned when
+#                           ScrapeCreators returned no usable video URL for
+#                           either.
 #
 # `wrangler secret put` takes the secret's NAME, not its value. The value goes
 # at the interactive prompt only. Passing the value as the argument creates a

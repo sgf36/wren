@@ -367,6 +367,22 @@ def main():
     shoot.clean_status_bar(udid)
     app_tmp = shoot.app_tmp_dir(udid)
 
+    # Warm up the simulator GPU before the first real recording. A cold GPU on a
+    # CI runner renders at ~2 fps; after one throwaway launch it sustains 48+.
+    shoot.say("warming up the simulator GPU…")
+    shoot.run("xcrun", "simctl", "launch", udid, shoot.BUNDLE,
+              "-AppleLanguages", f"({language})", "-AppleLocale",
+              args.locale.replace("-", "_"), check=False, quiet=True)
+    waited = 0.0
+    while waited < LAUNCH_TIMEOUT and not shoot.running(udid, shoot.BUNDLE):
+        time.sleep(1.0)
+        waited += 1.0
+    time.sleep(FIRST_FRAME_SETTLE)
+    shoot.run("xcrun", "simctl", "terminate", udid, shoot.BUNDLE,
+              check=False, quiet=True)
+    time.sleep(2.0)
+    shoot.say("GPU warm")
+
     failures = []
     for name in wanted:
         scene, seconds = available[name]

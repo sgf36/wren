@@ -16,8 +16,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  readInstagram, readTikTok, fetchPost, fetchImages, regionOf, isGenericPlace,
-  MAX_SLIDES, MEDIA_BUDGET,
+  readInstagram, readTikTok, fetchPost, fetchYouTubeSnippet, fetchImages,
+  regionOf, isGenericPlace, MAX_SLIDES, MEDIA_BUDGET,
 } from '../src/vendors.js';
 
 const CAROUSEL = JSON.parse(readFileSync(
@@ -31,6 +31,17 @@ const CAROUSEL = JSON.parse(readFileSync(
 // London listicle whose caption already names all eleven venues.
 const TIKTOK_VIDEO = JSON.parse(readFileSync(
   new URL('./fixtures/tiktok-video.json', import.meta.url), 'utf8'));
+
+// Real YouTube Data API v3 response for the exact Short reported as "the app
+// does ANYTHING when I click to share it to wren" -- id ikO_b8Wmtcc, 2026-09-30.
+// Nothing replaced: title and description are public data with no expiring
+// tokens. The description is genuinely empty -- all eleven venues are burned
+// into on-screen text only -- which is why this fixture exists at all: it is
+// the real case that proves the description-only path is not always enough,
+// not a hypothetical one.
+const YOUTUBE_EMPTY_DESCRIPTION = JSON.parse(readFileSync(
+  new URL('./fixtures/youtube-video-empty-description.json', import.meta.url),
+  'utf8'));
 
 test('a real carousel reads as eleven slides and its caption', () => {
   const post = readInstagram(CAROUSEL);
@@ -146,10 +157,12 @@ test('a vendor failure is null, not a half-read post', async () => {
     () => ({ ok: true, json: async () => ({ success: false }) })), null);
 });
 
-test('an unknown platform is not guessed at', async () => {
-  // YouTube answers with its own shape. Reading it from documentation rather
-  // than a real response is how the Instagram reader got written wrong three
-  // times, so it waits for a captured example.
+test('fetchPost never learns youtube -- that platform reads through the Data API instead', async () => {
+  // Not a gap waiting to be filled: placesFromPost routes 'youtube' to
+  // fetchYouTubeSnippet before fetchPost is ever called, on purpose (free API,
+  // no vendor credit). This pins that fetchPost itself stays ignorant of the
+  // platform, so a future change cannot silently start spending a
+  // ScrapeCreators credit on a request meant to be free.
   const post = await fetchPost(
     { SCRAPECREATORS_API_KEY: 'k' },
     { platform: 'youtube', canonical: 'x' },
@@ -200,6 +213,58 @@ test('a TikTok post is read end to end through fetchPost', async () => {
   );
   assert.ok(post.caption.includes('Camden Market'));
   assert.equal(post.video, 'https://example.invalid/tiktok-video-no-watermark.mp4');
+});
+
+test('no YouTube key means no call, matching the other vendor', async () => {
+  let called = false;
+  const post = await fetchYouTubeSnippet({}, 'x', () => { called = true; });
+  assert.equal(post, null);
+  assert.equal(called, false);
+});
+
+test('a real Short with an empty description reads as its title alone', async () => {
+  // The real, reported case: nothing to find here on its own. This is what
+  // makes placesFromPost fall through to the "nothing to read" refusal --
+  // correctly, since the eleven venues really are only on screen.
+  const post = await fetchYouTubeSnippet(
+    { YOUTUBE_API_KEY: 'k' }, 'ikO_b8Wmtcc',
+    () => ({ ok: true, json: async () => YOUTUBE_EMPTY_DESCRIPTION }),
+  );
+  assert.equal(post.caption, '10 Free Bucket list places You need to visit in London');
+  assert.equal(post.video, null);
+  assert.equal(post.images.length, 0);
+});
+
+test('a Short whose description lists places reads both title and description', async () => {
+  // Same confirmed shape (snippet.title / snippet.description) as the real
+  // fixture above -- only the values differ, to exercise the case where the
+  // description is the reason this path exists at all.
+  const withDescription = {
+    items: [{ snippet: {
+      title: 'Free things to do in Rome',
+      description: 'Trevi Fountain, the Pantheon, and Villa Borghese gardens.',
+    } }],
+  };
+  const post = await fetchYouTubeSnippet(
+    { YOUTUBE_API_KEY: 'k' }, 'x',
+    () => ({ ok: true, json: async () => withDescription }),
+  );
+  assert.ok(post.caption.includes('Free things to do in Rome'));
+  assert.ok(post.caption.includes('Trevi Fountain'));
+});
+
+test('no video found is null, not a half-read snippet', async () => {
+  const empty = await fetchYouTubeSnippet(
+    { YOUTUBE_API_KEY: 'k' }, 'x',
+    () => ({ ok: true, json: async () => ({ items: [] }) }),
+  );
+  assert.equal(empty, null);
+
+  const httpFailure = await fetchYouTubeSnippet(
+    { YOUTUBE_API_KEY: 'k' }, 'x',
+    () => ({ ok: false, status: 403 }),
+  );
+  assert.equal(httpFailure, null);
 });
 
 test('one unreachable slide does not lose the other ten', async () => {

@@ -124,6 +124,49 @@ export function readTikTok(body) {
 }
 
 /**
+ * YouTube's title and description, which is sometimes the whole answer.
+ *
+ * The free Data API (`videos.list`), not ScrapeCreators -- no vendor credit
+ * spent, and a Short's own description regularly lists every place named on
+ * screen, the same pattern that carried the first Instagram carousel and the
+ * TikTok listicle both did. Video-only here: no `video` or `images`, so a
+ * post whose description does not cooperate falls straight through to
+ * `placesFromPost`'s "nothing to read" refusal rather than a guessed-at
+ * media path.
+ *
+ * That fallback was tried and abandoned, not skipped for convenience.
+ * ScrapeCreators' own YouTube endpoint returns a `downloadOptions` object
+ * whose `formats` array and both manifest URLs came back empty on two
+ * different real videos, 2026-09-30 -- confirmed, not assumed, and its own
+ * response says why: "some videos may only expose signature-ciphered URLs."
+ * Building a video path against an extraction that fails this consistently
+ * would spend a credit per attempt for a payoff that has not been observed
+ * once. If ScrapeCreators' YouTube extraction improves, this is the function
+ * to extend -- not a new one.
+ */
+export async function fetchYouTubeSnippet(env, videoId, fetcher = fetch) {
+  if (!env.YOUTUBE_API_KEY) return null;
+  const url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet'
+    + `&id=${encodeURIComponent(videoId)}&key=${env.YOUTUBE_API_KEY}`;
+  const res = await fetcher(url);
+  if (!res.ok) {
+    console.error('youtube api http', res.status);
+    return null;
+  }
+
+  const body = await res.json();
+  const snippet = body?.items?.[0]?.snippet;
+  if (!snippet) return null;
+
+  return {
+    caption: [snippet.title, snippet.description].filter(Boolean).join('\n\n'),
+    video: null,
+    images: [],
+    alts: [],
+  };
+}
+
+/**
  * The vendor path for each platform, versioned per-platform because the
  * versions do not agree. `/v1/tiktok/video` looks like a URL that should
  * exist and instead 404s with a bare "Not Found" (no JSON, no error body) --
