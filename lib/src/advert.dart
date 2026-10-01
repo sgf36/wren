@@ -83,14 +83,33 @@ Widget? advertFor(String name) {
   final beat = advertBeats[name];
   if (beat == null) return null;
   if (beat.scene == 'splash') {
-    return const SplashGate(
+    return _withSentinel(const SplashGate(
       child: ColoredBox(color: Wren.ground, child: SizedBox.expand()),
-    );
+    ));
   }
   final scene = sceneFor(beat.scene);
   if (scene == null) return null;
-  return _Stage(script: beat.script, child: scene);
+  return _withSentinel(_Stage(script: beat.script, child: scene));
 }
+
+/// A magenta marker in the status-bar zone, invisible in the final video
+/// (compose.py crops it) but detectable by [_find_content_start] to locate
+/// the exact frame where the app's UI first appears. Eliminates timing
+/// guesses that broke the splash beat on CI runners.
+Widget _withSentinel(Widget child) => Stack(
+      children: [
+        Positioned.fill(child: child),
+        const Positioned(
+          top: 2,
+          left: 2,
+          child: SizedBox(
+            width: 6,
+            height: 6,
+            child: ColoredBox(color: Color(0xFFFF00FF)),
+          ),
+        ),
+      ],
+    );
 
 // --- the scripts -------------------------------------------------------------
 

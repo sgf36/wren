@@ -102,13 +102,87 @@ PROBLEM_HOLD = 2.5
 SOLUTION_HOLD = 4.5
 END_CARD_HOLD = 3.0
 
-# Recorder lead-in (2s) + warm compositor (~2.5s). Clips start with this much
-# dead time; trimming from here forward isolates the beat content.
+# Fallback trim offset when content-aware detection fails. Covers the recorder
+# lead-in (2s) plus a warm compositor (~2.5s). Content-aware detection
+# (_find_content_start) should supersede this for every Dart beat.
 _JUNK_START = 4.5
+
+# Sentinel pixel painted by advert.dart in the status-bar crop zone.
+_SENTINEL = (255, 0, 255)
 
 
 def say(msg):
     print(msg, flush=True)
+
+
+def _find_content_start(clip_path, max_search=20.0, fps=3):
+    """Detect where app content starts in a raw beat recording.
+
+    Scans extracted frames for two signals, checked per frame:
+
+    1. Sentinel pixel -- a magenta marker painted by advert.dart in the
+       status-bar zone (top-left corner). Conclusive: the Flutter widget
+       tree is rendering.
+    2. Teal dominance -- more than 25% of the central area matches the
+       app's teal background. Catches beats recorded before the sentinel
+       was added.
+
+    Returns the timestamp (seconds) of the first qualifying frame, or
+    None when neither signal fires (caller falls back to _JUNK_START).
+    """
+    from PIL import Image
+
+    with tempfile.TemporaryDirectory() as td:
+        td = pathlib.Path(td)
+        result = subprocess.run(
+            ["ffmpeg", "-y", "-ignore_editlist", "1",
+             "-i", str(clip_path),
+             "-t", str(max_search),
+             "-vf", "fps=%d,scale=540:-1" % fps,
+             str(td / "f_%04d.png")],
+            capture_output=True, text=True)
+        if result.returncode != 0:
+            return None
+
+        frames = sorted(td.glob("f_*.png"))
+        for i, fpath in enumerate(frames):
+            ts = i / fps
+            img = Image.open(fpath).convert("RGB")
+            w, h = img.size
+
+            # --- 1. Sentinel: magenta in the top-left corner --------------
+            sentinel_hit = False
+            for sx in range(min(20, w)):
+                for sy in range(min(20, h)):
+                    cr, cg, cb = img.getpixel((sx, sy))
+                    if cr > 200 and cg < 55 and cb > 200:
+                        sentinel_hit = True
+                        break
+                if sentinel_hit:
+                    break
+            if sentinel_hit:
+                say("    content at %.1fs (sentinel)" % ts)
+                return ts
+
+            # --- 2. Teal dominance in the central region ------------------
+            x0, x1 = int(w * 0.2), int(w * 0.8)
+            y0, y1 = int(h * 0.25), int(h * 0.75)
+            step = max(1, (x1 - x0) // 20)
+            total = 0
+            teal_count = 0
+            for px in range(x0, x1, step):
+                for py in range(y0, y1, step):
+                    cr, cg, cb = img.getpixel((px, py))
+                    total += 1
+                    if (abs(cr - TEAL[0]) < 35
+                            and abs(cg - TEAL[1]) < 35
+                            and abs(cb - TEAL[2]) < 35):
+                        teal_count += 1
+            if total > 0 and teal_count / total > 0.25:
+                say("    content at %.1fs (teal)" % ts)
+                return ts
+
+    return None
 
 
 def load_strings(locale):
@@ -154,7 +228,7 @@ def _load_icon(size):
 
 
 def _render(lines, bg, fg, font_size, out_path, line_spacing=1.7, y_shift=-60,
-            font_path=None, inline_icon=False):
+            font_path=None):
     from PIL import Image, ImageDraw, ImageFont
 
     if isinstance(lines, str):
@@ -163,46 +237,85 @@ def _render(lines, bg, fg, font_size, out_path, line_spacing=1.7, y_shift=-60,
     if any(_has_arabic(ln) for ln in lines):
         lines = [_reshape_bidi(ln) for ln in lines]
 
-    icon_img = None
-    icon_size = int(font_size * 1.3)
-    if inline_icon:
-        icon_img = _load_icon(icon_size)
-
     img = Image.new("RGB", (W, H), bg)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(font_path or FONT, font_size)
 
-    icon_gap = 6
     rendered = []
     for ln in lines:
-        has_icon = icon_img and ln.startswith("Wren")
-        if has_icon:
-            rest = ln[len("Wren"):]
-            rest_bbox = font.getbbox(rest) if rest else (0, 0, 0, 0)
-            rest_w = rest_bbox[2] - rest_bbox[0]
-            rest_h = rest_bbox[3] - rest_bbox[1]
-            total_w = icon_size + icon_gap + rest_w
-            line_h = max(icon_size, rest_h)
-            rendered.append(("icon", rest, total_w, line_h))
-        else:
-            bbox = font.getbbox(ln)
-            rendered.append(("text", ln, bbox[2] - bbox[0], bbox[3] - bbox[1]))
+        bbox = font.getbbox(ln)
+        rendered.append((ln, bbox[2] - bbox[0], bbox[3] - bbox[1]))
 
     gap = int(font_size * (line_spacing - 1))
-    total_h = sum(r[3] for r in rendered) + gap * max(len(rendered) - 1, 0)
+    total_h = sum(r[2] for r in rendered) + gap * max(len(rendered) - 1, 0)
 
     y = (H - total_h) // 2 + y_shift
-    for kind, text, w, h in rendered:
+    for text, w, h in rendered:
         x = (W - w) // 2
-        if kind == "icon" and icon_img:
-            icon_y = y + (h - icon_size) // 2
-            img.paste(icon_img, (x, icon_y), icon_img)
-            if text:
-                draw.text((x + icon_size + icon_gap, y), text,
-                          fill=fg, font=font)
-        else:
-            draw.text((x, y), text, fill=fg, font=font)
+        draw.text((x, y), text, fill=fg, font=font)
         y += h + gap
+
+    img.save(out_path, "PNG")
+
+
+def _render_solution_card(lines, out_path, font_path=None):
+    """Solution card: full-size Wren logo (icon + name) above the copy."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    if isinstance(lines, str):
+        lines = lines.split("\n")
+
+    clean = list(lines)
+    if clean and clean[0].startswith("Wren"):
+        rest = clean[0][len("Wren"):].lstrip()
+        if rest and rest[0].isascii() and rest[0].islower():
+            rest = rest[0].upper() + rest[1:]
+        if rest:
+            clean[0] = rest
+        else:
+            clean.pop(0)
+
+    if any(_has_arabic(ln) for ln in clean):
+        clean = [_reshape_bidi(ln) for ln in clean]
+
+    img = Image.new("RGB", (W, H), TEAL)
+    draw = ImageDraw.Draw(img)
+
+    icon_size = 160
+    icon_img = _load_icon(icon_size)
+    logo_font = ImageFont.truetype(font_path or FONT, 60)
+    wren_bbox = logo_font.getbbox("Wren")
+    wren_w = wren_bbox[2] - wren_bbox[0]
+    wren_h = wren_bbox[3] - wren_bbox[1]
+
+    icon_text_gap = 20
+    logo_body_gap = 50
+
+    logo_h = icon_size + icon_text_gap + wren_h
+
+    text_font = ImageFont.truetype(font_path or FONT, 46)
+    metrics = []
+    for ln in clean:
+        bbox = text_font.getbbox(ln)
+        metrics.append((bbox[2] - bbox[0], bbox[3] - bbox[1]))
+
+    line_gap = 28
+    text_h = sum(m[1] for m in metrics) + line_gap * max(len(clean) - 1, 0)
+
+    total = logo_h + logo_body_gap + text_h
+    y = (H - total) // 2 - 30
+
+    if icon_img:
+        img.paste(icon_img, ((W - icon_size) // 2, y), icon_img)
+    y += icon_size + icon_text_gap
+
+    draw.text(((W - wren_w) // 2, y), "Wren", fill=GOLD, font=logo_font)
+    y += wren_h + logo_body_gap
+
+    for i, ln in enumerate(clean):
+        tw, th = metrics[i]
+        draw.text(((W - tw) // 2, y), ln, fill=GOLD, font=text_font)
+        y += th + line_gap
 
     img.save(out_path, "PNG")
 
@@ -375,8 +488,7 @@ def main():
 
         say("  solution card")
         sol_png = tmp / "solution.png"
-        _render(solution_text, TEAL, GOLD, 50, sol_png, font_path=font_path,
-                inline_icon=True)
+        _render_solution_card(solution_text, sol_png, font_path=font_path)
         sol_mp4 = tmp / ("seg_%02d.mp4" % idx)
         _encode(sol_png, sol_mp4, duration=SOLUTION_HOLD, is_image=True)
         segments.append(sol_mp4)
@@ -396,15 +508,21 @@ def main():
             scene = info[0] if info else ""
 
             if beat_info and clip_secs > beat_secs + 1.0:
-                trim_s = _JUNK_START
+                say("  detecting content start for %s..." % clip.name)
+                detected = _find_content_start(clip)
+                if detected is not None:
+                    trim_s = detected
+                else:
+                    trim_s = _JUNK_START
+                    say("    detection failed, fallback %.1fs" % _JUNK_START)
                 trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
             else:
                 trim_s = None
                 trim_d = None
 
             if trim_s is not None:
-                say("  beat: %s  (%.1fs from %.1fs clip)"
-                    % (clip.name, trim_d, clip_secs))
+                say("  beat: %s  (%.1fs from %.1fs clip, skip %.1fs)"
+                    % (clip.name, trim_d, clip_secs, trim_s))
             else:
                 say("  beat: %s  (%.1fs)" % (clip.name, clip_secs))
 
