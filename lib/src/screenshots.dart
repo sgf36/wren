@@ -163,7 +163,7 @@ Widget? sceneFor(String name) {
         store: _SceneStore(),
         resolver: _SceneResolver(),
         files: StubFileSource(''),
-        initialPending: [for (var i = 0; i < 3; i++) _place(i)],
+        initialPending: [for (var i = 0; i < 5; i++) _place(i)],
         initialOverlay: ScreenshotOverlay.region,
       );
 

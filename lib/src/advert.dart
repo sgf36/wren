@@ -66,10 +66,10 @@ const advertLeadIn = 3.0;
 /// The `advert-` prefix keeps these clear of [sceneNames]; `shoot.py` iterates
 /// that list and must never try to photograph one of these.
 const advertBeats = <String, AdvertBeat>{
-  'advert-intro': AdvertBeat('splash', 4.0, _intro),
-  'advert-add': AdvertBeat('empty', 4.0, _add),
-  'advert-the-list': AdvertBeat('01-the-list', 9.0, _theList),
-  'advert-which-city': AdvertBeat('04-which-city', 8.0, _whichCity),
+  'advert-intro': AdvertBeat('splash', 5.0, _intro),
+  'advert-add': AdvertBeat('empty', 2.5, _add),
+  'advert-the-list': AdvertBeat('01-the-list', 4.0, _theList),
+  'advert-which-city': AdvertBeat('04-which-city', 4.0, _whichCity),
   'advert-correct-a-place': AdvertBeat(
     '03-correct-a-place',
     6.0,
@@ -95,35 +95,26 @@ Widget? advertFor(String name) {
 // --- the scripts -------------------------------------------------------------
 
 Future<void> _intro(Choreography c) async {
-  await c.hold(4.0);
+  await c.hold(5.0);
 }
 
 Future<void> _add(Choreography c) async {
-  // Read before the first await — the context may be gone afterwards.
   final addPlaces = L.of(c.context).addPlaces;
-  // The lead-in already showed the empty state for 3 seconds; tap immediately.
   await c.tapText(addPlaces);
-  // The three-option menu: screenshots, file, link.
-  await c.hold(3.0);
+  await c.hold(2.0);
 }
 
 Future<void> _theList(Choreography c) async {
-  await c.hold(8.0);
+  await c.hold(1.5);
+  await c.drag(const Offset(0, -300), seconds: 1.0);
+  await c.hold(1.0);
 }
 
 Future<void> _whichCity(Choreography c) async {
-  // Read before the first wait. After an await the context may be gone, and a
-  // label resolved from a dead context is how a beat plays in the wrong
-  // language or throws in the middle of a recording.
   final findPlaces = L.of(c.context).findPlaces;
-  // The scene opens the dialog from its own post-frame callback, so it is not up
-  // the instant this runs. The hold covers that and then leaves it long enough
-  // to be read.
-  await c.hold(2.6);
+  await c.hold(1.5);
   await c.tapText(findPlaces);
-  // The scene's resolver answers instantly and always, so this is the list
-  // resolving rather than a spinner.
-  await c.hold(3.2);
+  await c.hold(2.0);
 }
 
 Future<void> _correctAPlace(Choreography c) async {
@@ -221,7 +212,7 @@ class Choreography {
         _touchFade?.cancel();
         touchIndicator!.value = event.position;
       } else if (event is PointerUpEvent) {
-        _touchFade = Timer(const Duration(milliseconds: 300), () {
+        _touchFade = Timer(const Duration(milliseconds: 600), () {
           touchIndicator?.value = null;
         });
       }
@@ -342,12 +333,12 @@ class _TouchDot extends CustomPainter {
   _TouchDot(this.position);
   final Offset position;
 
-  static const _radius = 28.0;
-  static final _fill = Paint()..color = const Color(0x59F2C879);
+  static const _radius = 36.0;
+  static final _fill = Paint()..color = const Color(0x80F2C879);
   static final _ring = Paint()
-    ..color = const Color(0xB3F2C879)
+    ..color = const Color(0xD9F2C879)
     ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0;
+    ..strokeWidth = 2.5;
 
   @override
   void paint(Canvas canvas, Size size) {

@@ -104,6 +104,10 @@ MIN_PEAK_FPS = 30.0
 # The window the peak is measured over.
 PEAK_WINDOW = 2.0
 
+# After the GPU warmup launch, the compositor presents in 2-3s instead of 8.
+# This replaces FIRST_FRAME_SETTLE for actual beat recordings.
+WARM_SETTLE = _COMPOSITOR_DELAY + 1.0
+
 # Time for maps.apple.com to load and render the guide in Safari.
 MAPS_WEB_SETTLE = 8.0
 # How long to hold the rendered guide on screen.
@@ -320,7 +324,7 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         if shoot.VERBOSE:
             shoot.say(f"launchd has it after {waited:.0f}s", indent=2)
 
-        settle = (_COMPOSITOR_DELAY + 2.0) if scene == 'splash' else FIRST_FRAME_SETTLE
+        settle = (_COMPOSITOR_DELAY + 2.0) if scene == 'splash' else WARM_SETTLE
         time.sleep(settle + seconds)
     finally:
         # Terminate before stopping the recorder, so the last frame is the app
@@ -384,6 +388,11 @@ def record_maps_web(udid, out):
     for app in (shoot.SAFARI, shoot.MAPS, shoot.BUNDLE):
         shoot.run("xcrun", "simctl", "terminate", udid, app,
                   check=False, quiet=True)
+
+    shoot.run("xcrun", "simctl", "privacy", udid, "grant", "location",
+              shoot.SAFARI, check=False, quiet=True)
+    shoot.run("xcrun", "simctl", "privacy", udid, "grant", "location",
+              shoot.MAPS, check=False, quiet=True)
 
     proc = start_recorder(udid, out)
     try:

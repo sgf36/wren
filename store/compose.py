@@ -102,6 +102,10 @@ PROBLEM_HOLD = 2.5
 SOLUTION_HOLD = 4.5
 END_CARD_HOLD = 3.0
 
+# Recorder lead-in (2s) + warm compositor (~2.5s). Clips start with this much
+# dead time; trimming from here forward isolates the beat content.
+_JUNK_START = 4.5
+
 
 def say(msg):
     print(msg, flush=True)
@@ -141,8 +145,16 @@ def _reshape_bidi(text):
     return get_display(reshaped)
 
 
+def _load_icon(size):
+    from PIL import Image
+    if not APP_ICON.exists():
+        return None
+    icon = Image.open(APP_ICON).convert("RGBA")
+    return icon.resize((size, size), Image.LANCZOS)
+
+
 def _render(lines, bg, fg, font_size, out_path, line_spacing=1.7, y_shift=-60,
-            font_path=None):
+            font_path=None, inline_icon=False):
     from PIL import Image, ImageDraw, ImageFont
 
     if isinstance(lines, str):
@@ -151,21 +163,46 @@ def _render(lines, bg, fg, font_size, out_path, line_spacing=1.7, y_shift=-60,
     if any(_has_arabic(ln) for ln in lines):
         lines = [_reshape_bidi(ln) for ln in lines]
 
+    icon_img = None
+    icon_size = int(font_size * 1.3)
+    if inline_icon:
+        icon_img = _load_icon(icon_size)
+
     img = Image.new("RGB", (W, H), bg)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(font_path or FONT, font_size)
 
-    bboxes = [font.getbbox(ln) for ln in lines]
-    heights = [b[3] - b[1] for b in bboxes]
-    widths = [b[2] - b[0] for b in bboxes]
+    icon_gap = 6
+    rendered = []
+    for ln in lines:
+        has_icon = icon_img and ln.startswith("Wren")
+        if has_icon:
+            rest = ln[len("Wren"):]
+            rest_bbox = font.getbbox(rest) if rest else (0, 0, 0, 0)
+            rest_w = rest_bbox[2] - rest_bbox[0]
+            rest_h = rest_bbox[3] - rest_bbox[1]
+            total_w = icon_size + icon_gap + rest_w
+            line_h = max(icon_size, rest_h)
+            rendered.append(("icon", rest, total_w, line_h))
+        else:
+            bbox = font.getbbox(ln)
+            rendered.append(("text", ln, bbox[2] - bbox[0], bbox[3] - bbox[1]))
+
     gap = int(font_size * (line_spacing - 1))
-    total_h = sum(heights) + gap * max(len(lines) - 1, 0)
+    total_h = sum(r[3] for r in rendered) + gap * max(len(rendered) - 1, 0)
 
     y = (H - total_h) // 2 + y_shift
-    for i, line in enumerate(lines):
-        x = (W - widths[i]) // 2
-        draw.text((x, y), line, fill=fg, font=font)
-        y += heights[i] + gap
+    for kind, text, w, h in rendered:
+        x = (W - w) // 2
+        if kind == "icon" and icon_img:
+            icon_y = y + (h - icon_size) // 2
+            img.paste(icon_img, (x, icon_y), icon_img)
+            if text:
+                draw.text((x + icon_size + icon_gap, y), text,
+                          fill=fg, font=font)
+        else:
+            draw.text((x, y), text, fill=fg, font=font)
+        y += h + gap
 
     img.save(out_path, "PNG")
 
@@ -185,6 +222,9 @@ def _render_end_card(cta_text, out_path, font_path=None):
     lines = cta_text.split("\n") if isinstance(cta_text, str) else cta_text
     if any(_has_arabic(ln) for ln in lines):
         lines = [_reshape_bidi(ln) for ln in lines]
+    # The icon already represents "Wren" — drop lines that are just the name.
+    lines = [ln for ln in lines
+             if ln.strip().rstrip(".").rstrip("。") != "Wren"]
     y = H // 2 + 30
     for line in lines:
         bbox = font.getbbox(line)
@@ -335,7 +375,8 @@ def main():
 
         say("  solution card")
         sol_png = tmp / "solution.png"
-        _render(solution_text, TEAL, GOLD, 50, sol_png, font_path=font_path)
+        _render(solution_text, TEAL, GOLD, 50, sol_png, font_path=font_path,
+                inline_icon=True)
         sol_mp4 = tmp / ("seg_%02d.mp4" % idx)
         _encode(sol_png, sol_mp4, duration=SOLUTION_HOLD, is_image=True)
         segments.append(sol_mp4)
@@ -355,12 +396,7 @@ def main():
             scene = info[0] if info else ""
 
             if beat_info and clip_secs > beat_secs + 1.0:
-                # The beat content sits at the END of the recording, after
-                # recorder lead-in, compositor delay and settle — all of
-                # which VFR compresses unpredictably.  Trimming from the
-                # end in stream time sidesteps the wall-clock ≠ stream-time
-                # mismatch that made the old .trim-file approach overshoot.
-                trim_s = max(0, clip_secs - beat_secs - 0.5)
+                trim_s = _JUNK_START
                 trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
             else:
                 trim_s = None

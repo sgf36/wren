@@ -120,7 +120,7 @@ class _SplashGateState extends State<SplashGate>
       // On a CI simulator the compositor takes ~3s after launch before anything
       // is visible on screen. Delay the animation start so the recorder
       // captures the full four seconds rather than missing the opening.
-      Future.delayed(const Duration(milliseconds: 3000), () {
+      Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) _c.forward();
       });
     } else {
