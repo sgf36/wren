@@ -49,6 +49,10 @@ FONT = "/System/Library/Fonts/Supplemental/Georgia.ttf"
 _SAFE_TOP = 177    # Dynamic Island + status bar (59pt)
 _SAFE_BOTTOM = 102  # home indicator (34pt)
 
+# Instagram Reels/Stories overlay a CTA button in the bottom ~250px. Scale the
+# beat clips to fit above it so the app's own buttons are not covered.
+_IG_CTA_RESERVE = 250
+
 _CJK_CANDIDATES = [
     "/System/Library/Fonts/Supplemental/Songti.ttc",
     "/System/Library/Fonts/STSongti-SC-Regular.otf",
@@ -198,10 +202,10 @@ def _encode(src, dst, duration=None, vf_extra="", is_image=False,
     else:
         vf = ("crop=iw:ih-%d:0:%d,"
               "scale=%d:%d:force_original_aspect_ratio=decrease:force_divisible_by=2,"
-              "pad=%d:%d:(ow-iw)/2:(oh-ih)/2:color=%s,"
+              "pad=%d:%d:(ow-iw)/2:0:color=%s,"
               "fps=%d" % (
                   _SAFE_TOP + _SAFE_BOTTOM, _SAFE_TOP,
-                  W, H, W, H, _hex(TEAL), FPS))
+                  W, H - _IG_CTA_RESERVE, W, H, _hex(TEAL), FPS))
     if vf_extra:
         vf += "," + vf_extra
 
@@ -242,6 +246,19 @@ def _concat(segments, dst, tmp_dir):
 
 
 def _duration(path):
+    # Stream-level duration with -ignore_editlist matches how _encode reads
+    # VFR simulator recordings. Without it, ffprobe reports a container
+    # duration that differs from what ffmpeg actually processes, and the trim
+    # logic cuts the wrong range.
+    r = subprocess.run(
+        ["ffprobe", "-v", "error", "-ignore_editlist", "1",
+         "-select_streams", "v:0", "-show_entries", "stream=duration",
+         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
+        capture_output=True, text=True)
+    try:
+        return float(r.stdout.strip())
+    except ValueError:
+        pass
     r = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
