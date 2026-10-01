@@ -93,7 +93,10 @@ def _font_for_locale(locale):
 try:
     from record import DEFAULT_BEATS
 except ImportError:
-    DEFAULT_BEATS = ["advert-intro", "advert-add", "advert-the-list"]
+    DEFAULT_BEATS = [
+        "advert-intro", "advert-add", "advert-the-list",
+        "advert-which-city", "advert-maps-web",
+    ]
 
 PROBLEM_HOLD = 2.5
 SOLUTION_HOLD = 4.5

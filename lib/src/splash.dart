@@ -116,6 +116,13 @@ class _SplashGateState extends State<SplashGate>
         .disableAnimations;
     if (reduced) {
       _done = true;
+    } else if (const bool.fromEnvironment('WREN_SHOTS')) {
+      // On a CI simulator the compositor takes ~3s after launch before anything
+      // is visible on screen. Delay the animation start so the recorder
+      // captures the full four seconds rather than missing the opening.
+      Future.delayed(const Duration(milliseconds: 3000), () {
+        if (mounted) _c.forward();
+      });
     } else {
       _c.forward();
     }

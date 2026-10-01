@@ -16,14 +16,10 @@ name: Advert footage
 # interface changes far less often than the code does. Not a money question --
 # this repo is public, so macOS runners are free -- but a wall-clock one.
 #
-# WHAT THIS CANNOT PRODUCE, and neither can any change to it:
-#
-#   The Apple Maps payoff shot. A simulator ignores a `maps://guide` payload
-#   (Maps opens and does not change, delta 0.0) and sends the https form to
-#   Safari, because Maps does not claim the domain there. Measured both ways in
-#   ten languages -- store/SCREENSHOTS-RUNBOOK.md section 3. The link works on a
-#   real device. That shot is a device capture, permanently, and the advert is
-#   cut on the assumption that it is.
+# The Apple Maps guide is shown via maps.apple.com in Safari — the simulator
+# sends the https form there (Maps does not claim the domain). Safari renders
+# the guide in the device's own language. The `advert-maps-web` beat records
+# this.
 #
 # AND THE THING TO ACTUALLY CHECK: a green job means the clips are the right
 # length and are not frozen. It says nothing about whether they are smooth. A CI

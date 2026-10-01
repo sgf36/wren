@@ -11,10 +11,9 @@ name: Advert creative
 #
 # This repo is public, so macOS runners are free.
 #
-# WHAT THIS CANNOT PRODUCE: the Apple Maps payoff shot. A simulator ignores
-# maps://guide links (opens Safari instead). The advert ends on the
-# matched-places list, which is the proof the app works. The Maps shot is a
-# device capture, permanently -- see store/record.py and SCREENSHOTS-RUNBOOK.md.
+# The Apple Maps guide is shown via maps.apple.com in Safari (the simulator
+# sends the https form to Safari, not Maps). The `advert-maps-web` beat records
+# this -- Safari renders the guide in the device's language.
 
 on:
   workflow_dispatch:

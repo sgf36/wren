@@ -35,14 +35,17 @@ artefact.** So durations here are read out of the file's own QuickTime atoms
 rather than asked of the operating system. It needs no ffmpeg, no Spotlight and
 no network, and it cannot be absent on a runner.
 
-## What it still cannot do
+## Apple Maps web
 
-The Apple Maps payoff shot. A simulator ignores a `maps://guide` payload and
-sends the https form to Safari -- measured both ways in ten languages,
-`SCREENSHOTS-RUNBOOK.md` section 3. That shot is a device capture, permanently.
+A simulator ignores a `maps://guide` payload and sends the https form to Safari.
+That is exactly what we want for the advert: `maps.apple.com` renders the guide
+in Safari at the device's own language, and the resulting footage composites
+identically because compose.py's safe-area crop and CTA reserve apply to any
+full-screen recording. The `advert-maps-web` beat opens the guide URL via
+`simctl openurl`, waits for the page to settle, and records.
 
-And it cannot tell you the footage is *good*. It can now prove a clip is the
-right length and ran at a real frame rate, which is more than the first version
+It cannot tell you the footage is *good*. It can now prove a clip is the right
+length and ran at a real frame rate, which is more than the first version
 managed. It cannot see composition. Watch the clips.
 """
 
@@ -81,6 +84,12 @@ LAUNCH_TIMEOUT = 45.0
 # terminate arrived before the script had finished. The beat itself was fine.
 FIRST_FRAME_SETTLE = 9.0
 
+# On a CI simulator, the compositor takes about 3 seconds after launchd reports
+# the process before any frame is visible on screen. The splash animation in
+# splash.dart is gated by the same constant under WREN_SHOTS — change one,
+# change both.
+_COMPOSITOR_DELAY = 3.0
+
 # Frames per second across the busiest two seconds of the clip.
 #
 # NOT the average, which is a trap this file fell into twice. `simctl` writes a
@@ -95,10 +104,21 @@ MIN_PEAK_FPS = 30.0
 # The window the peak is measured over.
 PEAK_WINDOW = 2.0
 
+# Time for maps.apple.com to load and render the guide in Safari.
+MAPS_WEB_SETTLE = 8.0
+# How long to hold the rendered guide on screen.
+MAPS_WEB_HOLD = 5.0
+
 # The beats compose.py actually stitches into the final video. When `--beat` is
 # not given, record only these — the others are available but recording them
 # wastes CI time and hitting their quality gate blocks the whole run.
-DEFAULT_BEATS = ["advert-intro", "advert-add", "advert-the-list"]
+DEFAULT_BEATS = [
+    "advert-intro",
+    "advert-add",
+    "advert-the-list",
+    "advert-which-city",
+    "advert-maps-web",
+]
 
 
 def beats():
@@ -125,6 +145,8 @@ def beats():
         secs = float(seconds)
         # The splash runs from launch; it has no lead-in hold.
         result[name] = (scene, secs if scene == 'splash' else secs + lead_in)
+    # Not a Dart beat — recorded by opening the guide URL in Safari.
+    result['advert-maps-web'] = ('maps-web', MAPS_WEB_HOLD)
     return result
 
 
@@ -298,7 +320,7 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         if shoot.VERBOSE:
             shoot.say(f"launchd has it after {waited:.0f}s", indent=2)
 
-        settle = 2.0 if scene == 'splash' else FIRST_FRAME_SETTLE
+        settle = (_COMPOSITOR_DELAY + 2.0) if scene == 'splash' else FIRST_FRAME_SETTLE
         time.sleep(settle + seconds)
     finally:
         # Terminate before stopping the recorder, so the last frame is the app
@@ -347,9 +369,58 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
                   indent=1)
 
     if scene == 'splash':
-        trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited
+        trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited + _COMPOSITOR_DELAY
     else:
         trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited + settle
+    out.with_suffix('.trim').write_text(f"{trim_offset:.1f}\n")
+
+    return True
+
+
+def record_maps_web(udid, out):
+    """Record the guide rendered in Safari via maps.apple.com.
+
+    Not a Dart beat — no app launch. Opens the guide URL with `simctl openurl`,
+    which lands in Safari (simulators send the https form there, not to Maps).
+    Safari inherits the device language set by set_language(), so the page
+    renders in the correct locale.
+    """
+    shoot.say(f"advert-maps-web  (maps.apple.com, {MAPS_WEB_HOLD:.0f}s hold)")
+
+    for app in (shoot.SAFARI, shoot.MAPS, shoot.BUNDLE):
+        shoot.run("xcrun", "simctl", "terminate", udid, app,
+                  check=False, quiet=True)
+
+    proc = start_recorder(udid, out)
+    try:
+        shoot.run("xcrun", "simctl", "openurl", udid, shoot.GUIDE_URL,
+                  check=False)
+        time.sleep(MAPS_WEB_SETTLE + MAPS_WEB_HOLD)
+    finally:
+        shoot.run("xcrun", "simctl", "terminate", udid, shoot.SAFARI,
+                  check=False, quiet=True)
+        stop_recorder(proc)
+
+    if not out.exists():
+        shoot.say("the recorder wrote no file at all", indent=1)
+        return False
+
+    length, frames, finalised, peak = probe(out)
+    size = out.stat().st_size
+    shoot.say(f"{out.name}  {length:.1f}s  {frames} frames  "
+              f"{size / 1e6:.1f} MB", indent=1)
+
+    if not finalised:
+        shoot.say("no moov atom -- the recorder was killed rather than "
+                  "interrupted, and this file will not play", indent=1)
+        return False
+    min_length = MAPS_WEB_HOLD * 0.6
+    if length < min_length:
+        shoot.say(f"only {length:.1f}s of video for a {MAPS_WEB_HOLD:.0f}s "
+                  f"hold", indent=1)
+        return False
+
+    trim_offset = RECORDER_LEAD_IN + MAPS_WEB_SETTLE
     out.with_suffix('.trim').write_text(f"{trim_offset:.1f}\n")
 
     return True
@@ -442,8 +513,12 @@ def main():
     for name in wanted:
         scene, seconds = available[name]
         out = out_dir / f"{name}.mov"
-        if not record_beat(udid, name, scene, seconds, out, app_tmp,
-                           language, args.locale.replace("-", "_")):
+        if scene == 'maps-web':
+            ok = record_maps_web(udid, out)
+        else:
+            ok = record_beat(udid, name, scene, seconds, out, app_tmp,
+                             language, args.locale.replace("-", "_"))
+        if not ok:
             failures.append(name)
 
     shoot.say("")
