@@ -94,8 +94,8 @@ try:
     from record import DEFAULT_BEATS
 except ImportError:
     DEFAULT_BEATS = [
-        "advert-intro", "advert-add", "advert-the-list",
-        "advert-which-city", "advert-maps-web",
+        "advert-intro", "advert-add", "advert-which-city",
+        "advert-the-list", "advert-maps-web",
     ]
 
 PROBLEM_HOLD = 2.5

@@ -119,8 +119,8 @@ MAPS_WEB_HOLD = 5.0
 DEFAULT_BEATS = [
     "advert-intro",
     "advert-add",
-    "advert-the-list",
     "advert-which-city",
+    "advert-the-list",
     "advert-maps-web",
 ]
 
@@ -394,11 +394,21 @@ def record_maps_web(udid, out):
     shoot.run("xcrun", "simctl", "privacy", udid, "grant", "location",
               shoot.MAPS, check=False, quiet=True)
 
-    # Prime Safari so its first-launch UI (start page customisation popup,
-    # privacy report) is dismissed before the actual recording starts.
-    shoot.run("xcrun", "simctl", "openurl", udid, "https://example.com",
+    # Suppress Safari's first-launch start page customisation popup.
+    for key, val, typ in [
+        ("WBSStartPagePersonalizationEnabled", "false", "-bool"),
+        ("DidImportBookmarksAndReadingList", "true", "-bool"),
+        ("StartPagePolicyMask", "0", "-int"),
+    ]:
+        shoot.run("xcrun", "simctl", "spawn", udid,
+                  "defaults", "write", "com.apple.mobilesafari",
+                  key, typ, val, check=False, quiet=True)
+
+    # Open Safari once to absorb any remaining first-run prompts, then
+    # navigate directly to the guide URL — avoids a blank new-tab page.
+    shoot.run("xcrun", "simctl", "openurl", udid, shoot.GUIDE_URL,
               check=False)
-    time.sleep(4.0)
+    time.sleep(MAPS_WEB_SETTLE)
     shoot.run("xcrun", "simctl", "terminate", udid, shoot.SAFARI,
               check=False, quiet=True)
     time.sleep(1.0)
