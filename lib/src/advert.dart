@@ -68,7 +68,7 @@ const advertLeadIn = 3.0;
 const advertBeats = <String, AdvertBeat>{
   'advert-intro': AdvertBeat('splash', 4.0, _intro),
   'advert-add': AdvertBeat('empty', 4.0, _add),
-  'advert-the-list': AdvertBeat('01-the-list', 8.0, _theList),
+  'advert-the-list': AdvertBeat('01-the-list', 5.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 8.0, _whichCity),
   'advert-correct-a-place': AdvertBeat(
     '03-correct-a-place',
@@ -108,16 +108,11 @@ Future<void> _add(Choreography c) async {
 }
 
 Future<void> _theList(Choreography c) async {
-  // Long enough to read two rows before anything moves. The whole claim of the
-  // app is in this frame — what was read, beside what it matched — and an advert
-  // that scrolls it away before it can be read has thrown the shot.
-  await c.hold(1.8);
-  // Deliberately short of the end of the list. Five places barely overflow a
-  // 2796-high screen, so a longer drag hits the bounce and reads as a mistake.
-  await c.drag(const Offset(0, -200), seconds: 1.5);
-  await c.hold(0.9);
-  await c.drag(const Offset(0, 200), seconds: 1.3);
   await c.hold(1.2);
+  await c.drag(const Offset(0, -300), seconds: 0.7);
+  await c.hold(0.4);
+  await c.drag(const Offset(0, 300), seconds: 0.6);
+  await c.hold(0.6);
 }
 
 Future<void> _whichCity(Choreography c) async {
