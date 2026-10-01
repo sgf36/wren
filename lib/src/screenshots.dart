@@ -208,6 +208,17 @@ Widget? sceneFor(String name) {
         initialOverlay: ScreenshotOverlay.reelsPaywall,
       );
 
+    // The list with the unlock owned, so the advert's publish tap reaches the
+    // guide naming dialog instead of the paywall. Not a store screenshot.
+    case '01-the-list-unlocked':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        initialPending: [for (var i = 0; i < 5; i++) _place(i)],
+        initialOwned: const {unlimitedProductId},
+      );
+
     // The fresh app, empty. Used by the advert to show the first-launch state
     // before any places have been added.
     case 'empty':

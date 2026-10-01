@@ -102,6 +102,24 @@ void main() {
     );
   });
 
+  testWidgets('make guide opens the naming dialog', (tester) async {
+    await tester.pumpWidget(WrenApp(home: advertFor('advert-make-guide')));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final l = L.of(tester.element(find.byType(CapturePage)));
+
+    // Walk past the lead-in and the 1.0s hold, then the tap.
+    for (var t = 0.0; t < advertLeadIn + 2.0; t += 0.1) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(
+      find.text(l.nameThisGuide),
+      findsOneWidget,
+      reason: 'the guide naming dialog never opened after tapping the button',
+    );
+  });
+
   testWidgets('correct a place holds the lookup open', (tester) async {
     await _play(tester, 'advert-correct-a-place');
     // Nothing is asserted about motion here; the beat is a held shot. What is

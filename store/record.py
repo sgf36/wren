@@ -121,6 +121,7 @@ DEFAULT_BEATS = [
     "advert-add",
     "advert-which-city",
     "advert-the-list",
+    "advert-make-guide",
 ]
 
 
