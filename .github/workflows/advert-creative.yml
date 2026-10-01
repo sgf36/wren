@@ -160,5 +160,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: footage-${{ inputs.locale || 'en-GB' }}
-          path: store/footage/**/*.mov
+          path: |
+            store/footage/**/*.mov
+            store/footage/**/*.trim
           if-no-files-found: warn

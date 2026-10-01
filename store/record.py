@@ -345,7 +345,7 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
                   indent=1)
 
     if scene == 'splash':
-        trim_offset = RECORDER_LEAD_IN
+        trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited
     else:
         trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited + settle
     out.with_suffix('.trim').write_text(f"{trim_offset:.1f}\n")

@@ -193,11 +193,11 @@ def _encode(src, dst, duration=None, vf_extra="", is_image=False,
         vf += "," + vf_extra
 
     cmd = ["ffmpeg", "-y"]
-    if trim_start is not None:
-        cmd += ["-ss", str(trim_start)]
     if is_image:
         cmd += ["-loop", "1"]
     cmd += ["-i", str(src)]
+    if trim_start is not None:
+        cmd += ["-ss", str(trim_start)]
     if trim_duration is not None:
         cmd += ["-t", str(trim_duration)]
     elif duration is not None:
@@ -322,7 +322,7 @@ def main():
             trim_file = clip.with_suffix('.trim')
             if trim_file.exists():
                 trim_s = float(trim_file.read_text().strip())
-                trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
+                trim_d = beat_secs + 0.5
             elif scene == 'splash':
                 trim_s = RECORDER_LEAD_IN if beat_info else 2.0
                 trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
