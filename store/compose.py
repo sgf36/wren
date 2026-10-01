@@ -151,11 +151,13 @@ def _find_content_start(clip_path, max_search=None, fps=3):
             w, h = img.size
 
             # --- 1. Sentinel: magenta in the top-left corner --------------
+            # Thresholds handle a dialog barrier (Colors.black54) covering
+            # the sentinel: pure (255,0,255) attenuates to ~(117,0,117).
             sentinel_hit = False
             for sx in range(min(20, w)):
                 for sy in range(min(20, h)):
                     cr, cg, cb = img.getpixel((sx, sy))
-                    if cr > 200 and cg < 55 and cb > 200:
+                    if cr > 100 and cg < 55 and cb > 100:
                         sentinel_hit = True
                         break
                 if sentinel_hit:
@@ -165,6 +167,8 @@ def _find_content_start(clip_path, max_search=None, fps=3):
                 return ts
 
             # --- 2. Teal dominance in the central region ------------------
+            # Tolerance of 45 handles a dialog barrier darkening the teal
+            # from (30,75,69) to approximately (14,35,32).
             x0, x1 = int(w * 0.2), int(w * 0.8)
             y0, y1 = int(h * 0.25), int(h * 0.75)
             step = max(1, (x1 - x0) // 20)
@@ -174,9 +178,9 @@ def _find_content_start(clip_path, max_search=None, fps=3):
                 for py in range(y0, y1, step):
                     cr, cg, cb = img.getpixel((px, py))
                     total += 1
-                    if (abs(cr - TEAL[0]) < 35
-                            and abs(cg - TEAL[1]) < 35
-                            and abs(cb - TEAL[2]) < 35):
+                    if (abs(cr - TEAL[0]) < 45
+                            and abs(cg - TEAL[1]) < 45
+                            and abs(cb - TEAL[2]) < 45):
                         teal_count += 1
             if total > 0 and teal_count / total > 0.25:
                 say("    content at %.1fs (teal)" % ts)
