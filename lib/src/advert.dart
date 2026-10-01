@@ -68,7 +68,7 @@ const advertLeadIn = 3.0;
 const advertBeats = <String, AdvertBeat>{
   'advert-intro': AdvertBeat('splash', 4.0, _intro),
   'advert-add': AdvertBeat('empty', 4.0, _add),
-  'advert-the-list': AdvertBeat('01-the-list', 12.0, _theList),
+  'advert-the-list': AdvertBeat('01-the-list', 9.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 8.0, _whichCity),
   'advert-correct-a-place': AdvertBeat(
     '03-correct-a-place',
@@ -108,7 +108,7 @@ Future<void> _add(Choreography c) async {
 }
 
 Future<void> _theList(Choreography c) async {
-  await c.hold(11.0);
+  await c.hold(8.0);
 }
 
 Future<void> _whichCity(Choreography c) async {
