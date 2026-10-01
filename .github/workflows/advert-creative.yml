@@ -14,6 +14,10 @@ name: Advert creative
 # The Apple Maps guide is shown via maps.apple.com in Safari (the simulator
 # sends the https form to Safari, not Maps). The `advert-maps-web` beat records
 # this -- Safari renders the guide in the device's language.
+#
+# locale=all fans out into a matrix: each locale records and composes on its
+# own runner in parallel, after a single shared Flutter build. The Runner.app
+# is tarred before upload to preserve iOS bundle symlinks.
 
 on:
   workflow_dispatch:
@@ -23,7 +27,7 @@ on:
         type: string
         default: 'en-GB'
       beats:
-        description: 'Beat names, space-separated (blank = advert-the-list)'
+        description: 'Beat names, space-separated (blank = default beats)'
         type: string
         default: ''
       verbose:
@@ -35,10 +39,12 @@ env:
   FLUTTER_VERSION: '3.44.8'
 
 jobs:
-  creative:
-    name: Build advert (${{ inputs.locale || 'en-GB' }})
+  build:
+    name: Build app
     runs-on: macos-26
-    timeout-minutes: 90
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.locales.outputs.matrix }}
     steps:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
@@ -55,6 +61,59 @@ jobs:
       - name: Check the beats can be performed
         run: flutter test test/advert_choreography_test.dart --reporter compact
 
+      - name: Build the app
+        run: flutter build ios --simulator --debug --dart-define=WREN_SHOTS=true
+
+      - name: Resolve locales
+        id: locales
+        run: |
+          INPUT="${{ inputs.locale || 'en-GB' }}"
+          if [ "$INPUT" = "all" ]; then
+            MATRIX=$(python3 -c "
+          import json
+          d = json.load(open('store/advert_strings.json'))
+          print(json.dumps(sorted(d.get('problem', {}).keys())))
+          ")
+          else
+            MATRIX=$(python3 -c "import json; print(json.dumps(['$INPUT']))")
+          fi
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          echo "Locales: $MATRIX"
+
+      - name: Package the built app
+        run: tar -czf runner-app.tar.gz -C build/ios/iphonesimulator Runner.app
+
+      - name: Share the built app
+        uses: actions/upload-artifact@v7
+        with:
+          name: runner-app
+          path: runner-app.tar.gz
+          retention-days: 1
+
+  advert:
+    name: ${{ matrix.locale }}
+    needs: build
+    runs-on: macos-26
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        locale: ${{ fromJson(needs.build.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download built app
+        uses: actions/download-artifact@v4
+        with:
+          name: runner-app
+
+      - name: Unpack the built app
+        run: |
+          mkdir -p build/ios/iphonesimulator
+          tar -xzf runner-app.tar.gz -C build/ios/iphonesimulator
+          echo "Runner.app unpacked at:"
+          ls -ld build/ios/iphonesimulator/Runner.app
+
       - name: Install compose dependencies
         run: |
           brew install ffmpeg
@@ -62,30 +121,8 @@ jobs:
           source .venv/bin/activate
           pip install Pillow arabic-reshaper python-bidi
 
-      - name: Resolve locales
-        id: locales
+      - name: Record
         run: |
-          INPUT="${{ inputs.locale || 'en-GB' }}"
-          if [ "$INPUT" = "all" ]; then
-            LOCALES=$(python3 -c "
-          import json
-          d = json.load(open('store/advert_strings.json'))
-          print(' '.join(d.get('problem', {}).keys()))
-          ")
-          else
-            LOCALES="$INPUT"
-          fi
-          echo "list=$LOCALES" >> "$GITHUB_OUTPUT"
-          echo "Locales: $LOCALES"
-
-      - name: Build the app once
-        run: |
-          flutter build ios --simulator --debug --dart-define=WREN_SHOTS=true
-
-      - name: Record and compose
-        run: |
-          source .venv/bin/activate
-
           BEATS="${{ inputs.beats }}"
           BEAT_ARGS=""
           if [ -n "$BEATS" ]; then
@@ -94,26 +131,25 @@ jobs:
             done
           fi
 
-          for LOCALE in ${{ steps.locales.outputs.list }}; do
-            echo ""
-            echo "=== $LOCALE ==="
+          python3 -u store/record.py \
+            --keep-build \
+            $BEAT_ARGS \
+            --locale "${{ matrix.locale }}" \
+            ${{ inputs.verbose && '--verbose' || '' }}
 
-            # Record the beats (--keep-build: app already built above)
-            python3 -u store/record.py \
-              --keep-build \
-              $BEAT_ARGS \
-              --locale "$LOCALE" \
-              ${{ inputs.verbose && '--verbose' || '' }}
+      - name: Compose
+        run: |
+          source .venv/bin/activate
 
-            # Compose the final video
-            COMPOSE_BEATS=""
-            if [ -n "$BEATS" ]; then
-              COMPOSE_BEATS="--beats $BEATS"
-            fi
-            python3 -u store/compose.py \
-              --locale "$LOCALE" \
-              $COMPOSE_BEATS
-          done
+          BEATS="${{ inputs.beats }}"
+          COMPOSE_BEATS=""
+          if [ -n "$BEATS" ]; then
+            COMPOSE_BEATS="--beats $BEATS"
+          fi
+
+          python3 -u store/compose.py \
+            --locale "${{ matrix.locale }}" \
+            $COMPOSE_BEATS
 
       - name: Clip report
         if: always()
@@ -146,11 +182,11 @@ jobs:
                         f"| {frames} | {peak:.0f} | {f.stat().st_size / 1e6:.1f} MB |")
           PY
 
-      - name: Upload adverts
+      - name: Upload advert
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: adverts-${{ inputs.locale || 'en-GB' }}
+          name: advert-${{ matrix.locale }}
           path: store/adverts/**/*.mp4
           if-no-files-found: warn
 
@@ -158,6 +194,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: footage-${{ inputs.locale || 'en-GB' }}
+          name: footage-${{ matrix.locale }}
           path: store/footage/**/*.mov
           if-no-files-found: warn
