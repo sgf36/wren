@@ -83,9 +83,11 @@ Widget? advertFor(String name) {
   final beat = advertBeats[name];
   if (beat == null) return null;
   if (beat.scene == 'splash') {
-    return _withSentinel(const SplashGate(
-      child: ColoredBox(color: Wren.ground, child: SizedBox.expand()),
-    ));
+    return _withSentinel(
+      const SplashGate(
+        child: ColoredBox(color: Wren.ground, child: SizedBox.expand()),
+      ),
+    );
   }
   final scene = sceneFor(beat.scene);
   if (scene == null) return null;
@@ -97,19 +99,19 @@ Widget? advertFor(String name) {
 /// the exact frame where the app's UI first appears. Eliminates timing
 /// guesses that broke the splash beat on CI runners.
 Widget _withSentinel(Widget child) => Stack(
-      children: [
-        Positioned.fill(child: child),
-        const Positioned(
-          top: 2,
-          left: 2,
-          child: SizedBox(
-            width: 6,
-            height: 6,
-            child: ColoredBox(color: Color(0xFFFF00FF)),
-          ),
-        ),
-      ],
-    );
+  children: [
+    Positioned.fill(child: child),
+    const Positioned(
+      top: 2,
+      left: 2,
+      child: SizedBox(
+        width: 6,
+        height: 6,
+        child: ColoredBox(color: Color(0xFFFF00FF)),
+      ),
+    ),
+  ],
+);
 
 // --- the scripts -------------------------------------------------------------
 
