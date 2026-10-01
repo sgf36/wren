@@ -368,12 +368,6 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
                   f"{peak:.0f} fps peak, {frames} frames) — accepted",
                   indent=1)
 
-    if scene == 'splash':
-        trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited + _COMPOSITOR_DELAY
-    else:
-        trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited + settle
-    out.with_suffix('.trim').write_text(f"{trim_offset:.1f}\n")
-
     return True
 
 
@@ -419,9 +413,6 @@ def record_maps_web(udid, out):
         shoot.say(f"only {length:.1f}s of video for a {MAPS_WEB_HOLD:.0f}s "
                   f"hold", indent=1)
         return False
-
-    trim_offset = RECORDER_LEAD_IN + MAPS_WEB_SETTLE
-    out.with_suffix('.trim').write_text(f"{trim_offset:.1f}\n")
 
     return True
 

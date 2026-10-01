@@ -343,7 +343,7 @@ def main():
 
         beat_info = {}
         try:
-            from record import beats as _get_beats, RECORDER_LEAD_IN
+            from record import beats as _get_beats
             beat_info = _get_beats()
         except Exception:
             pass
@@ -354,14 +354,12 @@ def main():
             beat_secs = info[1] if info else clip_secs
             scene = info[0] if info else ""
 
-            trim_file = clip.with_suffix('.trim')
-            if trim_file.exists():
-                trim_s = float(trim_file.read_text().strip())
-                trim_d = beat_secs + 0.5
-            elif scene == 'splash':
-                trim_s = RECORDER_LEAD_IN if beat_info else 2.0
-                trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
-            elif beat_info and clip_secs > beat_secs + 2.0:
+            if beat_info and clip_secs > beat_secs + 1.0:
+                # The beat content sits at the END of the recording, after
+                # recorder lead-in, compositor delay and settle — all of
+                # which VFR compresses unpredictably.  Trimming from the
+                # end in stream time sidesteps the wall-clock ≠ stream-time
+                # mismatch that made the old .trim-file approach overshoot.
                 trim_s = max(0, clip_secs - beat_secs - 0.5)
                 trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
             else:
