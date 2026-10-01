@@ -319,7 +319,11 @@ def main():
             beat_secs = info[1] if info else clip_secs
             scene = info[0] if info else ""
 
-            if scene == 'splash':
+            trim_file = clip.with_suffix('.trim')
+            if trim_file.exists():
+                trim_s = float(trim_file.read_text().strip())
+                trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
+            elif scene == 'splash':
                 trim_s = RECORDER_LEAD_IN if beat_info else 2.0
                 trim_d = min(beat_secs + 0.5, max(0, clip_secs - trim_s))
             elif beat_info and clip_secs > beat_secs + 2.0:

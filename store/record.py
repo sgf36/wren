@@ -270,12 +270,17 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         return False
 
     proc = start_recorder(udid, out)
+    launch_elapsed = 0.0
+    waited = 0.0
+    settle = 0.0
     try:
         cmd = ["xcrun", "simctl", "launch", udid, shoot.BUNDLE,
                "-AppleLanguages", f"({language})", "-AppleLocale", locale]
         if shoot.VERBOSE:
             shoot.say(f"$ {' '.join(cmd)}", indent=2)
+        t0 = time.monotonic()
         r = subprocess.run(cmd, capture_output=True, text=True)
+        launch_elapsed = time.monotonic() - t0
         if r.returncode != 0:
             shoot.say(f"launch failed: {r.stderr.strip()[:300]}", indent=1)
             return False
@@ -338,6 +343,13 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         shoot.say(f"static beat ({average:.0f} fps avg, "
                   f"{peak:.0f} fps peak, {frames} frames) — accepted",
                   indent=1)
+
+    if scene == 'splash':
+        trim_offset = RECORDER_LEAD_IN
+    else:
+        trim_offset = RECORDER_LEAD_IN + launch_elapsed + waited + settle
+    out.with_suffix('.trim').write_text(f"{trim_offset:.1f}\n")
+
     return True
 
 
