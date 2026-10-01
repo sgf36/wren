@@ -70,7 +70,7 @@ const advertBeats = <String, AdvertBeat>{
   'advert-add': AdvertBeat('empty', 2.5, _add),
   'advert-the-list': AdvertBeat('01-the-list', 4.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 4.0, _whichCity),
-  'advert-make-guide': AdvertBeat('01-the-list-unlocked', 5.0, _makeGuide),
+  'advert-make-guide': AdvertBeat('01-the-list-unlocked', 10.0, _makeGuide),
   'advert-correct-a-place': AdvertBeat(
     '03-correct-a-place',
     6.0,
@@ -141,7 +141,7 @@ Future<void> _makeGuide(Choreography c) async {
   final l = L.of(c.context);
   await c.hold(1.0);
   await c.tapText(l.makeGuide(5));
-  await c.hold(3.0);
+  await c.hold(8.0);
 }
 
 Future<void> _correctAPlace(Choreography c) async {

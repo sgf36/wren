@@ -115,7 +115,8 @@ def say(msg):
     print(msg, flush=True)
 
 
-def _find_content_start(clip_path, max_search=None, fps=3):
+def _find_content_start(clip_path, max_search=None, fps=3,
+                        min_start=2.0):
     """Detect where app content starts in a raw beat recording.
 
     Scans extracted frames for two signals, checked per frame:
@@ -126,6 +127,10 @@ def _find_content_start(clip_path, max_search=None, fps=3):
     2. Teal dominance -- more than 25% of the central area matches the
        app's teal background. Catches beats recorded before the sentinel
        was added.
+
+    Frames before *min_start* seconds are skipped because the recording
+    can capture the previous beat's tail — its sentinel triggers a false
+    hit at 0.0 s.
 
     Returns the timestamp (seconds) of the first qualifying frame, or
     None when neither signal fires (caller falls back to _JUNK_START).
@@ -147,6 +152,8 @@ def _find_content_start(clip_path, max_search=None, fps=3):
         frames = sorted(td.glob("f_*.png"))
         for i, fpath in enumerate(frames):
             ts = i / fps
+            if ts < min_start:
+                continue
             img = Image.open(fpath).convert("RGB")
             w, h = img.size
 
