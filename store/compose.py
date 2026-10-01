@@ -91,8 +91,8 @@ try:
 except ImportError:
     DEFAULT_BEATS = ["advert-intro", "advert-add", "advert-the-list"]
 
-PROBLEM_HOLD = 1.8
-SOLUTION_HOLD = 2.8
+PROBLEM_HOLD = 2.5
+SOLUTION_HOLD = 4.5
 END_CARD_HOLD = 3.0
 
 
