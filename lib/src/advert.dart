@@ -126,9 +126,7 @@ Future<void> _add(Choreography c) async {
 }
 
 Future<void> _theList(Choreography c) async {
-  await c.hold(1.5);
-  await c.drag(const Offset(0, -300), seconds: 1.0);
-  await c.hold(1.0);
+  await c.hold(4.0);
 }
 
 Future<void> _whichCity(Choreography c) async {

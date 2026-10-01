@@ -394,6 +394,15 @@ def record_maps_web(udid, out):
     shoot.run("xcrun", "simctl", "privacy", udid, "grant", "location",
               shoot.MAPS, check=False, quiet=True)
 
+    # Prime Safari so its first-launch UI (start page customisation popup,
+    # privacy report) is dismissed before the actual recording starts.
+    shoot.run("xcrun", "simctl", "openurl", udid, "https://example.com",
+              check=False)
+    time.sleep(4.0)
+    shoot.run("xcrun", "simctl", "terminate", udid, shoot.SAFARI,
+              check=False, quiet=True)
+    time.sleep(1.0)
+
     proc = start_recorder(udid, out)
     try:
         shoot.run("xcrun", "simctl", "openurl", udid, shoot.GUIDE_URL,
