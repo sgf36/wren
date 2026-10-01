@@ -329,9 +329,11 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
         # simctl only writes a frame when the display changes. A beat that is
         # mostly deliberate holds (empty state, menu open) produces very few
         # frames — not because the GPU is stuttering but because nothing is
-        # moving. Distinguish the two: avg >= 5 means something WAS animating
-        # and the GPU could not keep up; avg < 5 means the content was still.
-        if average >= 5.0:
+        # moving. Distinguish the two: avg >= 10 means real animation was
+        # running (scrolling, transitions); avg < 10 means the content was
+        # still with at most minor system animation (status bar clock, etc.).
+        # Observed: static beats avg 4-7, scrolling/tapping beats avg 14-28.
+        if average >= 10.0:
             shoot.say(f"the busiest {PEAK_WINDOW:.0f}s of this clip ran at "
                       f"{peak:.0f} fps, which is stutter. No still will "
                       f"show it.", indent=1)
