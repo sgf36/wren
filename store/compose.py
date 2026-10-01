@@ -44,6 +44,11 @@ FADE = 10
 
 FONT = "/System/Library/Fonts/Supplemental/Georgia.ttf"
 
+# iPhone Pro/Pro Max safe area at 3x, cropped from beat clips before scaling.
+# Removes the "9:41 Carrier" status bar and the home indicator bar.
+_SAFE_TOP = 177    # Dynamic Island + status bar (59pt)
+_SAFE_BOTTOM = 102  # home indicator (34pt)
+
 _CJK_CANDIDATES = [
     "/System/Library/Fonts/Supplemental/Songti.ttc",
     "/System/Library/Fonts/STSongti-SC-Regular.otf",
@@ -187,14 +192,24 @@ def _render_end_card(cta_text, out_path, font_path=None):
 def _encode(src, dst, duration=None, vf_extra="", is_image=False,
             trim_start=None, trim_duration=None):
     """Encode any source to a standardised 1080x1920 h264 segment."""
-    vf = ("scale=%d:%d:force_original_aspect_ratio=increase,"
-          "crop=%d:%d,fps=%d" % (W, H, W, H, FPS))
+    if is_image:
+        vf = ("scale=%d:%d:force_original_aspect_ratio=increase,"
+              "crop=%d:%d,fps=%d" % (W, H, W, H, FPS))
+    else:
+        vf = ("crop=iw:ih-%d:0:%d,"
+              "scale=%d:%d:force_original_aspect_ratio=decrease:force_divisible_by=2,"
+              "pad=%d:%d:(ow-iw)/2:(oh-ih)/2:color=%s,"
+              "fps=%d" % (
+                  _SAFE_TOP + _SAFE_BOTTOM, _SAFE_TOP,
+                  W, H, W, H, _hex(TEAL), FPS))
     if vf_extra:
         vf += "," + vf_extra
 
     cmd = ["ffmpeg", "-y"]
     if is_image:
         cmd += ["-loop", "1"]
+    else:
+        cmd += ["-ignore_editlist", "1"]
     cmd += ["-i", str(src)]
     if trim_start is not None:
         cmd += ["-ss", str(trim_start)]
