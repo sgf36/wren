@@ -106,7 +106,7 @@ PEAK_WINDOW = 2.0
 
 # After the GPU warmup launch, the compositor presents in 2-3s instead of 8.
 # This replaces FIRST_FRAME_SETTLE for actual beat recordings.
-WARM_SETTLE = _COMPOSITOR_DELAY + 1.0
+WARM_SETTLE = _COMPOSITOR_DELAY + 5.0
 
 # Time for maps.apple.com to load and render the guide in Safari.
 MAPS_WEB_SETTLE = 8.0
@@ -121,7 +121,6 @@ DEFAULT_BEATS = [
     "advert-add",
     "advert-which-city",
     "advert-the-list",
-    "advert-maps-web",
 ]
 
 

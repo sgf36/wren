@@ -11,10 +11,6 @@ name: Advert creative
 #
 # This repo is public, so macOS runners are free.
 #
-# The Apple Maps guide is shown via maps.apple.com in Safari (the simulator
-# sends the https form to Safari, not Maps). The `advert-maps-web` beat records
-# this -- Safari renders the guide in the device's language.
-#
 # locale=all fans out into a matrix: each locale records and composes on its
 # own runner in parallel, after a single shared Flutter build. The Runner.app
 # is tarred before upload to preserve iOS bundle symlinks.

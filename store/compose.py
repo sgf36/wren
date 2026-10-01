@@ -95,7 +95,7 @@ try:
 except ImportError:
     DEFAULT_BEATS = [
         "advert-intro", "advert-add", "advert-which-city",
-        "advert-the-list", "advert-maps-web",
+        "advert-the-list",
     ]
 
 PROBLEM_HOLD = 2.5
