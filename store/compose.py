@@ -54,15 +54,15 @@ _SAFE_BOTTOM = 102  # home indicator (34pt)
 _IG_CTA_RESERVE = 250
 
 _CJK_CANDIDATES = [
+    "/System/Library/Fonts/PingFang.ttc",
     "/System/Library/Fonts/Supplemental/Songti.ttc",
     "/System/Library/Fonts/STSongti-SC-Regular.otf",
-    "/System/Library/Fonts/PingFang.ttc",
     "/System/Library/Fonts/Supplemental/Hiragino Mincho ProN W3.otf",
 ]
 _JA_CANDIDATES = [
     "/System/Library/Fonts/Supplemental/Hiragino Mincho ProN W3.otf",
-    "/System/Library/Fonts/Supplemental/Songti.ttc",
     "/System/Library/Fonts/PingFang.ttc",
+    "/System/Library/Fonts/Supplemental/Songti.ttc",
 ]
 _KO_CANDIDATES = [
     "/System/Library/Fonts/Supplemental/AppleMyungjo.ttf",
