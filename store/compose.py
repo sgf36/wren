@@ -115,7 +115,7 @@ def say(msg):
     print(msg, flush=True)
 
 
-def _find_content_start(clip_path, max_search=20.0, fps=3):
+def _find_content_start(clip_path, max_search=None, fps=3):
     """Detect where app content starts in a raw beat recording.
 
     Scans extracted frames for two signals, checked per frame:
@@ -134,13 +134,13 @@ def _find_content_start(clip_path, max_search=20.0, fps=3):
 
     with tempfile.TemporaryDirectory() as td:
         td = pathlib.Path(td)
-        result = subprocess.run(
-            ["ffmpeg", "-y", "-ignore_editlist", "1",
-             "-i", str(clip_path),
-             "-t", str(max_search),
-             "-vf", "fps=%d,scale=540:-1" % fps,
-             str(td / "f_%04d.png")],
-            capture_output=True, text=True)
+        cmd = ["ffmpeg", "-y", "-ignore_editlist", "1",
+               "-i", str(clip_path)]
+        if max_search is not None:
+            cmd += ["-t", str(max_search)]
+        cmd += ["-vf", "fps=%d,scale=540:-1" % fps,
+                str(td / "f_%04d.png")]
+        result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
             return None
 
