@@ -510,11 +510,16 @@ def main():
     # A real clock dates the footage, and a battery percentage differs between
     # takes of the same beat.
     shoot.clean_status_bar(udid)
-    for key in ("DidShowContinuousPathIntroduction",
-                "DidShowGestureKeyboardIntroduction"):
-        shoot.run("xcrun", "simctl", "spawn", udid, "defaults", "write",
-                  "com.apple.Preferences", key, "-bool", "true",
-                  check=False, quiet=True)
+    # Latin keyboards read the tutorial flag from com.apple.Preferences;
+    # Arabic (and other non-Latin QuickPath keyboards) read from
+    # com.apple.keyboard.preferences. Write both to suppress universally.
+    for domain in ("com.apple.Preferences",
+                   "com.apple.keyboard.preferences"):
+        for key in ("DidShowContinuousPathIntroduction",
+                    "DidShowGestureKeyboardIntroduction"):
+            shoot.run("xcrun", "simctl", "spawn", udid, "defaults", "write",
+                      domain, key, "-bool", "true",
+                      check=False, quiet=True)
     app_tmp = shoot.app_tmp_dir(udid)
 
     # Warm up the simulator GPU before the first real recording. A cold GPU on a
