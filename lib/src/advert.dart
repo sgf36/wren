@@ -67,7 +67,10 @@ const advertLeadIn = 3.0;
 /// The `advert-` prefix keeps these clear of [sceneNames]; `shoot.py` iterates
 /// that list and must never try to photograph one of these.
 const advertBeats = <String, AdvertBeat>{
-  'advert-intro': AdvertBeat('splash', 5.0, _intro),
+  // 3.2s + the 0.5s tail ends at 3.7s: the splash's mark is fully in by 2.8s
+  // and starts fading out at 3.72s (splash.dart, Interval(0.93, 1.00) of 4s).
+  // At 5.0 the beat ended on 1.5s of empty ground.
+  'advert-intro': AdvertBeat('splash', 3.2, _intro),
   'advert-add': AdvertBeat('empty', 2.5, _add),
   'advert-the-list': AdvertBeat('01-the-list', 4.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 4.0, _whichCity),
@@ -188,7 +191,7 @@ class _SentinelState extends State<_Sentinel> {
 // --- the scripts -------------------------------------------------------------
 
 Future<void> _intro(Choreography c) async {
-  await c.hold(5.0);
+  await c.hold(3.2);
 }
 
 Future<void> _add(Choreography c) async {
