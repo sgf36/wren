@@ -1,17 +1,17 @@
-"""Compose a ready-to-publish advert from recorded beats and text cards.
+"""Compose a ready-to-publish advert from rendered beats and text cards.
 
     python store/compose.py                          # en-GB, default beats
     python store/compose.py --locale fr-FR           # French
     python store/compose.py --beats advert-the-list advert-which-city
 
 macOS only -- uses system Georgia font and FFmpeg. Run from the repo root
-after store/record.py has produced the footage.
+after store/render.py has rendered the beats.
 
 Produces one 1080x1920 MP4 per locale under store/adverts/<locale>/.
 
 The three-act structure:
   1. Problem -- each line on its own text card, teal background, cream text
-  2. Screen recording -- beat clips from record.py showing the app in action
+  2. The app in action -- beats rendered frame by frame by store/render.py
   3. End card -- app icon and call to action on deep teal
 
 Everything is driven by advert_strings.json (localised captions). Add a
@@ -28,7 +28,6 @@ import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
-FOOTAGE = HERE / "footage"
 ADVERTS = HERE / "adverts"
 STRINGS = HERE / "advert_strings.json"
 APP_ICON = ROOT / "assets" / "icon" / "app_icon.png"
@@ -217,13 +216,7 @@ def _check_glyphs(font, text):
                  % (pathlib.Path(font.path).name,
                     " ".join("U+%04X" % ord(c) for c in gone), text))
 
-try:
-    from record import DEFAULT_BEATS
-except ImportError:
-    DEFAULT_BEATS = [
-        "advert-intro", "advert-add", "advert-which-city",
-        "advert-the-list", "advert-make-guide",
-    ]
+from render import DEFAULT_BEATS, OUT as RENDERED  # noqa: E402
 
 PROBLEM_HOLD = 2.5
 SOLUTION_HOLD = 4.5
@@ -492,17 +485,13 @@ def _render_end_card(cta_text, out_path, font_path=None, font_index=0,
 
 
 def _encode(src, dst, duration=None, vf_extra="", is_image=False,
-            window=None):
+            sequence=False):
     """Encode any source to a standardised 1080x1920 h264 segment.
 
-    `window` is (start, end, length) for a beat clip: frames from the exact
-    timestamp `start` up to but not including `end`, made exactly `length` long.
-    The cut is a `trim` filter on the decoded timestamps — the same timestamps
-    clipscan.py read the sentinel at — rather than `-ss`, so there is no seek
-    and no rounding between the frame that was checked and the frame that is
-    used. When a held scene's last frame arrives before `length` is up, it is
-    held (tpad clone): simctl writes no frame while the screen does not change,
-    so holding it is exactly what the screen showed.
+    `sequence` reads `src` as a rendered beat: a directory of numbered PNGs,
+    one per frame at FPS. Every frame is used, in order, as drawn — there is
+    nothing to find or trim, which is the point of rendering rather than
+    recording.
     """
     if is_image:
         vf = ("scale=%d:%d:force_original_aspect_ratio=increase,"
@@ -514,21 +503,16 @@ def _encode(src, dst, duration=None, vf_extra="", is_image=False,
               "fps=%d" % (
                   _SAFE_TOP + _SAFE_BOTTOM, _SAFE_TOP,
                   W, H - _IG_CTA_RESERVE, W, H, _hex(TEAL), FPS))
-        if window is not None:
-            start, end, length = window
-            vf = ("trim=start=%.6f:end=%.6f,setpts=PTS-STARTPTS,%s,"
-                  "tpad=stop_mode=clone:stop_duration=%.3f,"
-                  "trim=duration=%.6f"
-                  % (start, end, vf, length, length))
     if vf_extra:
         vf += "," + vf_extra
 
     cmd = ["ffmpeg", "-y"]
     if is_image:
-        cmd += ["-loop", "1"]
+        cmd += ["-loop", "1", "-i", str(src)]
+    elif sequence:
+        cmd += ["-framerate", str(FPS), "-i", str(pathlib.Path(src) / "%05d.png")]
     else:
-        cmd += ["-ignore_editlist", "1"]
-    cmd += ["-i", str(src)]
+        cmd += ["-i", str(src)]
     if duration is not None:
         cmd += ["-t", str(duration)]
     cmd += ["-vf", vf,
@@ -540,23 +524,6 @@ def _encode(src, dst, duration=None, vf_extra="", is_image=False,
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
         sys.exit("ffmpeg failed on %s:\n%s" % (src.name, r.stderr[-600:]))
-
-
-def beat_window(clip, beat_secs):
-    """(start, end, length) to cut from a raw beat clip, or exit saying why.
-
-    Every frame in the window is one clipscan.py saw the sentinel on, so the
-    launch screen, the home screen and the previous beat cannot reach the
-    advert. A clip with too little of the app in it fails here, loudly; it is
-    not padded out with whatever else the recorder caught.
-    """
-    import clipscan
-    from record import BEAT_TAIL
-    length = beat_secs + BEAT_TAIL
-    window, why = clipscan.check(clip, length)
-    if window is None:
-        sys.exit("%s: %s" % (clip.name, why))
-    return window[0], window[1], length
 
 
 def _concat(segments, dst, tmp_dir):
@@ -573,12 +540,8 @@ def _concat(segments, dst, tmp_dir):
 
 
 def _duration(path):
-    # Stream-level duration with -ignore_editlist matches how _encode reads
-    # VFR simulator recordings. Without it, ffprobe reports a container
-    # duration that differs from what ffmpeg actually processes, and the trim
-    # logic cuts the wrong range.
     r = subprocess.run(
-        ["ffprobe", "-v", "error", "-ignore_editlist", "1",
+        ["ffprobe", "-v", "error",
          "-select_streams", "v:0", "-show_entries", "stream=duration",
          "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
         capture_output=True, text=True)
@@ -602,7 +565,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--locale", default="en-GB")
     p.add_argument("--beats", nargs="+", default=DEFAULT_BEATS,
-                   help="beat names to include (default: advert-the-list)")
+                   help="beat names to include, in order (default: every beat)")
     args = p.parse_args()
 
     if not shutil.which("ffmpeg"):
@@ -616,20 +579,25 @@ def main():
 
     problem_lines, solution_text, cta_text = load_strings(args.locale)
 
-    locale_dir = FOOTAGE / args.locale
-    if not locale_dir.exists():
-        alt = FOOTAGE / args.locale.replace("-", "_")
-        if alt.exists():
-            locale_dir = alt
-        else:
-            sys.exit("no footage at %s -- run record.py first" % locale_dir)
-
+    locale_dir = RENDERED / args.locale
+    manifest_path = locale_dir / "manifest.json"
+    if not manifest_path.exists():
+        sys.exit("no render at %s -- run store/render.py --locale %s first"
+                 % (locale_dir, args.locale))
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    rendered = {b["name"]: b for b in manifest["beats"]}
+    if manifest.get("fps") != FPS:
+        sys.exit("rendered at %s fps, composed at %d" % (manifest.get("fps"), FPS))
     clips = []
     for beat in args.beats:
-        clip = locale_dir / ("%s.mov" % beat)
-        if not clip.exists():
-            sys.exit("missing beat clip: %s" % clip)
-        clips.append(clip)
+        if beat not in rendered:
+            sys.exit("%s was not rendered for %s" % (beat, args.locale))
+        frames = locale_dir / beat
+        count = len(list(frames.glob("*.png")))
+        if count != rendered[beat]["frames"]:
+            sys.exit("%s: %d frames on disk, %d rendered"
+                     % (beat, count, rendered[beat]["frames"]))
+        clips.append(frames)
 
     texts = ["Wren"]  # the solution card's logo, drawn in every locale
     for block in (problem_lines, solution_text, cta_text):
@@ -639,7 +607,7 @@ def main():
     fallback = _latin_fallback.get(args.locale)
     say("composing advert for %s" % args.locale)
     say("  beats: %s" % ", ".join(args.beats))
-    say("  footage: %s" % locale_dir)
+    say("  rendered: %s" % locale_dir)
 
     out_dir = ADVERTS / args.locale
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -673,19 +641,11 @@ def main():
         segments.append(sol_mp4)
         idx += 1
 
-        # No fallback: a beat whose length is unknown cannot be trimmed, and
-        # guessing is what put seven seconds of launch screen in da's advert.
-        from record import beats as _get_beats
-        beat_info = _get_beats()
-
-        for beat_name, clip in zip(args.beats, clips):
-            if beat_name not in beat_info:
-                sys.exit("%s is not a beat in lib/src/advert.dart" % beat_name)
-            window = beat_window(clip, beat_info[beat_name][1])
-            say("  beat: %s  %.3f-%.3f of the clip"
-                % (clip.name, window[0], window[0] + window[2]))
+        for beat_name, frames in zip(args.beats, clips):
+            say("  beat: %s  %d frames"
+                % (beat_name, rendered[beat_name]["frames"]))
             seg = tmp / ("seg_%02d.mp4" % idx)
-            _encode(clip, seg, window=window,
+            _encode(frames, seg, sequence=True,
                     vf_extra="fade=in:0:%d" % FADE)
             segments.append(seg)
             idx += 1
