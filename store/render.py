@@ -85,8 +85,12 @@ FAMILIES = {
 }
 
 FONT_DIRS = {
+    # FontServices: recent macOS keeps some system UI fonts (PingFang among
+    # them, by the name its compose.py candidate path suggested) out of
+    # /System/Library/Fonts.
     "darwin": ["/System/Library/Fonts", "/Library/Fonts",
-               "/System/Library/AssetsV2"],
+               "/System/Library/AssetsV2",
+               "/System/Library/PrivateFrameworks/FontServices.framework"],
     "win32": [os.path.expandvars(r"%WINDIR%\Fonts"),
               os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\Windows\Fonts")],
 }
@@ -137,13 +141,25 @@ def font_index(platform):
     return faces
 
 
+def _norm(family):
+    # Apple names its hidden system faces with a leading dot (".SF NS").
+    return family.lstrip(".").strip().lower()
+
+
 def find_faces(faces, candidates):
     """Every face of the first candidate family present, or []."""
     for want in candidates:
-        hits = [f for f in faces if f[0].lower() == want.lower()]
+        hits = [f for f in faces if _norm(f[0]) == _norm(want)]
         if hits:
             return hits
     return []
+
+
+def near_misses(faces, candidates):
+    """Installed families sharing a word with any candidate, for the error."""
+    words = {w for c in candidates for w in _norm(c).split() if len(w) > 2}
+    return sorted({"%s  (%s)" % (f[0], f[2]) for f in faces
+                   if words & set(_norm(f[0]).split())})
 
 
 def prepare(face, tmp):
@@ -186,7 +202,10 @@ def prepare(face, tmp):
 def faces_for(faces, candidates, tmp, role):
     found = find_faces(faces, candidates)
     if not found:
-        sys.exit("no font for %s: none of %s is installed" % (role, candidates))
+        near = near_misses(faces, candidates)
+        sys.exit("no font for %s: none of %s is installed.\n"
+                 "  Installed families sharing a word:\n    %s"
+                 % (role, candidates, "\n    ".join(near) or "(none)"))
     say("  %-22s %s (%d face%s)" % (role, found[0][0], len(found),
                                     "" if len(found) == 1 else "s"))
     paths = []
