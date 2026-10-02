@@ -73,22 +73,53 @@ _AR_CANDIDATES = [
     "/System/Library/Fonts/GeezaPro.ttc",
 ]
 
+# Characters that MUST render for a .ttc face to be usable for each locale.
+# SC faces lack traditional-form CJK characters; probing avoids hardcoding
+# face indices that vary across macOS versions.
+_TTC_TEST_CHARS = {
+    "zh-Hant": "費",  # 費 — absent from Songti.ttc SC face
+    "ja": "無",        # 無 — absent from Songti.ttc SC face
+}
+
 _font_cache = {}
 
 
+def _probe_ttc_face(path, test_char):
+    """Return the first .ttc face index whose glyph for test_char has pixels."""
+    from PIL import ImageFont, Image, ImageDraw
+    for i in range(8):
+        try:
+            f = ImageFont.truetype(path, 40, index=i)
+        except Exception:
+            break
+        img = Image.new("L", (60, 60), 0)
+        ImageDraw.Draw(img).text((5, 5), test_char, fill=255, font=f)
+        if img.getbbox():
+            return i
+    return -1
+
+
 def _font_for_locale(locale):
+    """Return (font_path, face_index) for the locale."""
     if locale in _font_cache:
         return _font_cache[locale]
     lang = locale.split("-")[0]
     candidates = {"ja": _JA_CANDIDATES, "zh": _CJK_CANDIDATES,
                   "ko": _KO_CANDIDATES, "ar": _AR_CANDIDATES}.get(lang, [])
+    test_char = _TTC_TEST_CHARS.get(locale) or _TTC_TEST_CHARS.get(lang)
     for path in candidates:
-        if pathlib.Path(path).exists():
-            say("  font for %s: %s" % (locale, path))
-            _font_cache[locale] = path
-            return path
-    _font_cache[locale] = FONT
-    return FONT
+        if not pathlib.Path(path).exists():
+            continue
+        index = 0
+        if path.endswith(".ttc") and test_char:
+            index = _probe_ttc_face(path, test_char)
+            if index < 0:
+                continue
+        say("  font for %s: %s (face %d)" % (locale, path, index))
+        _font_cache[locale] = (path, index)
+        return (path, index)
+    _font_cache[locale] = (FONT, 0)
+    return (FONT, 0)
 
 try:
     from record import DEFAULT_BEATS
@@ -239,7 +270,7 @@ def _load_icon(size):
 
 
 def _render(lines, bg, fg, font_size, out_path, line_spacing=1.7, y_shift=-60,
-            font_path=None):
+            font_path=None, font_index=0):
     from PIL import Image, ImageDraw, ImageFont
 
     if isinstance(lines, str):
@@ -250,7 +281,7 @@ def _render(lines, bg, fg, font_size, out_path, line_spacing=1.7, y_shift=-60,
 
     img = Image.new("RGB", (W, H), bg)
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(font_path or FONT, font_size)
+    font = ImageFont.truetype(font_path or FONT, font_size, index=font_index)
 
     rendered = []
     for ln in lines:
@@ -269,7 +300,7 @@ def _render(lines, bg, fg, font_size, out_path, line_spacing=1.7, y_shift=-60,
     img.save(out_path, "PNG")
 
 
-def _render_solution_card(lines, out_path, font_path=None):
+def _render_solution_card(lines, out_path, font_path=None, font_index=0):
     """Solution card: full-size Wren logo (icon + name) above the copy."""
     from PIL import Image, ImageDraw, ImageFont
 
@@ -294,7 +325,7 @@ def _render_solution_card(lines, out_path, font_path=None):
 
     icon_size = 160
     icon_img = _load_icon(icon_size)
-    logo_font = ImageFont.truetype(font_path or FONT, 60)
+    logo_font = ImageFont.truetype(font_path or FONT, 60, index=font_index)
     wren_bbox = logo_font.getbbox("Wren")
     wren_w = wren_bbox[2] - wren_bbox[0]
     wren_h = wren_bbox[3] - wren_bbox[1]
@@ -304,7 +335,7 @@ def _render_solution_card(lines, out_path, font_path=None):
 
     logo_h = icon_size + icon_text_gap + wren_h
 
-    text_font = ImageFont.truetype(font_path or FONT, 46)
+    text_font = ImageFont.truetype(font_path or FONT, 46, index=font_index)
     metrics = []
     for ln in clean:
         bbox = text_font.getbbox(ln)
@@ -331,7 +362,7 @@ def _render_solution_card(lines, out_path, font_path=None):
     img.save(out_path, "PNG")
 
 
-def _render_end_card(cta_text, out_path, font_path=None):
+def _render_end_card(cta_text, out_path, font_path=None, font_index=0):
     from PIL import Image, ImageDraw, ImageFont
 
     img = Image.new("RGB", (W, H), DEEP_TEAL)
@@ -342,7 +373,7 @@ def _render_end_card(cta_text, out_path, font_path=None):
         icon = icon.resize((200, 200), Image.LANCZOS)
         img.paste(icon, ((W - 200) // 2, H // 2 - 200 - 30), icon)
 
-    font = ImageFont.truetype(font_path or FONT, 46)
+    font = ImageFont.truetype(font_path or FONT, 46, index=font_index)
     lines = cta_text.split("\n") if isinstance(cta_text, str) else cta_text
     if any(_has_arabic(ln) for ln in lines):
         lines = [_reshape_bidi(ln) for ln in lines]
@@ -471,7 +502,7 @@ def main():
             sys.exit("missing beat clip: %s" % clip)
         clips.append(clip)
 
-    font_path = _font_for_locale(args.locale)
+    font_path, font_index = _font_for_locale(args.locale)
     say("composing advert for %s" % args.locale)
     say("  beats: %s" % ", ".join(args.beats))
     say("  footage: %s" % locale_dir)
@@ -487,7 +518,8 @@ def main():
         for i, line in enumerate(problem_lines):
             say("  problem card %d: %s" % (i + 1, line))
             png = tmp / ("problem_%d.png" % i)
-            _render([line], TEAL, CREAM, 58, png, font_path=font_path)
+            _render([line], TEAL, CREAM, 58, png, font_path=font_path,
+                   font_index=font_index)
             mp4 = tmp / ("seg_%02d.mp4" % idx)
             # Fade in on the first card only; the teal background stays
             # continuous across all problem cards and the solution card.
@@ -499,7 +531,8 @@ def main():
 
         say("  solution card")
         sol_png = tmp / "solution.png"
-        _render_solution_card(solution_text, sol_png, font_path=font_path)
+        _render_solution_card(solution_text, sol_png, font_path=font_path,
+                              font_index=font_index)
         sol_mp4 = tmp / ("seg_%02d.mp4" % idx)
         _encode(sol_png, sol_mp4, duration=SOLUTION_HOLD, is_image=True)
         segments.append(sol_mp4)
@@ -545,7 +578,8 @@ def main():
 
         say("  end card")
         end_png = tmp / "end_card.png"
-        _render_end_card(cta_text, end_png, font_path=font_path)
+        _render_end_card(cta_text, end_png, font_path=font_path,
+                         font_index=font_index)
         end_mp4 = tmp / ("seg_%02d.mp4" % idx)
         end_frame = int(END_CARD_HOLD * FPS) - FADE
         _encode(end_png, end_mp4, duration=END_CARD_HOLD,

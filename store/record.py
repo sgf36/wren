@@ -510,6 +510,11 @@ def main():
     # A real clock dates the footage, and a battery percentage differs between
     # takes of the same beat.
     shoot.clean_status_bar(udid)
+    for key in ("DidShowContinuousPathIntroduction",
+                "DidShowGestureKeyboardIntroduction"):
+        shoot.run("xcrun", "simctl", "spawn", udid, "defaults", "write",
+                  "com.apple.Preferences", key, "-bool", "true",
+                  check=False, quiet=True)
     app_tmp = shoot.app_tmp_dir(udid)
 
     # Warm up the simulator GPU before the first real recording. A cold GPU on a
