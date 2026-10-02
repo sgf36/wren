@@ -65,7 +65,10 @@ FAMILIES = {
         "system": ["SF Pro", "System Font", ".SF NS"],
         "sans": {
             "ja": ["Hiragino Sans"],
-            "zh-Hant": ["PingFang TC"],
+            # iOS uses PingFang TC; the runner's copy draws nothing (see
+            # SAMPLES), and Heiti TC is Apple's previous Traditional
+            # Chinese sans.
+            "zh-Hant": ["PingFang TC", "Heiti TC"],
             "ko": ["Apple SD Gothic Neo"],
             "ar": ["SF Arabic", "Geeza Pro"],
         },
@@ -199,22 +202,77 @@ def prepare(face, tmp):
     return outs
 
 
-def faces_for(faces, candidates, tmp, role):
-    found = find_faces(faces, candidates)
-    if not found:
-        near = near_misses(faces, candidates)
-        sys.exit("no font for %s: none of %s is installed.\n"
-                 "  Installed families sharing a word:\n    %s"
-                 % (role, candidates, "\n    ".join(near) or "(none)"))
-    say("  %-22s %s (%d face%s)" % (role, found[0][0], len(found),
-                                    "" if len(found) == 1 else "s"))
-    paths = []
-    for f in found:
-        # Italics are never asked for by the app and only add ambiguity.
-        if "italic" in f[1].lower() or "oblique" in f[1].lower():
+# Characters each fallback must actually draw. A font's cmap listing a glyph
+# is not proof it renders: on the macos-26 runner PingFang TC lists every
+# Chinese character and draws none of them (run 37033279280 rendered zh-Hant
+# entirely as boxes and passed the cmap check), as Pillow found in run 34.
+SAMPLES = {
+    "ja": "場所をとっておく",
+    "zh-Hant": "地方收著讀取",
+    "ko": "장소를담아두다",
+    "ar": "أماكن محفوظة",
+}
+
+
+def draws(path, sample):
+    """Whether FreeType draws real glyphs for every character in `sample`.
+
+    Real means ink, and ink that is not the font's own missing-glyph box: a
+    face that cannot render a glyph either draws nothing or draws .notdef.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+    try:
+        font = ImageFont.truetype(path, 48,
+                                  layout_engine=ImageFont.Layout.BASIC)
+    except Exception:
+        return False
+
+    def mask(ch):
+        img = Image.new("L", (96, 96), 0)
+        ImageDraw.Draw(img).text((12, 12), ch, fill=255, font=font)
+        return img.tobytes() if img.getbbox() else None
+
+    notdef = mask("\U0010FFFD")  # a private-use code point no font maps
+    for ch in sample:
+        if ch.isspace():
             continue
-        paths += prepare(f, tmp)
-    return paths
+        m = mask(ch)
+        if m is None or m == notdef:
+            return False
+    return True
+
+
+def faces_for(faces, candidates, tmp, role, sample="Wren"):
+    """Prepared font files for the first candidate that is installed AND draws.
+
+    Each candidate is tried in turn; one whose glyphs exist only on paper is
+    reported and skipped, never used.
+    """
+    tried = []
+    for want in candidates:
+        found = find_faces(faces, [want])
+        if not found:
+            tried.append("%s: not installed" % want)
+            continue
+        paths = []
+        for f in found:
+            # Italics are never asked for by the app and only add ambiguity.
+            if "italic" in f[1].lower() or "oblique" in f[1].lower():
+                continue
+            paths += prepare(f, tmp)
+        if not any(draws(p, sample) for p in paths):
+            tried.append("%s: installed, but draws no glyph for %r"
+                         % (found[0][0], sample))
+            say("  %-22s %s draws nothing for %r - next candidate"
+                % (role, found[0][0], sample))
+            continue
+        say("  %-22s %s (%d face%s)" % (role, found[0][0], len(found),
+                                        "" if len(found) == 1 else "s"))
+        return paths
+    near = near_misses(faces, candidates)
+    sys.exit("no usable font for %s:\n    %s\n"
+             "  Installed families sharing a word:\n    %s"
+             % (role, "\n    ".join(tried), "\n    ".join(near) or "(none)"))
 
 
 def build_config(locale, tmp):
@@ -246,7 +304,8 @@ def build_config(locale, tmp):
     sans_fallback, serif_fallback = [], []
     if script in spec["sans"]:
         families["WrenScriptSans"] = faces_for(
-            faces, spec["sans"][script], tmp, "%s sans fallback" % script)
+            faces, spec["sans"][script], tmp, "%s sans fallback" % script,
+            SAMPLES.get(script, "Wren"))
         sans_fallback = ["WrenScriptSans"]
     if script in spec["serif"]:
         if platform != "darwin" and not find_faces(faces, spec["serif"][script]):
@@ -257,7 +316,8 @@ def build_config(locale, tmp):
                 % script)
         else:
             families["WrenScriptSerif"] = faces_for(
-                faces, spec["serif"][script], tmp, "%s serif fallback" % script)
+                faces, spec["serif"][script], tmp, "%s serif fallback" % script,
+                SAMPLES.get(script, "Wren"))
             serif_fallback = ["WrenScriptSerif"]
     return {"families": families, "serifFallback": serif_fallback,
             "sansFallback": sans_fallback}
