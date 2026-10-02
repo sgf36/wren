@@ -115,7 +115,8 @@ jobs:
           brew install ffmpeg
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install Pillow arabic-reshaper python-bidi
+          # fonttools: compose.py reads each font's cmap to refuse tofu.
+          pip install Pillow arabic-reshaper python-bidi fonttools
 
       - name: Record
         run: |

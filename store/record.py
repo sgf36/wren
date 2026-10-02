@@ -32,8 +32,13 @@ running it, none visible beforehand:
 
 The last one is the one worth remembering: **the instrument was broken, not the
 artefact.** So durations here are read out of the file's own QuickTime atoms
-rather than asked of the operating system. It needs no ffmpeg, no Spotlight and
-no network, and it cannot be absent on a runner.
+rather than asked of the operating system. It needs no Spotlight and no
+network, and it cannot be absent on a runner.
+
+What is *in* each take is read by `clipscan.py`, which needs ffmpeg: the
+magenta sentinel the app draws, frame by frame, so a take that shows the
+launch screen, the home screen or a frozen display where the beat should be is
+recorded again instead of reaching compose.py. compose.py cuts by the same test.
 
 ## Apple Maps web
 
@@ -52,6 +57,7 @@ managed. It cannot see composition. Watch the clips.
 import argparse
 import pathlib
 import re
+import shutil
 import signal
 import struct
 import subprocess
@@ -59,7 +65,8 @@ import sys
 import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import shoot  # noqa: E402  -- after the path insert, deliberately
+import clipscan  # noqa: E402  -- after the path insert, deliberately
+import shoot  # noqa: E402
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -84,12 +91,6 @@ LAUNCH_TIMEOUT = 45.0
 # terminate arrived before the script had finished. The beat itself was fine.
 FIRST_FRAME_SETTLE = 9.0
 
-# On a CI simulator, the compositor takes about 3 seconds after launchd reports
-# the process before any frame is visible on screen. The splash animation in
-# splash.dart is gated by the same constant under WREN_SHOTS — change one,
-# change both.
-_COMPOSITOR_DELAY = 3.0
-
 # Frames per second across the busiest two seconds of the clip.
 #
 # NOT the average, which is a trap this file fell into twice. `simctl` writes a
@@ -104,9 +105,33 @@ MIN_PEAK_FPS = 30.0
 # The window the peak is measured over.
 PEAK_WINDOW = 2.0
 
-# After the GPU warmup launch, the compositor presents in 2-3s instead of 8.
-# This replaces FIRST_FRAME_SETTLE for actual beat recordings.
-WARM_SETTLE = _COMPOSITOR_DELAY + 5.0
+# How long to wait for the app to draw its first frame, after launchd has it.
+#
+# Measured on run 34 (2 October 2026): the white launch screen lasted 2 to 33
+# seconds before the first frame, for the same build on the same runner type.
+# It is Dart start-up in a debug build, not the compositor: de-DE's make-guide
+# sat on white for 16s and its tap still landed 3.8s after the app appeared,
+# like every locale that started in 3s. So the beat's clock starts when the app
+# says it drew (lib/src/advert.dart writes the marker), and this is only the
+# point at which a launch is given up on and retried.
+FIRST_FRAME_TIMEOUT = 90.0
+
+# Recorded past the beat's own length. Covers the compositor presenting the
+# first frame a little after the app drew it (0.1-0.5s measured) plus the tail
+# compose.py keeps after the script finishes.
+CONTENT_MARGIN = 1.5
+
+# Held after the script finishes, so the last state is seen rather than cut on.
+# compose.py trims each beat to its length plus this.
+BEAT_TAIL = 0.5
+
+# A take that fails its checks is recorded again rather than shipped. nb's intro
+# on run 34 was a frozen display — 27 seconds, one frame — on a runner where
+# every other beat recorded normally.
+ATTEMPTS = 3
+
+# Read out of lib/src/advert.dart by beats(), so the two cannot drift apart.
+FIRST_FRAME_FILE = None
 
 # Time for maps.apple.com to load and render the guide in Safari.
 MAPS_WEB_SETTLE = 8.0
@@ -144,6 +169,11 @@ def beats():
     if not lead:
         sys.exit("advertLeadIn is not declared in the beats file")
     lead_in = float(lead.group(1))
+    marker = re.search(r"const advertFirstFrameFile = '([^']+)';", dart)
+    if not marker:
+        sys.exit("advertFirstFrameFile is not declared in the beats file")
+    global FIRST_FRAME_FILE
+    FIRST_FRAME_FILE = marker.group(1)
     result = {}
     for name, scene, seconds in found:
         secs = float(seconds)
@@ -287,26 +317,34 @@ def stop_recorder(proc):
 
 
 def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
-    shoot.say(f"{name}  ({scene}, {seconds:.0f}s)")
+    """Record one beat, retrying a take that fails its checks."""
+    for attempt in range(1, ATTEMPTS + 1):
+        shoot.say(f"{name}  ({scene}, {seconds:.0f}s)"
+                  + (f"  attempt {attempt}/{ATTEMPTS}" if attempt > 1 else ""))
+        if _record_take(udid, name, scene, seconds, out, app_tmp, language,
+                        locale):
+            return True
+    return False
 
+
+def _record_take(udid, name, scene, seconds, out, app_tmp, language, locale):
     shoot.run("xcrun", "simctl", "terminate", udid, shoot.BUNDLE,
               check=False, quiet=True)
     if not shoot.name_scene(app_tmp, name):
         shoot.say("could not write the scene file", indent=1)
         return False
+    marker = app_tmp / FIRST_FRAME_FILE
+    # A marker left by the previous launch would start this beat's clock before
+    # this launch has drawn anything.
+    marker.unlink(missing_ok=True)
 
     proc = start_recorder(udid, out)
-    launch_elapsed = 0.0
-    waited = 0.0
-    settle = 0.0
     try:
         cmd = ["xcrun", "simctl", "launch", udid, shoot.BUNDLE,
                "-AppleLanguages", f"({language})", "-AppleLocale", locale]
         if shoot.VERBOSE:
             shoot.say(f"$ {' '.join(cmd)}", indent=2)
-        t0 = time.monotonic()
         r = subprocess.run(cmd, capture_output=True, text=True)
-        launch_elapsed = time.monotonic() - t0
         if r.returncode != 0:
             shoot.say(f"launch failed: {r.stderr.strip()[:300]}", indent=1)
             return False
@@ -321,17 +359,28 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
             shoot.say(f"the app never appeared in launchd after "
                       f"{LAUNCH_TIMEOUT:.0f}s", indent=1)
             return False
-        if shoot.VERBOSE:
-            shoot.say(f"launchd has it after {waited:.0f}s", indent=2)
 
-        settle = (_COMPOSITOR_DELAY + 2.0) if scene == 'splash' else WARM_SETTLE
-        time.sleep(settle + seconds)
+        # Then ask the app. launchd has the process seconds — sometimes half a
+        # minute — before Dart has drawn anything, and the beat's script starts
+        # on that first frame, not on the launch.
+        t0 = time.monotonic()
+        while not marker.exists():
+            if time.monotonic() - t0 > FIRST_FRAME_TIMEOUT:
+                shoot.say(f"the app had not drawn after "
+                          f"{FIRST_FRAME_TIMEOUT:.0f}s", indent=1)
+                return False
+            time.sleep(0.1)
+        shoot.say(f"first frame {time.monotonic() - t0 + waited:.1f}s "
+                  f"after launch", indent=1)
+        time.sleep(seconds + CONTENT_MARGIN)
     finally:
-        # Terminate before stopping the recorder, so the last frame is the app
-        # rather than the home screen sliding back in.
+        # Stop the recorder BEFORE terminating. The other way round, which this
+        # did until 2 October 2026, recorded the app shrinking away and the
+        # home screen sliding in; compose.py's trim only had to start a little
+        # early to show it, and ko's advert did.
+        stop_recorder(proc)
         shoot.run("xcrun", "simctl", "terminate", udid, shoot.BUNDLE,
                   check=False, quiet=True)
-        stop_recorder(proc)
 
     if not out.exists():
         shoot.say("the recorder wrote no file at all", indent=1)
@@ -372,6 +421,18 @@ def record_beat(udid, name, scene, seconds, out, app_tmp, language, locale):
                   f"{peak:.0f} fps peak, {frames} frames) — accepted",
                   indent=1)
 
+    # The checks above prove the file is a movie of the right length. This one
+    # proves the app is in it for long enough — the same test compose.py cuts
+    # by, so a take that passes here cannot fail there.
+    try:
+        window, why = clipscan.check(out, seconds + BEAT_TAIL)
+    except RuntimeError as e:
+        shoot.say(f"could not scan the clip: {e}", indent=1)
+        return False
+    if window is None:
+        shoot.say(why, indent=1)
+        return False
+    shoot.say(f"beat at {window[0]:.2f}-{window[1]:.2f}s of the clip", indent=1)
     return True
 
 
@@ -479,6 +540,9 @@ def main():
     args = p.parse_args()
 
     shoot.VERBOSE = args.verbose
+    if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
+        sys.exit("ffmpeg is required: every take is checked frame by frame "
+                 "(brew install ffmpeg)")
 
     available = beats()
     wanted = args.beat or list(DEFAULT_BEATS)
@@ -510,9 +574,13 @@ def main():
     # A real clock dates the footage, and a battery percentage differs between
     # takes of the same beat.
     shoot.clean_status_bar(udid)
-    # Latin keyboards read the tutorial flag from com.apple.Preferences;
-    # Arabic (and other non-Latin QuickPath keyboards) read from
-    # com.apple.keyboard.preferences. Write both to suppress universally.
+    # The QuickPath "slide to type" tutorial. com.apple.keyboard.preferences is
+    # the domain that works: it is what Appium writes, the same way, after boot
+    # (appium/appium-ios packages/simulator/lib/extensions/settings.ts), and
+    # run 34 — the first with it — showed the tutorial in none of 13 locales
+    # where run 33, with com.apple.Preferences alone, showed it in ko and fr-FR.
+    # DidShowGestureKeyboardIntroduction is the iPad tutorial's flag
+    # (WebDriverAgent, Detox and EarlGrey all set it); harmless on an iPhone.
     for domain in ("com.apple.Preferences",
                    "com.apple.keyboard.preferences"):
         for key in ("DidShowContinuousPathIntroduction",
