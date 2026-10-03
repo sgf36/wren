@@ -125,4 +125,10 @@ dependencies {
     // services on first use, which fails on a phone that is offline at exactly
     // the moment somebody tries the app for the first time.
     implementation("com.google.mlkit:text-recognition:16.0.1")
+
+    // Play Integrity, for the free sample. Android has no per-account id like
+    // Apple's appTransactionId, so the Worker reads Play Integrity's device
+    // recall instead: one bit Google keeps per phone, across reinstalls and
+    // factory resets, saying whether this phone has had its free read.
+    implementation("com.google.android.play:integrity:1.6.0")
 }

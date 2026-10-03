@@ -36,10 +36,12 @@ CREATE TABLE IF NOT EXISTS verifications (
 --
 -- An earlier attempt keyed it on a random id the app generated and sent. That is
 -- the thing this paragraph already forbade — a key the client chooses is a free
--- feature with extra steps — and it was stopped before it shipped. If a future
--- free tier needs Android, Play Integrity attests the app and device but issues
--- no stable per-account id, so it is NOT the equivalent of this and needs its
--- own answer rather than a device UUID with a nicer name.
+-- feature with extra steps — and it was stopped before it shipped. Play
+-- Integrity issues no stable per-account id, so Android's answer (2026-10-03)
+-- is device recall instead: a bit Google stores per phone, written only by this
+-- Worker, surviving reinstall and factory reset. The usage row is keyed
+-- `free:play:<nonce>`, which stops one token being spent twice; the bit is what
+-- stops a second token. See judgeIntegrity in src/index.js.
 CREATE TABLE IF NOT EXISTS usage (
   auth_key TEXT    NOT NULL,
   ts       INTEGER NOT NULL

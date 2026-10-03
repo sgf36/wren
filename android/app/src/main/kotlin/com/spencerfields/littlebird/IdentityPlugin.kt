@@ -3,6 +3,8 @@ package com.spencerfields.littlebird
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.google.android.play.core.integrity.IntegrityManagerFactory
+import com.google.android.play.core.integrity.IntegrityTokenRequest
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -49,6 +51,10 @@ class IdentityPlugin(private val context: Context) :
   }
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+    if (call.method == "integrityToken") {
+      integrityToken(call.argument<String>("nonce"), result)
+      return
+    }
     if (call.method != "deviceId") {
       result.notImplemented()
       return
@@ -80,6 +86,39 @@ class IdentityPlugin(private val context: Context) :
     // identifier this device will never present again.
     prefs.edit().putString(KEY, fresh).commit()
     return fresh
+  }
+
+  /**
+   * A classic Play Integrity token for the given nonce, or null.
+   *
+   * The free sample on Android. The token means nothing to this app: it is
+   * encrypted to Google, and the Worker has Google decode it and read device
+   * recall -- whether this phone has already had its free read.
+   *
+   * Every failure answers null rather than an error. No Play Store, no
+   * network, an emulator, an app not installed from Play: each simply means
+   * no free read, and the caller opens the paywall it always did. No Cloud
+   * project number is set, because an app distributed through Play is linked
+   * to its project in Play Console.
+   */
+  private fun integrityToken(nonce: String?, result: MethodChannel.Result) {
+    if (nonce.isNullOrEmpty()) {
+      result.success(null)
+      return
+    }
+    try {
+      IntegrityManagerFactory.create(context.applicationContext)
+        .requestIntegrityToken(
+          IntegrityTokenRequest.builder().setNonce(nonce).build())
+        .addOnSuccessListener { result.success(it.token()) }
+        .addOnFailureListener { e ->
+          Log.i(TAG, "no integrity token: ${e.message}")
+          result.success(null)
+        }
+    } catch (e: Exception) {
+      Log.i(TAG, "integrity request failed", e)
+      result.success(null)
+    }
   }
 
   private fun prefs(): SharedPreferences =
