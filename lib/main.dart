@@ -81,11 +81,32 @@ class WrenApp extends StatelessWidget {
     // whole of adding a language — there is no second place to keep in step.
     localizationsDelegates: L.localizationsDelegates,
     supportedLocales: L.supportedLocales,
+    localeListResolutionCallback: (locales, supported) =>
+        basicLocaleListResolution(
+          locales?.map(canonicalLocale).toList(),
+          supported,
+        ),
     // No splash in the screenshot build: it animates, and a screenshot taken
     // during it catches the mark half-faded.
     home: home ?? const SplashGate(child: CapturePage()),
   );
 }
+
+/// The locale the phone reports, under the name the translations use.
+///
+/// iOS reports Norwegian Bokmål as `nb` (Nynorsk as `nn`); the translation is
+/// `app_no.arb`. Flutter matches language codes exactly, so a Norwegian phone
+/// matched nothing and fell through to the first supported locale — Arabic.
+/// The simulator footage of 2 October 2026 showed exactly that: the nb advert
+/// was the Arabic app with Norwegian cards around it.
+Locale canonicalLocale(Locale locale) => switch (locale.languageCode) {
+  'nb' || 'nn' => Locale.fromSubtags(
+    languageCode: 'no',
+    scriptCode: locale.scriptCode,
+    countryCode: locale.countryCode,
+  ),
+  _ => locale,
+};
 
 /// Where a place in the list came from.
 ///

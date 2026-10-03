@@ -1,19 +1,27 @@
 name: Advert creative
 
-# Records app footage in a simulator, generates text cards and composites a
-# ready-to-publish advert video. The output is one 1080x1920 MP4 per locale,
-# uploaded as a workflow artifact.
+# Renders the app's advert beats frame by frame, generates text cards and
+# composites a ready-to-publish advert video. The output is one 1080x1920 MP4
+# per locale, uploaded as a workflow artifact with a contact sheet beside it.
 #
 #   gh workflow run advert-creative.yml                          # en-GB
 #   gh workflow run advert-creative.yml -f locale=fr-FR          # French
 #   gh workflow run advert-creative.yml -f locale=all            # every locale in advert_strings.json
 #   gh workflow run advert-creative.yml -f beats="advert-the-list advert-which-city"
 #
-# This repo is public, so macOS runners are free.
+# No simulator. Until October 2026 the beats were recorded in one with
+# `simctl io recordVideo`, and two runs measured frame by frame showed the
+# recording could not be trusted (timestamps out of order in a quarter of the
+# clips, first-run stalls, a launch screen of 2-33 s). The beats are now drawn
+# by test/advert_render_test.dart on the test's fake clock — the same app and
+# choreography, every frame exactly where it should be. See store/render.py.
 #
-# locale=all fans out into a matrix: each locale records and composes on its
-# own runner in parallel, after a single shared Flutter build. The Runner.app
-# is tarred before upload to preserve iOS bundle symlinks.
+# macOS because the render uses Apple's own system fonts (San Francisco,
+# Georgia, Hiragino, PingFang, Apple SD Gothic Neo, SF Arabic), found on the
+# runner and never committed. This repo is public, so macOS runners are free.
+#
+# The App Store preview still comes from a real recording — advert-footage.yml —
+# because Apple requires previews to be captures of the app itself.
 
 on:
   workflow_dispatch:
@@ -23,43 +31,24 @@ on:
         type: string
         default: 'en-GB'
       beats:
-        description: 'Beat names, space-separated (blank = default beats)'
+        description: 'Beat names, space-separated (blank = every beat)'
         type: string
         default: ''
-      verbose:
-        description: 'Log every command and its output'
-        type: boolean
-        default: true
 
 env:
   FLUTTER_VERSION: '3.44.8'
 
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: Build app
-    runs-on: macos-26
-    timeout-minutes: 15
+  locales:
+    name: Resolve locales
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.locales.outputs.matrix }}
     steps:
       - uses: actions/checkout@v7
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - run: flutter pub get
-
-      - name: Check every scene renders
-        run: flutter test test/scene_render_test.dart --reporter compact
-
-      - name: Check the beats can be performed
-        run: flutter test test/advert_choreography_test.dart --reporter compact
-
-      - name: Build the app
-        run: flutter build ios --simulator --debug --dart-define=WREN_SHOTS=true
-
       - name: Resolve locales
         id: locales
         run: |
@@ -76,120 +65,69 @@ jobs:
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
           echo "Locales: $MATRIX"
 
-      - name: Package the built app
-        run: tar -czf runner-app.tar.gz -C build/ios/iphonesimulator Runner.app
-
-      - name: Share the built app
-        uses: actions/upload-artifact@v7
-        with:
-          name: runner-app
-          path: runner-app.tar.gz
-          retention-days: 1
-
   advert:
     name: ${{ matrix.locale }}
-    needs: build
+    needs: locales
     runs-on: macos-26
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       matrix:
-        locale: ${{ fromJson(needs.build.outputs.matrix) }}
+        locale: ${{ fromJson(needs.locales.outputs.matrix) }}
       fail-fast: false
     steps:
       - uses: actions/checkout@v7
-
-      - name: Download built app
-        uses: actions/download-artifact@v4
+      - uses: subosito/flutter-action@v2
         with:
-          name: runner-app
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
 
-      - name: Unpack the built app
-        run: |
-          mkdir -p build/ios/iphonesimulator
-          tar -xzf runner-app.tar.gz -C build/ios/iphonesimulator
-          echo "Runner.app unpacked at:"
-          ls -ld build/ios/iphonesimulator/Runner.app
+      - run: flutter pub get
 
       - name: Install compose dependencies
         run: |
           brew install ffmpeg
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install Pillow arabic-reshaper python-bidi
+          # fonttools: render.py prepares the system fonts and proves every
+          # character drawn is in one of them; compose.py refuses tofu the
+          # same way on the cards.
+          pip install Pillow arabic-reshaper python-bidi fonttools
 
-      - name: Record
+      - name: Render
         run: |
-          BEATS="${{ inputs.beats }}"
+          source .venv/bin/activate
           BEAT_ARGS=""
-          if [ -n "$BEATS" ]; then
-            for b in $BEATS; do
-              BEAT_ARGS="$BEAT_ARGS --beat $b"
-            done
-          fi
-
-          python3 -u store/record.py \
-            --keep-build \
-            $BEAT_ARGS \
-            --locale "${{ matrix.locale }}" \
-            ${{ inputs.verbose && '--verbose' || '' }}
+          for b in ${{ inputs.beats }}; do BEAT_ARGS="$BEAT_ARGS --beat $b"; done
+          python3 -u store/render.py --locale "${{ matrix.locale }}" $BEAT_ARGS
 
       - name: Compose
         run: |
           source .venv/bin/activate
-
-          BEATS="${{ inputs.beats }}"
           COMPOSE_BEATS=""
-          if [ -n "$BEATS" ]; then
-            COMPOSE_BEATS="--beats $BEATS"
+          if [ -n "${{ inputs.beats }}" ]; then
+            COMPOSE_BEATS="--beats ${{ inputs.beats }}"
           fi
+          python3 -u store/compose.py --locale "${{ matrix.locale }}" $COMPOSE_BEATS
 
-          python3 -u store/compose.py \
-            --locale "${{ matrix.locale }}" \
-            $COMPOSE_BEATS
-
-      - name: Clip report
+      - name: Contact sheet
         if: always()
         run: |
-          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
-          import pathlib
-          adverts = pathlib.Path("store/adverts")
-          if not adverts.exists():
-              print("No adverts produced.")
-          else:
-              print("| locale | file | size |")
-              print("| --- | --- | --- |")
-              for f in sorted(adverts.rglob("*.mp4")):
-                  locale = f.parent.name
-                  size = f.stat().st_size / 1e6
-                  print(f"| {locale} | {f.name} | {size:.1f} MB |")
-          print()
-
-          footage = pathlib.Path("store/footage")
-          if footage.exists():
-              import sys
-              sys.path.insert(0, "store")
-              from record import probe
-              print("| beat clip | seconds | frames | peak fps | size |")
-              print("| --- | --- | --- | --- | --- |")
-              for f in sorted(footage.rglob("*.mov")):
-                  secs, frames, ok, peak = probe(f)
-                  flag = "" if ok else " **NOT FINALISED**"
-                  print(f"| {f.relative_to(footage)}{flag} | {secs:.1f} "
-                        f"| {frames} | {peak:.0f} | {f.stat().st_size / 1e6:.1f} MB |")
-          PY
+          f=$(ls store/adverts/*/wren-advert.mp4 2>/dev/null | head -1)
+          if [ -n "$f" ]; then
+            # Two frames a second of the finished advert, to look at before
+            # downloading it.
+            ffmpeg -v error -y -i "$f" -vf "fps=2,scale=120:-1,tile=14x8" \
+              -frames:v 1 "store/adverts/contact-sheet.png"
+          fi
 
       - name: Upload advert
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: advert-${{ matrix.locale }}
-          path: store/adverts/**/*.mp4
-          if-no-files-found: warn
-
-      - name: Upload raw footage
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: footage-${{ matrix.locale }}
-          path: store/footage/**/*.mov
+          path: |
+            store/adverts/**/*.mp4
+            store/adverts/contact-sheet.png
+            store/render/*/manifest.json
           if-no-files-found: warn

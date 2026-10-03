@@ -25,6 +25,7 @@
 library;
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,10 @@ const advertLeadIn = 3.0;
 /// The `advert-` prefix keeps these clear of [sceneNames]; `shoot.py` iterates
 /// that list and must never try to photograph one of these.
 const advertBeats = <String, AdvertBeat>{
-  'advert-intro': AdvertBeat('splash', 5.0, _intro),
+  // 3.2s + the 0.5s tail ends at 3.7s: the splash's mark is fully in by 2.8s
+  // and starts fading out at 3.72s (splash.dart, Interval(0.93, 1.00) of 4s).
+  // At 5.0 the beat ended on 1.5s of empty ground.
+  'advert-intro': AdvertBeat('splash', 3.2, _intro),
   'advert-add': AdvertBeat('empty', 2.5, _add),
   'advert-the-list': AdvertBeat('01-the-list', 4.0, _theList),
   'advert-which-city': AdvertBeat('04-which-city', 4.0, _whichCity),
@@ -95,29 +99,99 @@ Widget? advertFor(String name) {
   return _withSentinel(_Stage(script: beat.script, child: scene));
 }
 
+/// Written to the app's tmp directory on the first frame, so `store/record.py`
+/// can start the beat's clock when the app draws rather than when launchd
+/// reports it. Those differ by anything from two to thirty-three seconds on a CI
+/// runner — a debug build's Dart start-up, spent on the white launch screen —
+/// and a fixed allowance either wastes a minute per beat or, as on 2 October
+/// 2026, records seven seconds of launch screen where the beat should be.
+///
+/// `record.py` reads this name out of this file, as it does [advertLeadIn].
+const advertFirstFrameFile = 'wren-first-frame.txt';
+
 /// A magenta marker in the status-bar zone, invisible in the final video
-/// (compose.py crops it) but detectable by [_find_content_start] to locate
-/// the exact frame where the app's UI first appears. Eliminates timing
-/// guesses that broke the splash beat on CI runners.
-Widget _withSentinel(Widget child) => Stack(
-  children: [
-    Positioned.fill(child: child),
-    const Positioned(
-      top: 2,
-      left: 2,
-      child: SizedBox(
-        width: 6,
-        height: 6,
-        child: ColoredBox(color: Color(0xFFFF00FF)),
+/// (compose.py crops it) but detectable by `store/clipscan.py` to locate the
+/// exact frame where the app's UI first appears and to prove that every frame
+/// after it is the app.
+Widget _withSentinel(Widget child) => _Sentinel(child: child);
+
+class _Sentinel extends StatefulWidget {
+  const _Sentinel({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_Sentinel> createState() => _SentinelState();
+}
+
+class _SentinelState extends State<_Sentinel> {
+  /// Flips every [_heartbeat], between two shades `clipscan.py` both reads as
+  /// the sentinel.
+  ///
+  /// `simctl io recordVideo` writes a frame only when the screen changes, so
+  /// without this a deliberate hold and a frozen display look identical in the
+  /// file — and on run 34 the display froze mid-beat in five clips, recording
+  /// none of the tap that followed. With it, the app is never still for longer
+  /// than [_heartbeat], and a longer gap between frames is a stall, which
+  /// `clipscan.py` refuses.
+  bool _beat = false;
+  Timer? _ticker;
+  static const _heartbeat = Duration(milliseconds: 200);
+
+  @override
+  void initState() {
+    super.initState();
+    // Only the screenshot build has a recorder waiting for it; the widget tests
+    // pump these beats too, and would fail on the timer left running.
+    if (!const bool.fromEnvironment('WREN_SHOTS')) return;
+    _ticker = Timer.periodic(_heartbeat, (_) {
+      if (mounted) setState(() => _beat = !_beat);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      try {
+        File(
+          '${Directory.systemTemp.path}/$advertFirstFrameFile',
+        ).writeAsStringSync(DateTime.now().toIso8601String());
+      } on FileSystemException catch (e) {
+        // record.py times out waiting and retries the beat, which says more
+        // than a crash would.
+        debugPrint('could not write $advertFirstFrameFile: $e');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      Positioned.fill(child: widget.child),
+      Positioned(
+        top: 2,
+        left: 2,
+        // Its own layer, so the heartbeat repaints six points, not the scene.
+        child: RepaintBoundary(
+          child: SizedBox(
+            width: 6,
+            height: 6,
+            child: ColoredBox(
+              color: _beat ? const Color(0xFFF000F0) : const Color(0xFFFF00FF),
+            ),
+          ),
+        ),
       ),
-    ),
-  ],
-);
+    ],
+  );
+}
 
 // --- the scripts -------------------------------------------------------------
 
 Future<void> _intro(Choreography c) async {
-  await c.hold(5.0);
+  await c.hold(3.2);
 }
 
 Future<void> _add(Choreography c) async {

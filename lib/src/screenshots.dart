@@ -210,11 +210,16 @@ Widget? sceneFor(String name) {
 
     // The list with the unlock owned, so the advert's publish tap reaches the
     // guide naming dialog instead of the paywall. Not a store screenshot.
+    //
+    // Named already, so the dialog opens filled in: the advert is rendered
+    // without a keyboard (test/advert_render_test.dart), and an empty field
+    // with nothing to type on is the one state of that dialog no phone shows.
     case '01-the-list-unlocked':
       return CapturePage(
         store: _SceneStore(),
         resolver: _SceneResolver(),
         files: StubFileSource(''),
+        initialGuideName: 'London, October',
         initialPending: [for (var i = 0; i < 5; i++) _place(i)],
         initialOwned: const {unlimitedProductId},
       );
