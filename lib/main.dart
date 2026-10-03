@@ -1210,8 +1210,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     if (Platform.isAndroid) {
       // Android's equivalent is Google's verdict on this device, bound to this
       // link. Null when Play declines, which sells exactly as before.
-      final token = await comp.playIntegrityToken(link);
-      return token == null ? null : ReelAuth.playIntegrity(token);
+      final proof = await comp.playIntegrityToken(link);
+      return proof == null
+          ? null
+          : ReelAuth.playIntegrity(proof.token, proof.device);
     }
     final jws = await comp.appTransactionJws();
     return jws == null ? null : ReelAuth.appTransaction(jws);

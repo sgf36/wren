@@ -2,6 +2,7 @@ package com.spencerfields.littlebird
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.provider.Settings
 import android.util.Log
 import com.google.android.play.core.integrity.IntegrityManagerFactory
 import com.google.android.play.core.integrity.IntegrityTokenRequest
@@ -53,6 +54,10 @@ class IdentityPlugin(private val context: Context) :
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     if (call.method == "integrityToken") {
       integrityToken(call.argument<String>("nonce"), result)
+      return
+    }
+    if (call.method == "androidId") {
+      result.success(androidId())
       return
     }
     if (call.method != "deviceId") {
@@ -120,6 +125,24 @@ class IdentityPlugin(private val context: Context) :
       result.success(null)
     }
   }
+
+  /**
+   * ANDROID_ID: since Android 8, one value per signing key, user and device,
+   * kept across uninstalling and reinstalling the app. The free sample is one
+   * read per phone, and this is what "phone" means. Hashed in Dart before it
+   * goes anywhere, and used for nothing else -- never for advertising and
+   * never joined to any other identifier.
+   *
+   * Deliberately not deviceId() above: that is a UUID this app mints, which a
+   * reinstall replaces, and it must never answer anything that costs money.
+   */
+  private fun androidId(): String? =
+    try {
+      Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    } catch (e: Exception) {
+      Log.i(TAG, "no ANDROID_ID", e)
+      null
+    }
 
   private fun prefs(): SharedPreferences =
     context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
