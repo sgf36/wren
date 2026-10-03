@@ -36,12 +36,14 @@ CREATE TABLE IF NOT EXISTS verifications (
 --
 -- An earlier attempt keyed it on a random id the app generated and sent. That is
 -- the thing this paragraph already forbade — a key the client chooses is a free
--- feature with extra steps — and it was stopped before it shipped. Play
--- Integrity issues no stable per-account id, so Android's answer (2026-10-03)
--- is device recall instead: a bit Google stores per phone, written only by this
--- Worker, surviving reinstall and factory reset. The usage row is keyed
--- `free:play:<nonce>`, which stops one token being spent twice; the bit is what
--- stops a second token. See judgeIntegrity in src/index.js.
+-- feature with extra steps — and it was stopped before it shipped. Android
+-- (2026-10-03) keys on `free:android:<SHA-256 of ANDROID_ID>`. That is not a
+-- key the client chooses: the same hash is bound into a Play Integrity token's
+-- nonce, and only Play's own copy of the app on a device passing integrity can
+-- mint one, so changing it means a modified app or a modified system, both
+-- refused. ANDROID_ID survives reinstalling the app and resets on a factory
+-- reset or a second user profile. Device recall, where Google enables it,
+-- adds a bit that survives the factory reset too. See judgeIntegrity.
 CREATE TABLE IF NOT EXISTS usage (
   auth_key TEXT    NOT NULL,
   ts       INTEGER NOT NULL

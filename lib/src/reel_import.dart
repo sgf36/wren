@@ -210,12 +210,12 @@ class ReelAuth {
       _b = null;
 
   /// The same free sample on Android: a Play Integrity token minted for this
-  /// link. Google decodes it for the Worker, and its device recall says
-  /// whether this phone has had its free read.
-  const ReelAuth.playIntegrity(String token)
+  /// link, and the phone it names (SHA-256 of ANDROID_ID). Google decodes the
+  /// token for the Worker, which allows one read per phone.
+  const ReelAuth.playIntegrity(String token, String device)
     : _kind = 'playintegrity',
       _a = token,
-      _b = null;
+      _b = device;
 
   final String _kind;
   final String _a;
@@ -225,7 +225,7 @@ class ReelAuth {
     'appstore' => {'kind': 'appstore', 'jws': _a},
     'play' => {'kind': 'play', 'purchaseToken': _a, 'productId': _b},
     'apptransaction' => {'kind': 'apptransaction', 'jws': _a},
-    'playintegrity' => {'kind': 'playintegrity', 'token': _a},
+    'playintegrity' => {'kind': 'playintegrity', 'token': _a, 'device': _b},
     _ => {'kind': 'comp', 'token': _a},
   };
 }

@@ -292,23 +292,26 @@ Future<String?> appTransactionJws() async {
   }
 }
 
-/// Google's signed verdict on this device, minted for one shared [link].
+/// Google's signed verdict on this device, minted for one shared [link], and
+/// the device it names.
 ///
-/// The Android route to the free sample. Android has no `appTransactionId`, so
-/// the Worker instead asks Play Integrity's *device recall* whether this phone
-/// has had its free read; Google keeps that answer across reinstalls and
-/// factory resets. Null on iOS and whenever Play declines -- no Play Store,
-/// no network, an emulator -- and null is answered with the paywall it would
-/// have shown anyway.
-///
-/// The token is bound to the link through its nonce, so it cannot be spent on
-/// a different post.
-Future<String?> playIntegrityToken(String link) async {
+/// The Android route to the free sample. Android has no `appTransactionId`,
+/// so the read is one per phone: `device` is SHA-256 of ANDROID_ID, which
+/// survives reinstalling the app, and the same hash is bound into the token's
+/// nonce so the Worker can tell it came from this phone and not from an edited
+/// request. Null on iOS and whenever Play declines -- no Play Store, no
+/// network, an emulator -- and null is answered with the paywall it would have
+/// shown anyway.
+Future<({String token, String device})?> playIntegrityToken(String link) async {
   if (!Platform.isAndroid) return null;
   try {
-    return await _channel.invokeMethod<String>('integrityToken', {
-      'nonce': await integrityNonce(link),
+    final androidId = await _channel.invokeMethod<String>('androidId');
+    if (androidId == null || androidId.isEmpty) return null;
+    final device = await deviceHash(androidId);
+    final token = await _channel.invokeMethod<String>('integrityToken', {
+      'nonce': await integrityNonce(link, device),
     });
+    return token == null ? null : (token: token, device: device);
   } on PlatformException {
     return null;
   } on MissingPluginException {
@@ -316,17 +319,34 @@ Future<String?> playIntegrityToken(String link) async {
   }
 }
 
-/// base64url(SHA-256(link) followed by 16 random bytes), unpadded.
+/// base64url SHA-256 of ANDROID_ID, unpadded: 43 characters.
 ///
-/// The Worker checks only the hash half: that is what ties a token to its
-/// link. The random half makes every token unique, which is what lets the
-/// Worker key a free read on the nonce and refuse to spend one token twice.
-/// Nothing about the person goes in it, as Google requires.
+/// The raw id never leaves the phone; the Worker keeps only this.
 @visibleForTesting
-Future<String> integrityNonce(String link, {Random? random}) async {
+Future<String> deviceHash(String androidId) async => base64Url
+    .encode((await Sha256().hash(utf8.encode(androidId))).bytes)
+    .replaceAll('=', '');
+
+/// base64url(SHA-256(link) || SHA-256(ANDROID_ID) || 16 random bytes),
+/// unpadded.
+///
+/// The Worker checks the first two parts: the link half ties a token to one
+/// share, the device half to the `device` sent beside it. The random half
+/// makes every token unique. Nothing readable about the person goes in it, as
+/// Google requires.
+@visibleForTesting
+Future<String> integrityNonce(
+  String link,
+  String device, {
+  Random? random,
+}) async {
   final hash = await Sha256().hash(utf8.encode(link));
   final rng = random ?? Random.secure();
-  final bytes = [...hash.bytes, for (var i = 0; i < 16; i++) rng.nextInt(256)];
+  final bytes = [
+    ...hash.bytes,
+    ...base64Url.decode(base64Url.normalize(device)),
+    for (var i = 0; i < 16; i++) rng.nextInt(256),
+  ];
   return base64Url.encode(bytes).replaceAll('=', '');
 }
 

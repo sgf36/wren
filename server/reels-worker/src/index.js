@@ -402,39 +402,38 @@ export const INTEGRITY_MAX_AGE_MS = 10 * 60 * 1000;
  * Whether a decoded Play Integrity verdict earns this device its free read.
  *
  * Android has no `appTransactionId`: Google issues nothing that names the
- * account's download of the app. What it does offer is **device recall** --
- * three bits per device, stored by Google, written only by this server with
- * a token Google signed, and kept across uninstalling the app and resetting
- * the phone. `bitFirst` set means "this device has had its free read". That
- * is a per-device allowance where Apple's is per-account, which is the honest
- * difference between the two platforms and is the stronger of the two against
- * the abuse that matters here: a reinstall or a new Google account does not
- * clear it.
+ * account's download of the app. So the identity is the **device**, in two
+ * layers:
  *
- * **The three bits are shared by every app on the developer account**, so
- * Easy-Post Mobile Companion reads and writes the same three. `bitFirst` is
+ * 1. **`ANDROID_ID`**, which since Android 8 is scoped to the app's signing
+ *    key, the user and the device, and survives uninstalling and reinstalling
+ *    the app. The app sends SHA-256 of it as `device`, and binds the same hash
+ *    into the token's nonce. A genuine app on a genuine phone cannot send a
+ *    different one -- changing it means a modified app (not PLAY_RECOGNIZED)
+ *    or a modified system (not MEETS_DEVICE_INTEGRITY) -- so this is not an id
+ *    the client chooses, which is what schema.sql forbids. It resets on a
+ *    factory reset or a second user profile on the phone.
+ * 2. **Device recall**, when Google has switched it on for this app (a beta):
+ *    a bit Google keeps per phone, surviving a factory reset too. Absent from
+ *    the verdict until then, which is not a refusal; present with `bitFirst`
+ *    set is.
+ *
+ * **The three recall bits are shared by every app on the developer account**,
+ * so Easy-Post Mobile Companion reads and writes the same three. `bitFirst` is
  * Wren's. Any other app that starts using device recall must use another bit.
  *
  * Pure, and kept apart from the network calls, so every rule below is tested
- * against a verdict rather than against Google.
+ * against a verdict rather than against Google. Fails closed throughout:
+ * not Play's copy, not licensed, not a genuine device, a stale token, a nonce
+ * that does not carry SHA-256 of this link and of this device -- each is no
+ * free read, answered with `not_entitled` like every other refusal.
  *
- * Fails closed throughout. The cases that most need saying:
- *
- * * **No `deviceRecall` in the verdict means no free read.** It is absent
- *   until the feature is switched on for this app in Play Console, and
- *   switching it on needs Google's beta acceptance. Until then Android
- *   behaves exactly as it did before this existed: the paywall comes first.
- * * The nonce must carry SHA-256 of the link being read, so a token minted
- *   for one share cannot be spent on another.
- * * Not a genuine device, not Play's own copy of the app, or not a licensed
- *   install: no free read. Each is what an emulator farm minting fresh
- *   devices looks like.
- *
- * Returns `{ nonce }` when the read is granted -- the nonce becomes the
- * identity, so the lifetime quota stops the same token being spent twice --
- * and null otherwise, which the caller answers with `not_entitled`.
+ * Returns `{ recall }` -- whether device recall is in play, so the caller
+ * knows whether to mark it -- or null.
  */
-export async function judgeIntegrity(payload, url, now = Date.now()) {
+export async function judgeIntegrity(payload, url, device, now = Date.now()) {
+  if (!DEVICE_HASH.test(String(device || ''))) return null;
+
   const req = payload?.requestDetails;
   if (req?.requestPackageName !== BUNDLE_ID) return null;
 
@@ -444,41 +443,49 @@ export async function judgeIntegrity(payload, url, now = Date.now()) {
 
   if (payload?.accountDetails?.appLicensingVerdict !== 'LICENSED') return null;
 
-  const device = payload?.deviceIntegrity;
-  const recognised = device?.deviceRecognitionVerdict;
+  const integrity = payload?.deviceIntegrity;
+  const recognised = integrity?.deviceRecognitionVerdict;
   if (!Array.isArray(recognised)
     || !recognised.includes('MEETS_DEVICE_INTEGRITY')) return null;
 
-  const recall = device?.deviceRecall?.values;
-  if (!recall || typeof recall !== 'object') return null;
-  if (recall.bitFirst === true) return null;
+  const values = integrity?.deviceRecall?.values;
+  const recall = !!values && typeof values === 'object';
+  if (recall && values.bitFirst === true) return null;
 
   const minted = Number(req?.timestampMillis);
   if (!Number.isFinite(minted)) return null;
   if (now - minted > INTEGRITY_MAX_AGE_MS || minted - now > 60_000) return null;
 
   const nonce = typeof req?.nonce === 'string' ? req.nonce : '';
-  if (!(await nonceBindsUrl(nonce, url))) return null;
-  return { nonce };
+  if (!(await nonceBinds(nonce, url, device))) return null;
+  return { recall };
 }
 
+/** base64url of a SHA-256: 43 characters, unpadded. */
+export const DEVICE_HASH = /^[A-Za-z0-9_-]{43}$/;
+
 /**
- * The nonce is base64url(SHA-256(link) || 16 random bytes). The random half
- * makes every token unique; the hash half is the only part checked, and it is
- * what ties the token to the link it was minted for.
+ * The nonce is base64url(SHA-256(link) || SHA-256(ANDROID_ID) || 16 random
+ * bytes). The link half ties a token to one share; the device half ties it to
+ * the `device` sent beside it, so neither can be swapped in transit; the
+ * random half makes every token unique.
  */
-export async function nonceBindsUrl(nonce, url) {
+export async function nonceBinds(nonce, url, device) {
   if (typeof url !== 'string' || !url) return false;
   let raw;
+  let dev;
   try {
     raw = fromB64Url(nonce);
+    dev = fromB64Url(String(device));
   } catch {
     return false;
   }
-  if (raw.length < 48) return false;
-  const want = new Uint8Array(await crypto.subtle.digest(
+  if (raw.length < 80 || dev.length !== 32) return false;
+  const link = new Uint8Array(await crypto.subtle.digest(
     'SHA-256', new TextEncoder().encode(url)));
-  for (let i = 0; i < 32; i += 1) if (raw[i] !== want[i]) return false;
+  for (let i = 0; i < 32; i += 1) {
+    if (raw[i] !== link[i] || raw[32 + i] !== dev[i]) return false;
+  }
   return true;
 }
 
@@ -493,9 +500,10 @@ export async function nonceBindsUrl(nonce, url) {
  * Android user simply meets the paywall first, as before.
  */
 export async function verifyPlayIntegrity(
-  env, token, url, fetchFn = fetch, mint = accessToken,
+  env, token, url, device, fetchFn = fetch, mint = accessToken,
 ) {
   if (typeof token !== 'string' || !token) return null;
+  if (!DEVICE_HASH.test(String(device || ''))) return null;
   const bearer = await mint(
     env.PLAY_INTEGRITY_SA_KEY || env.PLAY_SA_KEY, INTEGRITY_SCOPE);
   if (!bearer) return null;
@@ -510,14 +518,18 @@ export async function verifyPlayIntegrity(
     });
   if (!res.ok) return null;
   const body = await res.json();
-  const judged = await judgeIntegrity(body?.tokenPayloadExternal, url);
+  const judged = await judgeIntegrity(body?.tokenPayloadExternal, url, device);
   if (!judged) return null;
 
+  // Keyed on the device, so the lifetime quota of one is one per phone, and a
+  // second token from the same phone finds the first read already counted.
+  // The recall token travels only when recall is in play, because writing a
+  // bit Google has not enabled would fail and refuse a read that is owed.
   return {
-    key: `free:play:${judged.nonce}`,
+    key: `free:android:${device}`,
     store: 'free',
     productId: null,
-    integrityToken: token,
+    integrityToken: judged.recall ? token : null,
   };
 }
 
@@ -698,7 +710,7 @@ export async function identify(env, auth, url) {
     // Needs the link, because the token is bound to it.
     if (auth?.kind === 'playintegrity') {
       if (Number(env.FREE_REELS ?? 1) < 1) return null;
-      return await verifyPlayIntegrity(env, auth.token, url);
+      return await verifyPlayIntegrity(env, auth.token, url, auth.device);
     }
   } catch {
     return null;

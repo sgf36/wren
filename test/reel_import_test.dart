@@ -230,12 +230,16 @@ void main() {
       });
       await readReel(
         'https://www.instagram.com/p/ABC/',
-        auth: const ReelAuth.playIntegrity('integrity.token'),
+        auth: const ReelAuth.playIntegrity('integrity.token', 'device.hash'),
         send: http.send,
       );
       expect(http.sent.single, {
         'url': 'https://www.instagram.com/p/ABC/',
-        'auth': {'kind': 'playintegrity', 'token': 'integrity.token'},
+        'auth': {
+          'kind': 'playintegrity',
+          'token': 'integrity.token',
+          'device': 'device.hash',
+        },
       });
     });
 
