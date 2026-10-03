@@ -96,5 +96,36 @@
     "it": "Wren.\nGratis sull'App Store.",
     "ar-SA": "Wren.\nمجّاناً على App Store.",
     "ru": "Wren.\nБесплатно в App Store."
+  },
+  "_doc_android": "The Android edition (compose.py --platform android) uses solution_android and cta_android in place of solution and cta: Android has no Apple Maps, so the claim is that the places go to the map app on the phone, and the store is Google Play. 'The map app' follows each language's own wording of emptyBodyAndroid in lib/l10n, so the advert and the app say it the same way. The problem lines are shared.",
+  "solution_android": {
+    "ar-SA": "Wren يقرأها\nمن لقطة شاشة\nويرسلها إلى\nتطبيق الخرائط على هاتفك.",
+    "da": "Wren læser dem\nfra et skærmbillede\nog sender dem\ntil din kortapp.",
+    "de-DE": "Wren liest sie\naus einem Screenshot\nund schickt sie\nin deine Karten-App.",
+    "en-GB": "Wren reads them\noff a screenshot\nand sends them\nto the map app on your phone.",
+    "fr-FR": "Wren les retrouve\ndans une capture d'écran\net les envoie\ndans ton app de cartes.",
+    "it": "Wren li trova\nin uno screenshot\ne li manda\nnella tua app di mappe.",
+    "ja": "Wrenがスクリーンショットから\nすべての場所を読み取り\nお使いの地図アプリに送信。",
+    "ko": "Wren이 스크린샷에서\n모든 장소를 읽어\n휴대폰의 지도 앱으로\n보냅니다.",
+    "nb": "Wren leser dem\nfra et skjermbilde\nog sender dem\ntil kartappen din.",
+    "nl": "Wren leest ze\nuit een screenshot\nen stuurt ze\nnaar je kaart-app.",
+    "ru": "Wren находит их\nна скриншоте\nи отправляет\nв твоё приложение карт.",
+    "sv": "Wren läser dem\nfrån en skärmbild\noch skickar dem\ntill din kartapp.",
+    "zh-Hant": "Wren從截圖中\n讀取每個地方\n並傳送到你的地圖App。"
+  },
+  "cta_android": {
+    "ar-SA": "Wren.\nمجّاناً على Google Play.",
+    "da": "Wren.\nGratis på Google Play.",
+    "de-DE": "Wren.\nKostenlos bei Google Play.",
+    "en-GB": "Wren.\nFree on Google Play.",
+    "fr-FR": "Wren.\nGratuit sur Google Play.",
+    "it": "Wren.\nGratis su Google Play.",
+    "ja": "Wren。\nGoogle Playで無料。",
+    "ko": "Wren.\nGoogle Play에서 무료.",
+    "nb": "Wren.\nGratis på Google Play.",
+    "nl": "Wren.\nGratis op Google Play.",
+    "ru": "Wren.\nБесплатно в Google Play.",
+    "sv": "Wren.\nGratis på Google Play.",
+    "zh-Hant": "Wren。\n在Google Play免費下載。"
   }
 }

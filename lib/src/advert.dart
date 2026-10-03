@@ -80,6 +80,19 @@ const advertBeats = <String, AdvertBeat>{
     6.0,
     _correctAPlace,
   ),
+
+  // The Android edition. Same story, same timings, and the same scripts where
+  // the screen is the same; only the last beat differs, because Android has
+  // no Apple Maps guide to make. Its payoff is the sheet that hands the list
+  // to a map app on the phone -- the whole Android product.
+  'advert-android-add': AdvertBeat('android-empty', 2.5, _add),
+  'advert-android-which-city': AdvertBeat(
+    'android-which-city',
+    4.0,
+    _whichCity,
+  ),
+  'advert-android-the-list': AdvertBeat('android-the-list', 4.0, _theList),
+  'advert-android-send': AdvertBeat('android-the-list', 10.0, _send),
 };
 
 /// The beat named, or null so `main` falls through to [sceneFor] and then to the
@@ -215,6 +228,13 @@ Future<void> _makeGuide(Choreography c) async {
   final l = L.of(c.context);
   await c.hold(1.0);
   await c.tapText(l.makeGuide(5));
+  await c.hold(8.0);
+}
+
+Future<void> _send(Choreography c) async {
+  final l = L.of(c.context);
+  await c.hold(1.0);
+  await c.tapText(l.sendPlacesTo);
   await c.hold(8.0);
 }
 
