@@ -255,6 +255,7 @@ export const COMP_ROLES_WITH_REELS = Object.freeze(['everything', 'admin']);
 /** What each service account may reach, and nothing wider. */
 export const PLAY_SCOPE = 'https://www.googleapis.com/auth/androidpublisher';
 export const VERTEX_SCOPE = 'https://www.googleapis.com/auth/cloud-platform';
+export const INTEGRITY_SCOPE = 'https://www.googleapis.com/auth/playintegrity';
 export const REEL_PRODUCTS = Object.freeze([
   'com.spencerfields.littlebird.everything',
   'com.spencerfields.littlebird.reels.upgrade',
@@ -389,6 +390,166 @@ export async function verifyAppTransaction(env, jws) {
   return { key: `free:${id}`, store: 'free', productId: null };
 }
 
+/* ------------------------------------------- the free sample on Android */
+
+/**
+ * How old a Play Integrity token may be when it arrives. A token is minted for
+ * one share, moments before it is sent, so anything older is being replayed.
+ */
+export const INTEGRITY_MAX_AGE_MS = 10 * 60 * 1000;
+
+/**
+ * Whether a decoded Play Integrity verdict earns this device its free read.
+ *
+ * Android has no `appTransactionId`: Google issues nothing that names the
+ * account's download of the app. What it does offer is **device recall** --
+ * three bits per device, stored by Google, written only by this server with
+ * a token Google signed, and kept across uninstalling the app and resetting
+ * the phone. `bitFirst` set means "this device has had its free read". That
+ * is a per-device allowance where Apple's is per-account, which is the honest
+ * difference between the two platforms and is the stronger of the two against
+ * the abuse that matters here: a reinstall or a new Google account does not
+ * clear it.
+ *
+ * **The three bits are shared by every app on the developer account**, so
+ * Easy-Post Mobile Companion reads and writes the same three. `bitFirst` is
+ * Wren's. Any other app that starts using device recall must use another bit.
+ *
+ * Pure, and kept apart from the network calls, so every rule below is tested
+ * against a verdict rather than against Google.
+ *
+ * Fails closed throughout. The cases that most need saying:
+ *
+ * * **No `deviceRecall` in the verdict means no free read.** It is absent
+ *   until the feature is switched on for this app in Play Console, and
+ *   switching it on needs Google's beta acceptance. Until then Android
+ *   behaves exactly as it did before this existed: the paywall comes first.
+ * * The nonce must carry SHA-256 of the link being read, so a token minted
+ *   for one share cannot be spent on another.
+ * * Not a genuine device, not Play's own copy of the app, or not a licensed
+ *   install: no free read. Each is what an emulator farm minting fresh
+ *   devices looks like.
+ *
+ * Returns `{ nonce }` when the read is granted -- the nonce becomes the
+ * identity, so the lifetime quota stops the same token being spent twice --
+ * and null otherwise, which the caller answers with `not_entitled`.
+ */
+export async function judgeIntegrity(payload, url, now = Date.now()) {
+  const req = payload?.requestDetails;
+  if (req?.requestPackageName !== BUNDLE_ID) return null;
+
+  const app = payload?.appIntegrity;
+  if (app?.appRecognitionVerdict !== 'PLAY_RECOGNIZED') return null;
+  if (app?.packageName !== BUNDLE_ID) return null;
+
+  if (payload?.accountDetails?.appLicensingVerdict !== 'LICENSED') return null;
+
+  const device = payload?.deviceIntegrity;
+  const recognised = device?.deviceRecognitionVerdict;
+  if (!Array.isArray(recognised)
+    || !recognised.includes('MEETS_DEVICE_INTEGRITY')) return null;
+
+  const recall = device?.deviceRecall?.values;
+  if (!recall || typeof recall !== 'object') return null;
+  if (recall.bitFirst === true) return null;
+
+  const minted = Number(req?.timestampMillis);
+  if (!Number.isFinite(minted)) return null;
+  if (now - minted > INTEGRITY_MAX_AGE_MS || minted - now > 60_000) return null;
+
+  const nonce = typeof req?.nonce === 'string' ? req.nonce : '';
+  if (!(await nonceBindsUrl(nonce, url))) return null;
+  return { nonce };
+}
+
+/**
+ * The nonce is base64url(SHA-256(link) || 16 random bytes). The random half
+ * makes every token unique; the hash half is the only part checked, and it is
+ * what ties the token to the link it was minted for.
+ */
+export async function nonceBindsUrl(nonce, url) {
+  if (typeof url !== 'string' || !url) return false;
+  let raw;
+  try {
+    raw = fromB64Url(nonce);
+  } catch {
+    return false;
+  }
+  if (raw.length < 48) return false;
+  const want = new Uint8Array(await crypto.subtle.digest(
+    'SHA-256', new TextEncoder().encode(url)));
+  for (let i = 0; i < 32; i += 1) if (raw[i] !== want[i]) return false;
+  return true;
+}
+
+/**
+ * A Play Integrity token, decoded by Google and judged above.
+ *
+ * Decoding is Google's to do: the token is encrypted to keys only Google
+ * holds for this app, which is why this is a network call rather than a
+ * signature check. The service account must belong to the Cloud project
+ * linked to the app under Play Console's App integrity page, with the Play
+ * Integrity API enabled there -- otherwise every call answers 403 and every
+ * Android user simply meets the paywall first, as before.
+ */
+export async function verifyPlayIntegrity(
+  env, token, url, fetchFn = fetch, mint = accessToken,
+) {
+  if (typeof token !== 'string' || !token) return null;
+  const bearer = await mint(
+    env.PLAY_INTEGRITY_SA_KEY || env.PLAY_SA_KEY, INTEGRITY_SCOPE);
+  if (!bearer) return null;
+
+  const res = await fetchFn(
+    `https://playintegrity.googleapis.com/v1/${BUNDLE_ID}:decodeIntegrityToken`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${bearer}`,
+        'Content-Type': 'application/json' },
+      body: JSON.stringify({ integrity_token: token }),
+    });
+  if (!res.ok) return null;
+  const body = await res.json();
+  const judged = await judgeIntegrity(body?.tokenPayloadExternal, url);
+  if (!judged) return null;
+
+  return {
+    key: `free:play:${judged.nonce}`,
+    store: 'free',
+    productId: null,
+    integrityToken: token,
+  };
+}
+
+/**
+ * Sets or clears this device's `bitFirst`. True on success only.
+ *
+ * Written BEFORE the post is read, and cleared again if reading fails. The
+ * other order -- read, then mark -- leaves the whole read as a window in which
+ * a second share minted on the same device also sees the bit unset, and a
+ * read is tens of seconds and costs money. Google propagates a write within
+ * seconds, so marking first shrinks that window to almost nothing.
+ */
+export async function writeRecall(
+  env, token, spent, fetchFn = fetch, mint = accessToken,
+) {
+  const bearer = await mint(
+    env.PLAY_INTEGRITY_SA_KEY || env.PLAY_SA_KEY, INTEGRITY_SCOPE);
+  if (!bearer) return false;
+  const res = await fetchFn(
+    `https://playintegrity.googleapis.com/v1/${BUNDLE_ID}/deviceRecall:write`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${bearer}`,
+        'Content-Type': 'application/json' },
+      // Only bitFirst. An unnamed bit is left as it is, and the other two are
+      // not Wren's to touch.
+      body: JSON.stringify({ integrityToken: token,
+        newValues: { bitFirst: spent } }),
+    });
+  return res.ok;
+}
+
 /**
  * Apple's root certificate, as DER.
  *
@@ -503,7 +664,7 @@ export async function accessToken(saKey, scope) {
  * reading "could not tell" as "probably fine" — is how a paid feature quietly
  * becomes a free one.
  */
-export async function identify(env, auth) {
+export async function identify(env, auth, url) {
   try {
     if (auth?.kind === 'comp') {
       const claims = await verifiedComp(env, auth.token);
@@ -532,6 +693,12 @@ export async function identify(env, auth) {
     if (auth?.kind === 'apptransaction') {
       if (Number(env.FREE_REELS ?? 1) < 1) return null;
       return await verifyAppTransaction(env, auth.jws);
+    }
+    // The same sample on Android, vouched for by Google rather than Apple.
+    // Needs the link, because the token is bound to it.
+    if (auth?.kind === 'playintegrity') {
+      if (Number(env.FREE_REELS ?? 1) < 1) return null;
+      return await verifyPlayIntegrity(env, auth.token, url);
     }
   } catch {
     return null;
@@ -1123,7 +1290,7 @@ async function handleProcess(request, env) {
   const target = reelTarget(payload?.url);
   if (!target) throw new Refusal(FAILURES.unsupportedHost, 400);
 
-  const who = await identify(env, payload?.auth);
+  const who = await identify(env, payload?.auth, payload?.url);
   if (!who) throw new Refusal(FAILURES.notEntitled, 402);
 
   const db = env.DB;
@@ -1170,7 +1337,22 @@ async function handleProcess(request, env) {
   if (!claimed.meta?.changes) throw new Refusal(FAILURES.busy, 409);
 
   try {
-    const result = await placesFromPost(env, target);
+    // Android's free read is marked spent with Google before any money is,
+    // and handed back if the read fails -- see writeRecall for why that order.
+    // A mark that cannot be written is a free read that cannot be recorded,
+    // so it is refused rather than given away unrecorded.
+    const recall = who.integrityToken;
+    if (recall && !(await writeRecall(env, recall, true))) {
+      throw new Refusal(FAILURES.notEntitled, 402);
+    }
+
+    let result;
+    try {
+      result = await placesFromPost(env, target);
+    } catch (err) {
+      if (recall) await writeRecall(env, recall, false).catch(() => false);
+      throw err;
+    }
 
     // Usage is recorded on success only. A vendor outage is not something to
     // charge against somebody's quota, and "it failed and used one anyway" is

@@ -1114,14 +1114,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // Whether a free read is still available is the server's to answer, not
     // this. A counter kept here would be wrong the moment the app was
     // reinstalled, and would have to be believed by the thing it is lying to.
-    var auth = await _reelAuth();
+    var auth = await _reelAuth(link);
     if (auth == null && !_entitlement.reels) {
-      // No free sample to be had — Android, iOS below 18.4, or StoreKit
-      // declined. The paywall opens exactly as it did before any of this
+      // No free sample to be had — iOS below 18.4, StoreKit or Play declined. The paywall opens exactly as it did before any of this
       // existed, which is worse for them and not wrong.
       if (await _sell(PaywallReason.reels) != _Gate.through) return;
       if (!mounted) return;
-      auth = await _reelAuth();
+      auth = await _reelAuth(link);
     }
     if (!mounted) return;
     if (auth == null) {
@@ -1189,7 +1188,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   ///
   /// A purchase is preferred over a complimentary token because it is the
   /// user's own and cannot be withdrawn.
-  Future<ReelAuth?> _reelAuth() async {
+  Future<ReelAuth?> _reelAuth(String link) async {
     final proof = await StoreUnlockStore.reelProof();
     if (proof != null) {
       return proof.store == 'play'
@@ -1206,8 +1205,14 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     }
 
     // Nothing owned. Apple's own statement that this account downloaded the app
-    // buys one read, and the server decides whether one is still going. Null on
-    // Android and below iOS 18.4, where the caller sells as it always did.
+    // buys one read, and the server decides whether one is still going. Null
+    // below iOS 18.4, where the caller sells as it always did.
+    if (Platform.isAndroid) {
+      // Android's equivalent is Google's verdict on this device, bound to this
+      // link. Null when Play declines, which sells exactly as before.
+      final token = await comp.playIntegrityToken(link);
+      return token == null ? null : ReelAuth.playIntegrity(token);
+    }
     final jws = await comp.appTransactionJws();
     return jws == null ? null : ReelAuth.appTransaction(jws);
   }
@@ -1254,7 +1259,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     if (await _sell(PaywallReason.reels) != _Gate.through) return null;
     if (!mounted) return null;
 
-    final bought = await _reelAuth();
+    final bought = await _reelAuth(link);
     if (!mounted) return null;
     if (bought == null) {
       setState(() => _status = l.reelNeedsRestore);

@@ -31,6 +31,7 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter/foundation.dart';
@@ -289,6 +290,44 @@ Future<String?> appTransactionJws() async {
     // clients simply have no free sample.
     return null;
   }
+}
+
+/// Google's signed verdict on this device, minted for one shared [link].
+///
+/// The Android route to the free sample. Android has no `appTransactionId`, so
+/// the Worker instead asks Play Integrity's *device recall* whether this phone
+/// has had its free read; Google keeps that answer across reinstalls and
+/// factory resets. Null on iOS and whenever Play declines -- no Play Store,
+/// no network, an emulator -- and null is answered with the paywall it would
+/// have shown anyway.
+///
+/// The token is bound to the link through its nonce, so it cannot be spent on
+/// a different post.
+Future<String?> playIntegrityToken(String link) async {
+  if (!Platform.isAndroid) return null;
+  try {
+    return await _channel.invokeMethod<String>('integrityToken', {
+      'nonce': await integrityNonce(link),
+    });
+  } on PlatformException {
+    return null;
+  } on MissingPluginException {
+    return null;
+  }
+}
+
+/// base64url(SHA-256(link) followed by 16 random bytes), unpadded.
+///
+/// The Worker checks only the hash half: that is what ties a token to its
+/// link. The random half makes every token unique, which is what lets the
+/// Worker key a free read on the nonce and refuse to spend one token twice.
+/// Nothing about the person goes in it, as Google requires.
+@visibleForTesting
+Future<String> integrityNonce(String link, {Random? random}) async {
+  final hash = await Sha256().hash(utf8.encode(link));
+  final rng = random ?? Random.secure();
+  final bytes = [...hash.bytes, for (var i = 0; i < 16; i++) rng.nextInt(256)];
+  return base64Url.encode(bytes).replaceAll('=', '');
 }
 
 /// Whether this device holds a valid complimentary unlock. Offline, every time
