@@ -144,7 +144,7 @@
 
 
 
-    <p class="updated">Last updated 17 August 2026</p>
+    <p class="updated">Last updated 3 October 2026</p>
 
 
 
@@ -202,7 +202,7 @@
     Wren runs, each of them only when you choose it: entering a complimentary
     code sends that code and a random identifier for this installation, and
     sharing a reel or a post sends its link along with proof that you bought the
-    feature. Nothing else about you is collected, stored or shared. No account,
+    feature. If you have not bought it, the first post you share is read free: to allow that once per phone, Wren sends a one-way fingerprint of your phone's Android ID (a number Android gives each app, which does not change when you reinstall) and Google's confirmation that the request comes from the genuine Wren app. Only the fingerprint is kept, and only to recognise that this phone has had its free read. It is never used for advertising and never joined to anything else. Nothing else about you is collected, stored or shared. No account,
     no sign-in, no analytics, no advertising identifier, no crash
     reporting.</p>
 
@@ -240,7 +240,7 @@
 
     <p>The second is a complimentary code and a random identifier, described
     next. The third is the address of a reel or post you choose to share,
-    described after that.</p>
+    described after that. If you have not bought the feature, a one-way fingerprint of your phone goes with the first post you share, so that it can be read free once per phone; that is described there too.</p>
 
   </section>
 
@@ -288,6 +288,8 @@
     screenshot, and no identifier for you. On Android that proof is the purchase
     token Google Play issued for the purchase, which the server checks with
     Google; a complimentary code works in its place.</p>
+
+    <p><strong>If you have not bought it, the first post is read free, once per phone.</strong> In place of a purchase, the app sends a one-way fingerprint (SHA-256) of the phone's Android ID and a Play Integrity token, which the server has Google check to confirm that the request comes from Wren as installed from Google Play, on a genuine device. The fingerprint is stored with that one read so the phone is not given a second; the Android ID itself never leaves the phone. Where Google offers it, the server may also set a flag that Google keeps for this phone, so that the free read is not given again after a factory reset.</p>
 
     <p>The server — a Cloudflare Worker run by the developer — fetches that
     post, has a language model read the place names out of its caption or its

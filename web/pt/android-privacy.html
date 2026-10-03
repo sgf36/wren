@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Última atualização a 17 de agosto de 2026</p>
+    <p class="updated">Última atualização a 3 de outubro de 2026</p>
 
 
 
@@ -190,7 +190,7 @@
 
     <h2>O que a Wren recolhe</h2>
 
-    <p>Praticamente nada, e apenas aquilo que pedir. Duas coisas chegam a um servidor gerido pelo Wren, cada uma delas apenas quando você a escolhe: introduzir um código de oferta envia esse código e um identificador aleatório desta instalação, e partilhar um reel ou uma publicação envia a sua ligação juntamente com a prova de que comprou a funcionalidade. Nada mais sobre si é recolhido, armazenado ou partilhado. Sem conta, sem início de sessão, sem análises, sem identificador de publicidade, sem relatórios de falhas.</p>
+    <p>Praticamente nada, e apenas aquilo que pedir. Duas coisas chegam a um servidor gerido pelo Wren, cada uma delas apenas quando você a escolhe: introduzir um código de oferta envia esse código e um identificador aleatório desta instalação, e partilhar um reel ou uma publicação envia a sua ligação juntamente com a prova de que comprou a funcionalidade. Se não a comprou, a primeira publicação que partilhar é lida gratuitamente: para permitir isso uma vez por telemóvel, o Wren envia uma impressão digital irreversível do Android ID do seu telemóvel (um número que o Android atribui a cada aplicação e que não muda quando a reinstala) e a confirmação da Google de que o pedido provém da aplicação Wren genuína. Apenas a impressão digital é guardada, e apenas para reconhecer que este telemóvel já teve a sua leitura gratuita. Nunca é usada para publicidade nem associada a qualquer outra coisa. Nada mais sobre si é recolhido, armazenado ou partilhado. Sem conta, sem início de sessão, sem análises, sem identificador de publicidade, sem relatórios de falhas.</p>
 
     <p>Se não fizer nenhuma das duas coisas, o Wren nunca contacta um servidor próprio.</p>
 
@@ -214,7 +214,7 @@
 
     <p>A cidade é uma que <em>você</em> escolheu na aplicação. O Wren nunca pergunta onde está o seu telemóvel — não existe permissão de localização, propositadamente. Só pergunta onde se encontra um determinado local.</p>
 
-    <p>A segunda é um código de oferta e um identificador aleatório, descritos a seguir. A terceira é o endereço de um reel ou publicação que escolhe partilhar, descrito depois disso.</p>
+    <p>A segunda é um código de oferta e um identificador aleatório, descritos a seguir. A terceira é o endereço de um reel ou publicação que escolhe partilhar, descrito depois disso. Se não comprou a funcionalidade, uma impressão digital irreversível do seu telemóvel acompanha a primeira publicação que partilhar, para que possa ser lida gratuitamente uma vez por telemóvel; isso também é descrito lá.</p>
 
   </section>
 
@@ -239,6 +239,8 @@
     <p>Partilhar a ligação de um reel ou de uma publicação é a única parte do Wren que envia algo escolhido por si a um servidor gerido pelo Wren. O Wren não consegue ler uma publicação no telemóvel: o menu de partilha entrega um endereço web e nunca o vídeo, pelo que a publicação tem de ser obtida a partir de algum lugar.</p>
 
     <p><strong>O que é enviado é a ligação, e a prova de que comprou a funcionalidade.</strong> Mais nada — sem nome, sem endereço de email, sem localização, sem captura de ecrã, e sem identificador seu. No Android, essa prova é o token de compra emitido pela Google Play para a compra, que o servidor verifica junto da Google; um código de oferta funciona em seu lugar.</p>
+
+    <p><strong>Se não a comprou, a primeira publicação é lida gratuitamente, uma vez por telemóvel.</strong> Em vez de uma compra, a aplicação envia uma impressão digital irreversível (SHA-256) do Android ID do telemóvel e um token Play Integrity, que o servidor pede à Google para verificar, de modo a confirmar que o pedido provém do Wren tal como instalado a partir do Google Play, num dispositivo genuíno. A impressão digital é guardada com essa única leitura para que o telemóvel não receba uma segunda; o próprio Android ID nunca sai do telemóvel. Quando a Google o disponibiliza, o servidor pode também definir uma marca que a Google guarda para este telemóvel, para que a leitura gratuita não volte a ser concedida após uma reposição de fábrica.</p>
 
     <p>O servidor — um Cloudflare Worker gerido pelo programador — obtém essa publicação, faz com que um modelo de linguagem leia os nomes dos locais na respetiva legenda ou imagens, envia os <em>nomes</em> de volta para o seu telemóvel, e descarta o resto. <strong>Nada sobre a publicação é armazenado: nem o endereço, nem o vídeo ou as imagens, nem a legenda, nem os nomes encontrados.</strong> O seu telemóvel procura então esses nomes exatamente como procura um nome lido numa captura de ecrã.</p>
 
