@@ -666,4 +666,22 @@ class LPl extends L {
 
   @override
   String get readLink => 'Odczytaj';
+
+  @override
+  String get handoffNoteOsmand => 'Potem zaimportuj je jako ulubione w OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Potwierdź import w Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Wymaga konta Gaia i włączonej warstwy punktów trasy';
+
+  @override
+  String get handoffNoteMapy =>
+      'Wymaga konta Seznam i kilku dotknięć, by zapisać';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Otwiera My Maps — kilka dotknięć i lista pojawi się wśród zapisanych map w Google Maps';
 }

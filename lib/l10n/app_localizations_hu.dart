@@ -631,4 +631,22 @@ class LHu extends L {
 
   @override
   String get readLink => 'Olvasd be';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Ezután importáld őket kedvencként az OsmAndben';
+
+  @override
+  String get handoffNoteLocus => 'Erősítsd meg az importálást a Locus Mapben';
+
+  @override
+  String get handoffNoteGaia => 'Gaia-fiók kell, és bekapcsolt útpontréteg';
+
+  @override
+  String get handoffNoteMapy =>
+      'Seznam-fiók kell, és néhány koppintás a mentéshez';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Megnyitja a My Mapset — néhány koppintás, és a lista megjelenik a mentett térképeid között a Google Mapsben';
 }

@@ -138,5 +138,10 @@
   "onboardingReels": "Del et link til et reel eller opslag — Wren finder stederne i det.",
   "onboardingFiles": "Importér en fil fra en anden kortapp: GPX, CSV, KML og mere.",
   "onboardingDismiss": "Kom i gang",
-  "sendPlacesEmpty": "Tilføj nogle steder først — tag et skærmbillede eller del et opslag med Wren."
+  "sendPlacesEmpty": "Tilføj nogle steder først — tag et skærmbillede eller del et opslag med Wren.",
+  "handoffNoteOsmand": "Importér dem derefter som favoritter i OsmAnd",
+  "handoffNoteLocus": "Bekræft importen i Locus Map",
+  "handoffNoteGaia": "Kræver en Gaia-konto og at waypoint-laget er slået til",
+  "handoffNoteMapy": "Kræver en Seznam-konto og et par tryk for at gemme",
+  "handoffNoteGoogleMaps": "Åbner My Maps — et par tryk, så ligger listen blandt dine gemte kort i Google Maps"
 }

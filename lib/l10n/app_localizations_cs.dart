@@ -669,4 +669,21 @@ class LCs extends L {
 
   @override
   String get readLink => 'Přečíst';
+
+  @override
+  String get handoffNoteOsmand => 'Pak je v OsmAnd importujte jako oblíbené';
+
+  @override
+  String get handoffNoteLocus => 'Potvrďte import v Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Vyžaduje účet Gaia a zapnutou vrstvu trasových bodů';
+
+  @override
+  String get handoffNoteMapy => 'Vyžaduje účet Seznam a pár klepnutí k uložení';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Otevře My Maps — pár klepnutí a seznam se objeví mezi uloženými mapami v Google Maps';
 }

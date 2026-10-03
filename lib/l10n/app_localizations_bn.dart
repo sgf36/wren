@@ -624,4 +624,23 @@ class LBn extends L {
 
   @override
   String get readLink => 'পড়ুন';
+
+  @override
+  String get handoffNoteOsmand =>
+      'এরপর OsmAnd-এ এগুলো পছন্দের তালিকায় ইমপোর্ট করুন';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map-এ ইমপোর্ট নিশ্চিত করুন';
+
+  @override
+  String get handoffNoteGaia =>
+      'একটি Gaia অ্যাকাউন্ট লাগবে, আর ওয়েপয়েন্ট লেয়ার চালু রাখতে হবে';
+
+  @override
+  String get handoffNoteMapy =>
+      'একটি Seznam অ্যাকাউন্ট লাগবে, আর সেভ করতে কয়েকটি ট্যাপ';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps খোলে — কয়েকটি ট্যাপে তালিকাটি Google Maps-এ আপনার সেভ করা ম্যাপে দেখা যাবে';
 }

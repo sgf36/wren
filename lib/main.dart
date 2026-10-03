@@ -2273,7 +2273,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                   ListTile(
                     leading: const Icon(Icons.place_outlined),
                     title: Text(t.name),
-                    subtitle: t.note.isEmpty ? null : Text(t.note),
+                    subtitle: _handoffNote(l, t) == null
+                        ? null
+                        : Text(_handoffNote(l, t)!),
                     onTap: () => Navigator.pop(context, t),
                   ),
               // Google Maps is always offered, because the route is a web page
@@ -2281,7 +2283,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               ListTile(
                 leading: const Icon(Icons.public),
                 title: Text(googleMapsTarget.name),
-                subtitle: Text(googleMapsTarget.note),
+                subtitle: Text(_handoffNote(l, googleMapsTarget)!),
                 onTap: () => Navigator.pop(context, googleMapsTarget),
               ),
               const Divider(height: 8),
@@ -2849,6 +2851,22 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     );
   }
 }
+
+/// The step left to take inside the receiving app, in the user's language.
+///
+/// [MapTarget.note] is English and stays the reference for what each app
+/// needs; it was shown as it stood until 3 October 2026, so a German phone
+/// read every other line of the sheet in German and these in English. Keyed
+/// by id so a target added without a translation shows no note rather than an
+/// English one.
+String? _handoffNote(L l, MapTarget t) => switch (t.id) {
+  'osmand' => l.handoffNoteOsmand,
+  'locus' => l.handoffNoteLocus,
+  'gaiagps' => l.handoffNoteGaia,
+  'mapy' => l.handoffNoteMapy,
+  'googlemaps' => l.handoffNoteGoogleMaps,
+  _ => null,
+};
 
 enum _UnlockChoice { buy, restore, publishFree, cancel }
 

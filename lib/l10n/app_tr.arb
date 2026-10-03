@@ -138,5 +138,10 @@
   "onboardingReels": "Bir reel veya gönderi bağlantısı paylaşın — Wren içindeki yerleri bulur.",
   "onboardingFiles": "Başka bir harita uygulamasından dosya içe aktarın: GPX, CSV, KML ve daha fazlası.",
   "onboardingDismiss": "Başla",
-  "sendPlacesEmpty": "Önce birkaç yer ekleyin — ekran görüntüsü alın ya da Wren’e bir gönderi paylaşın."
+  "sendPlacesEmpty": "Önce birkaç yer ekleyin — ekran görüntüsü alın ya da Wren’e bir gönderi paylaşın.",
+  "handoffNoteOsmand": "Ardından OsmAnd'de favori olarak içe aktarın",
+  "handoffNoteLocus": "Locus Map'te içe aktarmayı onaylayın",
+  "handoffNoteGaia": "Gaia hesabı ve açık bir yol noktası katmanı gerekir",
+  "handoffNoteMapy": "Seznam hesabı ve kaydetmek için birkaç dokunuş gerekir",
+  "handoffNoteGoogleMaps": "My Maps'i açar — birkaç dokunuşla liste Google Maps'te kayıtlı haritalarınız arasında görünür"
 }

@@ -138,5 +138,10 @@
   "onboardingReels": "Partajați un link de reel sau postare — Wren găsește locurile din el.",
   "onboardingFiles": "Importați un fișier dintr-o altă aplicație de hărți: GPX, CSV, KML și altele.",
   "onboardingDismiss": "Începeți",
-  "sendPlacesEmpty": "Adăugați mai întâi câteva locuri — faceți o captură de ecran sau partajați o postare în Wren."
+  "sendPlacesEmpty": "Adăugați mai întâi câteva locuri — faceți o captură de ecran sau partajați o postare în Wren.",
+  "handoffNoteOsmand": "Apoi importă-le ca favorite în OsmAnd",
+  "handoffNoteLocus": "Confirmă importul în Locus Map",
+  "handoffNoteGaia": "Necesită un cont Gaia și stratul de puncte de traseu activat",
+  "handoffNoteMapy": "Necesită un cont Seznam și câteva atingeri pentru salvare",
+  "handoffNoteGoogleMaps": "Deschide My Maps — câteva atingeri și lista apare printre hărțile tale salvate în Google Maps"
 }

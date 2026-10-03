@@ -138,5 +138,10 @@
   "onboardingReels": "Chia sẻ liên kết reel hoặc bài đăng — Wren sẽ tìm các địa điểm.",
   "onboardingFiles": "Nhập tệp từ ứng dụng bản đồ khác: GPX, CSV, KML và nhiều hơn.",
   "onboardingDismiss": "Bắt đầu",
-  "sendPlacesEmpty": "Thêm một số địa điểm trước — chụp ảnh màn hình hoặc chia sẻ bài đăng tới Wren."
+  "sendPlacesEmpty": "Thêm một số địa điểm trước — chụp ảnh màn hình hoặc chia sẻ bài đăng tới Wren.",
+  "handoffNoteOsmand": "Sau đó nhập chúng thành mục yêu thích trong OsmAnd",
+  "handoffNoteLocus": "Xác nhận nhập trong Locus Map",
+  "handoffNoteGaia": "Cần tài khoản Gaia và bật lớp điểm tham chiếu",
+  "handoffNoteMapy": "Cần tài khoản Seznam và vài lần chạm để lưu",
+  "handoffNoteGoogleMaps": "Mở My Maps — vài lần chạm, danh sách sẽ xuất hiện trong bản đồ đã lưu của bạn trên Google Maps"
 }

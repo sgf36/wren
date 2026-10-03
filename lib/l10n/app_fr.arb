@@ -138,5 +138,10 @@
   "onboardingReels": "Partagez un lien de reel ou de publication — Wren y trouve les lieux.",
   "onboardingFiles": "Importez un fichier d’une autre app de cartes : GPX, CSV, KML et plus.",
   "onboardingDismiss": "C’est parti",
-  "sendPlacesEmpty": "Ajoutez d’abord des lieux — faites une capture d’écran ou partagez une publication vers Wren."
+  "sendPlacesEmpty": "Ajoutez d’abord des lieux — faites une capture d’écran ou partagez une publication vers Wren.",
+  "handoffNoteOsmand": "Ensuite, importe-les comme favoris dans OsmAnd",
+  "handoffNoteLocus": "Confirme l'importation dans Locus Map",
+  "handoffNoteGaia": "Nécessite un compte Gaia et le calque des points de passage activé",
+  "handoffNoteMapy": "Nécessite un compte Seznam et quelques touches pour enregistrer",
+  "handoffNoteGoogleMaps": "Ouvre My Maps — quelques touches, et la liste apparaît dans tes cartes enregistrées sur Google Maps"
 }

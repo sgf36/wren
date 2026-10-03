@@ -634,4 +634,22 @@ class LMr extends L {
 
   @override
   String get readLink => 'वाचा';
+
+  @override
+  String get handoffNoteOsmand =>
+      'नंतर OsmAnd मध्ये ती आवडती म्हणून इम्पोर्ट करा';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map मध्ये इम्पोर्टची खात्री करा';
+
+  @override
+  String get handoffNoteGaia => 'Gaia खाते हवे, आणि वेपॉइंट लेयर चालू हवा';
+
+  @override
+  String get handoffNoteMapy =>
+      'Seznam खाते हवे, आणि सेव्ह करण्यासाठी काही टॅप';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps उघडते — काही टॅपनंतर यादी Google Maps मध्ये तुमच्या सेव्ह केलेल्या नकाशांत दिसते';
 }

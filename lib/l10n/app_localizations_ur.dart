@@ -639,4 +639,23 @@ class LUr extends L {
 
   @override
   String get readLink => 'پڑھیں';
+
+  @override
+  String get handoffNoteOsmand =>
+      'پھر OsmAnd میں انہیں پسندیدہ کے طور پر امپورٹ کریں';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map میں امپورٹ کی تصدیق کریں';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia اکاؤنٹ چاہیے، اور وے پوائنٹ لیئر آن ہونی چاہیے';
+
+  @override
+  String get handoffNoteMapy =>
+      'Seznam اکاؤنٹ چاہیے، اور محفوظ کرنے کے لیے چند ٹیپ';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps کھولتا ہے — چند ٹیپ کے بعد فہرست Google Maps میں آپ کے محفوظ کردہ نقشوں میں نظر آتی ہے';
 }

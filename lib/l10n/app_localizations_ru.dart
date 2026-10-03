@@ -676,4 +676,22 @@ class LRu extends L {
 
   @override
   String get readLink => 'Прочитать';
+
+  @override
+  String get handoffNoteOsmand => 'Затем импортируйте их в избранное в OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Подтвердите импорт в Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Нужны аккаунт Gaia и включённый слой путевых точек';
+
+  @override
+  String get handoffNoteMapy =>
+      'Нужны аккаунт Seznam и несколько касаний, чтобы сохранить';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Откроется My Maps — несколько касаний, и список появится среди сохранённых карт в Google Maps';
 }

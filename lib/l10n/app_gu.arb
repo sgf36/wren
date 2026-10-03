@@ -138,5 +138,10 @@
   "onboardingReels": "રીલ અથવા પોસ્ટ લિંક શેર કરો — Wren તેમાંથી સ્થળો શોધે છે.",
   "onboardingFiles": "બીજી નકશા એપમાંથી ફાઇલ આયાત કરો: GPX, CSV, KML અને વધુ.",
   "onboardingDismiss": "શરૂ કરો",
-  "sendPlacesEmpty": "પહેલાં કેટલાંક સ્થળો ઉમેરો — કંઈકનો સ્ક્રીનશોટ લો અથવા Wren પર પોસ્ટ શેર કરો."
+  "sendPlacesEmpty": "પહેલાં કેટલાંક સ્થળો ઉમેરો — કંઈકનો સ્ક્રીનશોટ લો અથવા Wren પર પોસ્ટ શેર કરો.",
+  "handoffNoteOsmand": "પછી OsmAnd માં તેમને મનપસંદ તરીકે ઇમ્પોર્ટ કરો",
+  "handoffNoteLocus": "Locus Map માં ઇમ્પોર્ટની પુષ્ટિ કરો",
+  "handoffNoteGaia": "Gaia એકાઉન્ટ જોઈએ, અને વેપોઇન્ટ લેયર ચાલુ હોવું જોઈએ",
+  "handoffNoteMapy": "Seznam એકાઉન્ટ જોઈએ, અને સેવ કરવા થોડા ટૅપ",
+  "handoffNoteGoogleMaps": "My Maps ખોલે છે — થોડા ટૅપ, અને સૂચિ Google Maps માં તમારા સાચવેલા નકશામાં દેખાય છે"
 }

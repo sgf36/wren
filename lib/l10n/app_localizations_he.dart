@@ -653,4 +653,20 @@ class LHe extends L {
 
   @override
   String get readLink => 'לקרוא';
+
+  @override
+  String get handoffNoteOsmand => 'לאחר מכן ייבאו אותם כמועדפים ב-OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'אשרו את הייבוא ב-Locus Map';
+
+  @override
+  String get handoffNoteGaia => 'דורש חשבון Gaia ושכבת נקודות הציון מופעלת';
+
+  @override
+  String get handoffNoteMapy => 'דורש חשבון Seznam וכמה הקשות לשמירה';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'פותח את My Maps — כמה הקשות, והרשימה מופיעה בין המפות השמורות שלכם ב-Google Maps';
 }

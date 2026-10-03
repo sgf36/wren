@@ -628,4 +628,21 @@ class LFi extends L {
 
   @override
   String get readLink => 'Lue se';
+
+  @override
+  String get handoffNoteOsmand => 'Tuo ne sitten suosikeiksi OsmAndissa';
+
+  @override
+  String get handoffNoteLocus => 'Vahvista tuonti Locus Mapissa';
+
+  @override
+  String get handoffNoteGaia => 'Vaatii Gaia-tilin ja reittipistetason päälle';
+
+  @override
+  String get handoffNoteMapy =>
+      'Vaatii Seznam-tilin ja muutaman napautuksen tallennukseen';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Avaa My Mapsin — muutama napautus, ja lista näkyy tallennetuissa kartoissasi Google Mapsissa';
 }

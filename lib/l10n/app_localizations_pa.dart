@@ -637,4 +637,22 @@ class LPa extends L {
 
   @override
   String get readLink => 'ਪੜ੍ਹੋ';
+
+  @override
+  String get handoffNoteOsmand =>
+      'ਫਿਰ OsmAnd ਵਿੱਚ ਇਹਨਾਂ ਨੂੰ ਮਨਪਸੰਦ ਵਜੋਂ ਇੰਪੋਰਟ ਕਰੋ';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map ਵਿੱਚ ਇੰਪੋਰਟ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia ਖਾਤਾ ਚਾਹੀਦਾ ਹੈ, ਅਤੇ ਵੇਪੁਆਇੰਟ ਲੇਅਰ ਚਾਲੂ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ';
+
+  @override
+  String get handoffNoteMapy => 'Seznam ਖਾਤਾ ਚਾਹੀਦਾ ਹੈ, ਅਤੇ ਸੇਵ ਕਰਨ ਲਈ ਕੁਝ ਟੈਪ';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps ਖੋਲ੍ਹਦਾ ਹੈ — ਕੁਝ ਟੈਪਾਂ ਬਾਅਦ ਸੂਚੀ Google Maps ਵਿੱਚ ਤੁਹਾਡੇ ਸੇਵ ਕੀਤੇ ਨਕਸ਼ਿਆਂ ਵਿੱਚ ਦਿਖਾਈ ਦਿੰਦੀ ਹੈ';
 }

@@ -138,5 +138,10 @@
   "onboardingReels": "릴이나 게시물 링크를 공유하면 Wren이 그 안의 장소를 찾아줍니다.",
   "onboardingFiles": "다른 지도 앱에서 파일 가져오기: GPX, CSV, KML 등.",
   "onboardingDismiss": "시작하기",
-  "sendPlacesEmpty": "먼저 장소를 추가하세요. 스크린샷을 찍거나 게시물을 Wren에 공유하세요."
+  "sendPlacesEmpty": "먼저 장소를 추가하세요. 스크린샷을 찍거나 게시물을 Wren에 공유하세요.",
+  "handoffNoteOsmand": "그다음 OsmAnd에서 즐겨찾기로 가져오세요",
+  "handoffNoteLocus": "Locus Map에서 가져오기를 확인하세요",
+  "handoffNoteGaia": "Gaia 계정이 필요하고 웨이포인트 레이어를 켜야 합니다",
+  "handoffNoteMapy": "Seznam 계정이 필요하고 저장하려면 몇 번 탭해야 합니다",
+  "handoffNoteGoogleMaps": "My Maps가 열립니다 — 몇 번 탭하면 목록이 Google Maps의 저장된 지도에 나타납니다"
 }

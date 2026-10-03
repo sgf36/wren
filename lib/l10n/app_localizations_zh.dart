@@ -573,6 +573,22 @@ class LZh extends L {
 
   @override
   String get readLink => '读取';
+
+  @override
+  String get handoffNoteOsmand => '然后在 OsmAnd 中将它们导入为收藏';
+
+  @override
+  String get handoffNoteLocus => '在 Locus Map 中确认导入';
+
+  @override
+  String get handoffNoteGaia => '需要 Gaia 账号，并开启航点图层';
+
+  @override
+  String get handoffNoteMapy => '需要 Seznam 账号，并点几下才能保存';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      '打开 My Maps — 点几下后，列表会出现在 Google Maps 中你保存的地图里';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1144,4 +1160,20 @@ class LZhHant extends LZh {
 
   @override
   String get readLink => '讀取';
+
+  @override
+  String get handoffNoteOsmand => '然後在 OsmAnd 中將它們匯入為收藏';
+
+  @override
+  String get handoffNoteLocus => '在 Locus Map 中確認匯入';
+
+  @override
+  String get handoffNoteGaia => '需要 Gaia 帳號，並開啟航點圖層';
+
+  @override
+  String get handoffNoteMapy => '需要 Seznam 帳號，並點幾下才能儲存';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      '開啟 My Maps — 點幾下後，清單會出現在 Google Maps 中你儲存的地圖裡';
 }

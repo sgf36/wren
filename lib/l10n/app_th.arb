@@ -138,5 +138,10 @@
   "onboardingReels": "แชร์ลิงก์รีลหรือโพสต์ — Wren จะค้นหาสถานที่ในนั้น",
   "onboardingFiles": "นำเข้าไฟล์จากแอปแผนที่อื่น: GPX, CSV, KML และอื่น ๆ",
   "onboardingDismiss": "เริ่มต้น",
-  "sendPlacesEmpty": "เพิ่มสถานที่ก่อน — ถ่ายภาพหน้าจอหรือแชร์โพสต์ไปที่ Wren"
+  "sendPlacesEmpty": "เพิ่มสถานที่ก่อน — ถ่ายภาพหน้าจอหรือแชร์โพสต์ไปที่ Wren",
+  "handoffNoteOsmand": "จากนั้นนำเข้าเป็นรายการโปรดใน OsmAnd",
+  "handoffNoteLocus": "ยืนยันการนำเข้าใน Locus Map",
+  "handoffNoteGaia": "ต้องมีบัญชี Gaia และเปิดเลเยอร์เวย์พอยต์",
+  "handoffNoteMapy": "ต้องมีบัญชี Seznam และแตะอีกสองสามครั้งเพื่อบันทึก",
+  "handoffNoteGoogleMaps": "เปิด My Maps — แตะไม่กี่ครั้ง แล้วรายการจะอยู่ในแผนที่ที่บันทึกไว้ของคุณใน Google Maps"
 }

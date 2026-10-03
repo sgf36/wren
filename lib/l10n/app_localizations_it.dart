@@ -637,4 +637,22 @@ class LIt extends L {
 
   @override
   String get readLink => 'Leggilo';
+
+  @override
+  String get handoffNoteOsmand => 'Poi importali come preferiti in OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Conferma l\'importazione in Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Serve un account Gaia e il livello dei waypoint attivo';
+
+  @override
+  String get handoffNoteMapy =>
+      'Serve un account Seznam e qualche tocco per salvare';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Apre My Maps: qualche tocco e l\'elenco compare tra le tue mappe salvate in Google Maps';
 }

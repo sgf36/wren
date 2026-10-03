@@ -138,5 +138,10 @@
   "onboardingReels": "Kongsi pautan reel atau siaran — Wren mencari tempatnya.",
   "onboardingFiles": "Import fail dari aplikasi peta lain: GPX, CSV, KML dan lagi.",
   "onboardingDismiss": "Mula",
-  "sendPlacesEmpty": "Tambah beberapa tempat dahulu — ambil tangkapan skrin atau kongsi siaran ke Wren."
+  "sendPlacesEmpty": "Tambah beberapa tempat dahulu — ambil tangkapan skrin atau kongsi siaran ke Wren.",
+  "handoffNoteOsmand": "Kemudian import sebagai kegemaran dalam OsmAnd",
+  "handoffNoteLocus": "Sahkan import dalam Locus Map",
+  "handoffNoteGaia": "Perlukan akaun Gaia, dan lapisan titik laluan dihidupkan",
+  "handoffNoteMapy": "Perlukan akaun Seznam, dan beberapa ketikan untuk menyimpan",
+  "handoffNoteGoogleMaps": "Membuka My Maps — beberapa ketikan, dan senarai muncul dalam peta tersimpan anda di Google Maps"
 }

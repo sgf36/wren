@@ -614,4 +614,22 @@ class LId extends L {
 
   @override
   String get readLink => 'Baca';
+
+  @override
+  String get handoffNoteOsmand => 'Lalu impor sebagai favorit di OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Konfirmasi impor di Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Perlu akun Gaia, dan lapisan titik arah diaktifkan';
+
+  @override
+  String get handoffNoteMapy =>
+      'Perlu akun Seznam, dan beberapa ketukan untuk menyimpan';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Membuka My Maps — beberapa ketukan, lalu daftarnya muncul di peta tersimpan Anda di Google Maps';
 }

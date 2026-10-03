@@ -138,5 +138,10 @@
   "onboardingReels": "Comparte un enlace de reel o publicación — Wren encuentra los lugares.",
   "onboardingFiles": "Importa un archivo de otra app de mapas: GPX, CSV, KML y más.",
   "onboardingDismiss": "Comenzar",
-  "sendPlacesEmpty": "Agrega lugares primero — toma una captura de pantalla o comparte una publicación en Wren."
+  "sendPlacesEmpty": "Agrega lugares primero — toma una captura de pantalla o comparte una publicación en Wren.",
+  "handoffNoteOsmand": "Después impórtalos como favoritos en OsmAnd",
+  "handoffNoteLocus": "Confirma la importación en Locus Map",
+  "handoffNoteGaia": "Necesita una cuenta de Gaia y la capa de waypoints activada",
+  "handoffNoteMapy": "Necesita una cuenta de Seznam y unos toques para guardar",
+  "handoffNoteGoogleMaps": "Abre My Maps: unos toques y la lista aparece entre tus mapas guardados en Google Maps"
 }

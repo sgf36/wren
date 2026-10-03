@@ -601,4 +601,21 @@ class LTh extends L {
 
   @override
   String get readLink => 'อ่านเลย';
+
+  @override
+  String get handoffNoteOsmand => 'จากนั้นนำเข้าเป็นรายการโปรดใน OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'ยืนยันการนำเข้าใน Locus Map';
+
+  @override
+  String get handoffNoteGaia => 'ต้องมีบัญชี Gaia และเปิดเลเยอร์เวย์พอยต์';
+
+  @override
+  String get handoffNoteMapy =>
+      'ต้องมีบัญชี Seznam และแตะอีกสองสามครั้งเพื่อบันทึก';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'เปิด My Maps — แตะไม่กี่ครั้ง แล้วรายการจะอยู่ในแผนที่ที่บันทึกไว้ของคุณใน Google Maps';
 }

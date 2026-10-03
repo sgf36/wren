@@ -636,6 +636,24 @@ class LEs extends L {
 
   @override
   String get readLink => 'Leerlo';
+
+  @override
+  String get handoffNoteOsmand => 'Después impórtalos como favoritos en OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirma la importación en Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Necesita una cuenta de Gaia y la capa de waypoints activada';
+
+  @override
+  String get handoffNoteMapy =>
+      'Necesita una cuenta de Seznam y unos toques para guardar';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Abre My Maps: unos toques y la lista aparece entre tus mapas guardados en Google Maps';
 }
 
 /// The translations for Spanish Castilian, as used in Mexico (`es_MX`).
@@ -1270,4 +1288,22 @@ class LEsMx extends LEs {
 
   @override
   String get readLink => 'Leerlo';
+
+  @override
+  String get handoffNoteOsmand => 'Después impórtalos como favoritos en OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirma la importación en Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Necesita una cuenta de Gaia y la capa de waypoints activada';
+
+  @override
+  String get handoffNoteMapy =>
+      'Necesita una cuenta de Seznam y unos toques para guardar';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Abre My Maps: unos toques y la lista aparece entre tus mapas guardados en Google Maps';
 }

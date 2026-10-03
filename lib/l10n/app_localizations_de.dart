@@ -639,4 +639,22 @@ class LDe extends L {
 
   @override
   String get readLink => 'Lesen';
+
+  @override
+  String get handoffNoteOsmand => 'Danach in OsmAnd als Favoriten importieren';
+
+  @override
+  String get handoffNoteLocus => 'Bestätige den Import in Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Braucht ein Gaia-Konto und eingeschaltete Wegpunkt-Ebene';
+
+  @override
+  String get handoffNoteMapy =>
+      'Braucht ein Seznam-Konto und ein paar Tipps zum Speichern';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Öffnet My Maps — ein paar Tipps, dann steht die Liste unter deinen gespeicherten Karten in Google Maps';
 }

@@ -633,4 +633,23 @@ class LNo extends L {
 
   @override
   String get readLink => 'Les den';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Importer dem deretter som favoritter i OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Bekreft importen i Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Krever en Gaia-konto og at veipunktlaget er slått på';
+
+  @override
+  String get handoffNoteMapy =>
+      'Krever en Seznam-konto og noen trykk for å lagre';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Åpner My Maps — noen trykk, så ligger listen blant de lagrede kartene dine i Google Maps';
 }

@@ -138,5 +138,10 @@
   "onboardingReels": "Comparteix un enllaç de reel o publicació — Wren hi troba els llocs.",
   "onboardingFiles": "Importa un fitxer d’una altra aplicació de mapes: GPX, CSV, KML i més.",
   "onboardingDismiss": "Comença",
-  "sendPlacesEmpty": "Afegeix uns llocs primer — fes una captura de pantalla o comparteix una publicació a Wren."
+  "sendPlacesEmpty": "Afegeix uns llocs primer — fes una captura de pantalla o comparteix una publicació a Wren.",
+  "handoffNoteOsmand": "Després importa'ls com a preferits a OsmAnd",
+  "handoffNoteLocus": "Confirma la importació a Locus Map",
+  "handoffNoteGaia": "Cal un compte de Gaia i tenir activada la capa de punts de pas",
+  "handoffNoteMapy": "Cal un compte de Seznam i uns quants tocs per desar-los",
+  "handoffNoteGoogleMaps": "Obre My Maps — uns quants tocs i la llista apareix entre els teus mapes desats a Google Maps"
 }

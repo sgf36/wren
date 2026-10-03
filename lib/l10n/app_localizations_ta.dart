@@ -640,4 +640,22 @@ class LTa extends L {
 
   @override
   String get readLink => 'வாசி';
+
+  @override
+  String get handoffNoteOsmand =>
+      'பின்னர் OsmAnd-இல் அவற்றை விருப்பங்களாக இறக்குமதி செய்யுங்கள்';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map-இல் இறக்குமதியை உறுதிசெய்யுங்கள்';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia கணக்கும், வழிப்புள்ளி அடுக்கு இயக்கமும் தேவை';
+
+  @override
+  String get handoffNoteMapy => 'Seznam கணக்கும், சேமிக்க சில தட்டல்களும் தேவை';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps-ஐத் திறக்கும் — சில தட்டல்களில் பட்டியல் Google Maps-இல் நீங்கள் சேமித்த வரைபடங்களில் தோன்றும்';
 }

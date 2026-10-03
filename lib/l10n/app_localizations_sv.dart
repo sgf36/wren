@@ -637,4 +637,22 @@ class LSv extends L {
 
   @override
   String get readLink => 'Läs den';
+
+  @override
+  String get handoffNoteOsmand => 'Importera dem sedan som favoriter i OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Bekräfta importen i Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Kräver ett Gaia-konto och att waypoint-lagret är på';
+
+  @override
+  String get handoffNoteMapy =>
+      'Kräver ett Seznam-konto och några tryck för att spara';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Öppnar My Maps — några tryck, så hamnar listan bland dina sparade kartor i Google Maps';
 }

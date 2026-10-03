@@ -627,4 +627,22 @@ class LGu extends L {
 
   @override
   String get readLink => 'વાંચો';
+
+  @override
+  String get handoffNoteOsmand =>
+      'પછી OsmAnd માં તેમને મનપસંદ તરીકે ઇમ્પોર્ટ કરો';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map માં ઇમ્પોર્ટની પુષ્ટિ કરો';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia એકાઉન્ટ જોઈએ, અને વેપોઇન્ટ લેયર ચાલુ હોવું જોઈએ';
+
+  @override
+  String get handoffNoteMapy => 'Seznam એકાઉન્ટ જોઈએ, અને સેવ કરવા થોડા ટૅપ';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps ખોલે છે — થોડા ટૅપ, અને સૂચિ Google Maps માં તમારા સાચવેલા નકશામાં દેખાય છે';
 }

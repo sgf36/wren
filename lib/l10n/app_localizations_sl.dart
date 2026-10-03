@@ -670,4 +670,22 @@ class LSl extends L {
 
   @override
   String get readLink => 'Preberi';
+
+  @override
+  String get handoffNoteOsmand => 'Nato jih v OsmAndu uvozite kot priljubljene';
+
+  @override
+  String get handoffNoteLocus => 'Potrdite uvoz v Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Potrebujete račun Gaia in vklopljen sloj potnih točk';
+
+  @override
+  String get handoffNoteMapy =>
+      'Potrebujete račun Seznam in nekaj dotikov za shranjevanje';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Odpre My Maps — nekaj dotikov in seznam se prikaže med shranjenimi zemljevidi v Google Maps';
 }

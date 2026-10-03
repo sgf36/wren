@@ -685,4 +685,20 @@ class LAr extends L {
 
   @override
   String get readLink => 'اقرأه';
+
+  @override
+  String get handoffNoteOsmand => 'ثم استوردها كمفضلة في OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'أكّد الاستيراد في Locus Map';
+
+  @override
+  String get handoffNoteGaia => 'يتطلب حساب Gaia وتفعيل طبقة نقاط الطريق';
+
+  @override
+  String get handoffNoteMapy => 'يتطلب حساب Seznam وبضع نقرات للحفظ';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'يفتح My Maps — بضع نقرات، وتظهر القائمة بين خرائطك المحفوظة في Google Maps';
 }
