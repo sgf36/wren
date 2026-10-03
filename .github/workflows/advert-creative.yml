@@ -8,6 +8,11 @@ name: Advert creative
 #   gh workflow run advert-creative.yml -f locale=fr-FR          # French
 #   gh workflow run advert-creative.yml -f locale=all            # every locale in advert_strings.json
 #   gh workflow run advert-creative.yml -f beats="advert-the-list advert-which-city"
+#   gh workflow run advert-creative.yml -f platform=android -f locale=de-DE
+#
+# platform=android renders the Android edition: Android's own fonts (Roboto,
+# Noto, downloaded by render.py), Material's Android look, and a last beat on
+# the sheet that hands the list to a map app instead of an Apple Maps guide.
 #
 # No simulator. Until October 2026 the beats were recorded in one with
 # `simctl io recordVideo`, and two runs measured frame by frame showed the
@@ -34,6 +39,11 @@ on:
         description: 'Beat names, space-separated (blank = every beat)'
         type: string
         default: ''
+      platform:
+        description: 'ios or android'
+        type: choice
+        options: [ios, android]
+        default: ios
 
 env:
   FLUTTER_VERSION: '3.44.8'
@@ -66,7 +76,7 @@ jobs:
           echo "Locales: $MATRIX"
 
   advert:
-    name: ${{ matrix.locale }}
+    name: ${{ inputs.platform || 'ios' }} ${{ matrix.locale }}
     needs: locales
     runs-on: macos-26
     timeout-minutes: 30
@@ -99,7 +109,8 @@ jobs:
           source .venv/bin/activate
           BEAT_ARGS=""
           for b in ${{ inputs.beats }}; do BEAT_ARGS="$BEAT_ARGS --beat $b"; done
-          python3 -u store/render.py --locale "${{ matrix.locale }}" $BEAT_ARGS
+          python3 -u store/render.py --platform "${{ inputs.platform || 'ios' }}" \
+            --locale "${{ matrix.locale }}" $BEAT_ARGS
 
       - name: Compose
         run: |
@@ -108,12 +119,13 @@ jobs:
           if [ -n "${{ inputs.beats }}" ]; then
             COMPOSE_BEATS="--beats ${{ inputs.beats }}"
           fi
-          python3 -u store/compose.py --locale "${{ matrix.locale }}" $COMPOSE_BEATS
+          python3 -u store/compose.py --platform "${{ inputs.platform || 'ios' }}" \
+            --locale "${{ matrix.locale }}" $COMPOSE_BEATS
 
       - name: Contact sheet
         if: always()
         run: |
-          f=$(ls store/adverts/*/wren-advert.mp4 2>/dev/null | head -1)
+          f=$(find store/adverts -name wren-advert.mp4 2>/dev/null | head -1)
           if [ -n "$f" ]; then
             # Two frames a second of the finished advert, to look at before
             # downloading it.
@@ -125,9 +137,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: advert-${{ matrix.locale }}
+          # The iOS name is unchanged, so links to earlier runs still read the
+          # same way; Android carries its platform in the name.
+          name: advert-${{ inputs.platform == 'android' && 'android-' || '' }}${{ matrix.locale }}
           path: |
             store/adverts/**/*.mp4
             store/adverts/contact-sheet.png
-            store/render/*/manifest.json
+            store/render/**/manifest.json
           if-no-files-found: warn

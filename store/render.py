@@ -2,6 +2,7 @@
 
     python store/render.py --locale fr-FR
     python store/render.py --locale ja --beat advert-make-guide
+    python store/render.py --platform android --locale de-DE
 
 Writes PNG frames to `store/render/<locale>/<beat>/` and a `manifest.json`,
 by running `test/advert_render_test.dart` — the real app, on the test's fake
@@ -28,6 +29,16 @@ script font everywhere else; all other text falls back to the sans script font.
 After rendering, every character drawn is checked against the font files of
 its chain (fontTools cmap). A character none of them has would have been drawn
 as a box, so that is an exit, not a warning.
+
+## Android
+
+`--platform android` renders the Android edition's beats (DEFAULT_BEATS_ANDROID)
+into `render/android/<locale>/`. Its fonts are Android's own, and unlike
+Apple's they are open-licence, so they are downloaded from google/fonts on any
+machine -- a Windows render is the real look, not a stand-in. The cascade is
+Android's fonts.xml: text with no family is Roboto; "Georgia" is an alias of
+`serif`, which is Noto Serif (the Play screenshots show exactly that); and each
+script falls back to its Noto face, serif under serif and sans under sans.
 """
 
 import argparse
@@ -54,6 +65,22 @@ DEFAULT_BEATS = [
     "advert-the-list",
     "advert-make-guide",
 ]
+
+# Same story, and the same intro; the last beat is the hand-off sheet, because
+# Android has no Apple Maps guide to make.
+DEFAULT_BEATS_ANDROID = [
+    "advert-intro",
+    "advert-android-add",
+    "advert-android-which-city",
+    "advert-android-the-list",
+    "advert-android-send",
+]
+
+
+def render_dir(platform, locale):
+    """Where a locale's frames go. Android has its own tree so the two
+    editions never overwrite each other's frames."""
+    return OUT / "android" / locale if platform == "android" else OUT / locale
 
 WEIGHTS = (400, 500, 600, 700)
 
@@ -99,8 +126,110 @@ FONT_DIRS = {
 }
 
 
+# Android's fonts, from github.com/google/fonts (OFL), per role and script.
+# Variable fonts; prepare() cuts static weights from them.
+_GF = "https://raw.githubusercontent.com/google/fonts/main/ofl/"
+ANDROID_FONTS = {
+    "system": _GF + "roboto/Roboto%5Bwdth,wght%5D.ttf",
+    "Georgia": _GF + "notoserif/NotoSerif%5Bwdth,wght%5D.ttf",
+    "sans": {
+        "ja": _GF + "notosansjp/NotoSansJP%5Bwght%5D.ttf",
+        "zh-Hant": _GF + "notosanstc/NotoSansTC%5Bwght%5D.ttf",
+        "ko": _GF + "notosanskr/NotoSansKR%5Bwght%5D.ttf",
+        # Android's Arabic is Naskh, for sans and serif alike.
+        "ar": _GF + "notonaskharabic/NotoNaskhArabic%5Bwght%5D.ttf",
+    },
+    "serif": {
+        "ja": _GF + "notoserifjp/NotoSerifJP%5Bwght%5D.ttf",
+        "zh-Hant": _GF + "notoseriftc/NotoSerifTC%5Bwght%5D.ttf",
+        "ko": _GF + "notoserifkr/NotoSerifKR%5Bwght%5D.ttf",
+        "ar": _GF + "notonaskharabic/NotoNaskhArabic%5Bwght%5D.ttf",
+    },
+    # Last in every chain, as on the phone: Roboto has no arrows, and the
+    # Google Maps row reads "You → Maps".
+    "symbols": _GF + "notosanssymbols/NotoSansSymbols%5Bwght%5D.ttf",
+}
+FONT_CACHE = pathlib.Path(os.environ.get("WREN_FONT_CACHE")
+                          or pathlib.Path.home() / ".cache" / "wren-fonts")
+
+# The first four bytes of a TrueType or OpenType file.
+_FONT_MAGIC = (b"\x00\x01\x00\x00", b"OTTO", b"true")
+
+
 def say(msg):
     print(msg, flush=True)
+
+
+def fetch(url):
+    """A downloaded font file, cached by name. Refuses anything that is not a
+    font, so an HTML error page is never handed to Flutter as one."""
+    import urllib.parse
+    import urllib.request
+    FONT_CACHE.mkdir(parents=True, exist_ok=True)
+    name = urllib.parse.unquote(url.rsplit("/", 1)[-1])
+    path = FONT_CACHE / "".join(c for c in name if c.isalnum() or c in ".-_")
+    if not path.exists() or path.stat().st_size == 0:
+        say("  downloading %s" % name)
+        req = urllib.request.Request(url,
+                                     headers={"User-Agent": "wren-render/1.0"})
+        with urllib.request.urlopen(req, timeout=120) as r:
+            data = r.read()
+        if data[:4] not in _FONT_MAGIC:
+            sys.exit("%s is not a font file (%d bytes)" % (url, len(data)))
+        path.write_bytes(data)
+    return str(path)
+
+
+def android_faces(url, tmp, role, sample="Wren"):
+    """Static weights of one downloaded font, proven to draw `sample`."""
+    from fontTools.ttLib import TTFont
+    path = fetch(url)
+    fam, sub = _names(TTFont(path, lazy=True))
+    paths = prepare((fam, sub, path, 0), tmp)
+    if not any(draws(p, sample) for p in paths):
+        sys.exit("%s (%s) draws no glyph for %r" % (role, fam, sample))
+    say("  %-22s %s" % (role, fam))
+    return paths
+
+
+def build_config_android(locale, tmp):
+    """Android's cascade. See the module docstring."""
+    families = {}
+    families["Roboto"] = android_faces(ANDROID_FONTS["system"], tmp,
+                                       "system sans")
+    families["Georgia"] = android_faces(ANDROID_FONTS["Georgia"], tmp,
+                                        "Georgia (serif alias)")
+    families["MaterialIcons"] = [material_icons()]
+    script = script_of(locale)
+    sans_fallback, serif_fallback = [], []
+    sample = SAMPLES.get(script, "Wren")
+    if script in ANDROID_FONTS["sans"]:
+        families["WrenScriptSans"] = android_faces(
+            ANDROID_FONTS["sans"][script], tmp,
+            "%s sans fallback" % script, sample)
+        sans_fallback = ["WrenScriptSans"]
+    if script in ANDROID_FONTS["serif"]:
+        families["WrenScriptSerif"] = android_faces(
+            ANDROID_FONTS["serif"][script], tmp,
+            "%s serif fallback" % script, sample)
+        serif_fallback = ["WrenScriptSerif"]
+    families["WrenSymbols"] = android_faces(ANDROID_FONTS["symbols"], tmp,
+                                            "symbols fallback", "→")
+    sans_fallback.append("WrenSymbols")
+    return {"families": families, "serifFallback": serif_fallback,
+            "sansFallback": sans_fallback, "systemFamily": "Roboto"}
+
+
+def material_icons():
+    flutter = shutil.which("flutter")
+    if not flutter:
+        sys.exit("flutter is not on PATH")
+    sdk = pathlib.Path(flutter).resolve().parent.parent
+    icons = list((sdk / "bin" / "cache" / "artifacts" / "material_fonts")
+                 .glob("[Mm]aterial[Ii]cons-[Rr]egular.otf"))
+    if not icons:
+        sys.exit("MaterialIcons not found under %s" % sdk)
+    return str(icons[0])
 
 
 def script_of(locale):
@@ -290,15 +419,7 @@ def build_config(locale, tmp):
     families["CupertinoSystemText"] = system
     families["CupertinoSystemDisplay"] = system
 
-    flutter = shutil.which("flutter")
-    if not flutter:
-        sys.exit("flutter is not on PATH")
-    sdk = pathlib.Path(flutter).resolve().parent.parent
-    icons = list((sdk / "bin" / "cache" / "artifacts" / "material_fonts")
-                 .glob("[Mm]aterial[Ii]cons-[Rr]egular.otf"))
-    if not icons:
-        sys.exit("MaterialIcons not found under %s" % sdk)
-    families["MaterialIcons"] = [str(icons[0])]
+    families["MaterialIcons"] = [material_icons()]
 
     script = script_of(locale)
     sans_fallback, serif_fallback = [], []
@@ -320,7 +441,8 @@ def build_config(locale, tmp):
                 SAMPLES.get(script, "Wren"))
             serif_fallback = ["WrenScriptSerif"]
     return {"families": families, "serifFallback": serif_fallback,
-            "sansFallback": sans_fallback}
+            "sansFallback": sans_fallback,
+            "systemFamily": "CupertinoSystemText"}
 
 
 # --- after the render --------------------------------------------------------
@@ -360,17 +482,21 @@ def main():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--locale", default="en-GB")
+    p.add_argument("--platform", choices=("ios", "android"), default="ios")
     p.add_argument("--beat", action="append",
                    help="one beat; repeatable (default: every advert beat)")
     args = p.parse_args()
-    beats = args.beat or DEFAULT_BEATS
+    android = args.platform == "android"
+    beats = args.beat or (DEFAULT_BEATS_ANDROID if android else DEFAULT_BEATS)
 
-    out = OUT / args.locale
+    out = render_dir(args.platform, args.locale)
     out.mkdir(parents=True, exist_ok=True)
-    say("rendering %s: %s" % (args.locale, ", ".join(beats)))
+    say("rendering %s for %s: %s"
+        % (args.locale, args.platform, ", ".join(beats)))
     # ignore_cleanup_errors: on Windows fontTools can still hold a file open.
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
-        config = build_config(args.locale, tmp)
+        config = (build_config_android(args.locale, tmp) if android
+                  else build_config(args.locale, tmp))
         cfg_path = os.path.join(tmp, "fonts.json")
         with open(cfg_path, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=1)
@@ -378,7 +504,8 @@ def main():
                    WREN_RENDER_OUT=str(out),
                    WREN_RENDER_LOCALE=args.locale,
                    WREN_RENDER_BEATS=",".join(beats),
-                   WREN_RENDER_FONTS=cfg_path)
+                   WREN_RENDER_FONTS=cfg_path,
+                   WREN_RENDER_PLATFORM=args.platform)
         cmd = [shutil.which("flutter"), "test", "--no-pub", TEST,
                "--reporter", "expanded"]
         r = subprocess.run(cmd, cwd=ROOT, env=env)

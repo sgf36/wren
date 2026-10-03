@@ -120,6 +120,31 @@ void main() {
     );
   });
 
+  testWidgets('android send opens the sheet, not "add some places first"', (
+    tester,
+  ) async {
+    await tester.pumpWidget(WrenApp(home: advertFor('advert-android-send')));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final l = L.of(tester.element(find.byType(CapturePage)));
+
+    for (var t = 0.0; t < advertLeadIn + 2.0; t += 0.1) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    // The first render answered the tap with the empty-list snackbar: the
+    // iOS fixtures carry no coordinate, and Android sends only places that
+    // have one. The sheet's title is the button's label too, so the proof is
+    // a row only the sheet has.
+    expect(find.text(l.sendPlacesEmpty), findsNothing);
+    expect(
+      find.text('Organic Maps'),
+      findsOneWidget,
+      reason: 'the hand-off sheet never opened after tapping the button',
+    );
+    expect(find.text(l.sendPlacesReady(5)), findsOneWidget);
+  });
+
   testWidgets('correct a place holds the lookup open', (tester) async {
     await _play(tester, 'advert-correct-a-place');
     // Nothing is asserted about motion here; the beat is a held shot. What is

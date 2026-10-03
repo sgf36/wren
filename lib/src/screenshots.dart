@@ -25,6 +25,8 @@ import '../main.dart';
 import 'entitlement.dart';
 import 'file_source.dart';
 import 'guide_link.dart';
+import 'map_targets.dart';
+import 'place_share.dart';
 import 'resolver.dart';
 import 'splash.dart';
 import 'theme.dart';
@@ -63,6 +65,36 @@ Pending _place(int i, {Origin origin = Origin.screenshot}) => Pending(
     metresFromCentre: 0,
   ),
   origin: origin,
+);
+
+/// Where the fixtures are, for the Android scenes.
+///
+/// Android looks a place up with the platform geocoder, which returns a
+/// coordinate and no Apple identifier, and a place is sendable to another map
+/// app only with a coordinate (Pending.exportable). The iOS fixtures carry the
+/// identifier and no coordinate, so on Android every one of them was
+/// unsendable and the send tap answered "add some places first". Never shown
+/// on screen; it only has to put each place where the venue is.
+const _coordinates = <(double, double)>[
+  (51.5245, -0.0768),
+  (51.5053, -0.0911),
+  (51.5052, -0.0910),
+  (51.5049, -0.0903),
+  (51.5055, -0.0906),
+  (51.5049, -0.0897),
+];
+
+/// A fixture as Android's geocoder would answer it: coordinate, no Apple id.
+Pending _androidPlace(int i) => Pending(
+  _readAs[i].trim(),
+  PlaceMatch(
+    name: _fixtures[i].$2,
+    address: _fixtures[i].$3,
+    category: 'Restaurant',
+    metresFromCentre: 0,
+    lat: _coordinates[i].$1,
+    lon: _coordinates[i].$2,
+  ),
 );
 
 /// A resolver that answers instantly and always. MapKit works in a simulator,
@@ -233,6 +265,55 @@ Widget? sceneFor(String name) {
         files: StubFileSource(''),
         initialPending: const [],
         skipOnboarding: true,
+      );
+
+    // The Android edition, for the Android advert. Not store screenshots: the
+    // Play listing's are shot on an emulator (store/play/SCREENSHOTS.md).
+    //
+    // Android has no Apple Maps, so these are the same list with the other
+    // button: "Send places to", which hands the list to a map app on the
+    // phone. canMakeGuides is set rather than left to the platform, because
+    // the advert is rendered on a desktop, where Platform.isAndroid is false.
+    case 'android-empty':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        canMakeGuides: false,
+        initialPending: const [],
+        skipOnboarding: true,
+      );
+
+    case 'android-which-city':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        canMakeGuides: false,
+        initialPending: [for (var i = 0; i < 5; i++) _androidPlace(i)],
+        initialOverlay: ScreenshotOverlay.region,
+      );
+
+    // Unlocked, as 01-the-list-unlocked is for iOS, so the send tap reaches
+    // the sheet rather than the paywall. The installed apps are the three
+    // whose full import was verified on a device (map_targets.dart), and the
+    // same three the Play screenshot 03-send-sheet shows.
+    case 'android-the-list':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        canMakeGuides: false,
+        sharer: StubPlaceSharer(
+          installed: [
+            for (final t in namedTargets)
+              if (const {'organicmaps', 'osmand', 'locus'}.contains(t.id))
+                t.packages.first,
+          ],
+        ),
+        initialGuideName: 'London, October',
+        initialPending: [for (var i = 0; i < 5; i++) _androidPlace(i)],
+        initialOwned: const {unlimitedProductId},
       );
 
     // The launch screen, at rest: the bird, the name, the idiom under it.

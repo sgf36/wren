@@ -3,11 +3,15 @@
     python store/compose.py                          # en-GB, default beats
     python store/compose.py --locale fr-FR           # French
     python store/compose.py --beats advert-the-list advert-which-city
+    python store/compose.py --platform android --locale de-DE
 
 macOS only -- uses system Georgia font and FFmpeg. Run from the repo root
 after store/render.py has rendered the beats.
 
-Produces one 1080x1920 MP4 per locale under store/adverts/<locale>/.
+Produces one 1080x1920 MP4 per locale under store/adverts/<locale>/, or
+store/adverts/android/<locale>/ for the Android edition, whose cards say
+"your map app" and "Google Play" (solution_android, cta_android) and whose
+beats end on the hand-off sheet rather than an Apple Maps guide.
 
 The three-act structure:
   1. Problem -- each line on its own text card, teal background, cream text
@@ -216,7 +220,8 @@ def _check_glyphs(font, text):
                  % (pathlib.Path(font.path).name,
                     " ".join("U+%04X" % ord(c) for c in gone), text))
 
-from render import DEFAULT_BEATS, OUT as RENDERED  # noqa: E402
+from render import (DEFAULT_BEATS, DEFAULT_BEATS_ANDROID,  # noqa: E402
+                    render_dir)
 
 PROBLEM_HOLD = 2.5
 SOLUTION_HOLD = 4.5
@@ -226,13 +231,16 @@ def say(msg):
     print(msg, flush=True)
 
 
-def load_strings(locale):
+def load_strings(locale, platform="ios"):
     if not STRINGS.exists():
         sys.exit("no strings file at %s" % STRINGS)
     data = json.loads(STRINGS.read_text(encoding="utf-8"))
+    # Never falls back to the iOS copy: an Android advert that said "Apple
+    # Maps" or "App Store" would be wrong in a way no check below would catch.
+    suffix = "_android" if platform == "android" else ""
     problem = data.get("problem", {}).get(locale)
-    solution = data.get("solution", {}).get(locale)
-    cta = data.get("cta", {}).get(locale)
+    solution = data.get("solution" + suffix, {}).get(locale)
+    cta = data.get("cta" + suffix, {}).get(locale)
     missing = [k for k, v in [("problem", problem), ("solution", solution),
                                ("cta", cta)] if not v]
     if missing:
@@ -564,9 +572,13 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--locale", default="en-GB")
-    p.add_argument("--beats", nargs="+", default=DEFAULT_BEATS,
+    p.add_argument("--platform", choices=("ios", "android"), default="ios")
+    p.add_argument("--beats", nargs="+", default=None,
                    help="beat names to include, in order (default: every beat)")
     args = p.parse_args()
+    android = args.platform == "android"
+    if args.beats is None:
+        args.beats = DEFAULT_BEATS_ANDROID if android else DEFAULT_BEATS
 
     if not shutil.which("ffmpeg"):
         sys.exit("ffmpeg is required")
@@ -577,14 +589,18 @@ def main():
     if not pathlib.Path(FONT).exists():
         sys.exit("Georgia font not at %s -- this needs macOS" % FONT)
 
-    problem_lines, solution_text, cta_text = load_strings(args.locale)
+    problem_lines, solution_text, cta_text = load_strings(args.locale,
+                                                          args.platform)
 
-    locale_dir = RENDERED / args.locale
+    locale_dir = render_dir(args.platform, args.locale)
     manifest_path = locale_dir / "manifest.json"
     if not manifest_path.exists():
-        sys.exit("no render at %s -- run store/render.py --locale %s first"
-                 % (locale_dir, args.locale))
+        sys.exit("no render at %s -- run store/render.py --platform %s "
+                 "--locale %s first" % (locale_dir, args.platform, args.locale))
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("platform", "ios") != args.platform:
+        sys.exit("%s holds a %s render, not %s"
+                 % (locale_dir, manifest.get("platform", "ios"), args.platform))
     rendered = {b["name"]: b for b in manifest["beats"]}
     if manifest.get("fps") != FPS:
         sys.exit("rendered at %s fps, composed at %d" % (manifest.get("fps"), FPS))
@@ -605,11 +621,12 @@ def main():
         texts += [_reshape_bidi(ln) if _has_arabic(ln) else ln for ln in lines]
     font_path, font_index = _font_for_locale(args.locale, texts)
     fallback = _latin_fallback.get(args.locale)
-    say("composing advert for %s" % args.locale)
+    say("composing %s advert for %s" % (args.platform, args.locale))
     say("  beats: %s" % ", ".join(args.beats))
     say("  rendered: %s" % locale_dir)
 
-    out_dir = ADVERTS / args.locale
+    out_dir = (ADVERTS / "android" / args.locale) if android \
+        else ADVERTS / args.locale
     out_dir.mkdir(parents=True, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as tmp:

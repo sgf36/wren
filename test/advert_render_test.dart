@@ -40,8 +40,16 @@
 /// - `WREN_RENDER_BEATS`: comma-separated beat names, in order.
 /// - `WREN_RENDER_FONTS`: a JSON file written by store/render.py —
 ///   `families` (family name → font files), `serifFallback` and
-///   `sansFallback` (family names). Fonts are loaded from the machine, never
-///   committed: on the macOS runner they are Apple's own system fonts.
+///   `sansFallback` (family names), and `systemFamily`, the face text with no
+///   family is drawn in. Fonts are never committed: for iOS they are Apple's
+///   own system fonts on the macOS runner; for Android, Google's open-licence
+///   Roboto and Noto, downloaded by render.py.
+/// - `WREN_RENDER_PLATFORM`: `ios` (default) or `android`, which decides the
+///   Material typography, scroll physics and sheet shapes drawn.
+///
+/// Android is rendered on the same 1320x2868 frame as iOS (a 440x956 dp phone,
+/// within the range of current large Android phones), so compose.py's crop
+/// and scale apply unchanged.
 library;
 
 import 'dart:convert';
@@ -102,7 +110,12 @@ Future<_Cascade> _loadFonts(String configPath) async {
   }
   List<String> names(String key) =>
       ((config[key] as List?) ?? const []).cast<String>();
-  return _Cascade(loaded, names('serifFallback'), names('sansFallback'));
+  return _Cascade(
+    loaded,
+    names('serifFallback'),
+    names('sansFallback'),
+    (config['systemFamily'] as String?) ?? 'CupertinoSystemText',
+  );
 }
 
 /// iOS's font cascade, applied where iOS applies it: to each run of text as it
@@ -127,23 +140,30 @@ Future<_Cascade> _loadFonts(String configPath) async {
 /// proves each one is in one of the chain's font files. A family that was not
 /// loaded fails here.
 class _Cascade {
-  _Cascade(this.loaded, this.serifFallback, this.sansFallback);
+  _Cascade(
+    this.loaded,
+    this.serifFallback,
+    this.sansFallback,
+    this.systemFamily,
+  );
 
   final List<String> loaded;
   final List<String> serifFallback;
   final List<String> sansFallback;
 
+  /// The face text with no family of its own is drawn in: SF on iOS,
+  /// Roboto on Android.
+  final String systemFamily;
+
   /// Chain ("Georgia>WrenSerif>WrenSans") → every character drawn with it.
   final glyphs = <String, Set<String>>{};
-
-  static const _systemFamily = 'CupertinoSystemText';
 
   List<String> _chainFor(String family) =>
       family == 'Georgia' ? [...serifFallback, ...sansFallback] : sansFallback;
 
   InlineSpan _patch(InlineSpan span, String? inherited) {
     if (span is! TextSpan) return span;
-    final family = span.style?.fontFamily ?? inherited ?? _systemFamily;
+    final family = span.style?.fontFamily ?? inherited ?? systemFamily;
     if (!loaded.contains(family)) {
       throw StateError(
         'text "${span.text}" asks for font family "$family", '
@@ -249,9 +269,12 @@ void main() {
       '${cascade.serifFallback}; sans fallback ${cascade.sansFallback}',
     );
 
-    // iOS, so Material picks the iOS typography, scroll physics and dialog
-    // shapes the phone shows. The test binding defaults to Android.
-    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    // The platform the advert is for, so Material picks that phone's
+    // typography, scroll physics and dialog shapes.
+    final android = _env['WREN_RENDER_PLATFORM'] == 'android';
+    debugDefaultTargetPlatformOverride = android
+        ? TargetPlatform.android
+        : TargetPlatform.iOS;
     // The test binding flattens shadows for determinism; this is a picture,
     // and the cards have them.
     debugDisableShadows = false;
@@ -264,6 +287,7 @@ void main() {
 
     final manifest = <String, Object>{
       'locale': _env['WREN_RENDER_LOCALE'] ?? 'en-GB',
+      'platform': android ? 'android' : 'ios',
       'fps': _fps,
       'width': _physical.width.round(),
       'height': _physical.height.round(),
