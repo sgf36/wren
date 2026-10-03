@@ -66,7 +66,7 @@ A saved-places export from another map app, or a Google Takeout archive. Wren re
 
 EVERY PLACE IS YOURS TO CHECK
 
-Wren shows what it read beside what it matched, so a wrong match is obvious rather than silent, and you can search again for anything it got wrong. This matters just as much for a reel: what a model read out of somebody else's caption can be wrong in exactly the way a reading of a screenshot can. Nothing is sent anywhere until you have looked at the list and chosen what to keep.
+Wren shows what it read beside what it matched, so a wrong match is obvious rather than silent, and you can search again for anything it got wrong. Nothing is sent anywhere until you have looked at the list and chosen what to keep.
 
 THEN HAND IT TO YOUR MAP APP
 
@@ -83,11 +83,11 @@ Google Maps works differently, because Google offers no way for an app to write 
 
 WHAT IT COSTS
 
-Guides of up to three places are free, for good, and so is reading a screenshot — at any size, however many places are in it.
+Sending up to three places at a time is free, for good, and so is reading a screenshot — at any size, however many places are in it. The first reel or post you share is read free too, once per phone.
 
 Two things are paid for, each once:
 
-• Any number of places — removes the three-place limit, and lets you add to a guide you already have
+• Any number of places — removes the three-place limit, so a whole list goes to your map app at once
 • Places from posts — reads the places out of a reel or post you share, with a fair-use allowance of 250 posts every thirty days
 
 Buying both together costs less than buying them apart, and if you already own the first, the second is offered at the difference rather than the full price. No subscription, nothing that renews, nothing that expires.
@@ -98,7 +98,7 @@ Your screenshots do not. That reading is done on the device.
 
 A place name does, when Wren looks it up, because finding where a place is means asking a map. It goes to the map service your phone already uses.
 
-A link does, if you share a reel or a post — and only then. A share sheet hands over a web address and never the video, so the post has to be fetched by something that can reach it. What is sent is the address and proof that you paid for the feature: no name, no email address, no location, and no identifier for you.
+A link does, if you share a reel or a post — and only then. A share sheet hands over a web address and never the video, so the post has to be fetched by something that can reach it. What is sent is the address and proof that you paid for the feature — or, for the free first read, a one-way fingerprint of your phone that is kept only to allow that read once. No name, no email address, no location.
 
 There is no account, no advertising and no analytics. Wren asks nothing at all about your location: it never asks where you are, only where a place named in a post or a screenshot is.
 
