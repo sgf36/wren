@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 
 import {
-  BUNDLE_ID, INTEGRITY_MAX_AGE_MS, identify, judgeIntegrity, nonceBindsUrl,
+  BUNDLE_ID, INTEGRITY_MAX_AGE_MS, INTEGRITY_SCOPE, identify, judgeIntegrity, nonceBindsUrl,
   verifyPlayIntegrity, writeRecall,
 } from '../src/index.js';
 
@@ -125,23 +125,22 @@ test('no token, or no service account, is a refusal and not a crash', async () =
 
 /* ---------------------------------------------------- against a fake Google */
 
-async function serviceAccount() {
-  const pair = await webcrypto.subtle.generateKey(
-    { name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048,
-      publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' },
-    true, ['sign', 'verify']);
-  const der = Buffer.from(await webcrypto.subtle.exportKey('pkcs8', pair.privateKey));
-  const pem = `-----BEGIN PRIVATE KEY-----\n${der.toString('base64')}\n-----END PRIVATE KEY-----\n`;
-  return JSON.stringify({ client_email: 'sa@example.iam.gserviceaccount.com',
-    private_key: pem });
+/**
+ * Stands in for minting a Google bearer token. The real minter signs a JWT with
+ * the service account's private key; nothing here needs one, and a test that
+ * carried key material would be the thing CI's committed-key guard exists to
+ * stop. Records the scope so a wrong one is caught.
+ */
+function fakeMint(scopes) {
+  return async (_key, scope) => {
+    scopes.push(scope);
+    return 'bearer';
+  };
 }
 
 function fakeGoogle(payload, calls) {
   return async (url, init) => {
     calls.push({ url: String(url), body: init?.body });
-    if (String(url).startsWith('https://oauth2.googleapis.com/token')) {
-      return new Response(JSON.stringify({ access_token: 'bearer' }));
-    }
     if (String(url).endsWith(':decodeIntegrityToken')) {
       return new Response(JSON.stringify({ tokenPayloadExternal: payload }));
     }
@@ -152,35 +151,45 @@ function fakeGoogle(payload, calls) {
   };
 }
 
-test('a granted token becomes a free identity keyed on its nonce', async (t) => {
+test('a granted token becomes a free identity keyed on its nonce', async () => {
   const v = await verdict((b) => {
     b.requestDetails.timestampMillis = String(Date.now() - 1000);
   });
   const calls = [];
-  const real = globalThis.fetch;
-  globalThis.fetch = fakeGoogle(v, calls);
-  t.after(() => { globalThis.fetch = real; });
-
-  const env = { PLAY_SA_KEY: await serviceAccount() };
-  const who = await verifyPlayIntegrity(env, 'tok', URL_A, globalThis.fetch);
+  const scopes = [];
+  const who = await verifyPlayIntegrity(
+    {}, 'tok', URL_A, fakeGoogle(v, calls), fakeMint(scopes));
   assert.ok(who);
   assert.equal(who.key, `free:play:${v.requestDetails.nonce}`);
   assert.equal(who.store, 'free');
   assert.equal(who.integrityToken, 'tok');
+  assert.deepEqual(scopes, [INTEGRITY_SCOPE]);
   const decode = calls.find((c) => c.url.endsWith(':decodeIntegrityToken'));
   assert.ok(decode.url.includes(BUNDLE_ID));
   assert.deepEqual(JSON.parse(decode.body), { integrity_token: 'tok' });
 });
 
-test('writeRecall touches bitFirst and nothing else', async (t) => {
-  const calls = [];
-  const real = globalThis.fetch;
-  globalThis.fetch = fakeGoogle({}, calls);
-  t.after(() => { globalThis.fetch = real; });
+test('a verdict Google decoded but the judge refuses grants nothing', async () => {
+  const spent = await verdict((b) => {
+    b.requestDetails.timestampMillis = String(Date.now() - 1000);
+    b.deviceIntegrity.deviceRecall.values.bitFirst = true;
+  });
+  assert.equal(await verifyPlayIntegrity(
+    {}, 'tok', URL_A, fakeGoogle(spent, []), fakeMint([])), null);
+});
 
-  const env = { PLAY_SA_KEY: await serviceAccount() };
-  assert.equal(await writeRecall(env, 'tok', true, globalThis.fetch), true);
-  assert.equal(await writeRecall(env, 'tok', false, globalThis.fetch), true);
+test('no bearer token means no decode and no free read', async () => {
+  const calls = [];
+  assert.equal(await verifyPlayIntegrity(
+    {}, 'tok', URL_A, fakeGoogle({}, calls), async () => null), null);
+  assert.equal(calls.length, 0, 'nothing may be sent without credentials');
+});
+
+test('writeRecall touches bitFirst and nothing else', async () => {
+  const calls = [];
+  const mint = fakeMint([]);
+  assert.equal(await writeRecall({}, 'tok', true, fakeGoogle({}, calls), mint), true);
+  assert.equal(await writeRecall({}, 'tok', false, fakeGoogle({}, calls), mint), true);
   const writes = calls.filter((c) => c.url.endsWith('/deviceRecall:write'))
     .map((c) => JSON.parse(c.body));
   // The other two bits belong to whichever other app on the developer account
@@ -191,12 +200,7 @@ test('writeRecall touches bitFirst and nothing else', async (t) => {
   ]);
 });
 
-test('a failed write reports failure', async (t) => {
-  const real = globalThis.fetch;
-  globalThis.fetch = async (url) => (String(url).includes('oauth2')
-    ? new Response(JSON.stringify({ access_token: 'b' }))
-    : new Response('denied', { status: 403 }));
-  t.after(() => { globalThis.fetch = real; });
-  const env = { PLAY_SA_KEY: await serviceAccount() };
-  assert.equal(await writeRecall(env, 'tok', true, globalThis.fetch), false);
+test('a failed write reports failure', async () => {
+  const denied = async () => new Response('denied', { status: 403 });
+  assert.equal(await writeRecall({}, 'tok', true, denied, fakeMint([])), false);
 });

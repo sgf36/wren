@@ -492,9 +492,11 @@ export async function nonceBindsUrl(nonce, url) {
  * Integrity API enabled there -- otherwise every call answers 403 and every
  * Android user simply meets the paywall first, as before.
  */
-export async function verifyPlayIntegrity(env, token, url, fetchFn = fetch) {
+export async function verifyPlayIntegrity(
+  env, token, url, fetchFn = fetch, mint = accessToken,
+) {
   if (typeof token !== 'string' || !token) return null;
-  const bearer = await accessToken(
+  const bearer = await mint(
     env.PLAY_INTEGRITY_SA_KEY || env.PLAY_SA_KEY, INTEGRITY_SCOPE);
   if (!bearer) return null;
 
@@ -528,8 +530,10 @@ export async function verifyPlayIntegrity(env, token, url, fetchFn = fetch) {
  * read is tens of seconds and costs money. Google propagates a write within
  * seconds, so marking first shrinks that window to almost nothing.
  */
-export async function writeRecall(env, token, spent, fetchFn = fetch) {
-  const bearer = await accessToken(
+export async function writeRecall(
+  env, token, spent, fetchFn = fetch, mint = accessToken,
+) {
+  const bearer = await mint(
     env.PLAY_INTEGRITY_SA_KEY || env.PLAY_SA_KEY, INTEGRITY_SCOPE);
   if (!bearer) return false;
   const res = await fetchFn(
