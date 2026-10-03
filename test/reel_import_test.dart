@@ -220,6 +220,25 @@ void main() {
       });
     });
 
+    test('the Android free sample goes as a Play Integrity token', () async {
+      // Same reason as above: the Worker routes on `kind`, and the token is
+      // what Google decodes, so both must arrive exactly as named.
+      final http = replying(200, {
+        'candidates': [
+          {'name': 'A'},
+        ],
+      });
+      await readReel(
+        'https://www.instagram.com/p/ABC/',
+        auth: const ReelAuth.playIntegrity('integrity.token'),
+        send: http.send,
+      );
+      expect(http.sent.single, {
+        'url': 'https://www.instagram.com/p/ABC/',
+        'auth': {'kind': 'playintegrity', 'token': 'integrity.token'},
+      });
+    });
+
     test('no region is a real answer, not a missing one', () async {
       // A post naming ten castles across seven countries has no single region,
       // and guessing one aims every lookup at the wrong place.
