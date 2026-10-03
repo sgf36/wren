@@ -88,6 +88,13 @@
       "surface": "paid",
       "creative": "Meta Ads app install campaign (Instagram Reels, Stories, Feed)",
       "notes": "One token for all Meta paid campaigns, not per ad set. Kept apart from ig-organic-* for the same reason as TikTok."
+    },
+    {
+      "token": "zeely-paid-app-install",
+      "channel": "Zeely",
+      "surface": "paid",
+      "creative": "Campaigns run through Zeely.ai",
+      "notes": "One token for everything Zeely runs, kept apart from meta-paid-* and tt-paid-* so Zeely's results can be judged on their own. If Zeely places Meta app-install ads, Meta substitutes the registered store URL and this token is dropped (verified for Meta 2026-10-02), so check where Zeely actually sends clicks."
     }
   ]
 }
