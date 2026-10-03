@@ -651,4 +651,22 @@ class LHr extends L {
 
   @override
   String get readLink => 'Pročitaj';
+
+  @override
+  String get handoffNoteOsmand => 'Zatim ih u OsmAndu uvezite kao favorite';
+
+  @override
+  String get handoffNoteLocus => 'Potvrdite uvoz u Locus Mapu';
+
+  @override
+  String get handoffNoteGaia =>
+      'Potreban je Gaia račun i uključen sloj putnih točaka';
+
+  @override
+  String get handoffNoteMapy =>
+      'Potreban je Seznam račun i nekoliko dodira za spremanje';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Otvara My Maps — nekoliko dodira i popis se pojavi među spremljenim kartama u Google Mapsu';
 }

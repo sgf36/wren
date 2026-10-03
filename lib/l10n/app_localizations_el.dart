@@ -645,4 +645,22 @@ class LEl extends L {
 
   @override
   String get readLink => 'Διάβασέ το';
+
+  @override
+  String get handoffNoteOsmand => 'Μετά εισαγάγετέ τα ως αγαπημένα στο OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Επιβεβαιώστε την εισαγωγή στο Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Χρειάζεται λογαριασμό Gaia και ενεργό επίπεδο σημείων διαδρομής';
+
+  @override
+  String get handoffNoteMapy =>
+      'Χρειάζεται λογαριασμό Seznam και μερικά πατήματα για αποθήκευση';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Ανοίγει το My Maps — μερικά πατήματα, και η λίστα εμφανίζεται στους αποθηκευμένους χάρτες σας στο Google Maps';
 }

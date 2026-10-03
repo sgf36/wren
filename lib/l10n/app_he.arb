@@ -138,5 +138,10 @@
   "onboardingReels": "שתפו קישור לריל או פוסט — Wren מוצא את המקומות בו.",
   "onboardingFiles": "ייבאו קובץ מאפליקציית מפות אחרת: GPX, CSV, KML ועוד.",
   "onboardingDismiss": "בואו נתחיל",
-  "sendPlacesEmpty": "הוסיפו מקומות קודם — צלמו מסך או שתפו פוסט ל־Wren."
+  "sendPlacesEmpty": "הוסיפו מקומות קודם — צלמו מסך או שתפו פוסט ל־Wren.",
+  "handoffNoteOsmand": "לאחר מכן ייבאו אותם כמועדפים ב-OsmAnd",
+  "handoffNoteLocus": "אשרו את הייבוא ב-Locus Map",
+  "handoffNoteGaia": "דורש חשבון Gaia ושכבת נקודות הציון מופעלת",
+  "handoffNoteMapy": "דורש חשבון Seznam וכמה הקשות לשמירה",
+  "handoffNoteGoogleMaps": "פותח את My Maps — כמה הקשות, והרשימה מופיעה בין המפות השמורות שלכם ב-Google Maps"
 }

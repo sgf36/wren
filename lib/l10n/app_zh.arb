@@ -138,5 +138,10 @@
   "onboardingReels": "分享帖子或视频链接，Wren 会找到其中的地点。",
   "onboardingFiles": "从其他地图应用导入文件：GPX、CSV、KML 等。",
   "onboardingDismiss": "开始使用",
-  "sendPlacesEmpty": "先添加一些地点 — 截取屏幕或将帖子分享给 Wren。"
+  "sendPlacesEmpty": "先添加一些地点 — 截取屏幕或将帖子分享给 Wren。",
+  "handoffNoteOsmand": "然后在 OsmAnd 中将它们导入为收藏",
+  "handoffNoteLocus": "在 Locus Map 中确认导入",
+  "handoffNoteGaia": "需要 Gaia 账号，并开启航点图层",
+  "handoffNoteMapy": "需要 Seznam 账号，并点几下才能保存",
+  "handoffNoteGoogleMaps": "打开 My Maps — 点几下后，列表会出现在 Google Maps 中你保存的地图里"
 }

@@ -138,5 +138,10 @@
   "onboardingReels": "Jaa reel- tai julkaisulinkki — Wren löytää siitä paikat.",
   "onboardingFiles": "Tuo tiedosto toisesta karttasovelluksesta: GPX, CSV, KML ja muut.",
   "onboardingDismiss": "Aloita",
-  "sendPlacesEmpty": "Lisää ensin paikkoja — kuvakaappaa jotain tai jaa julkaisu Wreniin."
+  "sendPlacesEmpty": "Lisää ensin paikkoja — kuvakaappaa jotain tai jaa julkaisu Wreniin.",
+  "handoffNoteOsmand": "Tuo ne sitten suosikeiksi OsmAndissa",
+  "handoffNoteLocus": "Vahvista tuonti Locus Mapissa",
+  "handoffNoteGaia": "Vaatii Gaia-tilin ja reittipistetason päälle",
+  "handoffNoteMapy": "Vaatii Seznam-tilin ja muutaman napautuksen tallennukseen",
+  "handoffNoteGoogleMaps": "Avaa My Mapsin — muutama napautus, ja lista näkyy tallennetuissa kartoissasi Google Mapsissa"
 }

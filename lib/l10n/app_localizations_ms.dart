@@ -614,4 +614,23 @@ class LMs extends L {
 
   @override
   String get readLink => 'Baca';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Kemudian import sebagai kegemaran dalam OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Sahkan import dalam Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Perlukan akaun Gaia, dan lapisan titik laluan dihidupkan';
+
+  @override
+  String get handoffNoteMapy =>
+      'Perlukan akaun Seznam, dan beberapa ketikan untuk menyimpan';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Membuka My Maps — beberapa ketikan, dan senarai muncul dalam peta tersimpan anda di Google Maps';
 }

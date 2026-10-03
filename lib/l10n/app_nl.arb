@@ -138,5 +138,10 @@
   "onboardingReels": "Deel een reel- of berichtlink — Wren vindt de plaatsen erin.",
   "onboardingFiles": "Importeer een bestand uit een andere kaart-app: GPX, CSV, KML en meer.",
   "onboardingDismiss": "Aan de slag",
-  "sendPlacesEmpty": "Voeg eerst plaatsen toe — maak een schermafbeelding of deel een bericht met Wren."
+  "sendPlacesEmpty": "Voeg eerst plaatsen toe — maak een schermafbeelding of deel een bericht met Wren.",
+  "handoffNoteOsmand": "Importeer ze daarna als favorieten in OsmAnd",
+  "handoffNoteLocus": "Bevestig de import in Locus Map",
+  "handoffNoteGaia": "Vereist een Gaia-account en de waypointlaag aan",
+  "handoffNoteMapy": "Vereist een Seznam-account en een paar tikken om op te slaan",
+  "handoffNoteGoogleMaps": "Opent My Maps — een paar tikken en de lijst staat bij je opgeslagen kaarten in Google Maps"
 }

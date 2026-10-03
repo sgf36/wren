@@ -627,4 +627,23 @@ class LTr extends L {
 
   @override
   String get readLink => 'Oku';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Ardından OsmAnd\'de favori olarak içe aktarın';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map\'te içe aktarmayı onaylayın';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia hesabı ve açık bir yol noktası katmanı gerekir';
+
+  @override
+  String get handoffNoteMapy =>
+      'Seznam hesabı ve kaydetmek için birkaç dokunuş gerekir';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps\'i açar — birkaç dokunuşla liste Google Maps\'te kayıtlı haritalarınız arasında görünür';
 }

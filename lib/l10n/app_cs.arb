@@ -138,5 +138,10 @@
   "onboardingReels": "Sdílejte odkaz na reel nebo příspěvek — Wren v něm najde místa.",
   "onboardingFiles": "Importujte soubor z jiné mapové aplikace: GPX, CSV, KML a další.",
   "onboardingDismiss": "Začít",
-  "sendPlacesEmpty": "Nejdřív přidejte místa — vyfoťte obrazovku nebo sdílejte příspěvek do Wren."
+  "sendPlacesEmpty": "Nejdřív přidejte místa — vyfoťte obrazovku nebo sdílejte příspěvek do Wren.",
+  "handoffNoteOsmand": "Pak je v OsmAnd importujte jako oblíbené",
+  "handoffNoteLocus": "Potvrďte import v Locus Map",
+  "handoffNoteGaia": "Vyžaduje účet Gaia a zapnutou vrstvu trasových bodů",
+  "handoffNoteMapy": "Vyžaduje účet Seznam a pár klepnutí k uložení",
+  "handoffNoteGoogleMaps": "Otevře My Maps — pár klepnutí a seznam se objeví mezi uloženými mapami v Google Maps"
 }

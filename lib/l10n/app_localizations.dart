@@ -1016,6 +1016,36 @@ abstract class L {
   /// In en, this message translates to:
   /// **'Read it'**
   String get readLink;
+
+  /// Note under OsmAnd in the Android sheet that sends places to a map app: the step the user still has to take inside OsmAnd. Name the action rather than quoting a button label: OsmAnd's own wording differs by language and cannot be checked here.
+  ///
+  /// In en, this message translates to:
+  /// **'Then tap \"Import as favorites\" in OsmAnd'**
+  String get handoffNoteOsmand;
+
+  /// Note under Locus Map in the same sheet: Locus asks the user to confirm the import.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm the import in Locus Map'**
+  String get handoffNoteLocus;
+
+  /// Note under Gaia GPS in the same sheet: it needs a Gaia account and its waypoints layer turned on, or the places do not show.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs a Gaia account, and the Waypoints layer switched on'**
+  String get handoffNoteGaia;
+
+  /// Note under Mapy.com in the same sheet: it needs a Seznam account, and saving takes a few taps.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs a Seznam account, and a few taps to save'**
+  String get handoffNoteMapy;
+
+  /// Note under Google Maps in the same sheet: the list goes to Google My Maps in the browser, and after a few taps it appears in the Google Maps app among the user's saved maps. Keep 'My Maps' and 'Google Maps' as Google's product names. Do not quote Google's tab names, which differ by language.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens My Maps — a few taps, and it appears in Maps under You → Maps'**
+  String get handoffNoteGoogleMaps;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

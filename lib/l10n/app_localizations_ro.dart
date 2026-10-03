@@ -653,4 +653,22 @@ class LRo extends L {
 
   @override
   String get readLink => 'Citește-l';
+
+  @override
+  String get handoffNoteOsmand => 'Apoi importă-le ca favorite în OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirmă importul în Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Necesită un cont Gaia și stratul de puncte de traseu activat';
+
+  @override
+  String get handoffNoteMapy =>
+      'Necesită un cont Seznam și câteva atingeri pentru salvare';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Deschide My Maps — câteva atingeri și lista apare printre hărțile tale salvate în Google Maps';
 }

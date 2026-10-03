@@ -138,5 +138,10 @@
   "onboardingReels": "شارك رابط ريل أو منشور — يجد Wren الأماكن فيه.",
   "onboardingFiles": "استورد ملفًا من تطبيق خرائط آخر: GPX و CSV و KML والمزيد.",
   "onboardingDismiss": "ابدأ",
-  "sendPlacesEmpty": "أضف بعض الأماكن أولاً — التقط لقطة شاشة لشيء ما أو شارك منشورًا إلى Wren."
+  "sendPlacesEmpty": "أضف بعض الأماكن أولاً — التقط لقطة شاشة لشيء ما أو شارك منشورًا إلى Wren.",
+  "handoffNoteOsmand": "ثم استوردها كمفضلة في OsmAnd",
+  "handoffNoteLocus": "أكّد الاستيراد في Locus Map",
+  "handoffNoteGaia": "يتطلب حساب Gaia وتفعيل طبقة نقاط الطريق",
+  "handoffNoteMapy": "يتطلب حساب Seznam وبضع نقرات للحفظ",
+  "handoffNoteGoogleMaps": "يفتح My Maps — بضع نقرات، وتظهر القائمة بين خرائطك المحفوظة في Google Maps"
 }

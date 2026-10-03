@@ -638,6 +638,25 @@ class LFr extends L {
 
   @override
   String get readLink => 'Lire';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Ensuite, importe-les comme favoris dans OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirme l\'importation dans Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Nécessite un compte Gaia et le calque des points de passage activé';
+
+  @override
+  String get handoffNoteMapy =>
+      'Nécessite un compte Seznam et quelques touches pour enregistrer';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Ouvre My Maps — quelques touches, et la liste apparaît dans tes cartes enregistrées sur Google Maps';
 }
 
 /// The translations for French, as used in Canada (`fr_CA`).
@@ -1275,4 +1294,23 @@ class LFrCa extends LFr {
 
   @override
   String get readLink => 'Lire';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Ensuite, importe-les comme favoris dans OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirme l\'importation dans Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Nécessite un compte Gaia et le calque des points de passage activé';
+
+  @override
+  String get handoffNoteMapy =>
+      'Nécessite un compte Seznam et quelques touches pour enregistrer';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Ouvre My Maps — quelques touches, et la liste apparaît dans tes cartes enregistrées sur Google Maps';
 }

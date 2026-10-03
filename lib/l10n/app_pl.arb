@@ -138,5 +138,10 @@
   "onboardingReels": "Udostępnij link do reela lub posta — Wren znajdzie w nim miejsca.",
   "onboardingFiles": "Zaimportuj plik z innej aplikacji map: GPX, CSV, KML i inne.",
   "onboardingDismiss": "Zacznij",
-  "sendPlacesEmpty": "Najpierw dodaj miejsca — zrób zrzut ekranu lub udostępnij post w Wren."
+  "sendPlacesEmpty": "Najpierw dodaj miejsca — zrób zrzut ekranu lub udostępnij post w Wren.",
+  "handoffNoteOsmand": "Potem zaimportuj je jako ulubione w OsmAnd",
+  "handoffNoteLocus": "Potwierdź import w Locus Map",
+  "handoffNoteGaia": "Wymaga konta Gaia i włączonej warstwy punktów trasy",
+  "handoffNoteMapy": "Wymaga konta Seznam i kilku dotknięć, by zapisać",
+  "handoffNoteGoogleMaps": "Otwiera My Maps — kilka dotknięć i lista pojawi się wśród zapisanych map w Google Maps"
 }

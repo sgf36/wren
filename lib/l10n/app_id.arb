@@ -138,5 +138,10 @@
   "onboardingReels": "Bagikan tautan reel atau pos — Wren menemukan tempat-tempatnya.",
   "onboardingFiles": "Impor file dari aplikasi peta lain: GPX, CSV, KML, dan lainnya.",
   "onboardingDismiss": "Mulai",
-  "sendPlacesEmpty": "Tambahkan beberapa tempat dulu — ambil tangkapan layar atau bagikan pos ke Wren."
+  "sendPlacesEmpty": "Tambahkan beberapa tempat dulu — ambil tangkapan layar atau bagikan pos ke Wren.",
+  "handoffNoteOsmand": "Lalu impor sebagai favorit di OsmAnd",
+  "handoffNoteLocus": "Konfirmasi impor di Locus Map",
+  "handoffNoteGaia": "Perlu akun Gaia, dan lapisan titik arah diaktifkan",
+  "handoffNoteMapy": "Perlu akun Seznam, dan beberapa ketukan untuk menyimpan",
+  "handoffNoteGoogleMaps": "Membuka My Maps — beberapa ketukan, lalu daftarnya muncul di peta tersimpan Anda di Google Maps"
 }

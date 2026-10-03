@@ -138,5 +138,10 @@
   "onboardingReels": "ਰੀਲ ਜਾਂ ਪੋਸਟ ਲਿੰਕ ਸਾਂਝਾ ਕਰੋ — Wren ਉਸ ਵਿੱਚ ਥਾਵਾਂ ਲੱਭ ਲਵੇਗਾ।",
   "onboardingFiles": "ਕਿਸੇ ਹੋਰ ਮੈਪ ਐਪ ਤੋਂ ਫ਼ਾਇਲ ਆਯਾਤ ਕਰੋ: GPX, CSV, KML ਅਤੇ ਹੋਰ।",
   "onboardingDismiss": "ਸ਼ੁਰੂ ਕਰੋ",
-  "sendPlacesEmpty": "ਪਹਿਲਾਂ ਕੁਝ ਥਾਵਾਂ ਜੋੜੋ — ਕਿਸੇ ਚੀਜ਼ ਦਾ ਸਕ੍ਰੀਨਸ਼ੌਟ ਲਓ ਜਾਂ Wren ਨੂੰ ਪੋਸਟ ਸਾਂਝੀ ਕਰੋ।"
+  "sendPlacesEmpty": "ਪਹਿਲਾਂ ਕੁਝ ਥਾਵਾਂ ਜੋੜੋ — ਕਿਸੇ ਚੀਜ਼ ਦਾ ਸਕ੍ਰੀਨਸ਼ੌਟ ਲਓ ਜਾਂ Wren ਨੂੰ ਪੋਸਟ ਸਾਂਝੀ ਕਰੋ।",
+  "handoffNoteOsmand": "ਫਿਰ OsmAnd ਵਿੱਚ ਇਹਨਾਂ ਨੂੰ ਮਨਪਸੰਦ ਵਜੋਂ ਇੰਪੋਰਟ ਕਰੋ",
+  "handoffNoteLocus": "Locus Map ਵਿੱਚ ਇੰਪੋਰਟ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
+  "handoffNoteGaia": "Gaia ਖਾਤਾ ਚਾਹੀਦਾ ਹੈ, ਅਤੇ ਵੇਪੁਆਇੰਟ ਲੇਅਰ ਚਾਲੂ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ",
+  "handoffNoteMapy": "Seznam ਖਾਤਾ ਚਾਹੀਦਾ ਹੈ, ਅਤੇ ਸੇਵ ਕਰਨ ਲਈ ਕੁਝ ਟੈਪ",
+  "handoffNoteGoogleMaps": "My Maps ਖੋਲ੍ਹਦਾ ਹੈ — ਕੁਝ ਟੈਪਾਂ ਬਾਅਦ ਸੂਚੀ Google Maps ਵਿੱਚ ਤੁਹਾਡੇ ਸੇਵ ਕੀਤੇ ਨਕਸ਼ਿਆਂ ਵਿੱਚ ਦਿਖਾਈ ਦਿੰਦੀ ਹੈ"
 }

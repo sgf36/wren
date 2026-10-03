@@ -138,5 +138,10 @@
   "onboardingReels": "Podijelite poveznicu reela ili objave — Wren pronalazi mjesta u njoj.",
   "onboardingFiles": "Uvezite datoteku iz druge aplikacije za karte: GPX, CSV, KML i više.",
   "onboardingDismiss": "Započnite",
-  "sendPlacesEmpty": "Najprije dodajte mjesta — napravite snimku zaslona ili podijelite objavu u Wren."
+  "sendPlacesEmpty": "Najprije dodajte mjesta — napravite snimku zaslona ili podijelite objavu u Wren.",
+  "handoffNoteOsmand": "Zatim ih u OsmAndu uvezite kao favorite",
+  "handoffNoteLocus": "Potvrdite uvoz u Locus Mapu",
+  "handoffNoteGaia": "Potreban je Gaia račun i uključen sloj putnih točaka",
+  "handoffNoteMapy": "Potreban je Seznam račun i nekoliko dodira za spremanje",
+  "handoffNoteGoogleMaps": "Otvara My Maps — nekoliko dodira i popis se pojavi među spremljenim kartama u Google Mapsu"
 }

@@ -637,4 +637,23 @@ class LNl extends L {
 
   @override
   String get readLink => 'Lezen';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Importeer ze daarna als favorieten in OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Bevestig de import in Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Vereist een Gaia-account en de waypointlaag aan';
+
+  @override
+  String get handoffNoteMapy =>
+      'Vereist een Seznam-account en een paar tikken om op te slaan';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Opent My Maps — een paar tikken en de lijst staat bij je opgeslagen kaarten in Google Maps';
 }

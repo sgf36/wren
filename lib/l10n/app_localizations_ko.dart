@@ -588,4 +588,20 @@ class LKo extends L {
 
   @override
   String get readLink => '읽기';
+
+  @override
+  String get handoffNoteOsmand => '그다음 OsmAnd에서 즐겨찾기로 가져오세요';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map에서 가져오기를 확인하세요';
+
+  @override
+  String get handoffNoteGaia => 'Gaia 계정이 필요하고 웨이포인트 레이어를 켜야 합니다';
+
+  @override
+  String get handoffNoteMapy => 'Seznam 계정이 필요하고 저장하려면 몇 번 탭해야 합니다';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps가 열립니다 — 몇 번 탭하면 목록이 Google Maps의 저장된 지도에 나타납니다';
 }

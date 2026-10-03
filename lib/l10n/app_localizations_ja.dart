@@ -585,4 +585,20 @@ class LJa extends L {
 
   @override
   String get readLink => '読み取る';
+
+  @override
+  String get handoffNoteOsmand => 'その後、OsmAndでお気に入りとして読み込みます';
+
+  @override
+  String get handoffNoteLocus => 'Locus Mapで読み込みを確定します';
+
+  @override
+  String get handoffNoteGaia => 'Gaiaアカウントと、ウェイポイントレイヤーのオンが必要です';
+
+  @override
+  String get handoffNoteMapy => 'Seznamアカウントと、保存までに数回のタップが必要です';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Mapsが開きます。数回タップすると、リストがGoogle Mapsの保存済みマップに表示されます';
 }

@@ -138,5 +138,10 @@
   "onboardingReels": "Oszd meg egy reel vagy poszt linkjét — a Wren megtalálja benne a helyeket.",
   "onboardingFiles": "Importálj fájlt egy másik térkép alkalmazásból: GPX, CSV, KML és több.",
   "onboardingDismiss": "Kezdés",
-  "sendPlacesEmpty": "Először adj hozzá helyeket — készíts képernyőképet vagy ossz meg egy bejegyzést a Wrennel."
+  "sendPlacesEmpty": "Először adj hozzá helyeket — készíts képernyőképet vagy ossz meg egy bejegyzést a Wrennel.",
+  "handoffNoteOsmand": "Ezután importáld őket kedvencként az OsmAndben",
+  "handoffNoteLocus": "Erősítsd meg az importálást a Locus Mapben",
+  "handoffNoteGaia": "Gaia-fiók kell, és bekapcsolt útpontréteg",
+  "handoffNoteMapy": "Seznam-fiók kell, és néhány koppintás a mentéshez",
+  "handoffNoteGoogleMaps": "Megnyitja a My Mapset — néhány koppintás, és a lista megjelenik a mentett térképeid között a Google Mapsben"
 }

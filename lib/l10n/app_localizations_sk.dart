@@ -669,4 +669,22 @@ class LSk extends L {
 
   @override
   String get readLink => 'Prečítať';
+
+  @override
+  String get handoffNoteOsmand => 'Potom ich v OsmAnd importujte ako obľúbené';
+
+  @override
+  String get handoffNoteLocus => 'Potvrďte import v Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Vyžaduje účet Gaia a zapnutú vrstvu trasových bodov';
+
+  @override
+  String get handoffNoteMapy =>
+      'Vyžaduje účet Seznam a pár ťuknutí na uloženie';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Otvorí My Maps — pár ťuknutí a zoznam sa zobrazí medzi uloženými mapami v Google Maps';
 }

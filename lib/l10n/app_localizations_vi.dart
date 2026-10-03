@@ -609,4 +609,21 @@ class LVi extends L {
 
   @override
   String get readLink => 'Đọc đi';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Sau đó nhập chúng thành mục yêu thích trong OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Xác nhận nhập trong Locus Map';
+
+  @override
+  String get handoffNoteGaia => 'Cần tài khoản Gaia và bật lớp điểm tham chiếu';
+
+  @override
+  String get handoffNoteMapy => 'Cần tài khoản Seznam và vài lần chạm để lưu';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Mở My Maps — vài lần chạm, danh sách sẽ xuất hiện trong bản đồ đã lưu của bạn trên Google Maps';
 }

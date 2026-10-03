@@ -632,4 +632,23 @@ class LDa extends L {
 
   @override
   String get readLink => 'Læs det';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Importér dem derefter som favoritter i OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Bekræft importen i Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Kræver en Gaia-konto og at waypoint-laget er slået til';
+
+  @override
+  String get handoffNoteMapy =>
+      'Kræver en Seznam-konto og et par tryk for at gemme';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Åbner My Maps — et par tryk, så ligger listen blandt dine gemte kort i Google Maps';
 }

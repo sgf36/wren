@@ -631,4 +631,22 @@ class LHi extends L {
 
   @override
   String get readLink => 'पढ़ें';
+
+  @override
+  String get handoffNoteOsmand =>
+      'फिर OsmAnd में इन्हें पसंदीदा के रूप में इम्पोर्ट करें';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map में इम्पोर्ट की पुष्टि करें';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia खाता चाहिए, और वेपॉइंट लेयर चालू होनी चाहिए';
+
+  @override
+  String get handoffNoteMapy => 'Seznam खाता चाहिए, और सेव करने के लिए कुछ टैप';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps खोलता है — कुछ टैप, और सूची Google Maps में आपके सहेजे गए मैप में दिखती है';
 }

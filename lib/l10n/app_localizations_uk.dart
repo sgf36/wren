@@ -670,4 +670,22 @@ class LUk extends L {
 
   @override
   String get readLink => 'Прочитати';
+
+  @override
+  String get handoffNoteOsmand => 'Потім імпортуйте їх як обране в OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Підтвердьте імпорт у Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Потрібні обліковий запис Gaia й увімкнений шар шляхових точок';
+
+  @override
+  String get handoffNoteMapy =>
+      'Потрібні обліковий запис Seznam і кілька дотиків, щоб зберегти';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Відкриває My Maps — кілька дотиків, і список з\'явиться серед збережених карт у Google Maps';
 }

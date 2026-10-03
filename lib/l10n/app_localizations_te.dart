@@ -634,4 +634,23 @@ class LTe extends L {
 
   @override
   String get readLink => 'చదువు';
+
+  @override
+  String get handoffNoteOsmand =>
+      'తర్వాత OsmAnd లో వాటిని ఇష్టమైనవిగా ఇంపోర్ట్ చేయండి';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map లో ఇంపోర్ట్‌ను నిర్ధారించండి';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia ఖాతా కావాలి, వేపాయింట్ లేయర్ ఆన్‌లో ఉండాలి';
+
+  @override
+  String get handoffNoteMapy =>
+      'Seznam ఖాతా కావాలి, సేవ్ చేయడానికి కొన్ని ట్యాప్‌లు';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps తెరుస్తుంది — కొన్ని ట్యాప్‌ల తర్వాత జాబితా Google Maps లో మీరు సేవ్ చేసిన మ్యాప్‌లలో కనిపిస్తుంది';
 }

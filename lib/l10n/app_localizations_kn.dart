@@ -637,4 +637,23 @@ class LKn extends L {
 
   @override
   String get readLink => 'ಓದಿ';
+
+  @override
+  String get handoffNoteOsmand =>
+      'ನಂತರ OsmAnd ನಲ್ಲಿ ಅವುಗಳನ್ನು ಮೆಚ್ಚಿನವುಗಳಾಗಿ ಆಮದು ಮಾಡಿ';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map ನಲ್ಲಿ ಆಮದನ್ನು ದೃಢೀಕರಿಸಿ';
+
+  @override
+  String get handoffNoteGaia =>
+      'Gaia ಖಾತೆ ಬೇಕು, ಮತ್ತು ವೇಪಾಯಿಂಟ್ ಲೇಯರ್ ಆನ್ ಆಗಿರಬೇಕು';
+
+  @override
+  String get handoffNoteMapy =>
+      'Seznam ಖಾತೆ ಬೇಕು, ಮತ್ತು ಉಳಿಸಲು ಕೆಲವು ಟ್ಯಾಪ್‌ಗಳು';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps ತೆರೆಯುತ್ತದೆ — ಕೆಲವು ಟ್ಯಾಪ್‌ಗಳ ನಂತರ ಪಟ್ಟಿ Google Maps ನಲ್ಲಿ ನೀವು ಉಳಿಸಿದ ನಕ್ಷೆಗಳಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ';
 }

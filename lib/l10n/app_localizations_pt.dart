@@ -634,6 +634,24 @@ class LPt extends L {
 
   @override
   String get readLink => 'Ler';
+
+  @override
+  String get handoffNoteOsmand => 'Depois importe como favoritos no OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirme a importação no Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Precisa de uma conta Gaia e da camada de waypoints ativada';
+
+  @override
+  String get handoffNoteMapy =>
+      'Precisa de uma conta Seznam e de alguns toques para salvar';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Abre o My Maps — alguns toques e a lista aparece entre seus mapas salvos no Google Maps';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1268,4 +1286,22 @@ class LPtPt extends LPt {
 
   @override
   String get readLink => 'Ler';
+
+  @override
+  String get handoffNoteOsmand => 'Depois importe-os como favoritos no OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirme a importação no Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Requer uma conta Gaia e a camada de waypoints ativada';
+
+  @override
+  String get handoffNoteMapy =>
+      'Requer uma conta Seznam e alguns toques para guardar';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Abre o My Maps — alguns toques e a lista aparece entre os seus mapas guardados no Google Maps';
 }

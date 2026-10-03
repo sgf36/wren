@@ -625,4 +625,23 @@ class LOr extends L {
 
   @override
   String get readLink => 'ପଢ଼ନ୍ତୁ';
+
+  @override
+  String get handoffNoteOsmand =>
+      'ତା\'ପରେ OsmAnd ରେ ସେଗୁଡ଼ିକୁ ପସନ୍ଦ ଭାବେ ଇମ୍ପୋର୍ଟ କରନ୍ତୁ';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map ରେ ଇମ୍ପୋର୍ଟ ନିଶ୍ଚିତ କରନ୍ତୁ';
+
+  @override
+  String get handoffNoteGaia =>
+      'ଏକ Gaia ଆକାଉଣ୍ଟ ଦରକାର, ଏବଂ ୱେପଏଣ୍ଟ ଲେୟାର ଚାଲୁ ରହିବା ଦରକାର';
+
+  @override
+  String get handoffNoteMapy =>
+      'ଏକ Seznam ଆକାଉଣ୍ଟ ଦରକାର, ଏବଂ ସେଭ କରିବାକୁ କିଛି ଟ୍ୟାପ';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps ଖୋଲେ — କିଛି ଟ୍ୟାପ ପରେ ତାଲିକାଟି Google Maps ରେ ଆପଣଙ୍କ ସେଭ ହୋଇଥିବା ମାନଚିତ୍ରରେ ଦେଖାଯାଏ';
 }

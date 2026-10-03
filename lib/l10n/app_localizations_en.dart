@@ -648,4 +648,22 @@ class LEn extends L {
 
   @override
   String get readLink => 'Read it';
+
+  @override
+  String get handoffNoteOsmand => 'Then tap \"Import as favorites\" in OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirm the import in Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Needs a Gaia account, and the Waypoints layer switched on';
+
+  @override
+  String get handoffNoteMapy =>
+      'Needs a Seznam account, and a few taps to save';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Opens My Maps — a few taps, and it appears in Maps under You → Maps';
 }

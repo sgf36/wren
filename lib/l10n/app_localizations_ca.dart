@@ -638,4 +638,23 @@ class LCa extends L {
 
   @override
   String get readLink => 'Llegeix-ho';
+
+  @override
+  String get handoffNoteOsmand =>
+      'Després importa\'ls com a preferits a OsmAnd';
+
+  @override
+  String get handoffNoteLocus => 'Confirma la importació a Locus Map';
+
+  @override
+  String get handoffNoteGaia =>
+      'Cal un compte de Gaia i tenir activada la capa de punts de pas';
+
+  @override
+  String get handoffNoteMapy =>
+      'Cal un compte de Seznam i uns quants tocs per desar-los';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'Obre My Maps — uns quants tocs i la llista apareix entre els teus mapes desats a Google Maps';
 }

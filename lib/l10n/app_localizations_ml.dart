@@ -636,4 +636,22 @@ class LMl extends L {
 
   @override
   String get readLink => 'വായിക്കൂ';
+
+  @override
+  String get handoffNoteOsmand =>
+      'തുടർന്ന് OsmAnd-ൽ ഇവ പ്രിയപ്പെട്ടവയായി ഇമ്പോർട്ട് ചെയ്യുക';
+
+  @override
+  String get handoffNoteLocus => 'Locus Map-ൽ ഇമ്പോർട്ട് സ്ഥിരീകരിക്കുക';
+
+  @override
+  String get handoffNoteGaia => 'ഒരു Gaia അക്കൗണ്ടും വേപോയിന്റ് ലെയർ ഓണും വേണം';
+
+  @override
+  String get handoffNoteMapy =>
+      'ഒരു Seznam അക്കൗണ്ടും സേവ് ചെയ്യാൻ കുറച്ച് ടാപ്പുകളും വേണം';
+
+  @override
+  String get handoffNoteGoogleMaps =>
+      'My Maps തുറക്കുന്നു — കുറച്ച് ടാപ്പുകൾക്ക് ശേഷം ലിസ്റ്റ് Google Maps-ൽ നിങ്ങൾ സേവ് ചെയ്ത മാപ്പുകളിൽ കാണാം';
 }
