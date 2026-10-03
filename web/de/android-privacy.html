@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Zuletzt aktualisiert am 17. August 2026</p>
+    <p class="updated">Zuletzt aktualisiert am 3. Oktober 2026</p>
 
 
 
@@ -190,7 +190,7 @@
 
     <h2>Was Wren erfasst</h2>
 
-    <p>Fast nichts, und nur das, worum Sie bitten. Zwei Dinge erreichen einen Server, den Wren betreibt, jeweils nur dann, wenn Sie es so wählen: Die Eingabe eines Gutscheincodes sendet diesen Code sowie eine zufällige Kennung für diese Installation, und das Teilen eines Reels oder Beitrags sendet dessen Link zusammen mit einem Nachweis, dass Sie die Funktion gekauft haben. Sonst wird nichts über Sie erfasst, gespeichert oder weitergegeben. Kein Konto, keine Anmeldung, keine Analyse, keine Werbekennung, keine Absturzberichte.</p>
+    <p>Fast nichts, und nur das, worum Sie bitten. Zwei Dinge erreichen einen Server, den Wren betreibt, jeweils nur dann, wenn Sie es so wählen: Die Eingabe eines Gutscheincodes sendet diesen Code sowie eine zufällige Kennung für diese Installation, und das Teilen eines Reels oder Beitrags sendet dessen Link zusammen mit einem Nachweis, dass Sie die Funktion gekauft haben. Haben Sie sie nicht gekauft, wird der erste Beitrag, den Sie teilen, kostenlos gelesen: Damit das einmal pro Telefon gilt, sendet Wren einen nicht umkehrbaren Fingerabdruck der Android-ID Ihres Telefons (eine Nummer, die Android jeder App zuweist und die sich bei einer Neuinstallation nicht ändert) sowie eine Bestätigung von Google, dass die Anfrage von der echten Wren-App stammt. Gespeichert wird nur der Fingerabdruck, und nur, um zu erkennen, dass dieses Telefon seinen kostenlosen Lesevorgang bereits hatte. Er wird nie für Werbung verwendet und nie mit etwas anderem verknüpft. Sonst wird nichts über Sie erfasst, gespeichert oder weitergegeben. Kein Konto, keine Anmeldung, keine Analyse, keine Werbekennung, keine Absturzberichte.</p>
 
     <p>Tun Sie keines von beidem, nimmt Wren überhaupt nie Kontakt zu einem eigenen Server auf.</p>
 
@@ -214,7 +214,7 @@
 
     <p>Die Stadt ist eine, die <em>Sie</em> in der App gewählt haben. Wren fragt nie, wo sich Ihr Telefon befindet – es gibt bewusst keine Standortberechtigung. Es fragt nur, wo sich ein benannter Ort befindet.</p>
 
-    <p>Das Zweite ist ein Gutscheincode und eine zufällige Kennung, im Folgenden beschrieben. Das Dritte ist die Adresse eines Reels oder Beitrags, den Sie zum Teilen ausgewählt haben, danach beschrieben.</p>
+    <p>Das Zweite ist ein Gutscheincode und eine zufällige Kennung, im Folgenden beschrieben. Das Dritte ist die Adresse eines Reels oder Beitrags, den Sie zum Teilen ausgewählt haben, danach beschrieben. Haben Sie die Funktion nicht gekauft, geht mit dem ersten Beitrag, den Sie teilen, ein nicht umkehrbarer Fingerabdruck Ihres Telefons mit, damit er einmal pro Telefon kostenlos gelesen werden kann; auch das wird dort beschrieben.</p>
 
   </section>
 
@@ -239,6 +239,8 @@
     <p>Das Teilen eines Links zu einem Reel oder Beitrag ist der einzige Teil von Wren, der etwas, das Sie ausgewählt haben, an einen von Wren betriebenen Server sendet. Wren kann einen Beitrag auf dem Telefon nicht lesen: Ein Teilen-Menü übergibt eine Webadresse und niemals das Video, sodass der Beitrag von irgendwoher abgerufen werden muss.</p>
 
     <p><strong>Gesendet werden der Link und ein Nachweis, dass Sie die Funktion gekauft haben.</strong> Sonst nichts – kein Name, keine E-Mail-Adresse, kein Standort, kein Screenshot und keine Kennung für Sie. Unter Android ist dieser Nachweis das Kauf-Token, das Google Play für den Kauf ausgestellt hat und das der Server bei Google überprüft; ein Gutscheincode funktioniert an dessen Stelle ebenso.</p>
+
+    <p><strong>Haben Sie sie nicht gekauft, wird der erste Beitrag kostenlos gelesen, einmal pro Telefon.</strong> Anstelle eines Kaufnachweises sendet die App einen nicht umkehrbaren Fingerabdruck (SHA-256) der Android-ID des Telefons und ein Play-Integrity-Token, das der Server von Google prüfen lässt, um zu bestätigen, dass die Anfrage von Wren stammt, wie es aus Google Play installiert wurde, auf einem echten Gerät. Der Fingerabdruck wird zusammen mit diesem einen Lesevorgang gespeichert, damit das Telefon keinen zweiten erhält; die Android-ID selbst verlässt das Telefon nie. Wo Google es anbietet, kann der Server außerdem eine Markierung setzen, die Google für dieses Telefon speichert, damit der kostenlose Lesevorgang auch nach einem Zurücksetzen auf die Werkseinstellungen nicht erneut gewährt wird.</p>
 
     <p>Der Server – ein vom Entwickler betriebener Cloudflare Worker – ruft diesen Beitrag ab, lässt ein Sprachmodell die Ortsnamen aus dessen Bildunterschrift oder Bildern herauslesen, sendet die <em>Namen</em> zurück an Ihr Telefon und verwirft den Rest. <strong>Nichts zum Beitrag wird gespeichert: weder die Adresse, noch das Video oder die Bilder, noch die Bildunterschrift, noch die gefundenen Namen.</strong> Ihr Telefon sucht diese Namen anschließend genauso nach, wie es einen von einem Screenshot gelesenen Namen nachschlägt.</p>
 

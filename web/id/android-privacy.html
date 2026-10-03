@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Terakhir diperbarui 17 Agustus 2026</p>
+    <p class="updated">Terakhir diperbarui 3 Oktober 2026</p>
 
 
 
@@ -190,7 +190,7 @@
 
     <h2>Apa yang dikumpulkan Wren</h2>
 
-    <p>Hampir tidak ada apa pun, dan hanya yang Anda minta sendiri. Ada dua hal yang mencapai server yang dijalankan Wren, masing-masing hanya ketika Anda memilihnya: memasukkan kode gratis mengirimkan kode tersebut beserta pengenal acak untuk instalasi ini, dan membagikan reel atau post mengirimkan tautannya beserta bukti bahwa Anda telah membeli fitur tersebut. Tidak ada hal lain tentang Anda yang dikumpulkan, disimpan, atau dibagikan. Tidak ada akun, tidak ada masuk (sign-in), tidak ada analitik, tidak ada pengenal iklan, tidak ada pelaporan crash.</p>
+    <p>Hampir tidak ada apa pun, dan hanya yang Anda minta sendiri. Ada dua hal yang mencapai server yang dijalankan Wren, masing-masing hanya ketika Anda memilihnya: memasukkan kode gratis mengirimkan kode tersebut beserta pengenal acak untuk instalasi ini, dan membagikan reel atau post mengirimkan tautannya beserta bukti bahwa Anda telah membeli fitur tersebut. Jika Anda belum membelinya, unggahan pertama yang Anda bagikan dibaca gratis: agar itu berlaku sekali per ponsel, Wren mengirimkan sidik jari satu arah dari Android ID ponsel Anda (sebuah nomor yang diberikan Android untuk setiap aplikasi, dan tidak berubah saat Anda menginstal ulang) serta konfirmasi Google bahwa permintaan tersebut berasal dari aplikasi Wren yang asli. Hanya sidik jari itu yang disimpan, dan hanya untuk mengenali bahwa ponsel ini sudah mendapatkan pembacaan gratisnya. Sidik jari itu tidak pernah digunakan untuk iklan dan tidak pernah digabungkan dengan hal lain. Tidak ada hal lain tentang Anda yang dikumpulkan, disimpan, atau dibagikan. Tidak ada akun, tidak ada masuk (sign-in), tidak ada analitik, tidak ada pengenal iklan, tidak ada pelaporan crash.</p>
 
     <p>Jika Anda tidak melakukan keduanya, Wren tidak pernah menghubungi server miliknya sama sekali.</p>
 
@@ -224,7 +224,7 @@
     Anda berada — tidak ada izin lokasi, dan itu disengaja. Aplikasi ini hanya menanyakan di mana
     sebuah place bernama berada.</p>
 
-    <p>Yang kedua adalah kode gratis dan pengenal acak, yang dijelaskan berikutnya. Yang ketiga adalah alamat reel atau post yang Anda pilih untuk dibagikan, yang dijelaskan setelah itu.</p>
+    <p>Yang kedua adalah kode gratis dan pengenal acak, yang dijelaskan berikutnya. Yang ketiga adalah alamat reel atau post yang Anda pilih untuk dibagikan, yang dijelaskan setelah itu. Jika Anda belum membeli fitur tersebut, sidik jari satu arah dari ponsel Anda ikut terkirim bersama unggahan pertama yang Anda bagikan, agar dapat dibaca gratis sekali per ponsel; hal ini juga dijelaskan di sana.</p>
 
   </section>
 
@@ -265,6 +265,8 @@
     <p>Membagikan tautan ke sebuah reel atau post adalah satu-satunya bagian dari Wren yang mengirimkan sesuatu yang Anda pilih ke server yang dijalankan Wren. Wren tidak bisa membaca post di ponsel: lembar bagikan (share sheet) hanya menyerahkan alamat web dan tidak pernah videonya, sehingga post tersebut harus diambil dari suatu tempat.</p>
 
     <p><strong>Yang dikirim adalah tautannya, dan bukti bahwa Anda telah membeli fitur tersebut.</strong> Tidak ada yang lain — tidak ada nama, tidak ada alamat email, tidak ada lokasi, tidak ada screenshot, dan tidak ada pengenal untuk Anda. Di Android, bukti tersebut adalah token pembelian yang diterbitkan Google Play untuk pembelian itu, yang diperiksa server dengan Google; kode gratis berfungsi sebagai penggantinya.</p>
+
+    <p><strong>Jika Anda belum membelinya, unggahan pertama dibaca gratis, sekali per ponsel.</strong> Sebagai pengganti pembelian, aplikasi mengirimkan sidik jari satu arah (SHA-256) dari Android ID ponsel dan token Play Integrity, yang oleh server diperiksakan ke Google untuk memastikan bahwa permintaan berasal dari Wren sebagaimana diinstal dari Google Play, di perangkat asli. Sidik jari disimpan bersama satu pembacaan itu agar ponsel tidak mendapatkan yang kedua; Android ID itu sendiri tidak pernah meninggalkan ponsel. Jika Google menyediakannya, server juga dapat memasang penanda yang disimpan Google untuk ponsel ini, sehingga pembacaan gratis tidak diberikan lagi setelah reset pabrik.</p>
 
     <p>Server tersebut — sebuah Cloudflare Worker yang dijalankan oleh pengembang — mengambil post tersebut, meminta model bahasa membaca nama-nama tempat dari keterangannya atau gambarnya, mengirimkan <em>nama-nama</em> tersebut kembali ke ponsel Anda, dan membuang sisanya. <strong>Tidak ada apa pun tentang post tersebut yang disimpan: bukan alamatnya, bukan video atau gambarnya, bukan keterangannya, bukan nama-nama yang ditemukan.</strong> Ponsel Anda kemudian mencari nama-nama tersebut persis seperti ketika mencari nama yang dibaca dari screenshot.</p>
 

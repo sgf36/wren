@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Última actualización: 17 de agosto de 2026</p>
+    <p class="updated">Última actualización: 3 de octubre de 2026</p>
 
 
 
@@ -194,7 +194,7 @@
     que Wren gestiona, cada una solo cuando usted lo decide: introducir un
     código de cortesía envía ese código y un identificador aleatorio para esta
     instalación, y compartir un reel o una publicación envía su enlace junto
-    con la prueba de que compró la función. No se recopila, almacena ni
+    con la prueba de que compró la función. Si no la ha comprado, la primera publicación que comparta se lee gratis: para permitirlo una vez por teléfono, Wren envía una huella irreversible del Android ID de su teléfono (un número que Android asigna a cada aplicación y que no cambia al reinstalarla) y la confirmación de Google de que la solicitud procede de la aplicación Wren auténtica. Solo se conserva la huella, y únicamente para reconocer que este teléfono ya ha tenido su lectura gratuita. Nunca se utiliza con fines publicitarios ni se vincula a nada más. No se recopila, almacena ni
     comparte nada más sobre usted. Sin cuenta, sin inicio de sesión, sin
     análisis, sin identificador publicitario, sin informes de fallos.</p>
 
@@ -222,7 +222,7 @@
 
     <p>La segunda es un código de cortesía y un identificador aleatorio, que se
     describe a continuación. La tercera es la dirección de un reel o una
-    publicación que usted decida compartir, descrita después de eso.</p>
+    publicación que usted decida compartir, descrita después de eso. Si no ha comprado la función, con la primera publicación que comparta se envía una huella irreversible de su teléfono, para que pueda leerse gratis una vez por teléfono; también se describe allí.</p>
 
   </section>
 
@@ -256,6 +256,8 @@
     esa prueba es el token de compra que Google Play emitió para la compra, que
     el servidor verifica con Google; un código de cortesía funciona en su
     lugar.</p>
+
+    <p><strong>Si no la ha comprado, la primera publicación se lee gratis, una vez por teléfono.</strong> En lugar de una compra, la aplicación envía una huella irreversible (SHA-256) del Android ID del teléfono y un token de Play Integrity, que el servidor hace verificar a Google para confirmar que la solicitud procede de Wren tal como se instaló desde Google Play, en un dispositivo auténtico. La huella se almacena junto con esa única lectura para que el teléfono no reciba una segunda; el propio Android ID nunca sale del teléfono. Cuando Google lo ofrece, el servidor también puede activar una marca que Google conserva para este teléfono, de modo que la lectura gratuita no vuelva a concederse tras un restablecimiento de fábrica.</p>
 
     <p>El servidor —un Cloudflare Worker gestionado por el desarrollador—
     obtiene esa publicación, hace que un modelo de lenguaje lea los nombres de

@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Dernière mise à jour le 17 août 2026</p>
+    <p class="updated">Dernière mise à jour le 3 octobre 2026</p>
 
 
 
@@ -194,7 +194,7 @@
     géré par Wren, chacune uniquement lorsque vous le choisissez : la saisie d'un
     code offert envoie ce code ainsi qu'un identifiant aléatoire propre à cette
     installation, et le partage d'un reel ou d'une publication envoie son lien
-    accompagné d'une preuve d'achat de la fonctionnalité. Rien d'autre vous concernant
+    accompagné d'une preuve d'achat de la fonctionnalité. Si vous ne l'avez pas achetée, la première publication que vous partagez est lue gratuitement : pour le permettre une fois par téléphone, Wren envoie une empreinte irréversible de l'identifiant Android de votre téléphone (un numéro qu'Android attribue à chaque application et qui ne change pas lors d'une réinstallation) ainsi que la confirmation de Google que la demande provient de la véritable application Wren. Seule l'empreinte est conservée, et uniquement pour reconnaître que ce téléphone a déjà eu sa lecture gratuite. Elle n'est jamais utilisée à des fins publicitaires ni associée à quoi que ce soit d'autre. Rien d'autre vous concernant
     n'est collecté, stocké ou partagé. Pas de compte, pas de connexion, pas
     d'analytique, pas d'identifiant publicitaire, pas de rapport de plantage.</p>
 
@@ -222,7 +222,7 @@
 
     <p>La deuxième est un code offert et un identifiant aléatoire, décrits
     ci-après. La troisième est l'adresse d'un reel ou d'une publication que vous
-    choisissez de partager, décrite ensuite.</p>
+    choisissez de partager, décrite ensuite. Si vous n'avez pas acheté la fonctionnalité, une empreinte irréversible de votre téléphone accompagne la première publication que vous partagez, afin qu'elle puisse être lue gratuitement une fois par téléphone ; cela est également décrit plus loin.</p>
 
   </section>
 
@@ -255,6 +255,8 @@
     localisation, ni capture d'écran, ni identifiant vous concernant. Sur Android,
     cette preuve est le jeton d'achat délivré par Google Play pour l'achat, que le
     serveur vérifie auprès de Google ; un code offert fonctionne à sa place.</p>
+
+    <p><strong>Si vous ne l'avez pas achetée, la première publication est lue gratuitement, une fois par téléphone.</strong> À la place d'un achat, l'application envoie une empreinte irréversible (SHA-256) de l'identifiant Android du téléphone et un jeton Play Integrity, que le serveur fait vérifier par Google afin de confirmer que la demande provient de Wren tel qu'installé depuis Google Play, sur un appareil authentique. L'empreinte est enregistrée avec cette unique lecture afin que le téléphone n'en obtienne pas une seconde ; l'identifiant Android lui-même ne quitte jamais le téléphone. Lorsque Google le propose, le serveur peut aussi activer un indicateur que Google conserve pour ce téléphone, afin que la lecture gratuite ne soit pas accordée à nouveau après une réinitialisation d'usine.</p>
 
     <p>Le serveur — un Cloudflare Worker géré par le développeur — récupère cette
     publication, fait lire par un modèle de langage les noms de lieux présents dans
