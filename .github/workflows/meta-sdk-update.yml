@@ -1,0 +1,108 @@
+name: Meta SDK update
+
+# Proposes the next exact pin of Meta's iOS SDK; it never floats the pin.
+# Weekly, and on demand. When Meta publishes a newer STABLE release this
+# pushes a branch with both pins bumped, opens a pull request whose body
+# compares Meta's privacy manifests (what the App Store label was built from),
+# and runs CI on the branch. A changed manifest is flagged do-not-merge.
+#
+# The repository does not let GitHub Actions open pull requests (Settings >
+# Actions > General > "Allow GitHub Actions to create and approve pull
+# requests" is off). While it stays off, the same text is opened as an ISSUE
+# with a one-click compare link instead. Either way Spencer is notified.
+#
+# CI is dispatched explicitly because a push made with GITHUB_TOKEN does not
+# trigger other workflows; workflow_dispatch is the documented exception.
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'   # Mondays 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: meta-sdk-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 .github/scripts/meta_sdk_update.py check
+
+      - id: branch
+        if: steps.check.outputs.newer == 'true'
+        env:
+          LATEST: ${{ steps.check.outputs.latest }}
+        run: |
+          BRANCH="deps/meta-sdk-$LATEST"
+          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$BRANCH already proposed; nothing to do"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - id: propose
+        if: steps.check.outputs.newer == 'true' && steps.branch.outputs.exists == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT: ${{ steps.check.outputs.current }}
+          LATEST: ${{ steps.check.outputs.latest }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+        run: |
+          python3 .github/scripts/meta_sdk_update.py apply "$LATEST"
+          python3 .github/scripts/meta_sdk_update.py report "$CURRENT" "$LATEST" > "$RUNNER_TEMP/body.md"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add packages/meta_app_events/ios/meta_app_events/Package.swift \
+                  packages/meta_app_events/ios/meta_app_events.podspec
+          git commit -m "Bump Meta's iOS SDK from $CURRENT to $LATEST"
+          git push origin "$BRANCH"
+
+      - name: Run CI on the branch
+        if: steps.propose.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+        run: gh workflow run ci.yml --ref "$BRANCH"
+
+      - name: Open the pull request, or an issue if Actions may not
+        if: steps.propose.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT: ${{ steps.check.outputs.current }}
+          LATEST: ${{ steps.check.outputs.latest }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+          PRIVACY_CHANGED: ${{ steps.propose.outputs.privacy_changed }}
+        run: |
+          TITLE="Bump Meta's iOS SDK from $CURRENT to $LATEST"
+          if grep -q 'Meta.s privacy manifest changed\|COULD NOT COMPARE' "$RUNNER_TEMP/body.md"; then
+            TITLE="$TITLE (privacy manifest changed: review before merging)"
+          fi
+          if gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"; then
+            exit 0
+          fi
+          echo "::warning::Actions may not open pull requests here; opening an issue instead"
+          {
+            echo "**Open the pull request:** https://github.com/${{ github.repository }}/compare/main...$BRANCH?expand=1"
+            echo
+            echo "(GitHub Actions is not allowed to open pull requests in this repository, so this issue stands in for one. CI has been started on the branch.)"
+            echo
+            cat "$RUNNER_TEMP/body.md"
+          } > "$RUNNER_TEMP/issue.md"
+          gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/issue.md"

@@ -2,10 +2,12 @@
 
 import PackageDescription
 
-// Meta's SDK as a Swift package, pinned EXACTLY. 18.1.1 is the latest release
-// (27 Aug 2026); facebook-ios-sdk's main branch already names 19.0.0, whose tag
-// does not exist yet, so anything looser than an exact pin can resolve to a
-// version that will not build.
+// Meta's SDK as a Swift package, pinned EXACTLY, and kept in step with the
+// podspec beside it. Never loosen the pin: in Aug 2026 facebook-ios-sdk's main
+// branch already named a 19.0.0 with no tag, and its privacy manifest is what
+// the App Store privacy label is built from, so a new version must be reviewed
+// before it ships. .github/workflows/meta-sdk-update.yml proposes each newer
+// stable release weekly, with the manifests compared.
 //
 // FacebookCore is the whole requirement: App Events, Aggregated Event
 // Measurement and SKAdNetwork reporting. No Login, no Share.
