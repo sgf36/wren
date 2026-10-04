@@ -55,6 +55,10 @@ public class MetaAppEventsPlugin: NSObject, FlutterPlugin {
     didFinishLaunchingWithOptions launchOptions: [AnyHashable: Any] = [:]
   ) -> Bool {
     self.launchOptions = launchOptions as? [UIApplication.LaunchOptionsKey: Any]
+    let defaults = UserDefaults.standard
+    if defaults.object(forKey: Self.firstLaunchKey) == nil {
+      defaults.set(Date(), forKey: Self.firstLaunchKey)
+    }
     if ATTrackingManager.trackingAuthorizationStatus == .authorized {
       start()
     } else if let country = SKPaymentQueue.default().storefront?.countryCode {
@@ -78,8 +82,46 @@ public class MetaAppEventsPlugin: NSObject, FlutterPlugin {
   private func start() {
     guard !started else { return }
     started = true
+    registerAttributionOnce()
     ApplicationDelegate.shared.application(
       UIApplication.shared, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  static let firstLaunchKey = "wren.attribution.firstLaunch"
+  static let registeredKey = "wren.attribution.registered"
+  /// Where Meta's SDK keeps its SKAdNetwork state (FBSDKSKAdNetworkReporterV2,
+  /// 18.1.1). It is written only once the SDK has itself updated a value.
+  static let metaReporterKey = "com.facebook.sdk:FBSDKSKAdNetworkReporter"
+
+  /// Tells Apple, once, that Wren has launched, so an install from an ad can be
+  /// attributed (SKAdNetwork, mirrored into AdAttributionKit by the system).
+  ///
+  /// Why Wren does this itself, decided 4 Oct 2026: Apple requires the
+  /// advertised app to update a conversion value at first launch, and Meta's
+  /// SDK does so only from a configuration Meta serves, which was empty for
+  /// Wren ({"data": []}). With no configuration no install could be attributed.
+  ///
+  /// Why it cannot fight the SDK: it runs at most once, before the SDK starts,
+  /// with the lowest values (fine 0, coarse low), and not at all if the SDK has
+  /// already updated anything; Meta's later rules only raise it. Meta asks for
+  /// no updates beyond 24 hours after install, so it is skipped after that.
+  ///
+  /// Why it sits behind the same consent gate as the SDK (called from start()):
+  /// the postback it enables goes to Meta, and in UK/EEA storefronts the
+  /// privacy policy promises nothing reaches Meta until tracking is allowed.
+  private func registerAttributionOnce() {
+    let defaults = UserDefaults.standard
+    guard !defaults.bool(forKey: Self.registeredKey),
+      defaults.object(forKey: Self.metaReporterKey) == nil
+    else { return }
+    let first = defaults.object(forKey: Self.firstLaunchKey) as? Date ?? Date()
+    guard Date().timeIntervalSince(first) < 24 * 60 * 60 else { return }
+    defaults.set(true, forKey: Self.registeredKey)
+    if #available(iOS 16.1, *) {
+      SKAdNetwork.updatePostbackConversionValue(0, coarseValue: .low, lockWindow: false) { _ in }
+    } else if #available(iOS 15.4, *) {
+      SKAdNetwork.updatePostbackConversionValue(0) { _ in }
+    }
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

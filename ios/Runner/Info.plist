@@ -128,6 +128,13 @@
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Wren reads the text in screenshots you choose, so it can find the places they name. Screenshots are read on this device and are not uploaded.</string>
+	<key>NSAdvertisingAttributionReportEndpoint</key>
+	<string>https://spencerfields.com</string>
+	<key>AdAttributionKit</key>
+	<dict>
+		<key>AttributionCopyEndpoint</key>
+		<string>https://spencerfields.com</string>
+	</dict>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Lets Meta tell Wren whether its adverts lead to downloads. Saying no changes nothing in the app.</string>
 	<key>FacebookAppID</key>
