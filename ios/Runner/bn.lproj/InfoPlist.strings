@@ -1,2 +1,3 @@
-/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+/* Apple's permission prompts. English source: ios/Runner/Info.plist. */
 "NSUserTrackingUsageDescription" = "এর ফলে Meta, Wren-কে জানাতে পারে যে এর বিজ্ঞাপন থেকে ডাউনলোড হচ্ছে কি না। না বললে অ্যাপে কিছুই বদলাবে না।";
+"NSPhotoLibraryUsageDescription" = "আপনার বেছে নেওয়া স্ক্রিনশটের লেখা Wren পড়ে, যাতে সেগুলিতে উল্লেখ করা জায়গাগুলো খুঁজে পায়। স্ক্রিনশট এই ডিভাইসেই পড়া হয় এবং আপলোড করা হয় না।";
