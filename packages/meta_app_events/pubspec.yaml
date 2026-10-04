@@ -1,0 +1,21 @@
+name: meta_app_events
+description: Wren's iOS-only bridge to Meta's App Events (installs, opens, purchases).
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.12.2
+  flutter: ">=3.44.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    # iOS only, deliberately: declaring no Android platform keeps Meta's
+    # Android SDK, and the advertising-ID permission it would add, out of the
+    # Android build entirely.
+    platforms:
+      ios:
+        pluginClass: MetaAppEventsPlugin

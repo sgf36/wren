@@ -25,6 +25,7 @@ import 'src/region_hint.dart';
 import 'src/resolver.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'src/review_prompt.dart';
+import 'src/tracking_prompt.dart';
 import 'src/share_inbox.dart';
 import 'src/admin_sheet.dart';
 import 'src/comp_unlock.dart' as comp;
@@ -202,6 +203,7 @@ class CapturePage extends StatefulWidget {
     this.shareInbox,
     this.sharer,
     this.reviewPrompt,
+    this.trackingPrompt,
     this.initialPending,
     this.initialGuideName,
     this.initialOwned,
@@ -280,6 +282,9 @@ class CapturePage extends StatefulWidget {
   /// the only thing that can be asserted anywhere is when Wren asks for it.
   final ReviewPrompt? reviewPrompt;
 
+  /// Apple's tracking question; see [TrackingPrompt]. Injected by tests.
+  final TrackingPrompt? trackingPrompt;
+
   @visibleForTesting
   final List<Pending>? initialPending;
 
@@ -331,6 +336,11 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   // Android briefly had nothing.
   late final ReviewPrompt _reviewPrompt =
       widget.reviewPrompt ?? (const StoreReviewPrompt());
+
+  // iPhone only: Meta's SDK is linked into the iOS build alone.
+  late final TrackingPrompt _trackingPrompt =
+      widget.trackingPrompt ??
+      (Platform.isIOS ? const AppleTrackingPrompt() : const NoTrackingPrompt());
 
   /// Whether guides -- and therefore the purchase that sells bigger ones --
   /// exist on this platform at all. See [CapturePage.canMakeGuides].
@@ -429,6 +439,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // A link may be waiting from before the app was even running.
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _takeSharedGuide();
+      // Apple's tracking question, before onboarding rather than on top of
+      // it: Apple's call returns once it is answered. Never in the screenshot
+      // build, where it would sit over every store image.
+      if (!_shots) await _trackingPrompt.maybeAsk();
       if (mounted) _maybeShowOnboarding();
     });
     // Seeded products have to reach the entitlement NOW, not when the first
@@ -927,7 +941,14 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // Coming back from Maps having just published is the one moment worth
     // asking for a rating, and it is only reachable from here: publishing
     // backgrounds the app, so nothing raised at that point would be seen.
-    _reviewPrompt.maybeAsk();
+    _askOnReturn();
+  }
+
+  /// The tracking question first, then the review prompt — never both on one
+  /// return. A review held back stays armed for the next return.
+  Future<void> _askOnReturn() async {
+    if (!_shots && await _trackingPrompt.maybeAsk()) return;
+    await _reviewPrompt.maybeAsk();
   }
 
   /// Re-establishes what this device's complimentary token grants.

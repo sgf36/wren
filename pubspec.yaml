@@ -40,6 +40,9 @@ dependencies:
   image_picker: ^1.2.3
   url_launcher: ^6.3.2
   in_app_purchase: ^3.3.0
+  # iOS only: Meta app events for iOS 14+ ad campaigns (see the package).
+  meta_app_events:
+    path: packages/meta_app_events
   shared_preferences: ^2.5.5
   flutter_localizations:
     sdk: flutter
