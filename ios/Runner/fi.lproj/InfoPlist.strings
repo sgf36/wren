@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Antaa Metan kertoa Wrenille, johtavatko sen mainokset latauksiin. Kieltäytyminen ei muuta sovelluksessa mitään.";

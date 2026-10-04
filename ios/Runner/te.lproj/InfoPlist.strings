@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Wren ప్రకటనల వల్ల డౌన్‌లోడ్‌లు జరుగుతున్నాయో లేదో Meta, Wren కు తెలియజేయడానికి ఇది అనుమతిస్తుంది. వద్దు అన్నా యాప్‌లో ఏమీ మారదు.";

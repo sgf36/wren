@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Pozwala firmie Meta informować Wren, czy jego reklamy prowadzą do pobrań. Odmowa niczego w aplikacji nie zmienia.";

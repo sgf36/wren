@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Επιτρέπει στη Meta να ενημερώνει το Wren αν οι διαφημίσεις του οδηγούν σε λήψεις. Αν αρνηθείτε, δεν αλλάζει τίποτα στην εφαρμογή.";
