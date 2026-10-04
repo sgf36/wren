@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Wrenの広告がダウンロードにつながったかどうかを、MetaがWrenに知らせるために使われます。許可しなくても、アプリは何も変わりません。";

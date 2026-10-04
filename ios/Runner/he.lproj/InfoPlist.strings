@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "מאפשר ל-Meta לדווח ל-Wren אם המודעות שלו מובילות להורדות. סירוב לא משנה דבר באפליקציה.";

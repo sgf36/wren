@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Memungkinkan Meta memberi tahu Wren apakah iklannya menghasilkan unduhan. Menolak tidak mengubah apa pun di aplikasi.";

@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Omogoča, da Meta sporoči Wrenu, ali njegovi oglasi vodijo do prenosov. Če zavrnete, se v aplikaciji nič ne spremeni.";

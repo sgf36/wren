@@ -1,0 +1,2 @@
+/* Apple's tracking prompt. English source: ios/Runner/Info.plist. */
+"NSUserTrackingUsageDescription" = "Permet que Meta digui a Wren si els seus anuncis porten a descàrregues. Si dius que no, no canvia res a l'app.";
