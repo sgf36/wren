@@ -1,3 +1,3 @@
 /* Apple's permission prompts. English source: ios/Runner/Info.plist. */
-"NSUserTrackingUsageDescription" = "Antaa Metan kertoa Wrenille, johtavatko sen mainokset latauksiin. Kieltäytyminen ei muuta sovelluksessa mitään.";
+"NSUserTrackingUsageDescription" = "Antaa Metan ja TikTokin kertoa Wrenille, johtavatko sen mainokset latauksiin. Kieltäytyminen ei muuta sovelluksessa mitään.";
 "NSPhotoLibraryUsageDescription" = "Wren lukee valitsemiesi kuvakaappausten tekstin löytääkseen niissä mainitut paikat. Kuvakaappaukset luetaan tällä laitteella, eikä niitä ladata minnekään.";

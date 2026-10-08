@@ -136,7 +136,11 @@
 		<string>https://spencerfields.com</string>
 	</dict>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>Lets Meta tell Wren whether its adverts lead to downloads. Saying no changes nothing in the app.</string>
+	<string>Lets Meta and TikTok tell Wren whether its adverts lead to downloads. Saying no changes nothing in the app.</string>
+	<key>TikTokAppID</key>
+	<string>7691334925462732821</string>
+	<key>TikTokAccessToken</key>
+	<string></string>
 	<key>FacebookAppID</key>
 	<string>1149316140753681</string>
 	<key>FacebookClientToken</key>

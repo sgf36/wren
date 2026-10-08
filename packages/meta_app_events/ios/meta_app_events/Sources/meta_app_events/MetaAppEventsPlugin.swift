@@ -2,9 +2,11 @@ import AppTrackingTransparency
 import FBSDKCoreKit
 import Flutter
 import StoreKit
+import TikTokBusinessSDK
 import UIKit
 
-/// Starts Meta's SDK, where the law allows it, and asks the tracking question.
+/// Starts Meta's and TikTok's SDKs, where the law allows it, and asks the
+/// tracking question.
 /// Reports nothing itself.
 ///
 /// With `FacebookAutoLogAppEventsEnabled` on (Info.plist), the SDK logs app
@@ -85,6 +87,31 @@ public class MetaAppEventsPlugin: NSObject, FlutterPlugin {
     registerAttributionOnce()
     ApplicationDelegate.shared.application(
       UIApplication.shared, didFinishLaunchingWithOptions: launchOptions)
+    startTikTok()
+  }
+
+  /// TikTok's App Events SDK, started at exactly the same point as Meta's and so
+  /// behind the same UK/EEA consent rule (added 8 Oct 2026, so TikTok app-install
+  /// campaigns can optimise for installs). It reports installs, launches and App
+  /// Store purchases on its own; Wren adds no events.
+  ///
+  /// Its SKAdNetwork support is switched OFF: Meta warns that more than one
+  /// updater of conversion values loses signal, and Wren already registers every
+  /// install once itself (registerAttributionOnce). Apple still sends TikTok the
+  /// install postback for its own ads, because postbacks go to whichever network
+  /// signed the winning impression, not to whoever set the value.
+  ///
+  /// The SDK no longer shows the tracking prompt itself (deprecated in 1.7.x), so
+  /// Wren's own prompt stays the only one. Credentials come from Info.plist; with
+  /// no access token the SDK is simply not started.
+  private func startTikTok() {
+    let info = Bundle.main.infoDictionary ?? [:]
+    guard let token = info["TikTokAccessToken"] as? String, !token.isEmpty,
+      let tiktokAppId = info["TikTokAppID"] as? String, !tiktokAppId.isEmpty,
+      let config = TikTokConfig(accessToken: token, appId: "6802053382", tiktokAppId: tiktokAppId)
+    else { return }
+    config.disableSKAdNetworkSupport()
+    TikTokBusiness.initializeSdk(config)
   }
 
   static let firstLaunchKey = "wren.attribution.firstLaunch"

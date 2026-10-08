@@ -7,7 +7,8 @@ import 'package:meta_app_events/meta_app_events.dart';
 /// packages/meta_app_events) declares in its privacy manifest that it tracks,
 /// and App Review guideline 5.1.2(i) requires the system prompt for that. The
 /// answer changes nothing in Wren: "Ask App Not to Track" leaves every feature
-/// as it was, and Meta then measures adverts only in aggregate.
+/// as it was, and Meta then measures adverts only in aggregate. TikTok's SDK,
+/// added 8 Oct 2026, sits behind the same prompt and no longer shows its own.
 ///
 /// Why at first launch rather than after the first guide (the first design):
 /// the events the adverts are judged on happen early. The install is reported
@@ -34,7 +35,7 @@ class AppleTrackingPrompt implements TrackingPrompt {
   }
 }
 
-/// Never asks. For tests, and for any build without Meta's SDK.
+/// Never asks. For tests, and for any build without the advertising SDKs.
 class NoTrackingPrompt implements TrackingPrompt {
   const NoTrackingPrompt();
 
