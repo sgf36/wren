@@ -1,8 +1,9 @@
-/// Wren's bridge to Meta's SDK on iPhone. The SDK reports installs, opens and
-/// purchases by itself; this only exposes Apple's tracking question.
+/// Wren's bridge to Meta's and TikTok's SDKs on iPhone. The SDKs report
+/// installs, opens and purchases by themselves; this only exposes Apple's
+/// tracking question.
 ///
 /// iOS only by design: the plugin declares no Android platform, so the
-/// Android build never links Meta's SDK and its Play listing and Data safety
+/// Android build never links either SDK and its Play listing and Data safety
 /// answers are unchanged. Every call here is a no-op elsewhere.
 library;
 

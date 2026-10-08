@@ -1,3 +1,3 @@
 /* Apple's permission prompts. English source: ios/Runner/Info.plist. */
-"NSUserTrackingUsageDescription" = "يتيح لـ Meta إخبار Wren بما إذا كانت إعلاناته تؤدي إلى تنزيلات. الرفض لا يغيّر شيئًا في التطبيق.";
+"NSUserTrackingUsageDescription" = "يتيح لـ Meta وTikTok إخبار Wren بما إذا كانت إعلاناته تؤدي إلى تنزيلات. الرفض لا يغيّر شيئًا في التطبيق.";
 "NSPhotoLibraryUsageDescription" = "يقرأ Wren النص في لقطات الشاشة التي تختارها ليعثر على الأماكن المذكورة فيها. تُقرأ لقطات الشاشة على هذا الجهاز ولا تُرفع إلى أي مكان.";

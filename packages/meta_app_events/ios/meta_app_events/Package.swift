@@ -11,6 +11,11 @@ import PackageDescription
 //
 // FacebookCore is the whole requirement: App Events, Aggregated Event
 // Measurement and SKAdNetwork reporting. No Login, no Share.
+//
+// TikTok's App Events SDK beside it, pinned EXACTLY for the same reason (added
+// 8 Oct 2026; 1.7.2 is the latest stable release). Its privacy manifest declares
+// almost nothing although it reads the advertising identifier and device details,
+// so the App Store label for it is built from what it does, not from that file.
 let package = Package(
   name: "meta_app_events",
   platforms: [
@@ -20,13 +25,15 @@ let package = Package(
     .library(name: "meta-app-events", targets: ["meta_app_events"])
   ],
   dependencies: [
-    .package(url: "https://github.com/facebook/facebook-ios-sdk", exact: "18.1.1")
+    .package(url: "https://github.com/facebook/facebook-ios-sdk", exact: "18.1.1"),
+    .package(url: "https://github.com/tiktok/tiktok-business-ios-sdk", exact: "1.7.2"),
   ],
   targets: [
     .target(
       name: "meta_app_events",
       dependencies: [
-        .product(name: "FacebookCore", package: "facebook-ios-sdk")
+        .product(name: "FacebookCore", package: "facebook-ios-sdk"),
+        .product(name: "TikTokBusinessSDK", package: "tiktok-business-ios-sdk"),
       ]
     )
   ]
