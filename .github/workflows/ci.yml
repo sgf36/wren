@@ -73,6 +73,15 @@ jobs:
           fi
           echo "no key material in tracked files"
 
+      # CI inserts the real value at build time; the committed one stays empty.
+      - name: Keep the TikTok access token out of git
+        run: |
+          if ! grep -Pzq '<key>TikTokAccessToken</key>\s*<string></string>' ios/Runner/Info.plist; then
+            echo "::error::ios/Runner/Info.plist carries a TikTokAccessToken value; it belongs in the TIKTOK_ACCESS_TOKEN secret"
+            exit 1
+          fi
+          echo "TikTokAccessToken is empty in the committed Info.plist"
+
       - name: Warn on anything that looks like a personal screenshot
         run: |
           found=$(git ls-files 'real/*' 'screenshots/*' | grep -viE '\.md$' || true)
@@ -623,6 +632,26 @@ jobs:
             echo "PROVISIONING_PROFILE_SPECIFIER=$PROFILE_NAME"
             echo "CODE_SIGN_IDENTITY=Apple Distribution"
           } >> ios/Flutter/Release.xcconfig
+
+      # TikTok's access token reaches the app only here, never through git: in
+      # this public repo it would be scraped and could be used to send fake
+      # events to Wren's TikTok data source. The committed Info.plist holds an
+      # empty value, which the app treats as "do not start TikTok's SDK", so a
+      # missing secret would ship a release that silently reports nothing.
+      # That is why this fails rather than warns.
+      - name: Insert the TikTok access token
+        if: steps.signing.outputs.ready == 'true'
+        env:
+          TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$TIKTOK_ACCESS_TOKEN" ]; then
+            echo "::error::TIKTOK_ACCESS_TOKEN secret is not set; this build would never start TikTok's SDK"
+            exit 1
+          fi
+          plutil -replace TikTokAccessToken -string "$TIKTOK_ACCESS_TOKEN" ios/Runner/Info.plist
+          GOT=$(plutil -extract TikTokAccessToken raw ios/Runner/Info.plist)
+          [ "$GOT" = "$TIKTOK_ACCESS_TOKEN" ] || { echo "::error::token did not land in Info.plist"; exit 1; }
+          echo "TikTok access token inserted (${#GOT} characters)"
 
       # No unlock code is compiled in any more. Complimentary codes are issued
       # and checked by the Worker, so there is no secret for this build to
