@@ -1,15 +1,18 @@
-name: Meta SDK update
+name: SDK update
 
-# Proposes the next exact pin of Meta's iOS SDK; it never floats the pin.
-# Weekly, and on demand. When Meta publishes a newer STABLE release this
-# pushes a branch with both pins bumped, opens a pull request whose body
-# compares Meta's privacy manifests (what the App Store label was built from),
-# and runs CI on the branch. A changed manifest is flagged do-not-merge.
+# Proposes the next exact pin of each advertising SDK Wren links on iPhone —
+# Meta's and, since 8 Oct 2026, TikTok's — and never floats a pin. Weekly, and
+# on demand. When a newer STABLE release appears this pushes a branch with both
+# of that SDK's pins bumped, opens a pull request whose body compares the SDK's
+# privacy manifests (and, for TikTok, a scan of what its source reads), and runs
+# CI on the branch. Anything that changed is flagged do-not-merge in the title.
 #
-# The repository does not let GitHub Actions open pull requests (Settings >
-# Actions > General > "Allow GitHub Actions to create and approve pull
-# requests" is off). While it stays off, the same text is opened as an ISSUE
-# with a one-click compare link instead. Either way Spencer is notified.
+# One job per SDK, so a new TikTok release and a new Meta release each get their
+# own branch and pull request and can be reviewed separately.
+#
+# If GitHub Actions may not open pull requests in this repository (Settings >
+# Actions > General), the same text is opened as an ISSUE with a one-click
+# compare link instead. Either way Spencer is notified.
 #
 # CI is dispatched explicitly because a push made with GITHUB_TOKEN does not
 # trigger other workflows; workflow_dispatch is the documented exception.
@@ -25,12 +28,15 @@ permissions:
   issues: write
   actions: write
 
-concurrency:
-  group: meta-sdk-update
-  cancel-in-progress: false
-
 jobs:
   update:
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk: [meta, tiktok]
+    concurrency:
+      group: sdk-update-${{ matrix.sdk }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -40,14 +46,14 @@ jobs:
       - id: check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 .github/scripts/meta_sdk_update.py check
+        run: python3 .github/scripts/sdk_update.py check "${{ matrix.sdk }}"
 
       - id: branch
         if: steps.check.outputs.newer == 'true'
         env:
           LATEST: ${{ steps.check.outputs.latest }}
         run: |
-          BRANCH="deps/meta-sdk-$LATEST"
+          BRANCH="deps/${{ matrix.sdk }}-sdk-$LATEST"
           echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
           if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
@@ -60,18 +66,19 @@ jobs:
         if: steps.check.outputs.newer == 'true' && steps.branch.outputs.exists == 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SDK: ${{ matrix.sdk }}
           CURRENT: ${{ steps.check.outputs.current }}
           LATEST: ${{ steps.check.outputs.latest }}
           BRANCH: ${{ steps.branch.outputs.name }}
         run: |
-          python3 .github/scripts/meta_sdk_update.py apply "$LATEST"
-          python3 .github/scripts/meta_sdk_update.py report "$CURRENT" "$LATEST" > "$RUNNER_TEMP/body.md"
+          python3 .github/scripts/sdk_update.py apply "$SDK" "$LATEST"
+          python3 .github/scripts/sdk_update.py report "$SDK" "$CURRENT" "$LATEST" > "$RUNNER_TEMP/body.md"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
           git add packages/meta_app_events/ios/meta_app_events/Package.swift \
                   packages/meta_app_events/ios/meta_app_events.podspec
-          git commit -m "Bump Meta's iOS SDK from $CURRENT to $LATEST"
+          git commit -m "Bump the $SDK iOS SDK from $CURRENT to $LATEST"
           git push origin "$BRANCH"
 
       - name: Run CI on the branch
@@ -85,14 +92,14 @@ jobs:
         if: steps.propose.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SDK: ${{ matrix.sdk }}
           CURRENT: ${{ steps.check.outputs.current }}
           LATEST: ${{ steps.check.outputs.latest }}
           BRANCH: ${{ steps.branch.outputs.name }}
-          PRIVACY_CHANGED: ${{ steps.propose.outputs.privacy_changed }}
         run: |
-          TITLE="Bump Meta's iOS SDK from $CURRENT to $LATEST"
-          if grep -q 'Meta.s privacy manifest changed\|COULD NOT COMPARE' "$RUNNER_TEMP/body.md"; then
-            TITLE="$TITLE (privacy manifest changed: review before merging)"
+          TITLE="Bump the $SDK iOS SDK from $CURRENT to $LATEST"
+          if grep -q 'may have changed\|COULD NOT' "$RUNNER_TEMP/body.md"; then
+            TITLE="$TITLE (privacy may have changed: review before merging)"
           fi
           if gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"; then
             exit 0
