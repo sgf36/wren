@@ -102,6 +102,13 @@
       "surface": "organic",
       "creative": "Spencer on a plane holding Wren (first organic TikTok post, @software_spencerfields)",
       "notes": "Its own token because it is its own creative: tt-organic-gone-by-thursday is a different piece, and one token per creative is the rule. Google Play equivalent uses the same name as utm_campaign."
+    },
+    {
+      "token": "tt-organic-profile",
+      "channel": "TikTok",
+      "surface": "organic",
+      "creative": "The link in the @software_spencerfields TikTok bio, through wren.spencerfields.com/get/",
+      "notes": "Not a creative: TikTok allows one profile link and organic posts carry none, so every post's traffic arrives through it. Through /get/ it sends iPhones to the App Store and Android phones to Google Play under the same name, so the bio needs no per-post link."
     }
   ]
 }
