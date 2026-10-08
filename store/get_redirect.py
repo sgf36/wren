@@ -3,6 +3,7 @@
     python store/get_redirect.py            # regenerate web/get/tokens.json from campaigns.json
     python store/get_redirect.py --deploy   # ...then upload web/get/ and test it live
     python store/get_redirect.py --links    # print the /get/ link for every campaign
+    python store/get_redirect.py --counts   # this month's daily taps per token and device
 
 tokens.json is generated, never edited: campaigns.json is the only place a token
 is defined (see campaign_links.py for why). Run this after adding a campaign, or
@@ -97,7 +98,9 @@ def test(tokens):
     ]
     bad = 0
     for ua, c, want in expect:
-        r = requests.get(URL, params={"c": c} if c else None, headers={"User-Agent": ua}, allow_redirects=False, timeout=30)
+        # X-Wren-Probe keeps these checks out of the daily tally.
+        r = requests.get(URL, params={"c": c} if c else None, headers={"User-Agent": ua, "X-Wren-Probe": "1"},
+                         allow_redirects=False, timeout=30)
         got = r.headers.get("Location")
         ok = r.status_code == 302 and got == want
         bad += not ok
@@ -106,7 +109,30 @@ def test(tokens):
         sys.exit("%d redirect check(s) failed" % bad)
 
 
+def counts():
+    """Print this month's tally: taps per day, token and device, as index.php kept it."""
+    import datetime as dt
+    s = session()
+    month = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m")
+    r = s.get(HOST + "/execute/Fileman/get_file_content",
+              params={"dir": "/home2/spencgh6/get-counts", "file": month + ".json"}, timeout=60).json()
+    text = (r.get("data") or {}).get("content")
+    if not text:
+        print("no taps recorded yet for %s" % month)
+        return
+    data = json.loads(text)
+    if not data:
+        print("no taps recorded yet for %s" % month)
+        return
+    for day, toks in sorted(data.items()):
+        for tok, dev in sorted(toks.items()):
+            print("%s  %-26s %s" % (day, tok, "  ".join("%s %d" % kv for kv in sorted(dev.items()))))
+
+
 def main():
+    if "--counts" in sys.argv:
+        counts()
+        return
     tokens = generate()
     print("tokens.json: %d campaigns" % len(tokens))
     if "--links" in sys.argv:
