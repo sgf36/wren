@@ -197,7 +197,14 @@ function source_tiktok(string $since, string $until): array
         'dimensions' => ['campaign_id', 'stat_time_day'], 'metrics' => $metrics,
         'start_date' => $since, 'end_date' => $until, 'page_size' => 1000,
     ])['list'] ?? [];
-    $campaigns = tiktok_get('campaign/get/', ['advertiser_id' => $adv, 'page_size' => 100])['list'] ?? [];
+    // campaign/get/ belongs to the "Ads management" scope, which the reporting
+    // app deliberately does not hold; without it the table has no status column
+    // but every figure is still there.
+    try {
+        $campaigns = tiktok_get('campaign/get/', ['advertiser_id' => $adv, 'page_size' => 100])['list'] ?? [];
+    } catch (Throwable $e) {
+        $campaigns = [];
+    }
 
     $byCampaign = [];
     $days = [];
@@ -533,7 +540,11 @@ function source_play(string $since, string $until): array
     $bucket = $g['play_bucket'];
     $months = array_unique(array_map(fn($d) => str_replace('-', '', substr($d, 0, 7)), days_between($since, $until)));
     $names = [];
-    foreach (['stats/installs/', 'acquisition/'] as $prefix) {
+    // stats/store_performance/ holds store-listing visitors and acquisitions by
+    // traffic source with UTM tags: the only place Play attributes the /get/
+    // links. It is published later than the install counts. (acquisition/ is
+    // empty on this account; checked 9 Oct 2026.)
+    foreach (['stats/installs/', 'stats/store_performance/'] as $prefix) {
         $d = http_json('GET', 'https://storage.googleapis.com/storage/v1/b/' . rawurlencode($bucket) . '/o?'
             . http_build_query(['prefix' => $prefix, 'maxResults' => 1000]), ['Authorization: Bearer ' . google_token()]);
         foreach ($d['items'] ?? [] as $o) {
@@ -562,28 +573,17 @@ function source_play(string $since, string $until): array
                     'active' => num($r['Active Device Installs'] ?? 0)];
             } elseif (str_ends_with($name, '_country.csv') && str_contains($name, 'installs_')) {
                 bump($countries, $r['Country'] ?? '?', 'installs', num($r['Daily User Installs'] ?? $r['Install events'] ?? 0));
-            } elseif (str_starts_with($name, 'acquisition/')) {
-                // Group by the first text column that is not the date or package
-                // (channel, country, UTM campaign...), summing every number.
-                $label = null;
-                foreach ($r as $k => $v) {
-                    if (!in_array($k, ['Date', 'Package Name', 'Package name'], true) && !is_numeric($v)) {
-                        $label = "$k: $v";
-                        break;
-                    }
-                }
-                $report = preg_replace('/^.*\/([a-z_]+)_' . preg_quote(PLAY_PACKAGE, '/') . '_\d{6}_?([a-z_]*)\.csv$/', '$1 $2', $name);
-                foreach ($r as $k => $v) {
-                    if (is_numeric($v)) {
-                        $acquisition[trim($report)][$label ?? 'all'][$k] = ($acquisition[trim($report)][$label ?? 'all'][$k] ?? 0) + num($v);
-                    }
-                }
+            } elseif (str_ends_with($name, '_traffic_source.csv') && str_contains($name, 'store_performance_')) {
+                $key = ($r['Traffic source'] ?? '?') . ' · ' . (($r['UTM source'] ?? '') ?: '–') . ' / ' . (($r['UTM campaign'] ?? '') ?: '–');
+                bump($acquisition, $key, 'visitors', num($r['Store listing visitors'] ?? 0));
+                bump($acquisition, $key, 'acquisitions', num($r['Store listing acquisitions'] ?? 0));
+                $latestSource = max($latestSource ?? '', $date);
             }
         }
     }
     ksort($daily);
     return ['configured' => true, 'latest_date' => $latest, 'daily' => $daily, 'countries' => $countries,
-        'acquisition' => $acquisition, 'files' => count($names)];
+        'sources' => $acquisition, 'sources_latest' => $latestSource ?? null, 'files' => count($names)];
 }
 
 // ---------------------------------------------------------------- this server's own files

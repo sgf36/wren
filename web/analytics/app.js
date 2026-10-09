@@ -287,13 +287,12 @@
           { label: "Country", get: function (r) { return regionName(r.k); } },
           { label: "Installs", num: true, get: function (r) { return n(r.installs); } },
         ], entries(play.countries, "installs").slice(0, 25))]),
-      ].concat(Object.keys(play.acquisition || {}).map(function (rep) {
-        var g = play.acquisition[rep], cols = {};
-        Object.keys(g).forEach(function (k) { Object.keys(g[k]).forEach(function (c) { cols[c] = 1; }); });
-        return h("div", {}, [h("h3", { text: "Acquisition: " + rep.replace(/_/g, " ") }), table([{ label: "Group", get: function (r) { return r.k; } }].concat(Object.keys(cols).slice(0, 5).map(function (c) {
-          return { label: c, num: true, get: function (r) { return n(r[c]); } };
-        })), Object.keys(g).map(function (k) { return Object.assign({ k: k }, g[k]); }))]);
-      }))));
+        h("div", {}, [h("h3", { text: "Store listing by source · UTM source / campaign" + (play.sources_latest ? " (to " + shortDate(play.sources_latest) + ")" : "") }), table([
+          { label: "Source", get: function (r) { return r.k; } },
+          { label: "Visitors", num: true, get: function (r) { return n(r.visitors); } },
+          { label: "Installs", num: true, get: function (r) { return n(r.acquisitions); } },
+        ], entries(play.sources, "visitors"), { empty: "Play has not published this month's traffic-source file yet; it comes later than installs." })]),
+      ]));
     }
     parts.push(section("Google Play", freshness(play, "Play publishes daily, a few days behind"), playKids));
 
