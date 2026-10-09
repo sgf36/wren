@@ -83,9 +83,14 @@
         if (b >= 3) kind = "stale";
       }
     }
-    var icon = { live: "●", near: "◷", daily: "▦", stale: "▲" }[kind];
-    return h("span", { class: "fresh " + kind, title: tipText + (s.fetched ? " Checked " + ago(s.fetched) + "." : "") + (s.stale ? " Showing the last good copy: " + s.stale : ""),
-      text: icon + " " + who + text + (s.stale ? " (last good copy)" : "") });
+    var title = tipText + (s.fetched ? " Checked " + ago(s.fetched) + "." : "") + (s.stale ? " Showing the last good copy: " + s.stale : "");
+    var words = who + text + (s.stale ? " (last good copy)" : "");
+    if (kind === "live") {
+      // A pulsing green dot, so live figures stand out at a glance.
+      return h("span", { class: "fresh live", title: title }, [h("span", { class: "pulse", "aria-hidden": "true" }), words]);
+    }
+    var icon = { near: "◷", daily: "▦", stale: "▲" }[kind];
+    return h("span", { class: "fresh " + kind, title: title, text: icon + " " + words });
   }
   function checked(s) { return s && s.ok && s.fetched ? h("span", { class: "fresh-checked", text: "checked " + ago(s.fetched) }) : null; }
 

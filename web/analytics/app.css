@@ -138,7 +138,27 @@ main#app { padding: 16px; max-width: 1280px; margin: 0 auto; display: grid; gap:
   white-space: nowrap;
   cursor: help;
 }
-.fresh.live { color: var(--good-ink); border-color: var(--good-ring); }
+.fresh.live { color: var(--good-ink); border-color: var(--good-ring); font-weight: 600; }
+.pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: var(--good);
+  vertical-align: 0;
+  box-shadow: 0 0 0 0 var(--good-ring);
+  animation: pulse 1.6s ease-out infinite;
+}
+@keyframes pulse {
+  0% { opacity: 1; box-shadow: 0 0 0 0 var(--good-ring); }
+  50% { opacity: 0.35; }
+  70% { box-shadow: 0 0 0 6px rgba(12, 163, 12, 0); }
+  100% { opacity: 1; box-shadow: 0 0 0 0 rgba(12, 163, 12, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+}
 .fresh.near { color: var(--ink-2); }
 .fresh.daily { color: var(--ink-2); }
 .fresh.stale { color: var(--wait-ink); border-color: var(--wait-ring); }
