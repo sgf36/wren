@@ -130,12 +130,12 @@ class LKo extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren은 가이드 하나에 최대 $limit곳까지 무료로 저장합니다. 지금 $selected곳을 선택해 $over곳 초과했습니다.';
+    return '장소 $selected곳이 준비됐습니다. 가이드 하나에 무료로 $limit곳까지 저장할 수 있으니, 잠금 해제하고 모두 저장하세요.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren은 한 번에 최대 $limit곳까지 무료로 보냅니다. 지금 $selected곳을 선택해 $over곳 초과했습니다.';
+    return '장소 $selected곳이 준비됐습니다. 한 번에 무료로 $limit곳까지 보낼 수 있으니, 잠금 해제하고 모두 보내세요.';
   }
 
   @override
@@ -515,6 +515,10 @@ class LKo extends L {
       '릴스나 게시물을 Wren에 공유하면 그 안의 장소를 읽어 줍니다. 확인하고 저장하기만 하면 됩니다. Wren은 영상을 보관하지 않습니다.';
 
   @override
+  String get reelsFreeUsed =>
+      '무료 게시물을 모두 사용했습니다. 잠금 해제하면 공유하는 모든 게시물에서 장소를 읽어 줍니다. 확인하고 저장하기만 하면 됩니다. Wren은 영상을 보관하지 않습니다.';
+
+  @override
   String everythingFor(String price) {
     return '전부 $price';
   }
@@ -533,6 +537,17 @@ class LKo extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return '이번 달 남은 게시물: $count개';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '남은 무료 게시물: $count개',
+      zero: '마지막 무료 게시물이었습니다',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -133,12 +133,12 @@ class LHu extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'A Wren ingyen legfeljebb $limit helyet ment egy útikalauzba. $selected van kijelölve — $over darabbal több.';
+    return '$selected hely készen áll. A Wren ingyen legfeljebb $limit helyet ment egy útikalauzba — oldd fel, és mentsd el mindet.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'A Wren ingyen legfeljebb $limit helyet küld egyszerre. $selected van kijelölve — $over darabbal több.';
+    return '$selected hely készen áll. A Wren ingyen legfeljebb $limit helyet küld egyszerre — oldd fel, és küldd el mindet.';
   }
 
   @override
@@ -552,6 +552,10 @@ class LHu extends L {
       'Oszd meg a Wrennel a reelt vagy a bejegyzést, és kiolvassa belőle a helyeket, készen az ellenőrzésre és a mentésre. A Wren soha nem tartja meg a videót.';
 
   @override
+  String get reelsFreeUsed =>
+      'Elhasználtad az ingyenes bejegyzéseket. Oldd fel a Wrent, és minden megosztott bejegyzésből kiolvassa a helyeket, készen az ellenőrzésre és a mentésre. A Wren soha nem tartja meg a videót.';
+
+  @override
   String everythingFor(String price) {
     return 'Minden $price áron';
   }
@@ -571,6 +575,17 @@ class LHu extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'hátralévő bejegyzés ebben a hónapban: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'még $count ingyenes bejegyzés',
+      zero: 'ez volt az utolsó ingyenes bejegyzés',
+    );
+    return '$_temp0';
   }
 
   @override

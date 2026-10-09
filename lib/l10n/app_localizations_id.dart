@@ -132,12 +132,12 @@ class LId extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren menyimpan hingga $limit tempat dalam satu panduan secara gratis. Kamu memilih $selected — $over lebih banyak dari itu.';
+    return '$selected tempatmu sudah siap. Wren menyimpan hingga $limit per panduan secara gratis — buka untuk menyimpan semuanya.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren mengirim hingga $limit tempat sekaligus secara gratis. Kamu memilih $selected — $over lebih banyak dari itu.';
+    return '$selected tempatmu sudah siap. Wren mengirim hingga $limit sekaligus secara gratis — buka untuk mengirim semuanya.';
   }
 
   @override
@@ -535,6 +535,10 @@ class LId extends L {
       'Bagikan reel atau unggahan ke Wren, lalu Wren membaca tempat-tempatnya, siap kamu periksa dan simpan. Wren tidak pernah menyimpan videonya.';
 
   @override
+  String get reelsFreeUsed =>
+      'Unggahan gratismu sudah habis. Buka Wren agar ia membaca tempat dari setiap unggahan yang kamu bagikan, siap kamu periksa dan simpan. Wren tidak pernah menyimpan videonya.';
+
+  @override
   String everythingFor(String price) {
     return 'Semuanya seharga $price';
   }
@@ -554,6 +558,17 @@ class LId extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'unggahan tersisa bulan ini: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'sisa $count unggahan gratis',
+      zero: 'itu unggahan gratis terakhirmu',
+    );
+    return '$_temp0';
   }
 
   @override

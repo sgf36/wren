@@ -132,12 +132,12 @@ class LGu extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren એક માર્ગદર્શિકામાં મફતમાં $limit જગ્યાઓ સુધી સાચવે છે. તમે $selected પસંદ કરી છે — $over વધારે.';
+    return 'તમારી $selected જગ્યાઓ તૈયાર છે. Wren એક માર્ગદર્શિકામાં મફતમાં $limit સુધી સાચવે છે — બધી સાચવવા અનલૉક કરો.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren એક સાથે મફતમાં $limit જગ્યાઓ સુધી મોકલે છે. તમે $selected પસંદ કરી છે — $over વધારે.';
+    return 'તમારી $selected જગ્યાઓ તૈયાર છે. Wren એક સાથે મફતમાં $limit સુધી મોકલે છે — બધી મોકલવા અનલૉક કરો.';
   }
 
   @override
@@ -548,6 +548,10 @@ class LGu extends L {
       'કોઈ રીલ કે પોસ્ટ Wren સાથે શેર કરો, એ એમાંથી જગ્યાઓ વાંચી લેશે — બસ તપાસીને સાચવી લો. Wren વીડિયો ક્યારેય રાખતું નથી.';
 
   @override
+  String get reelsFreeUsed =>
+      'તમારી મફત પોસ્ટ વપરાઈ ગઈ છે. અનલૉક કરો, અને Wren તમે શેર કરો તે દરેક પોસ્ટમાંથી જગ્યાઓ વાંચી લેશે — બસ તપાસીને સાચવી લો. Wren વીડિયો ક્યારેય રાખતું નથી.';
+
+  @override
   String everythingFor(String price) {
     return 'બધું જ $priceમાં';
   }
@@ -567,6 +571,17 @@ class LGu extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'આ મહિને બાકી પોસ્ટ: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'બાકી મફત પોસ્ટ: $count',
+      zero: 'આ છેલ્લી મફત પોસ્ટ હતી',
+    );
+    return '$_temp0';
   }
 
   @override

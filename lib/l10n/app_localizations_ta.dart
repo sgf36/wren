@@ -134,12 +134,12 @@ class LTa extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren ஒரு வழிகாட்டியில் இலவசமாக $limit இடங்கள் வரை சேமிக்கும். நீங்கள் $selected தேர்ந்தெடுத்துள்ளீர்கள் — $over அதிகம்.';
+    return 'உங்கள் $selected இடங்கள் தயார். Wren ஒரு வழிகாட்டியில் இலவசமாக $limit வரை சேமிக்கும் — எல்லாவற்றையும் சேமிக்கத் திறக்கவும்.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren ஒரே சமயத்தில் இலவசமாக $limit இடங்கள் வரை அனுப்பும். நீங்கள் $selected தேர்ந்தெடுத்துள்ளீர்கள் — $over அதிகம்.';
+    return 'உங்கள் $selected இடங்கள் தயார். Wren ஒரே சமயத்தில் இலவசமாக $limit வரை அனுப்பும் — எல்லாவற்றையும் அனுப்பத் திறக்கவும்.';
   }
 
   @override
@@ -561,6 +561,10 @@ class LTa extends L {
       'ஒரு ரீல் அல்லது இடுகையை Wren-க்குப் பகிருங்கள், அதிலிருந்து இடங்களை வாசித்துத் தரும் — சரிபார்த்துச் சேமித்தால் போதும். Wren வீடியோவை ஒருபோதும் வைத்திருப்பதில்லை.';
 
   @override
+  String get reelsFreeUsed =>
+      'உங்கள் இலவச இடுகைகள் தீர்ந்துவிட்டன. திறந்தால், நீங்கள் பகிரும் ஒவ்வொரு இடுகையிலிருந்தும் Wren இடங்களை வாசித்துத் தரும் — சரிபார்த்துச் சேமித்தால் போதும். Wren வீடியோவை ஒருபோதும் வைத்திருப்பதில்லை.';
+
+  @override
   String everythingFor(String price) {
     return 'எல்லாமும் $priceக்கு';
   }
@@ -580,6 +584,17 @@ class LTa extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'இம்மாதம் மீதமுள்ள இடுகைகள்: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'மீதமுள்ள இலவச இடுகைகள்: $count',
+      zero: 'இதுவே கடைசி இலவச இடுகை',
+    );
+    return '$_temp0';
   }
 
   @override

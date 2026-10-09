@@ -135,12 +135,12 @@ class LEl extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Το Wren αποθηκεύει δωρεάν έως $limit μέρη σε έναν οδηγό. Έχεις επιλέξει $selected — $over παραπάνω.';
+    return 'Τα $selected μέρη σου είναι έτοιμα. Το Wren αποθηκεύει δωρεάν έως $limit ανά οδηγό — ξεκλείδωσε για να τα κρατήσεις όλα.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Το Wren στέλνει δωρεάν έως $limit μέρη τη φορά. Έχεις επιλέξει $selected — $over παραπάνω.';
+    return 'Τα $selected μέρη σου είναι έτοιμα. Το Wren στέλνει δωρεάν έως $limit τη φορά — ξεκλείδωσε για να τα στείλεις όλα.';
   }
 
   @override
@@ -566,6 +566,10 @@ class LEl extends L {
       'Μοιράσου ένα reel ή μια ανάρτηση με το Wren και θα διαβάσει τα μέρη από μέσα, έτοιμα για έλεγχο και αποθήκευση. Το Wren δεν κρατάει ποτέ το βίντεο.';
 
   @override
+  String get reelsFreeUsed =>
+      'Χρησιμοποίησες τις δωρεάν αναρτήσεις σου. Ξεκλείδωσε και το Wren θα διαβάζει τα μέρη από κάθε ανάρτηση που μοιράζεσαι, έτοιμα για έλεγχο και αποθήκευση. Το Wren δεν κρατάει ποτέ το βίντεο.';
+
+  @override
   String everythingFor(String price) {
     return 'Όλα με $price';
   }
@@ -585,6 +589,18 @@ class LEl extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'αναρτήσεις που απομένουν αυτόν τον μήνα: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'απομένουν $count δωρεάν αναρτήσεις',
+      one: 'απομένει 1 δωρεάν ανάρτηση',
+      zero: 'αυτή ήταν η τελευταία δωρεάν ανάρτηση',
+    );
+    return '$_temp0';
   }
 
   @override

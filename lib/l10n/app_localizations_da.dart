@@ -133,12 +133,12 @@ class LDa extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren gemmer op til $limit steder i en guide gratis. Du har valgt $selected — $over flere end det.';
+    return 'Dine $selected steder er klar. Wren gemmer op til $limit i en guide gratis — lås op for at gemme dem alle.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren sender op til $limit steder ad gangen gratis. Du har valgt $selected — $over flere end det.';
+    return 'Dine $selected steder er klar. Wren sender op til $limit ad gangen gratis — lås op for at sende dem alle.';
   }
 
   @override
@@ -553,6 +553,10 @@ class LDa extends L {
       'Del et reel eller et opslag med Wren, så læser Wren stederne ud af det, klar til at tjekke og gemme. Wren beholder aldrig videoen.';
 
   @override
+  String get reelsFreeUsed =>
+      'Du har brugt dine gratis opslag. Lås op, så læser Wren stederne ud af hvert opslag, du deler, klar til at tjekke og gemme. Wren beholder aldrig videoen.';
+
+  @override
   String everythingFor(String price) {
     return 'Det hele for $price';
   }
@@ -572,6 +576,18 @@ class LDa extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'opslag tilbage denne måned: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count gratis opslag tilbage',
+      one: '1 gratis opslag tilbage',
+      zero: 'det var dit sidste gratis opslag',
+    );
+    return '$_temp0';
   }
 
   @override

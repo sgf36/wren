@@ -127,12 +127,12 @@ class LZh extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren 免费为一个指南保存最多 $limit 个地点。你选了 $selected 个，多出 $over 个。';
+    return '你的 $selected 个地点已准备好。Wren 免费为一个指南保存最多 $limit 个——解锁即可全部保存。';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren 每次免费发送最多 $limit 个地点。你选了 $selected 个，多出 $over 个。';
+    return '你的 $selected 个地点已准备好。Wren 每次免费发送最多 $limit 个——解锁即可全部发送。';
   }
 
   @override
@@ -504,6 +504,10 @@ class LZh extends L {
       '把 Reels 或帖子分享给 Wren，它会从中读出地点，等你确认后保存。Wren 从不保留视频。';
 
   @override
+  String get reelsFreeUsed =>
+      '免费帖子已用完。解锁后，Wren 会从你分享的每篇帖子中读出地点，等你确认后保存。Wren 从不保留视频。';
+
+  @override
   String everythingFor(String price) {
     return '全部功能 $price';
   }
@@ -522,6 +526,17 @@ class LZh extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return '本月还剩 $count 篇';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '还剩 $count 篇免费帖子',
+      zero: '这是最后一篇免费帖子',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -714,12 +729,12 @@ class LZhHant extends LZh {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren 免費為一個指南儲存最多 $limit 個地點。你選了 $selected 個，多出 $over 個。';
+    return '你的 $selected 個地點已準備好。Wren 免費為一個指南儲存最多 $limit 個——解鎖即可全部儲存。';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren 每次免費傳送最多 $limit 個地點。你選了 $selected 個，多出 $over 個。';
+    return '你的 $selected 個地點已準備好。Wren 每次免費傳送最多 $limit 個——解鎖即可全部傳送。';
   }
 
   @override
@@ -1091,6 +1106,10 @@ class LZhHant extends LZh {
       '把 Reels 或貼文分享給 Wren，它會從中讀出地點，等你確認後儲存。Wren 從不保留影片。';
 
   @override
+  String get reelsFreeUsed =>
+      '免費貼文已用完。解鎖後，Wren 會從你分享的每篇貼文中讀出地點，等你確認後儲存。Wren 從不保留影片。';
+
+  @override
   String everythingFor(String price) {
     return '全部功能 $price';
   }
@@ -1109,6 +1128,17 @@ class LZhHant extends LZh {
   @override
   String reelsLeftThisMonth(int count) {
     return '本月還剩 $count 篇';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '還剩 $count 篇免費貼文',
+      zero: '這是最後一篇免費貼文',
+    );
+    return '$_temp0';
   }
 
   @override

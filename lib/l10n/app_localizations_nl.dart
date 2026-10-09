@@ -134,12 +134,12 @@ class LNl extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren bewaart gratis tot $limit plekken in een gids. Je hebt er $selected geselecteerd — $over meer dan dat.';
+    return 'Je $selected plekken staan klaar. Wren bewaart er gratis tot $limit per gids — ontgrendel om ze allemaal te bewaren.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren stuurt gratis tot $limit plekken tegelijk. Je hebt er $selected geselecteerd — $over meer dan dat.';
+    return 'Je $selected plekken staan klaar. Wren stuurt er gratis tot $limit tegelijk — ontgrendel om ze allemaal te sturen.';
   }
 
   @override
@@ -558,6 +558,10 @@ class LNl extends L {
       'Deel een reel of een post met Wren en Wren haalt de plekken eruit, klaar om na te kijken en te bewaren. Wren bewaart de video nooit.';
 
   @override
+  String get reelsFreeUsed =>
+      'Je gratis posts zijn op. Ontgrendel Wren en het haalt de plekken uit elke post die je deelt, klaar om na te kijken en te bewaren. Wren bewaart de video nooit.';
+
+  @override
   String everythingFor(String price) {
     return 'Alles voor $price';
   }
@@ -577,6 +581,18 @@ class LNl extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'posts over deze maand: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'nog $count gratis posts',
+      one: 'nog 1 gratis post',
+      zero: 'dat was je laatste gratis post',
+    );
+    return '$_temp0';
   }
 
   @override

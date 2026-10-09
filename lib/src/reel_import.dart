@@ -153,6 +153,7 @@ class ReelReading {
     this.used,
     this.limit,
     this.resetsAt,
+    this.free = false,
   });
 
   final List<ReelCandidate> candidates;
@@ -165,6 +166,10 @@ class ReelReading {
   final int? used;
   final int? limit;
   final DateTime? resetsAt;
+
+  /// Read on the free allowance rather than a purchase. That allowance is for
+  /// life and never refills, so "left this month" would be untrue of it.
+  final bool free;
 }
 
 /// Thrown for everything that is not a reading.
@@ -186,6 +191,10 @@ class ReelFailed implements Exception {
 /// without the app having to be trustworthy.
 @immutable
 class ReelAuth {
+  /// The free allowance rather than a purchase or a code: an identity Apple or
+  /// Google vouched for without anybody paying.
+  bool get isFree => _kind == 'apptransaction' || _kind == 'playintegrity';
+
   const ReelAuth.appStore(String jws) : _kind = 'appstore', _a = jws, _b = null;
   const ReelAuth.play(String purchaseToken, String productId)
     : _kind = 'play',
@@ -288,6 +297,7 @@ Future<ReelReading> readReel(
     used: quota is Map ? (quota['used'] as num?)?.toInt() : null,
     limit: quota is Map ? (quota['limit'] as num?)?.toInt() : null,
     resetsAt: _resetOf(quota),
+    free: quota is Map && quota['free'] == true,
   );
 }
 

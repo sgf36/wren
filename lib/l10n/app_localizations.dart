@@ -369,16 +369,16 @@ abstract class L {
   /// **'Any number of places'**
   String get anyNumberOfPlaces;
 
-  /// Explains why the purchase is being offered.
+  /// Explains why the purchase is being offered, leading with the places the user already has ready rather than the limit. {over} is still passed but no longer shown.
   ///
   /// In en, this message translates to:
-  /// **'Wren saves up to {limit} places in a guide for free. You have {selected} selected — {over} more than that.'**
+  /// **'Your {selected} places are ready. Wren saves up to {limit} per guide for free — unlock to keep them all.'**
   String unlockExplain(int limit, int selected, int over);
 
   /// Mirrors unlockExplain on a platform with no guides: places are sent to another map app rather than saved into a guide.
   ///
   /// In en, this message translates to:
-  /// **'Wren sends up to {limit} places at a time for free. You have {selected} selected — {over} more than that.'**
+  /// **'Your {selected} places are ready. Wren sends up to {limit} at a time for free — unlock to send them all.'**
   String unlockExplainAndroid(int limit, int selected, int over);
 
   /// Reassurance that nothing recurs.
@@ -891,6 +891,12 @@ abstract class L {
   /// **'Share a reel or a post to Wren and it reads the places out of it, ready to check and save. Wren never keeps the video.'**
   String get reelsExplain;
 
+  /// The post purchase sheet, shown once the free posts are used up, instead of reelsExplain. The last sentence is the same privacy claim as reelsExplain and must stay true: the media is fetched, read and discarded, and the app never receives it.
+  ///
+  /// In en, this message translates to:
+  /// **'You have used your free posts. Unlock and Wren reads the places out of every post you share, ready to check and save. Wren never keeps the video.'**
+  String get reelsFreeUsed;
+
   /// Purchase button for the bundle: uncapped guides and reading posts together. The price comes from the store already formatted for the user's country — never reformat it.
   ///
   /// In en, this message translates to:
@@ -920,6 +926,12 @@ abstract class L {
   /// In en, this message translates to:
   /// **'{count, plural, =0{no posts left this month} =1{1 post left this month} other{{count} posts left this month}}'**
   String reelsLeftThisMonth(int count);
+
+  /// Appended to the import summary after a post is read on the free allowance. That allowance is for life (three posts) and never refills, so unlike reelsLeftThisMonth it names no month.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{that was your last free post} =1{1 free post left} other{{count} free posts left}}'**
+  String reelsFreeLeft(int count);
 
   /// Shown when the monthly allowance is used up. The window rolls over the trailing thirty days rather than resetting on the first of the month, so this states a date. The date is formatted by the platform.
   ///

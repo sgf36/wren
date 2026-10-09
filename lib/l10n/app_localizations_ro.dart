@@ -134,12 +134,12 @@ class LRo extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren salvează gratuit până la $limit locuri într-un ghid. Ai selectat $selected — cu $over mai multe.';
+    return 'Locuri pregătite: $selected. Wren salvează gratuit până la $limit într-un ghid — deblochează ca să le salvezi pe toate.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren trimite gratuit până la $limit locuri odată. Ai selectat $selected — cu $over mai multe.';
+    return 'Locuri pregătite: $selected. Wren trimite gratuit până la $limit odată — deblochează ca să le trimiți pe toate.';
   }
 
   @override
@@ -574,6 +574,10 @@ class LRo extends L {
       'Trimite un reel sau o postare către Wren și el scoate locurile din ea, gata de verificat și salvat. Wren nu păstrează niciodată videoclipul.';
 
   @override
+  String get reelsFreeUsed =>
+      'Ai folosit postările gratuite. Deblochează Wren și el va scoate locurile din fiecare postare pe care o trimiți, gata de verificat și salvat. Wren nu păstrează niciodată videoclipul.';
+
+  @override
   String everythingFor(String price) {
     return 'Tot pentru $price';
   }
@@ -593,6 +597,17 @@ class LRo extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'postări rămase luna aceasta: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'postări gratuite rămase: $count',
+      zero: 'a fost ultima postare gratuită',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -132,12 +132,12 @@ class LOr extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren ଗୋଟିଏ ଗାଇଡ୍‌ରେ ମାଗଣାରେ $limitଟି ପର୍ଯ୍ୟନ୍ତ ସ୍ଥାନ ସାଇତେ। ଆପଣ $selectedଟି ବାଛିଛନ୍ତି — $overଟି ଅଧିକ।';
+    return 'ଆପଣଙ୍କ $selectedଟି ସ୍ଥାନ ପ୍ରସ୍ତୁତ। Wren ଗୋଟିଏ ଗାଇଡ୍‌ରେ ମାଗଣାରେ $limitଟି ପର୍ଯ୍ୟନ୍ତ ସାଇତେ — ସବୁ ସାଇତିବାକୁ ଅନଲକ୍ କରନ୍ତୁ।';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren ଏକାଥରେ ମାଗଣାରେ $limitଟି ପର୍ଯ୍ୟନ୍ତ ସ୍ଥାନ ପଠାଏ। ଆପଣ $selectedଟି ବାଛିଛନ୍ତି — $overଟି ଅଧିକ।';
+    return 'ଆପଣଙ୍କ $selectedଟି ସ୍ଥାନ ପ୍ରସ୍ତୁତ। Wren ଏକାଥରେ ମାଗଣାରେ $limitଟି ପର୍ଯ୍ୟନ୍ତ ପଠାଏ — ସବୁ ପଠାଇବାକୁ ଅନଲକ୍ କରନ୍ତୁ।';
   }
 
   @override
@@ -547,6 +547,10 @@ class LOr extends L {
       'ଗୋଟିଏ ରିଲ୍ କିମ୍ବା ପୋଷ୍ଟ Wren ସହ ଶେୟାର୍ କରନ୍ତୁ, ସେ ସେଥିରୁ ସ୍ଥାନଗୁଡ଼ିକ ପଢ଼ି ନେବ — କେବଳ ଯାଞ୍ଚ କରି ସାଇତି ରଖନ୍ତୁ। Wren ଭିଡିଓ କେବେ ରଖେ ନାହିଁ।';
 
   @override
+  String get reelsFreeUsed =>
+      'ଆପଣଙ୍କ ମାଗଣା ପୋଷ୍ଟ ସରିଗଲା। ଅନଲକ୍ କଲେ ଆପଣ ଶେୟାର୍ କରୁଥିବା ପ୍ରତ୍ୟେକ ପୋଷ୍ଟରୁ Wren ସ୍ଥାନଗୁଡ଼ିକ ପଢ଼ି ନେବ — କେବଳ ଯାଞ୍ଚ କରି ସାଇତି ରଖନ୍ତୁ। Wren ଭିଡିଓ କେବେ ରଖେ ନାହିଁ।';
+
+  @override
   String everythingFor(String price) {
     return 'ସବୁକିଛି $priceରେ';
   }
@@ -566,6 +570,17 @@ class LOr extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'ଏହି ମାସରେ ବଳକା ପୋଷ୍ଟ: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ବଳକା ମାଗଣା ପୋଷ୍ଟ: $count',
+      zero: 'ଏହା ଶେଷ ମାଗଣା ପୋଷ୍ଟ ଥିଲା',
+    );
+    return '$_temp0';
   }
 
   @override

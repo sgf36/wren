@@ -82,6 +82,10 @@ def deploy():
     for name in FILES:
         save(s, REMOTE + "/analytics", name, (PAGE / name).read_text(encoding="utf-8"))
         print("uploaded analytics/%s" % name)
+    # The funnel counter the app posts to (web/f/), read by the dashboard.
+    mkdir(s, REMOTE, "f")
+    save(s, REMOTE + "/f", "index.php", (ROOT / "web" / "f" / "index.php").read_text(encoding="utf-8"))
+    print("uploaded f/index.php")
     return check()
 
 
@@ -118,6 +122,12 @@ def check():
     expect("auth.php refuses a missing CSRF token", r.status_code == 403, r.status_code)
     r = requests.get("https://wren.spencerfields.com/wren-analytics/config.json", headers=ua, timeout=30)
     expect("config is not under the web root", r.status_code == 404, r.status_code)
+    # A step the server does not know must be dropped, and still answer 204.
+    r = requests.post("https://wren.spencerfields.com/f/", headers=ua, timeout=30,
+                      json={"e": "not_a_step", "p": "ios", "v": "0.0.0", "l": "en"})
+    expect("funnel counter answers and drops unknown steps", r.status_code == 204, r.status_code)
+    r = requests.get("https://wren.spencerfields.com/funnel-counts/", headers=ua, timeout=30)
+    expect("funnel counts are not under the web root", r.status_code == 404, r.status_code)
     print("all checks passed" if not bad else "%d check(s) FAILED" % bad)
     return 1 if bad else 0
 

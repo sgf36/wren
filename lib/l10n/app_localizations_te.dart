@@ -133,12 +133,12 @@ class LTe extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren ఒక గైడ్‌లో ఉచితంగా $limit ప్రదేశాల వరకు భద్రపరుస్తుంది. మీరు $selected ఎంచుకున్నారు — $over ఎక్కువ.';
+    return 'మీ $selected ప్రదేశాలు సిద్ధంగా ఉన్నాయి. Wren ఒక గైడ్‌లో ఉచితంగా $limit వరకు భద్రపరుస్తుంది — అన్నింటినీ భద్రపరచడానికి అన్‌లాక్ చేయండి.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren ఒకేసారి ఉచితంగా $limit ప్రదేశాల వరకు పంపుతుంది. మీరు $selected ఎంచుకున్నారు — $over ఎక్కువ.';
+    return 'మీ $selected ప్రదేశాలు సిద్ధంగా ఉన్నాయి. Wren ఒకేసారి ఉచితంగా $limit వరకు పంపుతుంది — అన్నింటినీ పంపడానికి అన్‌లాక్ చేయండి.';
   }
 
   @override
@@ -555,6 +555,10 @@ class LTe extends L {
       'ఒక రీల్ లేదా పోస్ట్‌ను Wren-కి పంచుకోండి, అది వాటిలోంచి ప్రదేశాలను చదివేస్తుంది — సరిచూసి భద్రపరచుకుంటే చాలు. Wren వీడియోను ఎప్పుడూ ఉంచుకోదు.';
 
   @override
+  String get reelsFreeUsed =>
+      'మీ ఉచిత పోస్ట్‌లు అయిపోయాయి. అన్‌లాక్ చేస్తే, మీరు పంచుకునే ప్రతి పోస్ట్ నుంచి Wren ప్రదేశాలను చదివేస్తుంది — సరిచూసి భద్రపరచుకుంటే చాలు. Wren వీడియోను ఎప్పుడూ ఉంచుకోదు.';
+
+  @override
   String everythingFor(String price) {
     return 'అన్నీ $priceకి';
   }
@@ -574,6 +578,17 @@ class LTe extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'ఈ నెలలో మిగిలిన పోస్ట్‌లు: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'మిగిలిన ఉచిత పోస్ట్‌లు: $count',
+      zero: 'ఇదే చివరి ఉచిత పోస్ట్',
+    );
+    return '$_temp0';
   }
 
   @override

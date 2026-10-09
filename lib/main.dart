@@ -11,6 +11,7 @@ import 'l10n/app_localizations.dart';
 import 'src/advert.dart';
 import 'src/entitlement.dart';
 import 'src/file_source.dart';
+import 'src/funnel.dart';
 import 'src/guide_expand.dart';
 import 'src/guide_import.dart';
 import 'src/guide_link.dart';
@@ -89,9 +90,18 @@ class WrenApp extends StatelessWidget {
         ),
     // No splash in the screenshot build: it animates, and a screenshot taken
     // during it catches the mark half-faded.
-    home: home ?? const SplashGate(child: CapturePage()),
+    home: home ?? SplashGate(child: CapturePage(funnel: _productionFunnel())),
   );
 }
+
+/// The real funnel, for the shipped app only. Tests and the screenshot build
+/// never come through here, so they can never add to the live counts.
+Funnel _productionFunnel() => HttpFunnel(
+  platform: Platform.isIOS ? 'ios' : 'android',
+  language: () => canonicalLocale(
+    WidgetsBinding.instance.platformDispatcher.locale,
+  ).languageCode,
+);
 
 /// The locale the phone reports, under the name the translations use.
 ///
@@ -204,6 +214,7 @@ class CapturePage extends StatefulWidget {
     this.sharer,
     this.reviewPrompt,
     this.trackingPrompt,
+    this.funnel,
     this.initialPending,
     this.initialGuideName,
     this.initialOwned,
@@ -285,6 +296,10 @@ class CapturePage extends StatefulWidget {
   /// Apple's tracking question; see [TrackingPrompt]. Injected by tests.
   final TrackingPrompt? trackingPrompt;
 
+  /// Anonymous step counts; see [Funnel]. Null sends nothing, which is what
+  /// every test and the screenshot build get.
+  final Funnel? funnel;
+
   @visibleForTesting
   final List<Pending>? initialPending;
 
@@ -338,6 +353,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       widget.reviewPrompt ?? (const StoreReviewPrompt());
 
   // iPhone only: Meta's SDK is linked into the iOS build alone.
+  late final Funnel _funnel = widget.funnel ?? const NoFunnel();
+
   late final TrackingPrompt _trackingPrompt =
       widget.trackingPrompt ??
       (Platform.isIOS ? const AppleTrackingPrompt() : const NoTrackingPrompt());
@@ -788,6 +805,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// deliberately: the reading, ranking and city-confirmation are the part that
   /// took the longest to get right and there is no second copy of it.
   Future<void> _importScreenshots({List<String>? paths}) async {
+    _funnel.record(FunnelStep.importStarted, detail: 'screenshots');
     final l = L.of(context);
     setState(() {
       _busy = true;
@@ -1056,6 +1074,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     if (prefs.getBool(_onboardingShown) ?? false) return;
     if (!mounted || _pending.isNotEmpty || _busy) return;
     await prefs.setBool(_onboardingShown, true);
+    // The welcome sheet shows once per install, so it doubles as the count of
+    // new installs without storing anything new on the phone.
+    _funnel.record(FunnelStep.firstOpen);
     if (!mounted) return;
     final l = L.of(context);
     final t = Theme.of(context).textTheme;
@@ -1116,6 +1137,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// held and the link is one the feature can read.
   Future<void> _importReel(String link) async {
     final l = L.of(context);
+    _funnel.record(FunnelStep.importStarted, detail: 'reel');
     // A share can arrive before the first frame has finished, which is before
     // either source of entitlement has been read from disk. Raising the paywall
     // at somebody who has paid is the failure this avoids, and it is the
@@ -1154,6 +1176,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
     final reading = await _readSellingOnRefusal(link, auth, l);
     if (reading == null) return;
+    _funnel.record(FunnelStep.reelRead, detail: reading.free ? 'free' : 'paid');
     if (!mounted) return;
 
     // The city, confirmed rather than assumed, exactly as for screenshots — a
@@ -1195,7 +1218,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
         if (region != null) l.importSummaryIn(region.name),
         if (unmatched > 0) '· ${l.importSummaryNeedLook(unmatched)}',
         if (reading.used != null && reading.limit != null)
-          '· ${l.reelsLeftThisMonth(reading.limit! - reading.used!)}',
+          // A free allowance is for life, so "this month" would be untrue.
+          '· ${reading.free ? l.reelsFreeLeft(reading.limit! - reading.used!) : l.reelsLeftThisMonth(reading.limit! - reading.used!)}',
       ].join(' ');
     });
   }
@@ -1279,7 +1303,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     }
 
     setState(() => _busy = false);
-    if (await _sell(PaywallReason.reels) != _Gate.through) return null;
+    // Refused after a free read means the free ones are used up, and the sheet
+    // says so rather than explaining the feature they have just used.
+    if (await _sell(PaywallReason.reels, freeSpent: auth.isFree) !=
+        _Gate.through) {
+      return null;
+    }
     if (!mounted) return null;
 
     final bought = await _reelAuth(link);
@@ -1340,6 +1369,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// chosen the guide — so the paste dialog is skipped rather than asking them to
   /// hand over something they just handed over.
   Future<void> _importGuide({String? shared}) async {
+    _funnel.record(FunnelStep.importStarted, detail: 'guide');
     final l = L.of(context);
     final controller = TextEditingController();
     final pasted =
@@ -1626,6 +1656,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// is better than the one region a batch of screenshots shares, and it is why
   /// a file of places spread across three cities imports correctly.
   Future<void> _importFile() async {
+    _funnel.record(FunnelStep.importStarted, detail: 'file');
     final l = L.of(context);
     setState(() {
       _busy = true;
@@ -1897,6 +1928,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     PaywallReason reason, {
     int selected = 0,
     int carried = 0,
+    bool freeSpent = false,
   }) async {
     final l = L.of(context);
     final offers = offersFor(reason, _entitlement);
@@ -1923,6 +1955,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     final reels = reason == PaywallReason.reels;
     final combining = carried > 0;
     final over = _entitlement.overBy(selected);
+    _funnel.record(
+      FunnelStep.paywallShown,
+      detail: reels ? 'reels' : (combining ? 'combine' : 'places'),
+    );
     final choice = await showModalBottomSheet<_UnlockAnswer>(
       context: context,
       showDragHandle: true,
@@ -1952,7 +1988,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               if (reels || combining || selected > 0) ...[
                 Text(
                   reels
-                      ? l.reelsExplain
+                      ? (freeSpent ? l.reelsFreeUsed : l.reelsExplain)
                       : combining
                       ? l.unlockCombineBody(carried)
                       : (_makesGuides
@@ -2059,20 +2095,26 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     PaywallReason reason, {
     int selected = 0,
     int carried = 0,
+    bool freeSpent = false,
   }) async {
     final l = L.of(context);
     final answer = await _offerUnlock(
       reason,
       selected: selected,
       carried: carried,
+      freeSpent: freeSpent,
     );
     if (!mounted) return _Gate.stop;
     switch (answer.choice) {
       case _UnlockChoice.buy:
+        final product = _productDetail(answer.productId!);
+        _funnel.record(FunnelStep.buyTapped, detail: product);
         if (!await _store.buy(answer.productId!)) {
+          _funnel.record(FunnelStep.purchaseFailed, detail: product);
           if (mounted) setState(() => _status = l.purchaseDidNotComplete);
           return _Gate.stop;
         }
+        _funnel.record(FunnelStep.purchased, detail: product);
         if (!mounted) return _Gate.stop;
         // Folded in from the answer rather than re-read from the cache. The
         // store is the authority on what was bought and it has just said so;
@@ -2083,6 +2125,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           _recompose();
         });
       case _UnlockChoice.restore:
+        _funnel.record(FunnelStep.restoreTapped);
         final restored = await _restore();
         if (!mounted) return _Gate.stop;
         if (restored.isEmpty) {
@@ -2090,8 +2133,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
           return _Gate.stop;
         }
       case _UnlockChoice.publishFree:
+        _funnel.record(FunnelStep.savedFreeInstead);
         return _Gate.trimmed;
       case _UnlockChoice.cancel:
+        _funnel.record(FunnelStep.paywallDismissed);
         return _Gate.stop;
     }
     if (!mounted) return _Gate.stop;
@@ -2102,6 +2147,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     setState(() => _status = l.restoredUnlocked);
     return _Gate.stop;
   }
+
+  /// The product as the funnel names it: a short fixed word, never the store id.
+  String _productDetail(String productId) => switch (productId) {
+    everythingProductId => 'everything',
+    reelsUpgradeProductId => 'reels_upgrade',
+    _ => 'unlimited',
+  };
 
   /// Whether what is held now covers what the sheet was raised about.
   bool _satisfies(PaywallReason reason) => switch (reason) {
@@ -2360,7 +2412,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // Handing the file over is this platform's "it worked" moment, the same
     // way a guide opening in Maps is on iOS. Only arms the rating ask; the
     // prompt itself waits for the user to come back from the other app.
-    if (outcome == ShareOutcome.sent) await _reviewPrompt.recordSuccess();
+    if (outcome == ShareOutcome.sent) {
+      _funnel.record(FunnelStep.guideSaved);
+      await _reviewPrompt.recordSuccess();
+    }
   }
 
   /// The Google Maps route: save a CSV, then open My Maps in a Custom Tab.
@@ -2511,6 +2566,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       _queuedTotal = 0;
       // The guide is in Maps, whole. Only arms the ask — the user is looking at
       // Maps right now, so the prompt itself waits for them to come back.
+      _funnel.record(FunnelStep.guideSaved);
       await _reviewPrompt.recordSuccess();
     }
   }

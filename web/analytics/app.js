@@ -63,6 +63,7 @@
     ga4: ["near", "Same day", "Google Analytics shows today within hours and finalises each day after 24–48 hours."],
     ga4_realtime: ["live", "Live", "Visitors in the last 30 minutes, re-read every minute."],
     get: ["live", "Live", "Each tap is counted the moment it happens."],
+    funnel: ["live", "Live", "Each step is counted the moment the app reports it (Wren 2.1.9 and later)."],
     postbacks: ["near", "24–48 h+ late", "Shown the moment Apple sends them, but Apple holds each back 24–48 hours or more, at random."],
     apple: ["daily", "", "Apple publishes App Store analytics once a day, usually 1–2 days behind."],
     sales: ["daily", "", "Apple publishes sales once a day, for the previous day."],
@@ -215,7 +216,7 @@
     TODAY = d.until;
     var meta = S.meta || {}, tt = S.tiktok || {}, apple = S.apple || {}, play = S.play || {};
     var gt = S.get || {}, pb = S.postbacks || {}, ga = S.ga4 || {}, rt = S.ga4_realtime || {};
-    var sales = S.sales || {}, ps = S.play_sales || {};
+    var sales = S.sales || {}, ps = S.play_sales || {}, fn = S.funnel || {};
     var live = function (s) { return s && s.ok && s.configured !== false; };
 
     var metaSpend = live(meta) ? sum(meta.daily, "spend") : null;
@@ -330,6 +331,64 @@
     }
     parts.push(section("In-app purchases", "Stores publish sales once a day. App Store figures are net proceeds; Play's are gross charged.", iapKids,
       [badge("sales", sales, "App Store"), badge("play_sales", ps, "Play"), checked(live(sales) ? sales : ps)]));
+
+    // Purchase funnel: what the app reports at each step, in order. Counts are
+    // of events, not people (nothing identifies anyone), so a step can exceed
+    // the one before it when someone repeats it.
+    var FUNNEL = [
+      ["first_open", "Opened Wren for the first time"],
+      ["import_started", "Started an import"],
+      ["reel_read:free", "Read a post on a free read"],
+      ["paywall_shown", "Saw a purchase sheet"],
+      ["buy_tapped", "Tapped a buy button"],
+      ["purchased", "Bought"],
+    ];
+    var SIDE = [
+      ["paywall_shown:places", "Sheet: more than 3 places"],
+      ["paywall_shown:combine", "Sheet: adding to an existing guide"],
+      ["paywall_shown:reels", "Sheet: reading a post"],
+      ["purchase_failed", "Purchase cancelled or failed"],
+      ["paywall_dismissed", "Closed the sheet without choosing"],
+      ["saved_free_instead", "Saved the free 3 instead"],
+      ["restore_tapped", "Tapped restore"],
+      ["reel_read:paid", "Read a post on a purchase"],
+      ["guide_saved", "Saved a guide / sent places"],
+    ];
+    function stepTotal(key) {
+      var st = (fn.steps || {}), out = { ios: 0, android: 0, all: 0 };
+      Object.keys(st).forEach(function (k) {
+        if (k === key || k.indexOf(key + ":") === 0) ["ios", "android", "all"].forEach(function (p) { out[p] += +(st[k][p] || 0); });
+      });
+      return out;
+    }
+    var fnKids = [sourceState(fn, "Funnel")];
+    if (live(fn)) {
+      var prev = null, top = Math.max.apply(null, FUNNEL.map(function (f) { return stepTotal(f[0]).all; }).concat([1]));
+      var frows = FUNNEL.map(function (f) {
+        var c = stepTotal(f[0]), r = { k: f[1], ios: c.ios, android: c.android, all: c.all, pct: prev ? (prev > 0 ? c.all / prev : null) : null, w: c.all / top };
+        prev = c.all; return r;
+      });
+      fnKids.push(table([
+        { label: "Step", get: function (r) { return r.k; } },
+        // Width set through the style object, not a style attribute: the page's
+        // Content-Security-Policy refuses inline style attributes.
+        { label: "", get: function (r) { var bar = h("span", { class: "fbar" }); bar.style.width = Math.round(r.w * 100) + "%"; return bar; } },
+        { label: "iPhone", num: true, get: function (r) { return n(r.ios); } },
+        { label: "Android", num: true, get: function (r) { return n(r.android); } },
+        { label: "Total", num: true, get: function (r) { return n(r.all); } },
+        { label: "Of step above", num: true, get: function (r) { return r.pct == null ? "–" : n(r.pct * 100, 0) + "%"; } },
+      ], frows, { empty: "No steps reported yet. Counts start with Wren 2.1.9." }));
+      fnKids.push(h("h3", { text: "Along the way" }), table([
+        { label: "Event", get: function (r) { return r.k; } },
+        { label: "iPhone", num: true, get: function (r) { return n(r.ios); } },
+        { label: "Android", num: true, get: function (r) { return n(r.android); } },
+        { label: "Total", num: true, get: function (r) { return n(r.all); } },
+      ], SIDE.map(function (s) { var c = stepTotal(s[0]); return { k: s[1], ios: c.ios, android: c.android, all: c.all }; })));
+      var vers = Object.keys(fn.versions || {}).sort().reverse();
+      if (vers.length) fnKids.push(h("p", { class: "muted note", text: "App versions reporting: " + vers.map(function (v) { return v + " (" + n(fn.versions[v].events) + ")"; }).join(", ") }));
+    }
+    parts.push(section("Purchase funnel", "Counts of events, not people: nothing identifies anyone, so one person opening the sheet twice counts twice.", fnKids,
+      [badge("funnel", fn), checked(fn)]));
 
     // Revenue per campaign
     var rpc = [];

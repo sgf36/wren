@@ -136,12 +136,12 @@ class LHe extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return '‏Wren שומר עד $limit מקומות במדריך בחינם. סימנת $selected — $over יותר מזה.';
+    return 'המקומות מוכנים: $selected. ‏Wren שומר עד $limit במדריך בחינם — פתחו כדי לשמור את כולם.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return '‏Wren שולח עד $limit מקומות בכל פעם בחינם. סימנת $selected — $over יותר מזה.';
+    return 'המקומות מוכנים: $selected. ‏Wren שולח עד $limit בכל פעם בחינם — פתחו כדי לשלוח את כולם.';
   }
 
   @override
@@ -577,6 +577,10 @@ class LHe extends L {
       'שתפו ריל או פוסט עם Wren והוא יקרא מהם את המקומות, מוכנים לבדיקה ולשמירה. Wren אף פעם לא שומר את הסרטון.';
 
   @override
+  String get reelsFreeUsed =>
+      'הפוסטים החינמיים נוצלו. פתחו את Wren והוא יקרא את המקומות מכל פוסט שתשתפו, מוכנים לבדיקה ולשמירה. Wren אף פעם לא שומר את הסרטון.';
+
+  @override
   String everythingFor(String price) {
     return 'הכול ב־$price';
   }
@@ -595,6 +599,17 @@ class LHe extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'פוסטים שנשארו החודש: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'פוסטים חינמיים שנשארו: $count',
+      zero: 'זה היה הפוסט החינמי האחרון',
+    );
+    return '$_temp0';
   }
 
   @override

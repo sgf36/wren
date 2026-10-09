@@ -140,12 +140,12 @@ class LRu extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren бесплатно сохраняет в путеводителе до $limit мест. Выбрано $selected — на $over больше.';
+    return 'Мест готово: $selected. Wren бесплатно сохраняет в путеводителе до $limit — разблокируй, чтобы сохранить все.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren бесплатно отправляет до $limit мест за раз. Выбрано $selected — на $over больше.';
+    return 'Мест готово: $selected. Wren бесплатно отправляет до $limit за раз — разблокируй, чтобы отправить все.';
   }
 
   @override
@@ -597,6 +597,10 @@ class LRu extends L {
       'Поделись с Wren рилсом или публикацией, и он вытащит оттуда места — останется проверить и сохранить. Wren никогда не хранит видео.';
 
   @override
+  String get reelsFreeUsed =>
+      'Бесплатные публикации закончились. Разблокируй Wren, и он будет вытаскивать места из каждой публикации, которой ты поделишься, — останется проверить и сохранить. Wren никогда не хранит видео.';
+
+  @override
   String everythingFor(String price) {
     return 'Всё за $price';
   }
@@ -616,6 +620,17 @@ class LRu extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'публикаций осталось в этом месяце: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'бесплатных публикаций осталось: $count',
+      zero: 'это была последняя бесплатная публикация',
+    );
+    return '$_temp0';
   }
 
   @override

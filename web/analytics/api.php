@@ -35,6 +35,7 @@ $plan = [
     'ga4_realtime' => [60, fn() => source_ga4_realtime()],
     'get' => [0, fn() => source_get_taps($since, $until)],
     'postbacks' => [0, fn() => source_postbacks($since, $until)],
+    'funnel' => [0, fn() => source_funnel($since, $until)],
 ];
 $only = isset($_GET['source']) ? [(string) $_GET['source']] : array_keys($plan);
 

@@ -134,12 +134,12 @@ class LFi extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren tallentaa oppaaseen ilmaiseksi enintään $limit paikkaa. Olet valinnut $selected — $over enemmän.';
+    return 'Paikkoja valmiina: $selected. Wren tallentaa oppaaseen ilmaiseksi enintään $limit — avaa lukitus ja tallenna kaikki.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren lähettää kerralla ilmaiseksi enintään $limit paikkaa. Olet valinnut $selected — $over enemmän.';
+    return 'Paikkoja valmiina: $selected. Wren lähettää kerralla ilmaiseksi enintään $limit — avaa lukitus ja lähetä kaikki.';
   }
 
   @override
@@ -549,6 +549,10 @@ class LFi extends L {
       'Jaa reel tai julkaisu Wreniin, niin se lukee paikat siitä valmiiksi tarkistettavaksi ja tallennettavaksi. Wren ei säilytä videota koskaan.';
 
   @override
+  String get reelsFreeUsed =>
+      'Ilmaiset julkaisut on käytetty. Avaa lukitus, niin Wren lukee paikat jokaisesta jakamastasi julkaisusta valmiiksi tarkistettavaksi ja tallennettavaksi. Wren ei säilytä videota koskaan.';
+
+  @override
   String everythingFor(String price) {
     return 'Kaikki hintaan $price';
   }
@@ -568,6 +572,17 @@ class LFi extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'julkaisuja jäljellä tässä kuussa: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ilmaisia julkaisuja jäljellä: $count',
+      zero: 'se oli viimeinen ilmainen julkaisu',
+    );
+    return '$_temp0';
   }
 
   @override

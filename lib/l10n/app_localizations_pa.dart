@@ -133,12 +133,12 @@ class LPa extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren ਇੱਕ ਗਾਈਡ ਵਿੱਚ ਮੁਫ਼ਤ $limit ਥਾਵਾਂ ਤੱਕ ਸੰਭਾਲਦਾ ਹੈ। ਤੁਸੀਂ $selected ਚੁਣੀਆਂ ਹਨ — $over ਵੱਧ।';
+    return 'ਤੁਹਾਡੀਆਂ $selected ਥਾਵਾਂ ਤਿਆਰ ਹਨ। Wren ਇੱਕ ਗਾਈਡ ਵਿੱਚ ਮੁਫ਼ਤ $limit ਤੱਕ ਸੰਭਾਲਦਾ ਹੈ — ਸਾਰੀਆਂ ਸੰਭਾਲਣ ਲਈ ਅਨਲਾਕ ਕਰੋ।';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren ਇੱਕ ਵਾਰ ਵਿੱਚ ਮੁਫ਼ਤ $limit ਥਾਵਾਂ ਤੱਕ ਭੇਜਦਾ ਹੈ। ਤੁਸੀਂ $selected ਚੁਣੀਆਂ ਹਨ — $over ਵੱਧ।';
+    return 'ਤੁਹਾਡੀਆਂ $selected ਥਾਵਾਂ ਤਿਆਰ ਹਨ। Wren ਇੱਕ ਵਾਰ ਵਿੱਚ ਮੁਫ਼ਤ $limit ਤੱਕ ਭੇਜਦਾ ਹੈ — ਸਾਰੀਆਂ ਭੇਜਣ ਲਈ ਅਨਲਾਕ ਕਰੋ।';
   }
 
   @override
@@ -559,6 +559,10 @@ class LPa extends L {
       'ਕੋਈ ਰੀਲ ਜਾਂ ਪੋਸਟ Wren ਨਾਲ ਸਾਂਝੀ ਕਰੋ, ਉਹ ਉਸ ਵਿੱਚੋਂ ਥਾਵਾਂ ਪੜ੍ਹ ਲਵੇਗਾ — ਬੱਸ ਪਰਖੋ ਤੇ ਸੰਭਾਲ ਲਵੋ। Wren ਵੀਡੀਓ ਕਦੇ ਨਹੀਂ ਰੱਖਦਾ।';
 
   @override
+  String get reelsFreeUsed =>
+      'ਤੁਹਾਡੀਆਂ ਮੁਫ਼ਤ ਪੋਸਟਾਂ ਮੁੱਕ ਗਈਆਂ। ਅਨਲਾਕ ਕਰੋ, ਫਿਰ Wren ਤੁਹਾਡੀ ਸਾਂਝੀ ਕੀਤੀ ਹਰ ਪੋਸਟ ਵਿੱਚੋਂ ਥਾਵਾਂ ਪੜ੍ਹ ਲਵੇਗਾ — ਬੱਸ ਪਰਖੋ ਤੇ ਸੰਭਾਲ ਲਵੋ। Wren ਵੀਡੀਓ ਕਦੇ ਨਹੀਂ ਰੱਖਦਾ।';
+
+  @override
   String everythingFor(String price) {
     return 'ਸਭ ਕੁਝ $price ਵਿੱਚ';
   }
@@ -578,6 +582,17 @@ class LPa extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'ਇਸ ਮਹੀਨੇ ਬਾਕੀ ਪੋਸਟਾਂ: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ਬਾਕੀ ਮੁਫ਼ਤ ਪੋਸਟਾਂ: $count',
+      zero: 'ਇਹ ਆਖ਼ਰੀ ਮੁਫ਼ਤ ਪੋਸਟ ਸੀ',
+    );
+    return '$_temp0';
   }
 
   @override

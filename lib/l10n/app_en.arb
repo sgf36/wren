@@ -157,9 +157,9 @@
   "@anyNumberOfPlaces": {
     "description": "The unlock, on a platform that makes no guides. Mirrors guidesOfAnySize, which names the guide; here the unit sold is the number of places sent at once. Same product, same price, different word for the thing it lifts."
   },
-  "unlockExplain": "Wren saves up to {limit} places in a guide for free. You have {selected} selected — {over} more than that.",
+  "unlockExplain": "Your {selected} places are ready. Wren saves up to {limit} per guide for free — unlock to keep them all.",
   "@unlockExplain": {
-    "description": "Explains why the purchase is being offered.",
+    "description": "Explains why the purchase is being offered, leading with the places the user already has ready rather than the limit. {over} is still passed but no longer shown.",
     "placeholders": {
       "limit": {
         "type": "int"
@@ -172,7 +172,7 @@
       }
     }
   },
-  "unlockExplainAndroid": "Wren sends up to {limit} places at a time for free. You have {selected} selected — {over} more than that.",
+  "unlockExplainAndroid": "Your {selected} places are ready. Wren sends up to {limit} at a time for free — unlock to send them all.",
   "@unlockExplainAndroid": {
     "description": "Mirrors unlockExplain on a platform with no guides: places are sent to another map app rather than saved into a guide.",
     "placeholders": {
@@ -674,6 +674,10 @@
   "@reelsExplain": {
     "description": "Explains what the reel purchase does. The last sentence is the privacy claim the App Privacy label and the review notes both rest on, so it must stay true: the media is fetched, read and discarded, and the app never receives it."
   },
+  "reelsFreeUsed": "You have used your free posts. Unlock and Wren reads the places out of every post you share, ready to check and save. Wren never keeps the video.",
+  "@reelsFreeUsed": {
+    "description": "The post purchase sheet, shown once the free posts are used up, instead of reelsExplain. The last sentence is the same privacy claim as reelsExplain and must stay true: the media is fetched, read and discarded, and the app never receives it."
+  },
   "everythingFor": "Everything for {price}",
   "@everythingFor": {
     "description": "Purchase button for the bundle: uncapped guides and reading posts together. The price comes from the store already formatted for the user's country — never reformat it.",
@@ -703,6 +707,15 @@
   "reelsLeftThisMonth": "{count, plural, =0{no posts left this month} =1{1 post left this month} other{{count} posts left this month}}",
   "@reelsLeftThisMonth": {
     "description": "Appended to the import summary. Reading a post costs money on every use, so there is an allowance, and it is shown after each one rather than sprung on the user when it runs out.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reelsFreeLeft": "{count, plural, =0{that was your last free post} =1{1 free post left} other{{count} free posts left}}",
+  "@reelsFreeLeft": {
+    "description": "Appended to the import summary after a post is read on the free allowance. That allowance is for life (three posts) and never refills, so unlike reelsLeftThisMonth it names no month.",
     "placeholders": {
       "count": {
         "type": "int"

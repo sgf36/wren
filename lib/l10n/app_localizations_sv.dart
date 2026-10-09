@@ -134,12 +134,12 @@ class LSv extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren sparar upp till $limit platser i en guide gratis. Du har valt $selected — $over fler än så.';
+    return 'Dina $selected platser är klara. Wren sparar upp till $limit i en guide gratis — lås upp för att spara alla.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren skickar upp till $limit platser åt gången gratis. Du har valt $selected — $over fler än så.';
+    return 'Dina $selected platser är klara. Wren skickar upp till $limit åt gången gratis — lås upp för att skicka alla.';
   }
 
   @override
@@ -558,6 +558,10 @@ class LSv extends L {
       'Dela en reel eller ett inlägg med Wren, så läser Wren ut platserna, redo att kolla och spara. Wren behåller aldrig videon.';
 
   @override
+  String get reelsFreeUsed =>
+      'Du har använt dina gratis inlägg. Lås upp, så läser Wren ut platserna ur varje inlägg du delar, redo att kolla och spara. Wren behåller aldrig videon.';
+
+  @override
   String everythingFor(String price) {
     return 'Allt för $price';
   }
@@ -577,6 +581,18 @@ class LSv extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'inlägg kvar den här månaden: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count gratis inlägg kvar',
+      one: '1 gratis inlägg kvar',
+      zero: 'det var ditt sista gratis inlägg',
+    );
+    return '$_temp0';
   }
 
   @override
