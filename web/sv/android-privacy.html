@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Senast uppdaterad 3 oktober 2026</p>
+    <p class="updated">Senast uppdaterad 9 oktober 2026</p>
 
 
 
@@ -156,7 +156,7 @@
 
 
 
-    <p><strong>Appen</strong> har inga konton och ingen analys. Dina skärmdumpar och alla filer du importerar läses på din telefon och laddas aldrig upp. Två saker når en server som Wren driver, och bara när du ber om det: en kostnadsfri åtkomstkod, om du har fått en och anger den; samt länken till en reel eller ett inlägg, om du delar en för att Wren ska läsa den. Det inlägget hämtas, läses och kastas bort — ingenting om det sparas, inte videon, inte texten, inte platsnamnen.</p>
+    <p><strong>Appen</strong> har inga konton och ingen analys som identifierar dig: den räknar anonymt vilka steg människor når, utan något som identifierar dig eller din telefon. Dina skärmbilder och alla filer du importerar läses på din telefon och laddas aldrig upp. Två saker når faktiskt en server som Wren driver, och endast när du ber om det: en kostnadsfri åtkomstkod, om du har fått en sådan och anger den; samt länken till en reel eller ett inlägg, om du delar ett sådant för att Wren ska läsa det. Det inlägget hämtas, läses och kasseras — ingenting om det sparas, varken videon, orden eller platsnamnen.</p>
 
 
 
@@ -190,9 +190,9 @@
 
     <h2>Vad Wren samlar in</h2>
 
-    <p>Nästan ingenting, och bara det du själv ber om. Två saker når en server som Wren driver, och bara när du väljer det: att ange en kostnadsfri kod skickar den koden och en slumpmässig identifierare för denna installation, och att dela en reel eller ett inlägg skickar dess länk tillsammans med bevis på att du köpt funktionen. Om du inte har köpt den läses det första inlägget du delar gratis: för att det ska gälla en gång per telefon skickar Wren ett envägsfingeravtryck av telefonens Android-ID (ett nummer som Android ger varje app och som inte ändras när du installerar om) och Googles bekräftelse på att begäran kommer från den äkta Wren-appen. Endast fingeravtrycket sparas, och bara för att känna igen att den här telefonen redan har fått sin gratis läsning. Det används aldrig för reklam och kopplas aldrig ihop med något annat. Inget annat om dig samlas in, sparas eller delas. Inget konto, ingen inloggning, ingen analys, ingen annonsidentifierare, ingen krashrapportering.</p>
+    <p>Nästan ingenting, och bara det du själv begär. Två saker når en server som Wren driver, och vardera bara när du väljer det: att ange en kostnadsfri kod skickar den koden och en slumpmässig identifierare för denna installation, och att dela en reel eller ett inlägg skickar dess länk tillsammans med bevis på att du har köpt funktionen. Om du inte har köpt den läses de tre första inläggen du delar kostnadsfritt: för att möjliggöra detta, tre per telefon, skickar Wren ett envägsfingeravtryck av telefonens Android-ID (ett nummer som Android ger varje app, och som inte ändras när du installerar om) samt Googles bekräftelse på att förfrågan kommer från den äkta Wren-appen. Endast fingeravtrycket sparas, och endast för att räkna telefonens kostnadsfria läsningar. Det används aldrig för reklam och kopplas aldrig samman med något annat. Inget annat om dig samlas in, lagras eller delas. Inget konto, ingen inloggning, ingen analys som identifierar dig, ingen reklamidentifierare, ingen kraschrapportering.</p>
 
-    <p>Om du inte gör något av detta kontaktar Wren aldrig någon egen server alls.</p>
+    <p>Separat skickar appen anonyma räkningar av de steg som användare når, vilket beskrivs under <em>Anonyma användningsräkningar</em>; de innehåller ingenting som identifierar dig eller din telefon. Bortsett från dessa, om du inte gör något av det, kontaktar Wren aldrig över huvud taget någon egen server.</p>
 
   </section>
 
@@ -211,7 +211,7 @@
 
     <h2>Vad som lämnar din enhet, och vart det tar vägen</h2>
 
-    <p>Tre saker, och ingen av dem är en skärmdump.</p>
+    <p>Fyra saker, och ingen av dem är en skärmdump.</p>
 
     <p>Det första är <strong>namnet på en plats, och den stad du bekräftade att
     den ligger i</strong>. Att omvandla "Dishoom Shoreditch" till en koordinat
@@ -224,7 +224,7 @@
     är – det finns ingen platsbehörighet, med avsikt. Den frågar bara var en
     namngiven plats är.</p>
 
-    <p>Den andra är en kostnadsfri kod och en slumpmässig identifierare, som beskrivs härnäst. Den tredje är adressen till en reel eller ett inlägg du väljer att dela, som beskrivs efter det. Om du inte har köpt funktionen följer ett envägsfingeravtryck av din telefon med det första inlägget du delar, så att det kan läsas gratis en gång per telefon; det beskrivs också där.</p>
+    <p>Den andra är en kostnadsfri kod och en slumpmässig identifierare, som beskrivs härnäst. Den tredje är adressen till en reel eller ett inlägg som du väljer att dela, vilket beskrivs efter det. Om du inte har köpt funktionen skickas ett envägsfingeravtryck av din telefon med de tre första inläggen du delar, så att de kan läsas kostnadsfritt, tre per telefon; det beskrivs också där. Den fjärde är de anonyma stegräkningarna som beskrivs under <em>Anonyma användningsräkningar</em>.</p>
 
   </section>
 
@@ -258,6 +258,11 @@
     inte alls när en kod lyckas, och den raderas automatiskt.</p>
 
   </section>
+  <section>
+    <h2>Anonym användningsstatistik</h2>
+    <p>Från och med version 2.1.9 meddelar appen en server som Wren driver när du når vissa steg: att öppna Wren för första gången, att påbörja en import, att läsa ett inlägg, att se en köpruta, att trycka på en köpknapp, att köpet slutförs eller inte, och att spara en guide. Varje meddelande anger steget, vilken typ det var där det är relevant (till exempel vilken produkt), om telefonen är en Android-telefon eller en iPhone, appens version och vilket språk den visar.</p>
+    <p><strong>Ingenting identifierar dig eller din telefon.</strong> Det finns ingen identifierare av något slag, ingenting lagras på din telefon för att känna igen den igen, och servern behåller endast en löpande summa för varje steg och dag — inte de enskilda meddelandena, och inte den IP-adress de kom från. Utvecklaren använder summorna för att se var människor slutar innan de köper, vilket är det enda skälet till att de finns. De delas inte med någon och används inte för reklam.</p>
+  </section>
 
 <section>
 
@@ -267,7 +272,7 @@
 
     <p><strong>Det som skickas är länken, och bevis på att du köpt funktionen.</strong> Inget annat — inget namn, ingen e-postadress, ingen plats, ingen skärmdump och ingen identifierare för dig. På Android är det beviset köptoken som Google Play utfärdade för köpet, vilket servern kontrollerar mot Google; en kostnadsfri kod fungerar i dess ställe.</p>
 
-    <p><strong>Om du inte har köpt den läses det första inlägget gratis, en gång per telefon.</strong> I stället för ett köp skickar appen ett envägsfingeravtryck (SHA-256) av telefonens Android-ID och en Play Integrity-token, som servern låter Google kontrollera för att bekräfta att begäran kommer från Wren som installerats från Google Play, på en äkta enhet. Fingeravtrycket sparas tillsammans med den enda läsningen så att telefonen inte får en andra; själva Android-ID:t lämnar aldrig telefonen. Där Google erbjuder det kan servern även sätta en markering som Google sparar för den här telefonen, så att gratisläsningen inte ges igen efter en fabriksåterställning.</p>
+    <p><strong>Om du inte har köpt den läses de tre första inläggen kostnadsfritt, per telefon.</strong> I stället för ett köp skickar appen ett envägsfingeravtryck (SHA-256) av telefonens Android-ID samt en Play Integrity-token, som servern låter Google kontrollera för att bekräfta att förfrågan kommer från Wren installerad via Google Play, på en äkta enhet. Fingeravtrycket sparas tillsammans med den läsningen så att telefonen inte får en andra; själva Android-ID:t lämnar aldrig telefonen. Där Google erbjuder det kan servern även sätta en flagga som Google sparar för denna telefon, så att de kostnadsfria läsningarna inte ges igen efter en fabriksåterställning.</p>
 
     <p>Servern — en Cloudflare Worker som drivs av utvecklaren — hämtar inlägget, låter en språkmodell läsa ut platsnamnen ur dess bildtext eller bilder, skickar <em>namnen</em> tillbaka till din telefon och kasserar resten. <strong>Ingenting om inlägget sparas: inte adressen, inte videon eller bilderna, inte bildtexten, inte namnen som hittades.</strong> Din telefon slår därefter upp dessa namn precis som den slår upp ett namn läst från en skärmdump.</p>
 
@@ -393,7 +398,7 @@
 
 
 
-    <p><strong>Inget av detta gäller appen.</strong> Wren för Android innehåller ingen analys av något slag och har aldrig gjort det. Detta avsnitt handlar endast om denna webbplats.</p>
+    <p><strong>Inget av detta gäller för appen.</strong> Wren, Android-appen, använder inget av detta. Dess enda analys är de anonyma stegräkningarna som beskrivs ovan, vilka går till en server som Wren driver och som inte identifierar någon. Detta avsnitt handlar enbart om denna webbplats.</p>
 
 
 

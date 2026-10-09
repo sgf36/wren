@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Zuletzt aktualisiert am 4. Oktober 2026</p>
+    <p class="updated">Zuletzt aktualisiert am 9. Oktober 2026</p>
 
 
 
@@ -156,10 +156,7 @@
 
 
 
-    <p><strong>Die App</strong> hat keine Konten. Auf dem iPhone nutzt sie die Software von Meta und TikTok, um zu erfahren, ob Wrens Werbeanzeigen zu Downloads und Käufen führen — im Vereinigten Königreich und in Europa nur, wenn Sie Tracking erlauben —, und Ihre Antwort ändert nichts an der App. Ihre Screenshots und jede von Ihnen importierte Datei werden auf Ihrem Telefon gelesen und niemals hochgeladen. Zwei Dinge erreichen tatsächlich einen von Wren betriebenen Server, und zwar nur, wenn Sie es verlangen: ein kostenloser Zugangscode, falls Ihnen einer gegeben wurde und Sie ihn eingeben; und der Link zu einem Reel oder Beitrag, falls Sie einen zum Lesen mit Wren teilen. Dieser Beitrag wird abgerufen, gelesen und verworfen — nichts davon wird aufbewahrt, weder das Video, noch die Worte, noch die Ortsnamen.</p>
-
-
-
+    <p><strong>Die App</strong> hat keine Konten. Auf dem iPhone nutzt sie die Software von Meta und TikTok, um zu erfahren, ob Wrens Anzeigen zu Downloads und Käufen führen — in Großbritannien und Europa nur, wenn Sie das Tracking erlauben — und Ihre Antwort ändert nichts in der App. Ihre Screenshots und jede Datei, die Sie importieren, werden auf Ihrem Telefon gelesen und niemals hochgeladen. Zwei Dinge erreichen tatsächlich einen Server, den Wren betreibt, und nur dann, wenn Sie es verlangen: ein kostenloser Zugangscode, falls Ihnen einer gegeben wurde und Sie ihn eingeben; und der Link zu einem Reel oder Beitrag, falls Sie einen teilen, damit Wren ihn liest. Dieser Beitrag wird abgerufen, gelesen und verworfen — nichts davon wird behalten, weder das Video noch die Worte noch die Ortsnamen. Die App zählt außerdem anonym, welche Schritte Nutzer erreichen — die App öffnen, Orte importieren, ein Kaufangebot sehen, kaufen —, ohne dass irgendetwas Sie oder Ihr Telefon identifiziert.</p>
     <p><strong>Diese Website</strong> ist eine separate Angelegenheit: Sie verwendet Google Analytics, und nur dann, wenn Sie den Hinweis bei Ihrem ersten Besuch akzeptieren. Wenn Sie ablehnen, werden keine Cookies gesetzt.</p>
 
 
@@ -206,6 +203,8 @@
 
     <p>Es gibt zwei Ausnahmen. Auf dem iPhone melden <strong>die Software von Meta und TikTok App-Installationen, App-Öffnungen und App-Store-Käufe an diese Unternehmen</strong>, damit Wren feststellen kann, ob seine Werbeanzeigen wirken; dies wird unter <em>Werbemessung</em> ausführlich beschrieben. Und auf jedem Gerät wird <strong>eine zufällige Kennung für Ihr Gerät</strong> gesendet, wenn Sie einen kostenlosen Code eingeben. Wrens Datenschutzkennzeichnung im App Store führt beide auf, und diese Seite und jene Kennzeichnung sollen dasselbe aussagen.</p>
 
+    <p>Getrennt davon sendet die App <strong>anonyme Zählungen der Schritte, die Nutzer erreichen</strong>, beschrieben unter <em>Anonyme Nutzungszählungen</em>. Sie enthalten nichts, das Sie oder Ihr Telefon identifiziert, und auch die Angaben zum Datenschutz weisen darauf hin.</p>
+
 
 
   </section>
@@ -244,6 +243,14 @@
 
 
 
+  <section>
+    <h2>Anonyme Nutzungszählungen</h2>
+    <p>Ab Version 2.1.9 teilt die App einem Server, den Wren betreibt, mit, wenn Sie bestimmte Schritte erreichen: Wren zum ersten Mal öffnen, einen Import starten, einen Beitrag lesen, ein Kaufangebot sehen, auf eine Kaufen-Schaltfläche tippen, den Kauf abschließen oder nicht, und einen Guide speichern. Jede Nachricht nennt den Schritt, gegebenenfalls welche Art es war (zum Beispiel welches Produkt), ob es sich um ein iPhone oder ein Android-Telefon handelt, die Version der App und die angezeigte Sprache.</p>
+    <p><strong>Nichts identifiziert Sie oder Ihr Telefon.</strong> Es gibt keinerlei Kennung, nichts wird auf Ihrem Telefon gespeichert, um es wiederzuerkennen, und der Server behält nur eine laufende Gesamtzahl für jeden Schritt und Tag — nicht die einzelnen Nachrichten und nicht die IP-Adresse, von der sie kamen. Der Entwickler nutzt die Gesamtzahlen, um zu sehen, wo Nutzer vor dem Kauf abbrechen, und das ist der einzige Grund, warum sie existieren. Sie werden an niemanden weitergegeben und nicht für Werbung verwendet.</p>
+  </section>
+
+
+
 
 
 
@@ -271,6 +278,8 @@
     <p>Dies ist der einzige Teil von Wren, der etwas, das Sie ausgewählt haben, an einen Server sendet, den Wren betreibt, und das geschieht nur, wenn Sie einen Link zu einem Reel oder Beitrag teilen oder einfügen. Wren kann ihn nicht auf dem Telefon lesen: Ein Teilen-Menü übergibt lediglich eine Webadresse, niemals das Video, weshalb das Video von irgendwoher abgerufen werden muss.</p>
 
     <p><strong>Gesendet werden nur der Link und der Nachweis, dass Sie die Funktion gekauft haben.</strong> Sonst nichts – kein Name, keine E-Mail-Adresse, kein Standort, kein Screenshot und keine Kennung für Sie. Der Nachweis ist der Kaufbeleg, den der App Store oder Google Play für den Kauf ausgestellt hat und den der Server bei Apple oder Google prüft; ein kostenloser Code funktioniert ersatzweise ebenso.</p>
+
+    <p>Wenn Sie es nicht gekauft haben, werden Ihre ersten drei Beiträge kostenlos gelesen. Anstelle eines Kaufbelegs sendet Wren Apples signierten Nachweis, dass Ihr Apple Account Wren heruntergeladen hat, der eine von Apple vergebene Kennung für diesen Download enthält. Der Server behält diese Kennung nur, um die kostenlosen Lesevorgänge zu zählen, sodass es drei pro Account sind und nicht drei pro Neuinstallation.</p>
 
     <p>Der Server – ein Cloudflare Worker im eigenen Konto des Entwicklers – ruft diesen Beitrag ab, lässt ein Sprachmodell die Ortsnamen aus dessen Bildunterschrift oder seinen Bildern lesen, sendet die <em>Namen</em> zurück an Ihr Telefon und verwirft den Rest. <strong>Nichts vom Beitrag wird gespeichert: nicht die Adresse, nicht das Video oder die Bilder, nicht die Bildunterschrift, nicht die gefundenen Namen.</strong> Ihr Telefon sucht diese Namen anschließend auf dieselbe Weise, wie es einen von einem Screenshot gelesenen Namen nachschlägt.</p>
 
@@ -340,7 +349,7 @@
 
 
 
-    <p>Nur Text und Kennungen — niemals ein Bild und niemals eine Datei. Alles Folgende geht an Apple, mit Ausnahme der letzten beiden Zeilen.</p>
+    <p>Nur Text und Kennungen — niemals ein Bild und niemals eine Datei. Alles unten geht an Apple, mit Ausnahme der letzten vier Zeilen.</p>
 
 
 
@@ -501,9 +510,11 @@
 
 
             <td>Nur wenn Ihnen ein Code zur Verfügung gestellt wurde und Sie ihn eingeben — und, bei einem Code, der zusätzlich administrativen Zugang gewährt, danach etwa einmal täglich. Siehe oben. Wenn Sie nie einen eingeben, geschieht dies nie.</td>
-
-
-
+          </tr>
+          <tr>
+            <td>Welche Schritte Sie erreichen (zum Beispiel, dass ein Kaufangebot angezeigt wurde), mit der Art des Telefons, der App-Version und ihrer Sprache</td>
+            <td>Wrens Server</td>
+            <td>Anonyme laufende Gesamtzahlen, damit Wren sehen kann, wo Nutzer vor dem Kauf abbrechen. Nichts identifiziert Sie oder Ihr Telefon. Siehe <em>Anonyme Nutzungszählungen</em> oben.</td>
           </tr>
 
 

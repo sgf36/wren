@@ -136,7 +136,7 @@
 
 
 
-    <p class="updated">Senast uppdaterad 4 oktober 2026</p>
+    <p class="updated">Senast uppdaterad 9 oktober 2026</p>
 
 
 
@@ -156,10 +156,7 @@
 
 
 
-    <p><strong>Appen</strong> har inga konton. På iPhone använder den Metas och TikToks programvara för att få veta om Wrens annonser leder till nedladdningar och köp – i Storbritannien och Europa endast om du tillåter spårning – och ditt svar ändrar ingenting i appen. Dina skärmdumpar och eventuella filer du importerar läses på din telefon och laddas aldrig upp. Två saker når faktiskt en server som Wren driver, och endast när du begär det: en kostnadsfri åtkomstkod, om du har fått en sådan och anger den; och länken till en reel eller ett inlägg, om du delar ett sådant för att Wren ska läsa det. Det inlägget hämtas, läses och kasseras – inget om det sparas, varken videon, texten eller platsnamnen.</p>
-
-
-
+    <p><strong>Appen</strong> har inga konton. På iPhone använder den Metas och TikToks programvara för att se om Wrens annonser leder till nedladdningar och köp — i Storbritannien och Europa endast om du tillåter spårning — och ditt svar ändrar ingenting i appen. Dina skärmbilder och alla filer du importerar läses på din telefon och laddas aldrig upp. Två saker når faktiskt en server som Wren driver, och endast när du ber om det: en kostnadsfri åtkomstkod, om du har fått en sådan och anger den; samt länken till en reel eller ett inlägg, om du delar ett sådant för att Wren ska läsa det. Det inlägget hämtas, läses och kasseras — ingenting om det sparas, varken videon, orden eller platsnamnen. Appen räknar också, anonymt, vilka steg människor når — att öppna den, importera platser, se en köpvy, köpa — utan något som identifierar dig eller din telefon.</p>
     <p><strong>Den här webbplatsen</strong> är en separat fråga: den använder Google Analytics, och endast om du godkänner meddelandet vid ditt första besök. Om du avböjer sätts inga kakor.</p>
 
 
@@ -206,6 +203,8 @@
 
     <p>Det finns två undantag. På iPhone <strong>rapporterar Metas och TikToks programvara appinstallationer, appöppningar och App Store-köp till dessa företag</strong>, så att Wren kan avgöra om dess annonser fungerar; detta beskrivs i sin helhet under <em>Mätning av annonsering</em>. Och på vilken enhet som helst skickas en <strong>slumpmässig identifierare för din enhet</strong> om du anger en kostnadsfri kod. Wrens sekretessmärkning i App Store anger båda delarna, och den här sidan och den märkningen är tänkta att säga samma sak.</p>
 
+    <p>Separat skickar appen <strong>anonyma räkningar av de steg människor når</strong>, beskrivna under <em>Anonym användningsstatistik</em>. De innehåller ingenting som identifierar dig eller din telefon, och detta anges även i sekretessmärkningen.</p>
+
 
 
   </section>
@@ -244,6 +243,14 @@
 
 
 
+  <section>
+    <h2>Anonym användningsstatistik</h2>
+    <p>Från version 2.1.9 meddelar appen en server som Wren driver när du når vissa steg: att öppna Wren för första gången, att påbörja en import, att läsa ett inlägg, att se en köpvy, att trycka på en köpknapp, att köpet genomförs eller inte, samt att spara en Guide. Varje meddelande anger steget, vilken typ det var där det är relevant (till exempel vilken produkt), om telefonen är en iPhone eller en Android-telefon, appens version och vilket språk den visar.</p>
+    <p><strong>Ingenting identifierar dig eller din telefon.</strong> Det finns ingen identifierare av något slag, ingenting lagras på din telefon för att känna igen den igen, och servern behåller endast en löpande summa för varje steg och dag — inte de enskilda meddelandena, och inte den IP-adress de kom från. Utvecklaren använder summorna för att se var människor slutar innan de köper, vilket är det enda skälet till att de finns. De delas inte med någon och används inte för reklam.</p>
+  </section>
+
+
+
 
 
 
@@ -271,6 +278,8 @@
     <p>Detta är den enda delen av Wren som skickar något du själv valt till en server som Wren driver, och det sker bara när du delar eller klistrar in en länk till en reel eller ett inlägg. Wren kan inte läsa det på telefonen: en delningsfunktion lämnar över en webbadress och aldrig videon, så videon måste hämtas någonstans ifrån.</p>
 
     <p><strong>Det som skickas är länken, samt bevis på att du köpt funktionen.</strong> Ingenting annat — inget namn, ingen e-postadress, ingen plats, ingen skärmdump och ingen identifierare för dig. Beviset är kvittot som App Store eller Google Play utfärdade för köpet, vilket servern kontrollerar hos Apple eller Google; en kostnadsfri kod fungerar i dess ställe.</p>
+
+    <p>Om du inte har köpt den läses dina första tre inlägg kostnadsfritt. Istället för ett kvitto skickar Wren Apples signerade uppgift om att ditt Apple Account laddade ner Wren, vilken innehåller en identifierare som Apple tilldelar den nedladdningen. Servern behåller den identifieraren endast för att räkna de kostnadsfria läsningarna, så att det blir tre per konto snarare än tre per ominstallation.</p>
 
     <p>Servern — en Cloudflare Worker i utvecklarens eget konto — hämtar inlägget, låter en språkmodell läsa ut platsnamnen ur dess bildtext eller bilder, skickar <em>namnen</em> tillbaka till din telefon, och kastar bort resten. <strong>Ingenting om inlägget sparas: inte adressen, inte videon eller bilderna, inte bildtexten, inte namnen den hittade.</strong> Din telefon slår sedan upp dessa namn på samma sätt som den slår upp ett namn som lästs av en skärmdump.</p>
 
@@ -340,7 +349,7 @@
 
 
 
-    <p>Endast text och identifierare – aldrig en bild och aldrig en fil. Allt nedan går till Apple, förutom de två sista raderna.</p>
+    <p>Endast text och identifierare — aldrig en bild, och aldrig en fil. Allt nedan går till Apple, förutom de fyra sista raderna.</p>
 
 
 
@@ -501,9 +510,11 @@
 
 
             <td>Endast om du fick en kod och anger den — och, för en kod som även ger administrativ åtkomst, ungefär en gång om dagen därefter. Se ovan. Om du aldrig anger någon kod sker detta aldrig.</td>
-
-
-
+          </tr>
+          <tr>
+            <td>Vilka steg du når (till exempel att en köpvy visades), tillsammans med typen av telefon, appversionen och dess språk</td>
+            <td>Wrens server</td>
+            <td>Anonyma löpande summor, så att Wren kan se var människor slutar innan de köper. Ingenting identifierar dig eller din telefon. Se <em>Anonym användningsstatistik</em> ovan.</td>
           </tr>
 
 
