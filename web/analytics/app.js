@@ -164,13 +164,23 @@
     var playInst = live(play) ? sum(play.daily, "installs") : null;
     var people = live(gt) ? sum(gt.daily, "iphone") + sum(gt.daily, "android") + sum(gt.daily, "other") : null;
     var won = live(pb) ? pb.postbacks.filter(function (p) { return p.won !== false; }).length : null;
-    var measured = (appleFirst || 0) + (playInst || 0);
+    // Stores report days late, so set downloads only against spend on the days
+    // they have reported; otherwise today's spend inflates the cost.
+    var cutoff = [live(apple) && apple.latest_date, live(play) && play.latest_date].filter(Boolean).sort()[0] || null;
+    function toCutoff(dly, f) {
+      var t = 0;
+      Object.keys(dly || {}).forEach(function (k) { if (cutoff && k <= cutoff) t += +(dly[k][f] || 0); });
+      return t;
+    }
+    var spendToCutoff = toCutoff(live(meta) && meta.daily, "spend") + toCutoff(live(tt) && tt.daily, "spend");
+    var downloadsToCutoff = toCutoff(live(apple) && apple.daily, "first") + toCutoff(live(play) && play.daily, "installs");
 
     var tiles = h("div", { class: "tiles" }, [
       tile("Ad spend", gbp(spend), (live(meta) ? "Meta " + gbp(metaSpend) : "Meta not connected") + " · " + (live(tt) ? "TikTok " + gbp(ttSpend) : "TikTok not connected"), "Meta + TikTok, live"),
       tile("App Store first-time downloads", n(appleFirst), live(apple) ? "Apple data to " + (apple.latest_date ? shortDate(apple.latest_date) : "–") : "Apple not connected", "All sources, not only ads"),
       tile("Google Play installs", n(playInst), live(play) ? "Play data to " + (play.latest_date ? shortDate(play.latest_date) : "–") : "Play not connected", "Daily user installs"),
-      tile("Cost per download", measured > 0 && spend > 0 ? gbp(spend / measured) : "–", "Spend ÷ (App Store + Play), blended", "Lags: stores report days late"),
+      tile("Cost per download", downloadsToCutoff > 0 && spendToCutoff > 0 ? gbp(spendToCutoff / downloadsToCutoff) : "–",
+        cutoff ? "Spend to " + shortDate(cutoff) + " ÷ (App Store + Play)" : "Needs store data", "Only days the stores have reported"),
       tile("Meta-reported installs", n(live(meta) ? sum(meta.daily, "installs") : null), "iOS 14+ campaigns, modelled by Meta", "Meta Insights"),
       tile("Install reports from Apple", n(won), "SKAdNetwork postbacks, winning only", "Arrive 24–48 h+ late"),
       tile("/get/ visitors", n(people), live(gt) ? n(sum(gt.daily, "iphone")) + " iPhone · " + n(sum(gt.daily, "android")) + " Android" : "", "Includes in-app browser prefetch"),
@@ -193,7 +203,7 @@
       live(meta) ? table([
         { label: "Campaign", get: function (r) { return r.name; } },
         { label: "Status", get: function (r) { return pill(r.status); } },
-        { label: "Budget", num: true, get: function (r) { return r.budget == null ? "–" : gbp(r.budget) + (r.budget_type === "daily" ? "/day" : ""); } },
+        { label: "Budget", num: true, get: function (r) { return r.budget == null ? "–" : gbp(r.budget) + (/^daily/.test(r.budget_type) ? "/day" : "") + (/ad sets/.test(r.budget_type) ? " (ad sets)" : ""); } },
         { label: "Spend", num: true, get: function (r) { return gbp(r.spend); }, total: totalOf("spend", gbp) },
         { label: "Impressions", num: true, get: function (r) { return n(r.impressions); }, total: totalOf("impressions") },
         { label: "Link clicks", num: true, get: function (r) { return n(r.link_clicks); }, total: totalOf("link_clicks") },

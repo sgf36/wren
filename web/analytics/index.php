@@ -12,7 +12,7 @@ security_headers();
 header('Content-Type: text/html; charset=utf-8');
 $email = signed_in();
 $csrf = htmlspecialchars(csrf_token());
-$v = '2026101003'; // bump when app.js / app.css change, to beat browser caches
+$v = '2026101004'; // bump when app.js / app.css change, to beat browser caches
 
 if ($email) {
     header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; "

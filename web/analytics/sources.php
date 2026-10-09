@@ -123,6 +123,18 @@ function source_meta(string $since, string $until): array
         'fields' => $fields,
     ])['data'];
     $account = meta_get($act, ['fields' => 'currency,amount_spent,spend_cap,account_status,disable_reason']);
+    // Campaigns that budget per ad set (Asia: one budget per market) carry no
+    // campaign budget, so add up their running ad sets' budgets instead.
+    $adsetBudgets = [];
+    foreach (meta_get("$act/adsets", ['fields' => 'campaign_id,daily_budget,lifetime_budget,effective_status', 'limit' => 500])['data'] as $s) {
+        if (in_array($s['effective_status'], ['ACTIVE', 'IN_PROCESS', 'WITH_ISSUES', 'PAUSED'], true)) {
+            $type = num($s['lifetime_budget'] ?? 0) > 0 ? 'lifetime' : (num($s['daily_budget'] ?? 0) > 0 ? 'daily' : null);
+            if ($type) {
+                $adsetBudgets[$s['campaign_id']][$type] = ($adsetBudgets[$s['campaign_id']][$type] ?? 0)
+                    + num($s[$type . '_budget']) / 100;
+            }
+        }
+    }
 
     $stats = [];
     foreach ($byCampaign as $r) {
@@ -133,6 +145,10 @@ function source_meta(string $since, string $until): array
         $budget = isset($c['lifetime_budget']) && $c['lifetime_budget'] > 0
             ? ['lifetime', num($c['lifetime_budget']) / 100]
             : (isset($c['daily_budget']) && $c['daily_budget'] > 0 ? ['daily', num($c['daily_budget']) / 100] : [null, null]);
+        if ($budget[0] === null && isset($adsetBudgets[$c['id']])) {
+            $t = isset($adsetBudgets[$c['id']]['lifetime']) ? 'lifetime' : 'daily';
+            $budget = [$t . ' (ad sets)', $adsetBudgets[$c['id']][$t]];
+        }
         $s = $stats[$c['id']] ?? null;
         if (!$s && !in_array($c['effective_status'], ['ACTIVE', 'IN_PROCESS', 'WITH_ISSUES'], true)) {
             continue; // nothing in range and not running: noise
