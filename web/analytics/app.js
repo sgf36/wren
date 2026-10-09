@@ -75,6 +75,7 @@
   function badge(key, s, prefix, latestOverride) {
     var f = FRESH[key], kind = f[0], text = f[1], tipText = f[2], who = prefix ? prefix + ": " : "";
     if (!s || s.configured === false || !s.ok) return h("span", { class: "fresh off", title: tipText, text: "○ " + who + "not available" });
+    if (s.waiting) return h("span", { class: "fresh near", title: "Google is applying the Play Console access you granted; this takes up to 24 hours.", text: "◷ " + who + "waiting for Google" });
     if (kind === "daily") {
       var latest = latestOverride || s.latest_date;
       if (!latest) { kind = "stale"; text = "nothing published for these dates yet"; }
@@ -98,6 +99,7 @@
   function sourceState(s, label) {
     if (!s) return h("p", { class: "muted", text: label + ": not requested." });
     if (s.configured === false) return h("p", { class: "notice", text: label + " is not connected yet. Its credentials are not in the server's config." });
+    if (s.waiting) return h("p", { class: "notice", text: "Waiting for Google to apply the Play Console access you granted. Google takes up to 24 hours; nothing needs changing here, and the figures appear on their own." });
     if (!s.ok) return h("p", { class: "notice error", text: label + " could not be read: " + s.error });
     return null;
   }
@@ -217,7 +219,7 @@
     var meta = S.meta || {}, tt = S.tiktok || {}, apple = S.apple || {}, play = S.play || {};
     var gt = S.get || {}, pb = S.postbacks || {}, ga = S.ga4 || {}, rt = S.ga4_realtime || {};
     var sales = S.sales || {}, ps = S.play_sales || {}, fn = S.funnel || {};
-    var live = function (s) { return s && s.ok && s.configured !== false; };
+    var live = function (s) { return s && s.ok && s.configured !== false && !s.waiting; };
 
     var metaSpend = live(meta) ? sum(meta.daily, "spend") : null;
     var ttSpend = live(tt) ? sum(tt.daily, "spend") : null;

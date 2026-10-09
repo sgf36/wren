@@ -584,6 +584,24 @@ function play_csv(string $bucket, string $name): array
     return $rows;
 }
 
+// Play's report bucket belongs to Google Play, not to any Cloud project here: its
+// access follows the permissions granted in Play Console, and Google takes up to
+// a day to apply a new grant to the bucket. Until then every read is a 403
+// naming storage.objects, which is not a fault and must not look like one. The
+// answer is a PartialResult, so it is never cached and the figures appear on the
+// first load after access arrives.
+function play_waiting_guard(callable $fetch): array
+{
+    try {
+        return $fetch();
+    } catch (Throwable $e) {
+        if (preg_match('/storage\.objects\.(list|get)/', $e->getMessage())) {
+            throw new PartialResult(['configured' => true, 'waiting' => true]);
+        }
+        throw $e;
+    }
+}
+
 function source_play(string $since, string $until): array
 {
     $g = config()['google'] ?? null;
