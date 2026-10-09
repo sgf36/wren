@@ -132,12 +132,12 @@ class LMr extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren एका मार्गदर्शिकेत मोफत $limit ठिकाणांपर्यंत जतन करतो. तुम्ही $selected निवडली आहेत — $over जास्त.';
+    return 'तुमची $selected ठिकाणं तयार आहेत. Wren एका मार्गदर्शिकेत मोफत $limit पर्यंत जतन करतो — सगळी जतन करण्यासाठी अनलॉक करा.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren एका वेळी मोफत $limit ठिकाणांपर्यंत पाठवतो. तुम्ही $selected निवडली आहेत — $over जास्त.';
+    return 'तुमची $selected ठिकाणं तयार आहेत. Wren एका वेळी मोफत $limit पर्यंत पाठवतो — सगळी पाठवण्यासाठी अनलॉक करा.';
   }
 
   @override
@@ -555,6 +555,10 @@ class LMr extends L {
       'एखादी रील किंवा पोस्ट Wren ला शेअर करा, तो त्यातून ठिकाणं वाचून काढेल — फक्त तपासा आणि जतन करा. Wren व्हिडिओ कधीच ठेवत नाही.';
 
   @override
+  String get reelsFreeUsed =>
+      'तुमच्या मोफत पोस्ट संपल्या. अनलॉक करा, मग तुम्ही शेअर कराल त्या प्रत्येक पोस्टमधून Wren ठिकाणं वाचून काढेल — फक्त तपासा आणि जतन करा. Wren व्हिडिओ कधीच ठेवत नाही.';
+
+  @override
   String everythingFor(String price) {
     return 'सगळं $priceमध्ये';
   }
@@ -574,6 +578,17 @@ class LMr extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'या महिन्यात उरलेल्या पोस्ट: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'उरलेल्या मोफत पोस्ट: $count',
+      zero: 'ही शेवटची मोफत पोस्ट होती',
+    );
+    return '$_temp0';
   }
 
   @override

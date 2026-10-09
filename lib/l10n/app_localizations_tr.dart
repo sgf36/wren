@@ -132,12 +132,12 @@ class LTr extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren bir rehbere ücretsiz olarak en fazla $limit mekân kaydeder. $selected tane seçtin — $over tane fazla.';
+    return '$selected mekânın hazır. Wren bir rehbere ücretsiz olarak en fazla $limit tane kaydeder — hepsini kaydetmek için kilidi aç.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren bir seferde ücretsiz olarak en fazla $limit mekân gönderir. $selected tane seçtin — $over tane fazla.';
+    return '$selected mekânın hazır. Wren bir seferde ücretsiz olarak en fazla $limit tane gönderir — hepsini göndermek için kilidi aç.';
   }
 
   @override
@@ -548,6 +548,10 @@ class LTr extends L {
       'Bir reel ya da gönderiyi Wren ile paylaş, içindeki yerleri okusun; kontrol edip kaydetmen yeter. Wren videoyu asla saklamaz.';
 
   @override
+  String get reelsFreeUsed =>
+      'Ücretsiz gönderilerini kullandın. Kilidi aç, Wren paylaştığın her gönderideki yerleri okusun; kontrol edip kaydetmen yeter. Wren videoyu asla saklamaz.';
+
+  @override
   String everythingFor(String price) {
     return 'Hepsi $price';
   }
@@ -567,6 +571,17 @@ class LTr extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'bu ay kalan gönderi: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'kalan ücretsiz gönderi: $count',
+      zero: 'bu son ücretsiz gönderindi',
+    );
+    return '$_temp0';
   }
 
   @override

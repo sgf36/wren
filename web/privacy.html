@@ -144,7 +144,7 @@
 
 
 
-    <p class="updated">Last updated 4 October 2026</p>
+    <p class="updated">Last updated 9 October 2026</p>
 
 
 
@@ -164,10 +164,7 @@
 
 
 
-    <p><strong>The app</strong> has no accounts. On iPhone it uses Meta's and TikTok's software to learn whether Wren's adverts lead to downloads and purchases — in the United Kingdom and Europe only if you allow tracking — and your answer changes nothing in the app. Your screenshots and any file you import are read on your phone and are never uploaded. Two things do reach a server Wren runs, and only when you ask: a complimentary access code, if you were given one and enter it; and the link to a reel or post, if you share one for Wren to read. That post is fetched, read and discarded — nothing about it is kept, not the video, not the words, not the place names.</p>
-
-
-
+    <p><strong>The app</strong> has no accounts. On iPhone it uses Meta's and TikTok's software to learn whether Wren's adverts lead to downloads and purchases — in the United Kingdom and Europe only if you allow tracking — and your answer changes nothing in the app. Your screenshots and any file you import are read on your phone and are never uploaded. Two things do reach a server Wren runs, and only when you ask: a complimentary access code, if you were given one and enter it; and the link to a reel or post, if you share one for Wren to read. That post is fetched, read and discarded — nothing about it is kept, not the video, not the words, not the place names. The app also counts, anonymously, which steps people reach — opening it, importing places, seeing a purchase sheet, buying — with nothing that identifies you or your phone.</p>
     <p><strong>This website</strong> is a separate matter: it uses Google Analytics, and only if you accept the notice on your first visit. Declining sets no cookies.</p>
 
 
@@ -214,6 +211,8 @@
 
     <p>There are two exceptions. On iPhone, <strong>Meta's and TikTok's software report app installs, app openings and App Store purchases to those companies</strong>, so that Wren can tell whether its adverts work; this is described in full under <em>Advertising measurement</em>. And on any device, a <strong>random identifier for your device</strong> is sent if you enter a complimentary code. Wren's App Store privacy label declares both, and this page and that label are meant to say the same thing.</p>
 
+    <p>Separately, the app sends <strong>anonymous counts of the steps people reach</strong>, described under <em>Anonymous usage counts</em>. They carry nothing that identifies you or your phone, and the label declares them too.</p>
+
 
 
   </section>
@@ -252,6 +251,14 @@
 
 
 
+  <section>
+    <h2>Anonymous usage counts</h2>
+    <p>From version 2.1.9, the app tells a server Wren runs when you reach certain steps: opening Wren for the first time, starting an import, reading a post, seeing a purchase sheet, tapping a buy button, the purchase completing or not, and saving a guide. Each message names the step, which kind it was where that matters (which product, for example), whether the phone is an iPhone or an Android phone, the app's version and the language it is showing.</p>
+    <p><strong>Nothing identifies you or your phone.</strong> There is no identifier of any kind, nothing is stored on your phone to recognise it again, and the server keeps only a running total for each step and day — not the individual messages, and not the IP address they came from. The developer uses the totals to see where people stop before buying, which is the only reason they exist. They are not shared with anyone and are not used for advertising.</p>
+  </section>
+
+
+
 
 
 
@@ -279,6 +286,8 @@
     <p>This is the one part of Wren that sends something you chose to a server Wren runs, and it happens only when you share or paste a link to a reel or a post. Wren cannot read one on the phone: a share sheet hands over a web address and never the video, so the video has to be fetched from somewhere.</p>
 
     <p><strong>What is sent is the link, and proof that you bought the feature.</strong> Nothing else — no name, no email address, no location, no screenshot, and no identifier for you. The proof is the receipt the App Store or Google Play issued for the purchase, which the server checks with Apple or Google; a complimentary code works in its place.</p>
+
+    <p>If you have not bought it, your first three posts are read free. In place of a receipt, Wren sends Apple's signed record that your Apple Account downloaded Wren, which carries an identifier Apple assigns to that download. The server keeps that identifier only to count the free reads, so that they are three per account rather than three per reinstall.</p>
 
     <p>The server — a Cloudflare Worker in the developer's own account — fetches that post, has a language model read the place names out of its caption or its pictures, sends the <em>names</em> back to your phone, and discards the rest. <strong>Nothing about the post is stored: not the address, not the video or images, not the caption, not the names it found.</strong> Your phone then looks those names up the same way it looks up a name read off a screenshot.</p>
 
@@ -348,7 +357,7 @@
 
 
 
-    <p>Only text and identifiers — never an image, and never a file. Everything below goes to Apple, apart from the last two rows.</p>
+    <p>Only text and identifiers — never an image, and never a file. Everything below goes to Apple, apart from the last four rows.</p>
 
 
 
@@ -509,9 +518,11 @@
 
 
             <td>Only if you were given a code and enter it — and, for a code that also grants administrative access, about once a day thereafter. See above. If you never enter one, this never happens.</td>
-
-
-
+          </tr>
+          <tr>
+            <td>Which steps you reach (for example, that a purchase sheet was shown), with the kind of phone, the app version and its language</td>
+            <td>Wren's server</td>
+            <td>Anonymous running totals, so that Wren can see where people stop before buying. Nothing identifies you or your phone. See <em>Anonymous usage counts</em> above.</td>
           </tr>
 
 

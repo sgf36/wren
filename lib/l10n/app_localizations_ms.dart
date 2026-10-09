@@ -132,12 +132,12 @@ class LMs extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren menyimpan sehingga $limit tempat dalam satu panduan secara percuma. Anda memilih $selected — $over lebih daripada itu.';
+    return '$selected tempat anda sudah sedia. Wren menyimpan sehingga $limit bagi setiap panduan secara percuma — buka untuk menyimpan semuanya.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren menghantar sehingga $limit tempat sekali gus secara percuma. Anda memilih $selected — $over lebih daripada itu.';
+    return '$selected tempat anda sudah sedia. Wren menghantar sehingga $limit sekali gus secara percuma — buka untuk menghantar semuanya.';
   }
 
   @override
@@ -535,6 +535,10 @@ class LMs extends L {
       'Kongsi reel atau siaran kepada Wren, dan Wren membaca tempat-tempatnya, sedia untuk kamu semak dan simpan. Wren tidak pernah menyimpan videonya.';
 
   @override
+  String get reelsFreeUsed =>
+      'Siaran percuma anda sudah habis. Buka Wren dan ia akan membaca tempat daripada setiap siaran yang anda kongsi, sedia untuk disemak dan disimpan. Wren tidak pernah menyimpan videonya.';
+
+  @override
   String everythingFor(String price) {
     return 'Semuanya pada $price';
   }
@@ -554,6 +558,17 @@ class LMs extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'siaran berbaki bulan ini: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'baki $count siaran percuma',
+      zero: 'itu siaran percuma terakhir anda',
+    );
+    return '$_temp0';
   }
 
   @override

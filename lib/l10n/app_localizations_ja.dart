@@ -129,12 +129,12 @@ class LJa extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wrenは1つのガイドに$limit件まで無料で保存できます。現在$selected件を選択中で、$over件超えています。';
+    return '$selected件の場所の準備ができました。無料で保存できるのは1つのガイドにつき$limit件までです。ロックを解除すると、すべて保存できます。';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wrenは一度に$limit件まで無料で送信できます。現在$selected件を選択中で、$over件超えています。';
+    return '$selected件の場所の準備ができました。無料で送信できるのは一度に$limit件までです。ロックを解除すると、すべて送信できます。';
   }
 
   @override
@@ -513,6 +513,10 @@ class LJa extends L {
       'リールや投稿を Wren に共有すると、そこから場所を読み取ります。あとは確認して保存するだけ。Wren が動画を保管することはありません。';
 
   @override
+  String get reelsFreeUsed =>
+      '無料の投稿を使い切りました。ロックを解除すると、共有したどの投稿からも場所を読み取ります。あとは確認して保存するだけ。Wren が動画を保管することはありません。';
+
+  @override
   String everythingFor(String price) {
     return 'すべて $price';
   }
@@ -531,6 +535,17 @@ class LJa extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return '今月の残りは$count件';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '無料の投稿はあと$count件',
+      zero: '無料の投稿はこれが最後でした',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -130,12 +130,12 @@ class LVi extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren lưu miễn phí tối đa $limit địa điểm trong một hướng dẫn. Bạn đang chọn $selected — nhiều hơn $over.';
+    return '$selected địa điểm của bạn đã sẵn sàng. Wren lưu miễn phí tối đa $limit trong một hướng dẫn — mở khoá để lưu tất cả.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren gửi miễn phí tối đa $limit địa điểm mỗi lần. Bạn đang chọn $selected — nhiều hơn $over.';
+    return '$selected địa điểm của bạn đã sẵn sàng. Wren gửi miễn phí tối đa $limit mỗi lần — mở khoá để gửi tất cả.';
   }
 
   @override
@@ -530,6 +530,10 @@ class LVi extends L {
       'Chia sẻ một reel hay một bài đăng tới Wren, Wren sẽ đọc ra các địa điểm, sẵn sàng để kiểm và lưu. Wren không bao giờ giữ lại video.';
 
   @override
+  String get reelsFreeUsed =>
+      'Bạn đã dùng hết các bài đăng miễn phí. Mở khoá để Wren đọc ra các địa điểm từ mọi bài đăng bạn chia sẻ, sẵn sàng để kiểm và lưu. Wren không bao giờ giữ lại video.';
+
+  @override
   String everythingFor(String price) {
     return 'Trọn bộ với $price';
   }
@@ -549,6 +553,17 @@ class LVi extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'bài đăng còn lại tháng này: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'còn $count bài đăng miễn phí',
+      zero: 'đó là bài đăng miễn phí cuối cùng',
+    );
+    return '$_temp0';
   }
 
   @override

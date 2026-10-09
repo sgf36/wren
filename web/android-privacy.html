@@ -144,7 +144,7 @@
 
 
 
-    <p class="updated">Last updated 3 October 2026</p>
+    <p class="updated">Last updated 9 October 2026</p>
 
 
 
@@ -164,7 +164,7 @@
 
 
 
-    <p><strong>The app</strong> has no accounts and no analytics. Your screenshots and any file you import are read on your phone and are never uploaded. Two things do reach a server Wren runs, and only when you ask: a complimentary access code, if you were given one and enter it; and the link to a reel or post, if you share one for Wren to read. That post is fetched, read and discarded — nothing about it is kept, not the video, not the words, not the place names.</p>
+    <p><strong>The app</strong> has no accounts, and no analytics that identify you: it counts anonymously which steps people reach, with nothing that identifies you or your phone. Your screenshots and any file you import are read on your phone and are never uploaded. Two things do reach a server Wren runs, and only when you ask: a complimentary access code, if you were given one and enter it; and the link to a reel or post, if you share one for Wren to read. That post is fetched, read and discarded — nothing about it is kept, not the video, not the words, not the place names.</p>
 
 
 
@@ -202,11 +202,10 @@
     Wren runs, each of them only when you choose it: entering a complimentary
     code sends that code and a random identifier for this installation, and
     sharing a reel or a post sends its link along with proof that you bought the
-    feature. If you have not bought it, the first post you share is read free: to allow that once per phone, Wren sends a one-way fingerprint of your phone's Android ID (a number Android gives each app, which does not change when you reinstall) and Google's confirmation that the request comes from the genuine Wren app. Only the fingerprint is kept, and only to recognise that this phone has had its free read. It is never used for advertising and never joined to anything else. Nothing else about you is collected, stored or shared. No account,
-    no sign-in, no analytics, no advertising identifier, no crash
-    reporting.</p>
+    feature. If you have not bought it, the first three posts you share are read free: to allow that, three per phone, Wren sends a one-way fingerprint of your phone's Android ID (a number Android gives each app, which does not change when you reinstall) and Google's confirmation that the request comes from the genuine Wren app. Only the fingerprint is kept, and only to count this phone's free reads. It is never used for advertising and never joined to anything else. Nothing else about you is collected, stored or shared. No account,
+    no sign-in, no analytics that identify you, no advertising identifier, no crash reporting.</p>
 
-    <p>If you do neither, Wren never contacts a server of its own at all.</p>
+    <p>Separately, the app sends anonymous counts of the steps people reach, described under <em>Anonymous usage counts</em>; they carry nothing that identifies you or your phone. Apart from those, if you do neither, Wren never contacts a server of its own at all.</p>
 
   </section>
 
@@ -225,7 +224,7 @@
 
     <h2>What leaves your device, and where it goes</h2>
 
-    <p>Three things, and none of them is a screenshot.</p>
+    <p>Four things, and none of them is a screenshot.</p>
 
     <p>The first is <strong>the name of a place, and the city you confirmed it
     is in</strong>. Turning "Dishoom Shoreditch" into a coordinate means asking
@@ -240,7 +239,7 @@
 
     <p>The second is a complimentary code and a random identifier, described
     next. The third is the address of a reel or post you choose to share,
-    described after that. If you have not bought the feature, a one-way fingerprint of your phone goes with the first post you share, so that it can be read free once per phone; that is described there too.</p>
+    described after that. If you have not bought the feature, a one-way fingerprint of your phone goes with the first three posts you share, so that they can be read free, three per phone; that is described there too. The fourth is the anonymous step counts described under <em>Anonymous usage counts</em>.</p>
 
   </section>
 
@@ -273,6 +272,11 @@
     all when a code succeeds, and it is deleted automatically.</p>
 
   </section>
+  <section>
+    <h2>Anonymous usage counts</h2>
+    <p>From version 2.1.9, the app tells a server Wren runs when you reach certain steps: opening Wren for the first time, starting an import, reading a post, seeing a purchase sheet, tapping a buy button, the purchase completing or not, and saving a guide. Each message names the step, which kind it was where that matters (which product, for example), whether the phone is an Android phone or an iPhone, the app's version and the language it is showing.</p>
+    <p><strong>Nothing identifies you or your phone.</strong> There is no identifier of any kind, nothing is stored on your phone to recognise it again, and the server keeps only a running total for each step and day — not the individual messages, and not the IP address they came from. The developer uses the totals to see where people stop before buying, which is the only reason they exist. They are not shared with anyone and are not used for advertising.</p>
+  </section>
 
 <section>
 
@@ -289,7 +293,7 @@
     token Google Play issued for the purchase, which the server checks with
     Google; a complimentary code works in its place.</p>
 
-    <p><strong>If you have not bought it, the first post is read free, once per phone.</strong> In place of a purchase, the app sends a one-way fingerprint (SHA-256) of the phone's Android ID and a Play Integrity token, which the server has Google check to confirm that the request comes from Wren as installed from Google Play, on a genuine device. The fingerprint is stored with that one read so the phone is not given a second; the Android ID itself never leaves the phone. Where Google offers it, the server may also set a flag that Google keeps for this phone, so that the free read is not given again after a factory reset.</p>
+    <p><strong>If you have not bought it, the first three posts are read free, per phone.</strong> In place of a purchase, the app sends a one-way fingerprint (SHA-256) of the phone's Android ID and a Play Integrity token, which the server has Google check to confirm that the request comes from Wren as installed from Google Play, on a genuine device. The fingerprint is stored with that one read so the phone is not given a second; the Android ID itself never leaves the phone. Where Google offers it, the server may also set a flag that Google keeps for this phone, so that the free reads are not given again after a factory reset.</p>
 
     <p>The server — a Cloudflare Worker run by the developer — fetches that
     post, has a language model read the place names out of its caption or its
@@ -434,7 +438,7 @@
 
 
 
-    <p><strong>None of this applies to the app.</strong> Wren the Android app contains no analytics of any kind and never has. This section is about this website only.</p>
+    <p><strong>None of this applies to the app.</strong> Wren the Android app uses none of this. Its only analytics are the anonymous step counts described above, which go to a server Wren runs and identify nobody. This section is about this website only.</p>
 
 
 

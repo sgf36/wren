@@ -133,7 +133,11 @@ QUOTA_PER_30_DAYS = "250"
 # identity rather than granting one with nothing behind it — so somebody who
 # never had an allowance is told they have not bought the feature, which is
 # true, instead of that they have used up an allowance, which is not.
-FREE_REELS = "1"
+#
+# Raised from 1 to 3 on 9 Oct 2026 with Wren 2.1.9: one read showed the feature
+# but was too little to judge it by, and still nobody had bought. Three reads
+# cost three times the pence above per new user; the global ceiling still holds.
+FREE_REELS = "3"
 
 # Vertex, which is where the model is actually called.
 #

@@ -134,12 +134,12 @@ class LKn extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren ಒಂದು ಮಾರ್ಗದರ್ಶಿಯಲ್ಲಿ ಉಚಿತವಾಗಿ $limit ಸ್ಥಳಗಳವರೆಗೆ ಉಳಿಸುತ್ತದೆ. ನೀವು $selected ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ — $over ಹೆಚ್ಚು.';
+    return 'ನಿಮ್ಮ $selected ಸ್ಥಳಗಳು ಸಿದ್ಧವಾಗಿವೆ. Wren ಒಂದು ಮಾರ್ಗದರ್ಶಿಯಲ್ಲಿ ಉಚಿತವಾಗಿ $limit ವರೆಗೆ ಉಳಿಸುತ್ತದೆ — ಎಲ್ಲವನ್ನೂ ಉಳಿಸಲು ಅನ್‌ಲಾಕ್ ಮಾಡಿ.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren ಒಂದೇ ಬಾರಿಗೆ ಉಚಿತವಾಗಿ $limit ಸ್ಥಳಗಳವರೆಗೆ ಕಳುಹಿಸುತ್ತದೆ. ನೀವು $selected ಆಯ್ಕೆ ಮಾಡಿದ್ದೀರಿ — $over ಹೆಚ್ಚು.';
+    return 'ನಿಮ್ಮ $selected ಸ್ಥಳಗಳು ಸಿದ್ಧವಾಗಿವೆ. Wren ಒಂದೇ ಬಾರಿಗೆ ಉಚಿತವಾಗಿ $limit ವರೆಗೆ ಕಳುಹಿಸುತ್ತದೆ — ಎಲ್ಲವನ್ನೂ ಕಳುಹಿಸಲು ಅನ್‌ಲಾಕ್ ಮಾಡಿ.';
   }
 
   @override
@@ -559,6 +559,10 @@ class LKn extends L {
       'ರೀಲ್ ಅಥವಾ ಪೋಸ್ಟ್ ಒಂದನ್ನು Wren ಜೊತೆ ಹಂಚಿಕೊಳ್ಳಿ, ಅದು ಅದರಿಂದ ಸ್ಥಳಗಳನ್ನು ಓದಿಕೊಳ್ಳುತ್ತದೆ — ಪರಿಶೀಲಿಸಿ ಉಳಿಸಿದರೆ ಸಾಕು. Wren ವಿಡಿಯೊವನ್ನು ಎಂದೂ ಇಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ.';
 
   @override
+  String get reelsFreeUsed =>
+      'ನಿಮ್ಮ ಉಚಿತ ಪೋಸ್ಟ್‌ಗಳು ಮುಗಿದಿವೆ. ಅನ್‌ಲಾಕ್ ಮಾಡಿದರೆ ನೀವು ಹಂಚಿಕೊಳ್ಳುವ ಪ್ರತಿ ಪೋಸ್ಟ್‌ನಿಂದ Wren ಸ್ಥಳಗಳನ್ನು ಓದಿಕೊಳ್ಳುತ್ತದೆ — ಪರಿಶೀಲಿಸಿ ಉಳಿಸಿದರೆ ಸಾಕು. Wren ವಿಡಿಯೊವನ್ನು ಎಂದೂ ಇಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ.';
+
+  @override
   String everythingFor(String price) {
     return 'ಎಲ್ಲವೂ $priceಕ್ಕೆ';
   }
@@ -578,6 +582,17 @@ class LKn extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'ಈ ತಿಂಗಳು ಉಳಿದ ಪೋಸ್ಟ್: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ಉಳಿದ ಉಚಿತ ಪೋಸ್ಟ್: $count',
+      zero: 'ಇದು ಕೊನೆಯ ಉಚಿತ ಪೋಸ್ಟ್ ಆಗಿತ್ತು',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -134,12 +134,12 @@ class LHr extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren besplatno sprema do $limit mjesta u vodič. Odabrao si $selected — $over više od toga.';
+    return 'Mjesta spremna za spremanje: $selected. Wren ih besplatno sprema do $limit po vodiču — otključaj i spremi sva.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren besplatno šalje do $limit mjesta odjednom. Odabrao si $selected — $over više od toga.';
+    return 'Mjesta spremna za slanje: $selected. Wren ih besplatno šalje do $limit odjednom — otključaj i pošalji sva.';
   }
 
   @override
@@ -572,6 +572,10 @@ class LHr extends L {
       'Podijeli s Wrenom reel ili objavu i on iz nje iščita mjesta, spremna za provjeru i spremanje. Wren nikad ne zadržava videozapis.';
 
   @override
+  String get reelsFreeUsed =>
+      'Besplatne objave su potrošene. Otključaj Wren i on će iščitati mjesta iz svake objave koju podijeliš, spremna za provjeru i spremanje. Wren nikad ne zadržava videozapis.';
+
+  @override
   String everythingFor(String price) {
     return 'Sve za $price';
   }
@@ -591,6 +595,17 @@ class LHr extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'objava preostalo ovaj mjesec: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'preostalo besplatnih objava: $count',
+      zero: 'to je bila posljednja besplatna objava',
+    );
+    return '$_temp0';
   }
 
   @override

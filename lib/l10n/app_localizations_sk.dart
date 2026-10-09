@@ -136,12 +136,12 @@ class LSk extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren uloží do sprievodcu zadarmo až $limit miest. Máš vybraných $selected — o $over viac.';
+    return 'Miesta pripravené na uloženie: $selected. Wren ich do sprievodcu zadarmo uloží až $limit — odomkni a ulož všetky.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren odošle zadarmo až $limit miest naraz. Máš vybraných $selected — o $over viac.';
+    return 'Miesta pripravené na odoslanie: $selected. Wren ich zadarmo odošle až $limit naraz — odomkni a pošli všetky.';
   }
 
   @override
@@ -590,6 +590,10 @@ class LSk extends L {
       'Zdieľaj Wrenu reel alebo príspevok a on z neho vyčíta miesta, pripravené na kontrolu a uloženie. Wren si video nikdy nenecháva.';
 
   @override
+  String get reelsFreeUsed =>
+      'Príspevky zadarmo sú vyčerpané. Odomkni Wren a vyčíta miesta z každého príspevku, ktorý zdieľaš, pripravené na kontrolu a uloženie. Wren si video nikdy nenecháva.';
+
+  @override
   String everythingFor(String price) {
     return 'Všetko za $price';
   }
@@ -609,6 +613,17 @@ class LSk extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'príspevkov tento mesiac zostáva: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'zostávajúce príspevky zadarmo: $count',
+      zero: 'to bol posledný príspevok zadarmo',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -134,12 +134,12 @@ class LDe extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren sichert kostenlos bis zu $limit Orte in einem Guide. Du hast $selected ausgewählt — $over mehr als das.';
+    return 'Deine $selected Orte sind bereit. Wren sichert bis zu $limit pro Guide kostenlos – schalte frei, um alle zu sichern.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren sendet kostenlos bis zu $limit Orte auf einmal. Du hast $selected ausgewählt — $over mehr als das.';
+    return 'Deine $selected Orte sind bereit. Wren sendet bis zu $limit auf einmal kostenlos – schalte frei, um alle zu senden.';
   }
 
   @override
@@ -560,6 +560,10 @@ class LDe extends L {
       'Teile ein Reel oder einen Beitrag mit Wren, und Wren liest die Orte heraus – bereit zum Prüfen und Speichern. Wren behält das Video nie.';
 
   @override
+  String get reelsFreeUsed =>
+      'Deine kostenlosen Beiträge sind aufgebraucht. Schalte frei, und Wren liest die Orte aus jedem Beitrag, den du teilst – bereit zum Prüfen und Speichern. Wren behält das Video nie.';
+
+  @override
   String everythingFor(String price) {
     return 'Alles für $price';
   }
@@ -579,6 +583,18 @@ class LDe extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'Beiträge diesen Monat übrig: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'noch $count kostenlose Beiträge',
+      one: 'noch 1 kostenloser Beitrag',
+      zero: 'das war dein letzter kostenloser Beitrag',
+    );
+    return '$_temp0';
   }
 
   @override

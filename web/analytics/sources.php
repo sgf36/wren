@@ -899,3 +899,32 @@ function source_play_sales(string $since, string $until): array
     ksort($daily);
     return ['configured' => true, 'latest_date' => $latest, 'daily' => $daily, 'products' => $products, 'countries' => $countries];
 }
+
+// The purchase funnel the app reports through /f/ (lib/src/funnel.dart): a
+// daily count per step, detail, platform, version and language, from this
+// server's own files. Counts are of events, not people.
+function source_funnel(string $since, string $until): array
+{
+    $dir = dirname(base_dir()) . '/funnel-counts';
+    $steps = [];
+    $daily = [];
+    $versions = [];
+    foreach (array_unique(array_map(fn($d) => substr($d, 0, 7), days_between($since, $until))) as $month) {
+        $data = json_decode((string) @file_get_contents("$dir/$month.json"), true) ?: [];
+        foreach ($data as $day => $rows) {
+            if ($day < $since || $day > $until) {
+                continue;
+            }
+            foreach ($rows as $key => $n) {
+                [$step, $detail, $platform, $version] = array_pad(explode('|', $key), 5, '');
+                $label = $detail === '' ? $step : "$step:$detail";
+                bump($steps, $label, $platform, $n);
+                bump($steps, $label, 'all', $n);
+                bump($daily, $day, $step, $n);
+                bump($versions, $version, 'events', $n);
+            }
+        }
+    }
+    ksort($daily);
+    return ['configured' => true, 'steps' => $steps, 'daily' => $daily, 'versions' => $versions];
+}

@@ -140,12 +140,12 @@ class LAr extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'يحفظ Wren مجاناً ما يصل إلى $limit أماكن في الدليل. لديك $selected محدداً — أي $over أكثر من ذلك.';
+    return 'الأماكن جاهزة: $selected. يحفظ Wren مجاناً حتى $limit في الدليل — افتح القفل لحفظها كلها.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'يرسل Wren مجاناً ما يصل إلى $limit أماكن في المرة. لديك $selected محدداً — أي $over أكثر من ذلك.';
+    return 'الأماكن جاهزة: $selected. يرسل Wren مجاناً حتى $limit في المرة — افتح القفل لإرسالها كلها.';
   }
 
   @override
@@ -608,6 +608,10 @@ class LAr extends L {
       'شارك ريلًا أو منشورًا مع Wren فيقرأ منه الأماكن، جاهزة للمراجعة والحفظ. لا يحتفظ Wren بالفيديو أبدًا.';
 
   @override
+  String get reelsFreeUsed =>
+      'استخدمت منشوراتك المجانية. افتح القفل ليقرأ Wren الأماكن من كل منشور تشاركه، جاهزة للمراجعة والحفظ. لا يحتفظ Wren بالفيديو أبدًا.';
+
+  @override
   String everythingFor(String price) {
     return 'كل شيء مقابل $price';
   }
@@ -627,6 +631,17 @@ class LAr extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'المنشورات المتبقية هذا الشهر: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'المنشورات المجانية المتبقية: $count',
+      zero: 'كان هذا آخر منشور مجاني',
+    );
+    return '$_temp0';
   }
 
   @override

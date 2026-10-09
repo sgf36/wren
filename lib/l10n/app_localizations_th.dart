@@ -130,12 +130,12 @@ class LTh extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren บันทึกได้ฟรีสูงสุด $limit ที่ต่อไกด์ คุณเลือกไว้ $selected ที่ เกินมา $over ที่';
+    return 'สถานที่ $selected ที่พร้อมแล้ว Wren บันทึกได้ฟรีสูงสุด $limit ที่ต่อไกด์ — ปลดล็อกเพื่อบันทึกทั้งหมด';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren ส่งได้ฟรีสูงสุด $limit ที่ต่อครั้ง คุณเลือกไว้ $selected ที่ เกินมา $over ที่';
+    return 'สถานที่ $selected ที่พร้อมแล้ว Wren ส่งได้ฟรีสูงสุด $limit ที่ต่อครั้ง — ปลดล็อกเพื่อส่งทั้งหมด';
   }
 
   @override
@@ -525,6 +525,10 @@ class LTh extends L {
       'แชร์รีลหรือโพสต์มาที่ Wren แล้วมันจะอ่านสถานที่ออกมาให้ พร้อมตรวจและบันทึก Wren ไม่เก็บวิดีโอไว้เลย';
 
   @override
+  String get reelsFreeUsed =>
+      'คุณใช้โพสต์ฟรีหมดแล้ว ปลดล็อกแล้ว Wren จะอ่านสถานที่จากทุกโพสต์ที่คุณแชร์ พร้อมตรวจและบันทึก Wren ไม่เก็บวิดีโอไว้เลย';
+
+  @override
   String everythingFor(String price) {
     return 'ทั้งหมดในราคา $price';
   }
@@ -543,6 +547,17 @@ class LTh extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'โพสต์ที่เหลือเดือนนี้: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'เหลือโพสต์ฟรี $count โพสต์',
+      zero: 'นี่คือโพสต์ฟรีโพสต์สุดท้าย',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -134,12 +134,12 @@ class LEn extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'Wren saves up to $limit places in a guide for free. You have $selected selected — $over more than that.';
+    return 'Your $selected places are ready. Wren saves up to $limit per guide for free — unlock to keep them all.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'Wren sends up to $limit places at a time for free. You have $selected selected — $over more than that.';
+    return 'Your $selected places are ready. Wren sends up to $limit at a time for free — unlock to send them all.';
   }
 
   @override
@@ -562,6 +562,10 @@ class LEn extends L {
       'Share a reel or a post to Wren and it reads the places out of it, ready to check and save. Wren never keeps the video.';
 
   @override
+  String get reelsFreeUsed =>
+      'You have used your free posts. Unlock and Wren reads the places out of every post you share, ready to check and save. Wren never keeps the video.';
+
+  @override
   String everythingFor(String price) {
     return 'Everything for $price';
   }
@@ -586,6 +590,18 @@ class LEn extends L {
       other: '$count posts left this month',
       one: '1 post left this month',
       zero: 'no posts left this month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count free posts left',
+      one: '1 free post left',
+      zero: 'that was your last free post',
     );
     return '$_temp0';
   }

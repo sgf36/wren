@@ -133,12 +133,12 @@ class LCa extends L {
 
   @override
   String unlockExplain(int limit, int selected, int over) {
-    return 'El Wren desa gratuïtament fins a $limit llocs per guia. N\'has seleccionat $selected: $over més.';
+    return 'Tens $selected llocs a punt. El Wren en desa gratuïtament fins a $limit per guia; desbloqueja\'l per desar-los tots.';
   }
 
   @override
   String unlockExplainAndroid(int limit, int selected, int over) {
-    return 'El Wren envia gratuïtament fins a $limit llocs alhora. N\'has seleccionat $selected: $over més.';
+    return 'Tens $selected llocs a punt. El Wren n\'envia gratuïtament fins a $limit alhora; desbloqueja\'l per enviar-los tots.';
   }
 
   @override
@@ -559,6 +559,10 @@ class LCa extends L {
       'Comparteix un reel o una publicació amb el Wren i en traurà els llocs, a punt per revisar i desar. El Wren no conserva mai el vídeo.';
 
   @override
+  String get reelsFreeUsed =>
+      'Ja has fet servir les publicacions gratuïtes. Desbloqueja el Wren i en traurà els llocs de cada publicació que comparteixis, a punt per revisar i desar. El Wren no conserva mai el vídeo.';
+
+  @override
   String everythingFor(String price) {
     return 'Tot per $price';
   }
@@ -578,6 +582,18 @@ class LCa extends L {
   @override
   String reelsLeftThisMonth(int count) {
     return 'publicacions que et queden aquest mes: $count';
+  }
+
+  @override
+  String reelsFreeLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'et queden $count publicacions gratuïtes',
+      one: 'et queda 1 publicació gratuïta',
+      zero: 'era la darrera publicació gratuïta',
+    );
+    return '$_temp0';
   }
 
   @override
