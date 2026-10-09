@@ -76,6 +76,12 @@ function meta_action(array $row, array $names): float
 const META_INSTALL = ['omni_app_install', 'mobile_app_install', 'app_install'];
 const META_PURCHASE = ['omni_purchase', 'app_custom_event.fb_mobile_purchase', 'purchase'];
 
+// Purchase VALUE is in action_values (account currency), the count in actions.
+function meta_value(array $row, array $names): float
+{
+    return meta_action(['actions' => $row['action_values'] ?? []], $names);
+}
+
 function meta_metrics(array $r): array
 {
     $installs = meta_action($r, META_INSTALL);
@@ -87,6 +93,7 @@ function meta_metrics(array $r): array
         'link_clicks' => (int) num($r['inline_link_clicks'] ?? 0),
         'installs' => $installs,
         'purchases' => meta_action($r, META_PURCHASE),
+        'revenue' => meta_value($r, META_PURCHASE),
         'cpi' => $installs > 0 ? round($spend / $installs, 2) : null,
         'ctr' => num($r['impressions'] ?? 0) > 0 ? round(100 * num($r['inline_link_clicks'] ?? 0) / num($r['impressions']), 2) : null,
     ];
@@ -100,7 +107,7 @@ function source_meta(string $since, string $until): array
     }
     $act = $cfg['ad_account'];
     $range = json_encode(['since' => $since, 'until' => $until]);
-    $fields = 'spend,impressions,reach,inline_link_clicks,actions';
+    $fields = 'spend,impressions,reach,inline_link_clicks,actions,action_values';
 
     $campaigns = meta_get("$act/campaigns", [
         'fields' => 'id,name,effective_status,objective,daily_budget,lifetime_budget,start_time,stop_time',
@@ -207,7 +214,9 @@ function source_tiktok(string $since, string $until): array
         return ['configured' => false];
     }
     $adv = $cfg['advertiser_id'];
-    $metrics = ['spend', 'impressions', 'clicks', 'reach', 'conversion', 'campaign_name'];
+    // purchase / total_purchase_value / app_install are TikTok's app-event metrics
+    // (from its SDK in Wren 2.1.8+); names checked against the API on 9 Oct 2026.
+    $metrics = ['spend', 'impressions', 'clicks', 'reach', 'conversion', 'app_install', 'purchase', 'total_purchase_value', 'campaign_name'];
     $daily = tiktok_get('report/integrated/get/', [
         'advertiser_id' => $adv, 'report_type' => 'BASIC', 'data_level' => 'AUCTION_CAMPAIGN',
         'dimensions' => ['campaign_id', 'stat_time_day'], 'metrics' => $metrics,
@@ -228,7 +237,7 @@ function source_tiktok(string $since, string $until): array
         $id = $r['dimensions']['campaign_id'];
         $day = substr($r['dimensions']['stat_time_day'], 0, 10);
         $m = $r['metrics'];
-        foreach (['spend', 'impressions', 'clicks', 'conversion'] as $k) {
+        foreach (['spend', 'impressions', 'clicks', 'conversion', 'app_install', 'purchase', 'total_purchase_value'] as $k) {
             $byCampaign[$id][$k] = ($byCampaign[$id][$k] ?? 0) + num($m[$k] ?? 0);
             $days[$day][$k] = ($days[$day][$k] ?? 0) + num($m[$k] ?? 0);
         }
@@ -241,6 +250,7 @@ function source_tiktok(string $since, string $until): array
     $rows = [];
     foreach ($status + array_fill_keys(array_keys($byCampaign), []) as $id => $c) {
         $s = $byCampaign[$id] ?? ['spend' => 0, 'impressions' => 0, 'clicks' => 0, 'conversion' => 0];
+        $s += ['app_install' => 0, 'purchase' => 0, 'total_purchase_value' => 0];
         if (!$s['spend'] && ($c['operation_status'] ?? '') !== 'ENABLE') {
             continue;
         }
@@ -248,7 +258,8 @@ function source_tiktok(string $since, string $until): array
             'status' => $c['secondary_status'] ?? $c['operation_status'] ?? '',
             'objective' => $c['objective_type'] ?? '', 'budget' => isset($c['budget']) ? num($c['budget']) : null,
             'spend' => $s['spend'], 'impressions' => (int) $s['impressions'], 'clicks' => (int) $s['clicks'],
-            'conversions' => $s['conversion'],
+            'conversions' => $s['conversion'], 'installs' => $s['app_install'] ?? 0,
+            'purchases' => $s['purchase'] ?? 0, 'revenue' => $s['total_purchase_value'] ?? 0,
             'cpc' => $s['clicks'] > 0 ? round($s['spend'] / $s['clicks'], 3) : null];
     }
     usort($rows, fn($a, $b) => $b['spend'] <=> $a['spend']);
@@ -278,7 +289,7 @@ function asc_get(string $url): array
 const ASC_REPORTS = [
     'App Downloads Standard', 'App Downloads Detailed',
     'App Store Discovery and Engagement Standard', 'App Store Discovery and Engagement Detailed',
-    'App Store Purchases Standard',
+    'App Store Purchases Standard', 'App Store Purchases Detailed',
 ];
 
 // Downloads the daily report files Apple has produced since $since. A file never
@@ -438,11 +449,22 @@ function source_apple(string $since, string $until): array
             }
         }
     }
+    // Same, by campaign token: the only place Apple ties a purchase to a ct=
+    // campaign. Counts only people who share analytics with developers.
+    $purchaseCampaigns = [];
+    foreach ($reports['App Store Purchases Detailed'] ?? [] as $r) {
+        foreach ($r as $col => $v) {
+            if (is_numeric($v) && preg_match('/purchase|proceeds|sales|units|refund/i', $col)) {
+                bump($purchaseCampaigns, ($r['Campaign'] ?? '') ?: '(none)', $col, num($v));
+            }
+        }
+    }
     ksort($daily);
     ksort($purchases);
     return ['configured' => true, 'partial' => $partial, 'latest_date' => $latest, 'processed' => $processed,
         'daily' => $daily, 'sources' => $sources, 'territories' => $territories,
-        'campaigns' => $campaigns, 'referrers' => $referrers, 'purchases' => $purchases];
+        'campaigns' => $campaigns, 'referrers' => $referrers, 'purchases' => $purchases,
+        'purchase_campaigns' => $purchaseCampaigns];
 }
 
 // ---------------------------------------------------------------- Google (GA4, Play)
@@ -668,4 +690,197 @@ function source_postbacks(string $since, string $until): array
     }
     ksort($daily);
     return ['configured' => true, 'postbacks' => array_slice($all, 0, 100), 'count' => count($all), 'daily' => $daily];
+}
+
+// ---------------------------------------------------------------- in-app purchases and revenue
+
+// Rough pounds for amounts Apple and Google report in many currencies. Labelled
+// "≈" on the page: the stores pay out at their own rates, later.
+function fx_to_gbp(float $amount, string $currency): ?float
+{
+    if ($amount == 0.0 || strtoupper($currency) === 'GBP') {
+        return $amount;
+    }
+    $rates = cached('fx_gbp', 43200, fn() => ['rates' => http_json('GET', 'https://open.er-api.com/v6/latest/GBP')['rates'] ?? []])['rates'];
+    $r = $rates[strtoupper($currency)] ?? null;
+    return $r ? $amount / $r : null;
+}
+
+// Apple product type ids: what a sales-report line is.
+function apple_line_kind(string $type): string
+{
+    if (preg_match('/^(IA|FI)/', $type)) {
+        return 'iap';
+    }
+    if (preg_match('/^(1|F1)/', $type)) {
+        return 'download';
+    }
+    if (preg_match('/^(3|F3)/', $type)) {
+        return 'redownload';
+    }
+    return preg_match('/^(7|F7)/', $type) ? 'update' : 'other';
+}
+
+// Apple's daily Sales report: every unit and every in-app purchase, including the
+// people Apple Analytics leaves out because they do not share analytics. Covers
+// all the account's apps; Wren's own lines carry its Apple id, its in-app
+// purchases carry its SKU as Parent Identifier. No campaign column exists here.
+function source_sales(string $since, string $until): array
+{
+    $c = config()['asc'] ?? null;
+    if (empty($c['p8']) || empty($c['vendor_number'])) {
+        return ['configured' => false];
+    }
+    $sku = cached('asc_wren_sku', 86400 * 7, fn() => ['sku' => asc_get('/v1/apps/' . APPLE_APP_ID . '?fields[apps]=sku')['data']['attributes']['sku']])['sku'];
+    $started = microtime(true);
+    $partial = false;
+    $daily = [];
+    $products = [];
+    $countries = [];
+    $latest = null;
+    $unconverted = [];
+    $yesterday = gmdate('Y-m-d', time() - 86400);
+    foreach (array_reverse(days_between($since, min($until, $yesterday))) as $day) {
+        $rows = cache_get('asc_sales_' . $day);
+        if ($rows === null) {
+            if (microtime(true) - $started > 15) {
+                $partial = true;
+                continue;
+            }
+            [$code, $body] = http('GET', 'https://api.appstoreconnect.apple.com/v1/salesReports?' . http_build_query([
+                'filter[frequency]' => 'DAILY', 'filter[reportType]' => 'SALES', 'filter[reportSubType]' => 'SUMMARY',
+                'filter[vendorNumber]' => $c['vendor_number'], 'filter[reportDate]' => $day, 'filter[version]' => '1_1',
+            ]), ['Authorization: Bearer ' . asc_token(), 'Accept: application/a-gzip'], null, 40);
+            if ($code === 404) {
+                // "no sales for the date" and "not published yet" both answer 404.
+                // Only a day well past is safe to record as empty.
+                if ($day < gmdate('Y-m-d', time() - 3 * 86400)) {
+                    cache_put('asc_sales_' . $day, []);
+                }
+                continue;
+            }
+            if ($code !== 200) {
+                throw new RuntimeException("sales report $day: HTTP $code " . api_message(json_decode($body, true), ''));
+            }
+            $tsv = @gzdecode($body);
+            $lines = explode("\n", trim($tsv === false ? $body : $tsv));
+            $head = str_getcsv(array_shift($lines), "\t", '"', '');
+            $rows = [];
+            foreach ($lines as $line) {
+                if ($line === '') {
+                    continue;
+                }
+                $r = array_combine($head, array_pad(str_getcsv($line, "\t", '"', ''), count($head), ''));
+                if (($r['Apple Identifier'] ?? '') !== APPLE_APP_ID && ($r['Parent Identifier'] ?? '') !== $sku) {
+                    continue; // another of the account's apps
+                }
+                // Keep only what the page needs; never buyer-level detail.
+                $rows[] = ['type' => $r['Product Type Identifier'], 'sku' => $r['SKU'], 'title' => $r['Title'],
+                    'units' => num($r['Units']), 'proceeds' => num($r['Developer Proceeds']),
+                    'currency' => $r['Currency of Proceeds'], 'country' => $r['Country Code']];
+            }
+            cache_put('asc_sales_' . $day, $rows);
+        }
+        if ($rows) {
+            $latest = max($latest ?? '', $day);
+        }
+        $daily[$day] = $daily[$day] ?? [];
+        foreach ($rows as $r) {
+            $kind = apple_line_kind($r['type']);
+            if ($kind === 'iap') {
+                $gbp = fx_to_gbp($r['proceeds'] * $r['units'], $r['currency']);
+                if ($gbp === null) {
+                    $unconverted[$r['currency']] = true;
+                    $gbp = 0.0;
+                }
+                $field = $r['units'] < 0 ? 'refunds' : 'purchases';
+                $key = $r['sku'] . ' · ' . $r['title'];
+                bump($daily, $day, $field, abs($r['units']));
+                bump($daily, $day, 'proceeds', $gbp);
+                bump($products, $key, $field, abs($r['units']));
+                bump($products, $key, 'proceeds', $gbp);
+                bump($countries, $r['country'], $field, abs($r['units']));
+                bump($countries, $r['country'], 'proceeds', $gbp);
+            } elseif ($kind !== 'other') {
+                bump($daily, $day, $kind . 's', $r['units']);
+                if ($kind === 'download') {
+                    bump($countries, $r['country'], 'downloads', $r['units']);
+                }
+            }
+        }
+    }
+    ksort($daily);
+    return ['configured' => true, 'partial' => $partial, 'latest_date' => $latest, 'daily' => $daily,
+        'products' => $products, 'countries' => $countries, 'unconverted' => array_keys($unconverted)];
+}
+
+// Google Play's monthly sales report (a zip in the same bucket, refreshed daily):
+// one line per order. Needs the "View financial data" permission in Play Console,
+// which the bulk-reports permission alone does not give. Aggregated here; the
+// buyer-level lines (city, postcode) are never stored.
+function source_play_sales(string $since, string $until): array
+{
+    $g = config()['google'] ?? null;
+    if (empty($g['service_account']['private_key']) || empty($g['play_bucket'])) {
+        return ['configured' => false];
+    }
+    if (!class_exists('ZipArchive')) {
+        throw new RuntimeException('PHP on this host has no ZipArchive');
+    }
+    $bucket = $g['play_bucket'];
+    $daily = [];
+    $products = [];
+    $countries = [];
+    $latest = null;
+    foreach (array_unique(array_map(fn($d) => str_replace('-', '', substr($d, 0, 7)), days_between($since, $until))) as $month) {
+        $agg = cached("play_sales_$month", 3600, function () use ($bucket, $month) {
+            $list = http_json('GET', 'https://storage.googleapis.com/storage/v1/b/' . rawurlencode($bucket) . '/o?'
+                . http_build_query(['prefix' => "sales/salesreport_$month"]), ['Authorization: Bearer ' . google_token()]);
+            $out = ['rows' => []];
+            foreach ($list['items'] ?? [] as $o) {
+                [$code, $zip] = http('GET', 'https://storage.googleapis.com/storage/v1/b/' . rawurlencode($bucket) . '/o/'
+                    . rawurlencode($o['name']) . '?alt=media', ['Authorization: Bearer ' . google_token()], null, 60);
+                if ($code !== 200) {
+                    throw new RuntimeException("Play sales report: HTTP $code");
+                }
+                $tmp = tempnam(private_dir('cache'), 'zip');
+                file_put_contents($tmp, $zip);
+                $z = new ZipArchive();
+                if ($z->open($tmp) === true) {
+                    $csv = (string) $z->getFromIndex(0);
+                    $z->close();
+                    $lines = preg_split('/\r?\n/', trim($csv));
+                    $head = str_getcsv(array_shift($lines), ',', '"', '');
+                    foreach ($lines as $l) {
+                        $r = array_combine($head, array_pad(str_getcsv($l, ',', '"', ''), count($head), ''));
+                        if (($r['Product ID'] ?? '') !== PLAY_PACKAGE) {
+                            continue;
+                        }
+                        $out['rows'][] = ['day' => $r['Order Charged Date'] ?? '', 'status' => $r['Financial Status'] ?? '',
+                            'product' => ($r['SKU ID'] ?? '') . ' · ' . ($r['Product Title'] ?? ''),
+                            'amount' => num(str_replace(',', '', $r['Charged Amount'] ?? '0')),
+                            'currency' => $r['Currency of Sale'] ?? '', 'country' => $r['Country of Buyer'] ?? ''];
+                    }
+                }
+                @unlink($tmp);
+            }
+            return $out;
+        });
+        foreach ($agg['rows'] as $r) {
+            if ($r['day'] < $since || $r['day'] > $until) {
+                continue;
+            }
+            $latest = max($latest ?? '', $r['day']);
+            $refund = stripos($r['status'], 'refund') !== false;
+            $gbp = fx_to_gbp($r['amount'], $r['currency']) ?? 0.0;
+            $field = $refund ? 'refunds' : 'purchases';
+            bump($daily, $r['day'], $field, 1);
+            bump($daily, $r['day'], 'gross', $refund ? -abs($gbp) : $gbp);
+            bump($products, $r['product'], $field, 1);
+            bump($products, $r['product'], 'gross', $refund ? -abs($gbp) : $gbp);
+            bump($countries, $r['country'], $field, 1);
+        }
+    }
+    ksort($daily);
+    return ['configured' => true, 'latest_date' => $latest, 'daily' => $daily, 'products' => $products, 'countries' => $countries];
 }

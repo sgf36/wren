@@ -151,7 +151,7 @@ def build_config():
         sys.exit("more than one AuthKey_*.p8 in %s; keep only the Sales and Reports key" % SIGNING)
     if p8:
         cfg["asc"] = {"key_id": p8[0].stem.split("_", 1)[1], "issuer": ASC_ISSUER, "request_id": ASC_REQUEST,
-                      "p8": p8[0].read_text(encoding="utf-8")}
+                      "p8": p8[0].read_text(encoding="utf-8"), "vendor_number": secret("asc-vendor-number")}
 
     sa = SIGNING / "service-account.json"
     if sa.is_file():
@@ -170,6 +170,7 @@ def describe(cfg):
         ("Google sign-in client id", bool(cfg.get("google_client_id"))),
         ("Meta (read-only token)", "meta" in cfg),
         ("App Store Connect (Sales and Reports key)", "asc" in cfg),
+        ("  vendor number (sales reports: in-app purchases)", bool(cfg.get("asc", {}).get("vendor_number"))),
         ("Google service account", bool(g)),
         ("  GA4 property id", bool(g.get("ga4_property"))),
         ("  Play report bucket", bool(g.get("play_bucket"))),

@@ -29,6 +29,8 @@ $plan = [
     'tiktok' => [300, fn() => source_tiktok($since, $until)],
     'apple' => [3600, fn() => source_apple($since, $until)],
     'play' => [3600, fn() => source_play($since, $until)],
+    'sales' => [3600, fn() => source_sales($since, $until)],
+    'play_sales' => [3600, fn() => source_play_sales($since, $until)],
     'ga4' => [900, fn() => source_ga4($since, $until)],
     'ga4_realtime' => [60, fn() => source_ga4_realtime()],
     'get' => [0, fn() => source_get_taps($since, $until)],

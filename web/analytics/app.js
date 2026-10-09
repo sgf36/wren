@@ -155,6 +155,7 @@
     var S = d.sources, dates = dateList(d.since, d.until);
     var meta = S.meta || {}, tt = S.tiktok || {}, apple = S.apple || {}, play = S.play || {};
     var gt = S.get || {}, pb = S.postbacks || {}, ga = S.ga4 || {}, rt = S.ga4_realtime || {};
+    var sales = S.sales || {}, ps = S.play_sales || {};
     var live = function (s) { return s && s.ok && s.configured !== false; };
 
     var metaSpend = live(meta) ? sum(meta.daily, "spend") : null;
@@ -187,6 +188,23 @@
       tile("On the website now", n(live(rt) ? rt.active : null), live(rt) ? "GA4 realtime, last 30 min" : "GA4 not connected", "Consented visitors only"),
     ]);
 
+    // In-app purchases: Apple's sales report (net proceeds) and Play's sales
+    // report (gross charged). Return on spend only over days both sides cover.
+    var iapCount = (live(sales) ? sum(sales.daily, "purchases") : 0) + (live(ps) ? sum(ps.daily, "purchases") : 0);
+    var iapRefunds = (live(sales) ? sum(sales.daily, "refunds") : 0) + (live(ps) ? sum(ps.daily, "refunds") : 0);
+    var iapMoney = (live(sales) ? sum(sales.daily, "proceeds") : 0) + (live(ps) ? sum(ps.daily, "gross") : 0);
+    var salesCut = [live(sales) && sales.latest_date, live(ps) && ps.latest_date].filter(Boolean).sort()[0] || null;
+    function sumTo(dly, f, cut) { var t = 0; Object.keys(dly || {}).forEach(function (k) { if (cut && k <= cut) t += +(dly[k][f] || 0); }); return t; }
+    var moneyToCut = sumTo(live(sales) && sales.daily, "proceeds", salesCut) + sumTo(live(ps) && ps.daily, "gross", salesCut);
+    var spendToSalesCut = sumTo(live(meta) && meta.daily, "spend", salesCut) + sumTo(live(tt) && tt.daily, "spend", salesCut);
+    var anySales = live(sales) || live(ps);
+    tiles.appendChild(tile("In-app purchases", anySales ? n(iapCount) : "–",
+      anySales ? n(iapRefunds) + " refunded" + (live(sales) ? "" : " · App Store missing") + (live(ps) ? "" : " · Play missing") : "Sales reports not connected",
+      "Every buyer, from the stores' sales reports"));
+    tiles.appendChild(tile("In-app revenue", anySales ? "≈" + gbp(iapMoney) : "–", "App Store net proceeds + Play gross", "Converted to £ at today's rate"));
+    tiles.appendChild(tile("Return on ad spend", anySales && spendToSalesCut > 0 ? n(moneyToCut / spendToSalesCut, 2) + "×" : "–",
+      salesCut ? "Revenue ÷ spend, to " + shortDate(salesCut) : "Needs sales reports", "All revenue, not only ad-driven"));
+
     var parts = [tiles];
 
     // Spend
@@ -196,6 +214,83 @@
       if (live(tt)) spendSeries.push({ name: "TikTok", cls: "s2", values: map(tt.daily, "spend") });
       parts.push(section("Spend per day", "Pounds. Meta and TikTok report spend within minutes.", [barChart(dates, spendSeries, gbp, "Ad spend per day")]));
     }
+
+    // In-app purchases
+    var iapKids = [sourceState(sales, "App Store sales reports"), sourceState(ps, "Google Play sales reports")];
+    if (live(sales) && sales.partial) iapKids.push(h("p", { class: "notice", text: "Still downloading Apple's daily sales reports. This fills in over the next minute." }));
+    if (live(sales) && sales.unconverted && sales.unconverted.length) iapKids.push(h("p", { class: "notice", text: "No exchange rate for " + sales.unconverted.join(", ") + "; those amounts are left out of the £ figures." }));
+    if (anySales) {
+      var iapSeries = [];
+      if (live(sales)) iapSeries.push({ name: "App Store", cls: "s1", values: map(sales.daily, "purchases") });
+      if (live(ps)) iapSeries.push({ name: "Google Play", cls: "s2", values: map(ps.daily, "purchases") });
+      iapKids.push(barChart(dates, iapSeries, n, "In-app purchases per day"));
+      var drows = {};
+      [[live(sales) && sales.daily, "proceeds", "a"], [live(ps) && ps.daily, "gross", "g"]].forEach(function (x) {
+        Object.keys(x[0] || {}).forEach(function (k) {
+          var d = drows[k] = drows[k] || { date: k, purchases: 0, refunds: 0, apple: 0, play: 0 };
+          d.purchases += +(x[0][k].purchases || 0); d.refunds += +(x[0][k].refunds || 0);
+          d[x[2] === "a" ? "apple" : "play"] += +(x[0][k][x[1]] || 0);
+        });
+      });
+      iapKids.push(table([
+        { label: "Date", get: function (r) { return shortDate(r.date); } },
+        { label: "Purchases", num: true, get: function (r) { return n(r.purchases); }, total: totalOf("purchases") },
+        { label: "Refunds", num: true, get: function (r) { return n(r.refunds); }, total: totalOf("refunds") },
+        { label: "App Store net ≈£", num: true, get: function (r) { return n(r.apple, 2); }, total: totalOf("apple", function (v) { return n(v, 2); }) },
+        { label: "Play gross ≈£", num: true, get: function (r) { return n(r.play, 2); }, total: totalOf("play", function (v) { return n(v, 2); }) },
+      ], Object.keys(drows).sort().reverse().map(function (k) { return drows[k]; }).filter(function (r) { return r.purchases || r.refunds; }),
+        { total: true, empty: "No in-app purchases in this range." }));
+      var prod = {};
+      [[live(sales) && sales.products, "proceeds", "App Store"], [live(ps) && ps.products, "gross", "Play"]].forEach(function (x) {
+        Object.keys(x[0] || {}).forEach(function (k) { prod[x[2] + " · " + k] = { purchases: x[0][k].purchases || 0, refunds: x[0][k].refunds || 0, money: x[0][k][x[1]] || 0 }; });
+      });
+      var ctry = {};
+      [live(sales) && sales.countries, live(ps) && ps.countries].forEach(function (c) {
+        Object.keys(c || {}).forEach(function (k) { var o = ctry[k] = ctry[k] || { purchases: 0, proceeds: 0 }; o.purchases += +(c[k].purchases || 0); o.proceeds += +(c[k].proceeds || 0); });
+      });
+      iapKids.push(h("div", { class: "grid2" }, [
+        h("div", {}, [h("h3", { text: "By product" }), table([
+          { label: "Store · product", get: function (r) { return r.k; } },
+          { label: "Purchases", num: true, get: function (r) { return n(r.purchases); } },
+          { label: "Refunds", num: true, get: function (r) { return n(r.refunds); } },
+          { label: "≈£", num: true, get: function (r) { return n(r.money, 2); } },
+        ], entries(prod, "purchases"))]),
+        h("div", {}, [h("h3", { text: "By country" }), table([
+          { label: "Country", get: function (r) { return regionName(r.k); } },
+          { label: "Purchases", num: true, get: function (r) { return n(r.purchases); } },
+        ], entries(ctry, "purchases").filter(function (r) { return r.purchases; }).slice(0, 25))]),
+      ]));
+    }
+    parts.push(section("In-app purchases", freshness(live(sales) ? sales : ps, "stores publish sales daily, the day after" +
+      (live(sales) && sales.latest_date ? "; App Store to " + shortDate(sales.latest_date) : "") +
+      (live(ps) && ps.latest_date ? "; Play to " + shortDate(ps.latest_date) : "")), iapKids));
+
+    // Revenue per campaign
+    var rpc = [];
+    if (live(meta)) meta.campaigns.forEach(function (c) { rpc.push({ k: "Meta · " + c.name, spend: c.spend, installs: c.installs, purchases: c.purchases, revenue: c.revenue }); });
+    if (live(tt)) tt.campaigns.forEach(function (c) { rpc.push({ k: "TikTok · " + c.name, spend: c.spend, installs: c.installs, purchases: c.purchases, revenue: c.revenue }); });
+    var appleRpc = live(apple) ? Object.keys(apple.purchase_campaigns || {}) : [];
+    var rpcKids = [table([
+      { label: "Campaign", get: function (r) { return r.k; } },
+      { label: "Spend", num: true, get: function (r) { return gbp(r.spend); }, total: totalOf("spend", gbp) },
+      { label: "Installs", num: true, get: function (r) { return n(r.installs); }, total: totalOf("installs") },
+      { label: "Purchases", num: true, get: function (r) { return n(r.purchases); }, total: totalOf("purchases") },
+      { label: "Revenue", num: true, get: function (r) { return gbp(r.revenue); }, total: totalOf("revenue", gbp) },
+      { label: "Return", num: true, get: function (r) { return r.spend > 0 && r.revenue != null ? n(r.revenue / r.spend, 2) + "×" : "–"; } },
+    ], rpc, { total: true, empty: "No campaigns with data in this range." })];
+    if (appleRpc.length) {
+      var acols = {};
+      appleRpc.forEach(function (k) { Object.keys(apple.purchase_campaigns[k]).forEach(function (c) { acols[c] = 1; }); });
+      rpcKids.push(h("h3", { text: "App Store purchases by campaign token (people who share analytics only)" }), table(
+        [{ label: "Token", get: function (r) { return r.k; } }].concat(Object.keys(acols).map(function (c) { return { label: c, num: true, get: function (r) { return n(r[c], /USD|GBP|Proceeds|Sales/i.test(c) ? 2 : 0); } }; })),
+        entries(apple.purchase_campaigns, Object.keys(acols)[0])));
+    }
+    if (anySales) {
+      var attributed = rpc.reduce(function (t, r) { return t + (+r.revenue || 0); }, 0);
+      rpcKids.push(h("p", { class: "muted note", text: "All in-app revenue in this range ≈" + gbp(iapMoney) + "; the ad platforms claim " + gbp(attributed) +
+        ". The rest came from people the platforms could not link to an ad (no tracking consent, organic, or another source)." }));
+    }
+    parts.push(section("Revenue per campaign", "What each ad platform attributes to its campaigns, from the purchase events Wren's Meta and TikTok SDKs report. Platform-reported, so it may overlap and differs from Apple's net proceeds.", rpcKids));
 
     // Meta
     parts.push(section("Meta (Instagram)", freshness(meta, "account " + (meta.currency || "")), [
