@@ -98,8 +98,12 @@
     var totals = dates.map(function (d) { return series.reduce(function (t, s) { return t + (+(s.values[d] || 0)); }, 0); });
     var max = Math.max.apply(null, totals.concat([0]));
     if (max === 0) return h("p", { class: "muted", text: "Nothing recorded in this range." });
-    var step = Math.pow(10, Math.floor(Math.log10(max))), nice = Math.ceil(max / step) * step;
-    if (nice / step <= 2) nice = Math.ceil(max / (step / 5)) * (step / 5);
+    // Gridlines at 0, half and top: pick a round half-value, so both labels are
+    // round; counts never get a fractional half (3 would label 1.5 as "2").
+    var half = max / 2, mag = Math.pow(10, Math.floor(Math.log10(half)));
+    var mid = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10].map(function (m) { return m * mag; })
+      .filter(function (m) { return m >= half - 1e-9 && (fmt !== n || Math.abs(m - Math.round(m)) < 1e-9); })[0];
+    var nice = 2 * (fmt === n ? Math.max(1, mid || Math.ceil(half)) : mid);
     var ns = "http://www.w3.org/2000/svg";
     function s(tag, a) { var e = document.createElementNS(ns, tag); for (var k in a) e.setAttribute(k, a[k]); return e; }
     var svg = s("svg", { viewBox: "0 0 " + W + " " + H, class: "chart", role: "img", "aria-label": title });
