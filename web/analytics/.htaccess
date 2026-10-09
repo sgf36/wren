@@ -1,0 +1,10 @@
+# The private dashboard. lib.php and sources.php are only ever included by the
+# other scripts; they refuse to run on their own too, but there is no reason to
+# serve them at all.
+Options -Indexes
+<FilesMatch "^(lib|sources)\.php$">
+    Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>
