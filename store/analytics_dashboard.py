@@ -131,11 +131,16 @@ def build_config():
 
     token = secret("meta-token")
     if token:
-        d = requests.get("https://graph.facebook.com/v25.0/debug_token",
-                         params={"input_token": token, "access_token": token}, timeout=30).json().get("data", {})
-        scopes = set(d.get("scopes") or [])
-        if not d.get("is_valid"):
-            sys.exit("meta-token is not valid; nothing was written")
+        # Not debug_token: Meta answers that only for the app's admins and developers,
+        # which an Employee system user deliberately is not. /me/permissions works for
+        # any token and lists exactly what it was granted.
+        d = requests.get("https://graph.facebook.com/v25.0/me/permissions",
+                         params={"access_token": token}, timeout=30).json()
+        if "data" not in d:
+            sys.exit("meta-token was refused (%s); nothing was written" % d.get("error", {}).get("message", "?")[:120])
+        scopes = {p["permission"] for p in d["data"] if p.get("status") == "granted"}
+        if "ads_read" not in scopes:
+            sys.exit("meta-token lacks ads_read; nothing was written")
         if scopes & {"ads_management", "business_management", "pages_manage_ads"}:
             sys.exit("meta-token can manage ads (%s). Make an ads_read-only token; nothing was written"
                      % ", ".join(sorted(scopes & {"ads_management", "business_management", "pages_manage_ads"})))
