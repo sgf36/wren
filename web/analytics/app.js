@@ -44,20 +44,56 @@
 
   // ------------------------------------------------------------ building blocks
 
-  function section(title, note, kids) {
-    return h("section", { class: "panel" }, [h("div", { class: "panel-head" }, [h("h2", { text: title }), note ? h("p", { class: "muted note", text: note }) : null])].concat(kids));
+  // badges: how current this section's figures are (see badge()).
+  function section(title, note, kids, badges) {
+    return h("section", { class: "panel" }, [h("div", { class: "panel-head" }, [h("h2", { text: title }),
+      badges && badges.length ? h("div", { class: "fresh-row" }, badges.filter(Boolean)) : null,
+      note ? h("p", { class: "muted note", text: note }) : null])].concat(kids));
   }
+
+  // How current each source's figures are. Every tile, section and chart says so,
+  // so a zero that only means "not reported yet" is never read as "none".
+  //   live   counted as it happens
+  //   near   minutes to hours behind (or, for install reports, a day or more)
+  //   daily  published once a day; the badge names the last day actually published
+  var FRESH = {
+    meta: ["near", "Near real-time", "Meta updates spend, impressions and clicks about every 15 minutes; this page re-reads them every 5."],
+    meta_installs: ["near", "1–3 days late", "Meta counts iOS installs through Apple's SKAdNetwork, which holds each one back 24–72 hours."],
+    tiktok: ["near", "Within hours", "TikTok's reporting runs up to a few hours behind; this page re-reads it every 5 minutes."],
+    ga4: ["near", "Same day", "Google Analytics shows today within hours and finalises each day after 24–48 hours."],
+    ga4_realtime: ["live", "Live", "Visitors in the last 30 minutes, re-read every minute."],
+    get: ["live", "Live", "Each tap is counted the moment it happens."],
+    postbacks: ["near", "24–48 h+ late", "Shown the moment Apple sends them, but Apple holds each back 24–48 hours or more, at random."],
+    apple: ["daily", "", "Apple publishes App Store analytics once a day, usually 1–2 days behind."],
+    sales: ["daily", "", "Apple publishes sales once a day, for the previous day."],
+    play: ["daily", "", "Google publishes Play installs once a day, a few days behind."],
+    play_sales: ["daily", "", "Google refreshes the month's Play sales file once a day."],
+  };
+  var TODAY = "", hatchCount = 0;
+  function daysBehind(latest) { return Math.round((Date.parse(TODAY + "T00:00:00Z") - Date.parse(latest + "T00:00:00Z")) / 864e5); }
+  function badge(key, s, prefix, latestOverride) {
+    var f = FRESH[key], kind = f[0], text = f[1], tipText = f[2], who = prefix ? prefix + ": " : "";
+    if (!s || s.configured === false || !s.ok) return h("span", { class: "fresh off", title: tipText, text: "○ " + who + "not available" });
+    if (kind === "daily") {
+      var latest = latestOverride || s.latest_date;
+      if (!latest) { kind = "stale"; text = "nothing published for these dates yet"; }
+      else {
+        var b = daysBehind(latest);
+        text = "to " + shortDate(latest) + " · " + (b <= 0 ? "up to date" : b === 1 ? "1 day behind" : b + " days behind");
+        if (b >= 3) kind = "stale";
+      }
+    }
+    var icon = { live: "●", near: "◷", daily: "▦", stale: "▲" }[kind];
+    return h("span", { class: "fresh " + kind, title: tipText + (s.fetched ? " Checked " + ago(s.fetched) + "." : "") + (s.stale ? " Showing the last good copy: " + s.stale : ""),
+      text: icon + " " + who + text + (s.stale ? " (last good copy)" : "") });
+  }
+  function checked(s) { return s && s.ok && s.fetched ? h("span", { class: "fresh-checked", text: "checked " + ago(s.fetched) }) : null; }
 
   function sourceState(s, label) {
     if (!s) return h("p", { class: "muted", text: label + ": not requested." });
     if (s.configured === false) return h("p", { class: "notice", text: label + " is not connected yet. Its credentials are not in the server's config." });
     if (!s.ok) return h("p", { class: "notice error", text: label + " could not be read: " + s.error });
     return null;
-  }
-
-  function freshness(s, extra) {
-    if (!s || !s.ok || s.configured === false) return "";
-    return "Fetched " + ago(s.fetched) + (extra ? " · " + extra : "") + (s.stale ? " · showing the last good copy (" + s.stale + ")" : "");
   }
 
   function table(cols, rows, opts) {
@@ -81,23 +117,31 @@
 
   function pill(status) {
     var s = String(status || "").toUpperCase();
-    var kind = /ACTIVE|ENABLE|DELIVERY_OK/.test(s) ? "good" : /PAUSE|DISABLE|NOT_DELIVER|ARCHIVED/.test(s) ? "off" : /REVIEW|PROCESS|LEARN/.test(s) ? "wait" : /ISSUE|REJECT|DISAPPROVED|ERROR/.test(s) ? "bad" : "off";
+    var kind = /NO_RECENT_DELIVERY|PAUSE|DISABLE|NOT_DELIVER|ARCHIVED/.test(s) ? "off" : /ACTIVE|ENABLE|DELIVERY_OK|DELIVERING_NOW/.test(s) ? "good"
+      : /REVIEW|PROCESS|LEARN|DELIVERED_YESTERDAY/.test(s) ? "wait" : /ISSUE|REJECT|DISAPPROVED|ERROR/.test(s) ? "bad" : "off";
     var icon = { good: "●", off: "○", wait: "◐", bad: "▲" }[kind];
     return h("span", { class: "pill " + kind, text: icon + " " + s.replace(/^CAMPAIGN_STATUS_|_/g, " ").trim().toLowerCase() });
   }
 
-  function tile(label, value, sub, source) {
-    return h("div", { class: "tile" }, [h("div", { class: "tile-label", text: label }), h("div", { class: "tile-value", text: value }), h("div", { class: "tile-sub muted", text: sub || "" }), source ? h("div", { class: "tile-src", text: source }) : null]);
+  // badges: one per source behind the number, so a tile mixing a live source
+  // with a daily one says which part is which.
+  function tile(label, value, sub, note, badges) {
+    return h("div", { class: "tile" }, [h("div", { class: "tile-label", text: label }), h("div", { class: "tile-value", text: value }),
+      h("div", { class: "tile-sub muted", text: sub || "" }), note ? h("div", { class: "tile-note muted", text: note }) : null,
+      h("div", { class: "tile-fresh" }, (badges || []).filter(Boolean))]);
   }
 
   // A stacked daily bar chart. series: [{name, cls, values: {date: number}}].
-  function barChart(dates, series, fmt, title) {
+  // reportedTo: the last day the source has published; later days are hatched
+  // "not reported yet", so they are not read as zero.
+  function barChart(dates, series, fmt, title, reportedTo) {
     fmt = fmt || n;
+    var pendingFrom = reportedTo ? dates.filter(function (d) { return d > reportedTo; }) : [];
     // Drawn at the panel's real width, so text stays 11px rather than scaling.
     var W = Math.max(300, Math.min(1240, (app.clientWidth || 752) - 66)), H = 200, L = 52, R = 8, T = 10, B = 26;
     var totals = dates.map(function (d) { return series.reduce(function (t, s) { return t + (+(s.values[d] || 0)); }, 0); });
     var max = Math.max.apply(null, totals.concat([0]));
-    if (max === 0) return h("p", { class: "muted", text: "Nothing recorded in this range." });
+    if (max === 0) return h("p", { class: "muted", text: "Nothing recorded in this range" + (reportedTo ? " (reported to " + shortDate(reportedTo) + ")." : ".") });
     // Gridlines at 0, half and top: pick a round half-value, so both labels are
     // round; counts never get a fractional half (3 would label 1.5 as "2").
     var half = max / 2, mag = Math.pow(10, Math.floor(Math.log10(half)));
@@ -108,6 +152,13 @@
     function s(tag, a) { var e = document.createElementNS(ns, tag); for (var k in a) e.setAttribute(k, a[k]); return e; }
     var svg = s("svg", { viewBox: "0 0 " + W + " " + H, class: "chart", role: "img", "aria-label": title });
     var plotW = W - L - R, plotH = H - T - B, bw = plotW / dates.length;
+    if (pendingFrom.length) {
+      var defs = s("defs", {}), hid = "hatch" + (++hatchCount), pat = s("pattern", { id: hid, width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
+      pat.appendChild(s("line", { x1: 0, y1: 0, x2: 0, y2: 6, class: "hatch" }));
+      defs.appendChild(pat); svg.appendChild(defs);
+      var px0 = L + dates.indexOf(pendingFrom[0]) * bw;
+      svg.appendChild(s("rect", { x: px0, y: T, width: W - R - px0, height: plotH, class: "pending", fill: "url(#" + hid + ")" }));
+    }
     [0, 0.5, 1].forEach(function (f) {
       var y = T + plotH * (1 - f);
       svg.appendChild(s("line", { x1: L, x2: W - R, y1: y, y2: y, class: f === 0 ? "axis" : "grid" }));
@@ -134,6 +185,7 @@
       var hit = s("rect", { x: x, y: T, width: bw, height: plotH, class: "hit" });
       hit.addEventListener("mousemove", function (ev) {
         tip.replaceChildren(h("strong", { text: shortDate(d) }));
+        if (reportedTo && d > reportedTo) { tip.appendChild(h("div", { class: "muted", text: "Not reported yet" })); }
         series.slice().reverse().forEach(function (se) {
           tip.appendChild(h("div", {}, [h("span", { class: "key " + se.cls }), se.name + ": " + fmt(+(se.values[d] || 0))]));
         });
@@ -145,7 +197,9 @@
       hit.addEventListener("mouseleave", function () { tip.hidden = true; });
       svg.appendChild(hit);
     });
-    var legend = series.length > 1 ? h("div", { class: "legend" }, series.map(function (se) { return h("span", {}, [h("span", { class: "key " + se.cls }), se.name]); })) : null;
+    var keys = series.length > 1 ? series.map(function (se) { return h("span", {}, [h("span", { class: "key " + se.cls }), se.name]); }) : [];
+    if (pendingFrom.length) keys.push(h("span", {}, [h("span", { class: "key pending-key" }), "Not reported yet (after " + shortDate(reportedTo) + ")"]));
+    var legend = keys.length ? h("div", { class: "legend" }, keys) : null;
     return h("figure", { class: "figure" }, [h("figcaption", { text: title }), legend, svg]);
   }
 
@@ -153,6 +207,7 @@
 
   function render(d) {
     var S = d.sources, dates = dateList(d.since, d.until);
+    TODAY = d.until;
     var meta = S.meta || {}, tt = S.tiktok || {}, apple = S.apple || {}, play = S.play || {};
     var gt = S.get || {}, pb = S.postbacks || {}, ga = S.ga4 || {}, rt = S.ga4_realtime || {};
     var sales = S.sales || {}, ps = S.play_sales || {};
@@ -176,16 +231,20 @@
     var spendToCutoff = toCutoff(live(meta) && meta.daily, "spend") + toCutoff(live(tt) && tt.daily, "spend");
     var downloadsToCutoff = toCutoff(live(apple) && apple.daily, "first") + toCutoff(live(play) && play.daily, "installs");
 
+    // A blended figure is only as current as its slowest daily source, so its
+    // badge names the day it runs to.
+    var cutSrc = { ok: true, latest_date: cutoff, fetched: (apple.fetched || play.fetched) };
     var tiles = h("div", { class: "tiles" }, [
-      tile("Ad spend", gbp(spend), (live(meta) ? "Meta " + gbp(metaSpend) : "Meta not connected") + " · " + (live(tt) ? "TikTok " + gbp(ttSpend) : "TikTok not connected"), "Meta + TikTok, live"),
-      tile("App Store first-time downloads", n(appleFirst), live(apple) ? "Apple data to " + (apple.latest_date ? shortDate(apple.latest_date) : "–") : "Apple not connected", "All sources, not only ads"),
-      tile("Google Play installs", n(playInst), live(play) ? "Play data to " + (play.latest_date ? shortDate(play.latest_date) : "–") : "Play not connected", "Daily user installs"),
+      tile("Ad spend", gbp(spend), (live(meta) ? "Meta " + gbp(metaSpend) : "Meta not connected") + " · " + (live(tt) ? "TikTok " + gbp(ttSpend) : "TikTok not connected"), null,
+        [badge("meta", meta, "Meta"), badge("tiktok", tt, "TikTok")]),
+      tile("App Store first-time downloads", n(appleFirst), "All sources, not only ads", null, [badge("apple", apple)]),
+      tile("Google Play installs", n(playInst), "Daily user installs", null, [badge("play", play)]),
       tile("Cost per download", downloadsToCutoff > 0 && spendToCutoff > 0 ? gbp(spendToCutoff / downloadsToCutoff) : "–",
-        cutoff ? "Spend to " + shortDate(cutoff) + " ÷ (App Store + Play)" : "Needs store data", "Only days the stores have reported"),
-      tile("Meta-reported installs", n(live(meta) ? sum(meta.daily, "installs") : null), "iOS 14+ campaigns, modelled by Meta", "Meta Insights"),
-      tile("Install reports from Apple", n(won), "SKAdNetwork postbacks, winning only", "Arrive 24–48 h+ late"),
-      tile("/get/ visitors", n(people), live(gt) ? n(sum(gt.daily, "iphone")) + " iPhone · " + n(sum(gt.daily, "android")) + " Android" : "", "Includes in-app browser prefetch"),
-      tile("On the website now", n(live(rt) ? rt.active : null), live(rt) ? "GA4 realtime, last 30 min" : "GA4 not connected", "Consented visitors only"),
+        "Spend ÷ (App Store + Play downloads)", "Both sides stop at the stores' last reported day", [badge("apple", cutSrc, "Stores", cutoff)]),
+      tile("Meta-reported installs", n(live(meta) ? sum(meta.daily, "installs") : null), "iOS 14+ campaigns, modelled by Meta", null, [badge("meta_installs", meta)]),
+      tile("Install reports from Apple", n(won), "SKAdNetwork postbacks, winning only", null, [badge("postbacks", pb)]),
+      tile("/get/ visitors", n(people), live(gt) ? n(sum(gt.daily, "iphone")) + " iPhone · " + n(sum(gt.daily, "android")) + " Android" : "", "Includes in-app browser prefetch", [badge("get", gt)]),
+      tile("On the website now", n(live(rt) ? rt.active : null), "Visitors in the last 30 minutes", "Only those who accepted cookies", [badge("ga4_realtime", rt)]),
     ]);
 
     // In-app purchases: Apple's sales report (net proceeds) and Play's sales
@@ -199,11 +258,13 @@
     var spendToSalesCut = sumTo(live(meta) && meta.daily, "spend", salesCut) + sumTo(live(tt) && tt.daily, "spend", salesCut);
     var anySales = live(sales) || live(ps);
     tiles.appendChild(tile("In-app purchases", anySales ? n(iapCount) : "–",
-      anySales ? n(iapRefunds) + " refunded" + (live(sales) ? "" : " · App Store missing") + (live(ps) ? "" : " · Play missing") : "Sales reports not connected",
-      "Every buyer, from the stores' sales reports"));
-    tiles.appendChild(tile("In-app revenue", anySales ? "≈" + gbp(iapMoney) : "–", "App Store net proceeds + Play gross", "Converted to £ at today's rate"));
+      anySales ? n(iapRefunds) + " refunded" : "Sales reports not connected",
+      "Every buyer, from the stores' sales reports", [badge("sales", sales, "App Store"), badge("play_sales", ps, "Play")]));
+    tiles.appendChild(tile("In-app revenue", anySales ? "≈" + gbp(iapMoney) : "–", "App Store net proceeds + Play gross", "Converted to £ at today's rate",
+      [badge("sales", sales, "App Store"), badge("play_sales", ps, "Play")]));
     tiles.appendChild(tile("Return on ad spend", anySales && spendToSalesCut > 0 ? n(moneyToCut / spendToSalesCut, 2) + "×" : "–",
-      salesCut ? "Revenue ÷ spend, to " + shortDate(salesCut) : "Needs sales reports", "All revenue, not only ad-driven"));
+      "In-app revenue ÷ ad spend", "All revenue, not only ad-driven; both sides stop at the sales reports' last day",
+      [badge("sales", { ok: anySales, latest_date: salesCut, fetched: sales.fetched || ps.fetched }, "Sales", salesCut)]));
 
     var parts = [tiles];
 
@@ -212,7 +273,8 @@
       var spendSeries = [];
       if (live(meta)) spendSeries.push({ name: "Meta", cls: "s1", values: map(meta.daily, "spend") });
       if (live(tt)) spendSeries.push({ name: "TikTok", cls: "s2", values: map(tt.daily, "spend") });
-      parts.push(section("Spend per day", "Pounds. Meta and TikTok report spend within minutes.", [barChart(dates, spendSeries, gbp, "Ad spend per day")]));
+      parts.push(section("Spend per day", "Pounds. Today's bar keeps growing until the day ends.", [barChart(dates, spendSeries, gbp, "Ad spend per day")],
+        [badge("meta", meta, "Meta"), badge("tiktok", tt, "TikTok"), checked(meta)]));
     }
 
     // In-app purchases
@@ -223,7 +285,7 @@
       var iapSeries = [];
       if (live(sales)) iapSeries.push({ name: "App Store", cls: "s1", values: map(sales.daily, "purchases") });
       if (live(ps)) iapSeries.push({ name: "Google Play", cls: "s2", values: map(ps.daily, "purchases") });
-      iapKids.push(barChart(dates, iapSeries, n, "In-app purchases per day"));
+      iapKids.push(barChart(dates, iapSeries, n, "In-app purchases per day", salesCut));
       var drows = {};
       [[live(sales) && sales.daily, "proceeds", "a"], [live(ps) && ps.daily, "gross", "g"]].forEach(function (x) {
         Object.keys(x[0] || {}).forEach(function (k) {
@@ -261,9 +323,8 @@
         ], entries(ctry, "purchases").filter(function (r) { return r.purchases; }).slice(0, 25))]),
       ]));
     }
-    parts.push(section("In-app purchases", freshness(live(sales) ? sales : ps, "stores publish sales daily, the day after" +
-      (live(sales) && sales.latest_date ? "; App Store to " + shortDate(sales.latest_date) : "") +
-      (live(ps) && ps.latest_date ? "; Play to " + shortDate(ps.latest_date) : "")), iapKids));
+    parts.push(section("In-app purchases", "Stores publish sales once a day. App Store figures are net proceeds; Play's are gross charged.", iapKids,
+      [badge("sales", sales, "App Store"), badge("play_sales", ps, "Play"), checked(live(sales) ? sales : ps)]));
 
     // Revenue per campaign
     var rpc = [];
@@ -290,10 +351,11 @@
       rpcKids.push(h("p", { class: "muted note", text: "All in-app revenue in this range ≈" + gbp(iapMoney) + "; the ad platforms claim " + gbp(attributed) +
         ". The rest came from people the platforms could not link to an ad (no tracking consent, organic, or another source)." }));
     }
-    parts.push(section("Revenue per campaign", "What each ad platform attributes to its campaigns, from the purchase events Wren's Meta and TikTok SDKs report. Platform-reported, so it may overlap and differs from Apple's net proceeds.", rpcKids));
+    parts.push(section("Revenue per campaign", "What each ad platform attributes to its campaigns, from the purchase events Wren's Meta and TikTok SDKs report. Platform-reported, so it may overlap and differs from Apple's net proceeds.", rpcKids,
+      [badge("meta", meta, "Meta"), badge("tiktok", tt, "TikTok"), appleRpc.length ? badge("apple", apple, "App Store") : null]));
 
     // Meta
-    parts.push(section("Meta (Instagram)", freshness(meta, "account " + (meta.currency || "")), [
+    parts.push(section("Meta (Instagram)", "Spend, impressions and clicks are near real-time; installs arrive 1–3 days late through Apple.", [
       sourceState(meta, "Meta"),
       live(meta) ? table([
         { label: "Campaign", get: function (r) { return r.name; } },
@@ -323,27 +385,28 @@
         { label: "Installs", num: true, get: function (r) { return n(r.installs); } },
         { label: "Cost/install", num: true, get: function (r) { return r.cpi == null ? "–" : gbp(r.cpi); } },
       ], meta.countries)]) : null,
-    ]));
+    ], [badge("meta", meta), badge("meta_installs", meta, "Installs"), checked(meta)]));
 
     // TikTok
     var ttKids = [sourceState(tt, "TikTok")];
     if (tt.configured === false) ttKids.push(h("p", { class: "muted", text: "Until TikTok approves API access, its traffic shows up below: /get/ visitors with tt-* tokens, and App Store downloads under the same campaign tokens." }));
     if (live(tt)) ttKids.push(table([
       { label: "Campaign", get: function (r) { return r.name; } },
-      { label: "Status", get: function (r) { return pill(r.status); } },
+      { label: tt.campaigns.some(function (c) { return c.status_inferred; }) ? "Delivery (from impressions)" : "Status", get: function (r) { return pill(r.status); } },
       { label: "Spend", num: true, get: function (r) { return gbp(r.spend); }, total: totalOf("spend", gbp) },
       { label: "Impressions", num: true, get: function (r) { return n(r.impressions); }, total: totalOf("impressions") },
       { label: "Clicks", num: true, get: function (r) { return n(r.clicks); }, total: totalOf("clicks") },
       { label: "Cost/click", num: true, get: function (r) { return r.cpc == null ? "–" : "£" + n(r.cpc, 3); } },
       { label: "Conversions", num: true, get: function (r) { return n(r.conversions); }, total: totalOf("conversions") },
     ], tt.campaigns, { total: true }));
-    parts.push(section("TikTok", freshness(tt) + (live(tt) ? " · TikTok Promote (in-app boosts) is not in the API" : ""), ttKids));
+    parts.push(section("TikTok", "TikTok Promote (boosts made in the TikTok app) is not in TikTok's API, so it is not here.", ttKids,
+      [badge("tiktok", tt), checked(tt)]));
 
     // Apple
     var appleKids = [sourceState(apple, "App Store Connect")];
     if (live(apple)) {
       if (apple.partial) appleKids.push(h("p", { class: "notice", text: "Still downloading Apple's report files. This fills in over the next minute." }));
-      appleKids.push(barChart(dates, [{ name: "First-time downloads", cls: "s1", values: map(apple.daily, "first") }], n, "App Store first-time downloads per day"));
+      appleKids.push(barChart(dates, [{ name: "First-time downloads", cls: "s1", values: map(apple.daily, "first") }], n, "App Store first-time downloads per day", apple.latest_date));
       var rows = Object.keys(apple.daily).sort().reverse().map(function (k) { return Object.assign({ date: k }, apple.daily[k]); });
       appleKids.push(table([
         { label: "Date", get: function (r) { return shortDate(r.date); } },
@@ -385,12 +448,13 @@
         })), pk.sort().reverse().map(function (k) { return Object.assign({ date: k }, apple.purchases[k]); }), { total: true }));
       }
     }
-    parts.push(section("App Store", freshness(apple, "Apple publishes daily, 1–2 days behind; campaigns under 5 downloads are hidden by Apple"), appleKids));
+    parts.push(section("App Store", "Apple hides campaigns with fewer than 5 downloads, and counts only people who share analytics.", appleKids,
+      [badge("apple", apple), checked(apple)]));
 
     // Play
     var playKids = [sourceState(play, "Google Play")];
     if (live(play)) {
-      playKids.push(barChart(dates, [{ name: "Installs", cls: "s1", values: map(play.daily, "installs") }], n, "Google Play installs per day"));
+      playKids.push(barChart(dates, [{ name: "Installs", cls: "s1", values: map(play.daily, "installs") }], n, "Google Play installs per day", play.latest_date));
       playKids.push(h("div", { class: "grid2" }, [
         h("div", {}, [h("h3", { text: "By country" }), table([
           { label: "Country", get: function (r) { return regionName(r.k); } },
@@ -403,7 +467,8 @@
         ], entries(play.sources, "visitors"), { empty: "Play has not published this month's traffic-source file yet; it comes later than installs." })]),
       ]));
     }
-    parts.push(section("Google Play", freshness(play, "Play publishes daily, a few days behind"), playKids));
+    parts.push(section("Google Play", "The traffic-source (UTM) file is published later than installs; its own date is in its heading.", playKids,
+      [badge("play", play, "Installs"), live(play) && play.sources_latest ? badge("play", play, "Sources", play.sources_latest) : null, checked(play)]));
 
     // /get/
     var getKids = [sourceState(gt, "/get/ tally")];
@@ -421,7 +486,8 @@
         { label: "Bots/checkers", num: true, get: function (r) { return n(r.bot); }, total: totalOf("bot") },
       ], entries(gt.tokens, "iphone"), { total: true }));
     }
-    parts.push(section("/get/ campaign links", "Live. TikTok's in-app browser loads links before anyone taps, so read this as device mix, not a click count.", getKids));
+    parts.push(section("/get/ campaign links", "TikTok's in-app browser loads links before anyone taps, so read this as device mix, not a click count.", getKids,
+      [badge("get", gt), checked(gt)]));
 
     // SKAN
     var pbKids = [sourceState(pb, "Postbacks")];
@@ -434,7 +500,8 @@
       { label: "Window", get: function (r) { return r.sequence == null ? "–" : String(+r.sequence + 1); } },
       { label: "Version", get: function (r) { return r.version; } },
     ], pb.postbacks, { empty: "No install reports from Apple in this range." }));
-    parts.push(section("Install reports from Apple (SKAdNetwork)", "Copies of the postbacks Apple sends ad networks. Live as they arrive; Apple delays each by 24–48 hours or more, at random.", pbKids));
+    parts.push(section("Install reports from Apple (SKAdNetwork)", "Copies of the postbacks Apple sends ad networks, shown the moment they arrive.", pbKids,
+      [badge("postbacks", pb), checked(pb)]));
 
     // GA4
     var gaKids = [sourceState(ga, "Google Analytics")];
@@ -456,7 +523,8 @@
         ], rt.countries)]) : null,
       ]));
     }
-    parts.push(section("Website (wren.spencerfields.com)", freshness(ga, "only visitors who accepted cookies are counted"), gaKids));
+    parts.push(section("Website (wren.spencerfields.com)", "Only visitors who accepted cookies are counted.", gaKids,
+      [badge("ga4", ga, "Daily"), badge("ga4_realtime", rt, "Right now"), checked(ga)]));
 
     app.replaceChildren.apply(app, parts.filter(Boolean));
     return live(apple) && apple.partial;

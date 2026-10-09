@@ -207,6 +207,15 @@ function tiktok_get(string $path, array $params): array
     return $d['data'] ?? [];
 }
 
+// TikTok reports days in the ad account's time zone (London), so "today" is
+// compared in that zone too.
+function tiktok_delivery(?string $lastDay): string
+{
+    $today = (new DateTime('now', new DateTimeZone('Europe/London')))->format('Y-m-d');
+    $yesterday = (new DateTime('yesterday', new DateTimeZone('Europe/London')))->format('Y-m-d');
+    return $lastDay === $today ? 'DELIVERING_NOW' : ($lastDay === $yesterday ? 'DELIVERED_YESTERDAY' : 'NO_RECENT_DELIVERY');
+}
+
 function source_tiktok(string $since, string $until): array
 {
     $cfg = config()['tiktok'] ?? null;
@@ -242,6 +251,9 @@ function source_tiktok(string $since, string $until): array
             $days[$day][$k] = ($days[$day][$k] ?? 0) + num($m[$k] ?? 0);
         }
         $byCampaign[$id]['name'] = $m['campaign_name'] ?? $id;
+        if (num($m['impressions'] ?? 0) > 0) {
+            $byCampaign[$id]['last_delivery'] = max($byCampaign[$id]['last_delivery'] ?? '', $day);
+        }
     }
     $status = [];
     foreach ($campaigns as $c) {
@@ -255,7 +267,10 @@ function source_tiktok(string $since, string $until): array
             continue;
         }
         $rows[] = ['id' => (string) $id, 'name' => $c['_name'] ?? ($s['name'] ?? $id),
-            'status' => $c['secondary_status'] ?? $c['operation_status'] ?? '',
+            // The real on/off status needs the Ads management scope, which this
+            // read-only token deliberately lacks; delivery is inferred instead.
+            'status' => $c['secondary_status'] ?? $c['operation_status'] ?? tiktok_delivery($s['last_delivery'] ?? null),
+            'status_inferred' => !isset($c['secondary_status']) && !isset($c['operation_status']),
             'objective' => $c['objective_type'] ?? '', 'budget' => isset($c['budget']) ? num($c['budget']) : null,
             'spend' => $s['spend'], 'impressions' => (int) $s['impressions'], 'clicks' => (int) $s['clicks'],
             'conversions' => $s['conversion'], 'installs' => $s['app_install'] ?? 0,

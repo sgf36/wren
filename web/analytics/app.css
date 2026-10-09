@@ -17,6 +17,11 @@
   --good: #0ca30c;
   --wait: #b77d00;
   --bad: #d03b3b;
+  /* text-safe steps of the status hues, for badge words */
+  --good-ink: #006300;
+  --good-ring: rgba(12, 163, 12, 0.45);
+  --wait-ink: #8a5d00;
+  --wait-ring: rgba(183, 125, 0, 0.5);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -34,6 +39,10 @@
     --s2: #d95926;
     --s3: #199e70;
     --wait: #fab219;
+    --good-ink: #4cc94c;
+    --good-ring: rgba(12, 163, 12, 0.6);
+    --wait-ink: #fab219;
+    --wait-ring: rgba(250, 178, 25, 0.55);
   }
 }
 
@@ -112,7 +121,30 @@ main#app { padding: 16px; max-width: 1280px; margin: 0 auto; display: grid; gap:
 .tile-label { color: var(--ink-2); font-size: 13px; }
 .tile-value { font-size: 28px; font-weight: 600; }
 .tile-sub { font-size: 12px; }
-.tile-src { font-size: 11px; color: var(--muted); border-top: 1px solid var(--grid); margin-top: 6px; padding-top: 6px; }
+.tile-note { font-size: 11px; }
+.tile-fresh { display: flex; flex-wrap: wrap; gap: 4px; border-top: 1px solid var(--grid); margin-top: 6px; padding-top: 8px; }
+
+/* freshness: an icon and words, never colour alone */
+.fresh-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.fresh {
+  display: inline-block;
+  font-size: 11px;
+  line-height: 1.3;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--page);
+  color: var(--ink-2);
+  white-space: nowrap;
+  cursor: help;
+}
+.fresh.live { color: var(--good-ink); border-color: var(--good-ring); }
+.fresh.near { color: var(--ink-2); }
+.fresh.daily { color: var(--ink-2); }
+.fresh.stale { color: var(--wait-ink); border-color: var(--wait-ring); }
+.fresh.off { color: var(--muted); }
+.fresh-checked { font-size: 11px; color: var(--muted); }
+.panel-head .note { flex-basis: 100%; }
 
 /* panels */
 .panel {
@@ -157,6 +189,8 @@ figcaption { font-size: 13px; color: var(--ink-2); margin-bottom: 4px; }
 .chart .axis { stroke: var(--axis); stroke-width: 1; }
 .chart .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 .chart .hit { fill: transparent; }
+.chart .hatch { stroke: var(--axis); stroke-width: 2; }
+.key.pending-key { background: repeating-linear-gradient(45deg, var(--axis) 0 2px, transparent 2px 5px); border: 1px solid var(--axis); }
 .chart .hit:hover { fill: var(--grid); fill-opacity: 0.35; }
 #tip {
   position: fixed;
