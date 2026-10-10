@@ -159,6 +159,16 @@ main#app { padding: 16px; max-width: 1280px; margin: 0 auto; display: grid; gap:
 @media (prefers-reduced-motion: reduce) {
   .pulse { animation: none; }
 }
+/* Real time: a count that just went up lights green for a moment. */
+.bump { border-radius: 4px; animation: bump 1.8s ease-out; }
+@keyframes bump {
+  0% { background: var(--good-ring); color: var(--good-ink); }
+  100% { background: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bump { animation: none; font-weight: 700; }
+}
+.live-note { border-left: 3px solid var(--good); }
 .fresh.near { color: var(--ink-2); }
 .fresh.daily { color: var(--ink-2); }
 .fresh.stale { color: var(--wait-ink); border-color: var(--wait-ring); }

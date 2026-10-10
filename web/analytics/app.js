@@ -4,8 +4,11 @@
 
   var app = document.getElementById("app");
   var tip = document.getElementById("tip");
-  var days = 14;
-  try { days = +localStorage.getItem("wren-dash-days") || 14; } catch (e) { /* storage blocked */ }
+  var days = 14; // 0 is the "Real time" tab
+  try {
+    var saved = localStorage.getItem("wren-dash-days");
+    if (saved !== null && [0, 1, 7, 14, 30].indexOf(+saved) >= 0) days = +saved;
+  } catch (e) { /* storage blocked */ }
   var timer = null;
   var regionName = (function () {
     try { var d = new Intl.DisplayNames(["en-GB"], { type: "region" }); return function (c) { try { return d.of(c) || c; } catch (e) { return c; } }; }
@@ -213,6 +216,123 @@
 
   // ------------------------------------------------------------ the page
 
+  // The app's funnel steps, in order, then the events along the way. Shared by
+  // the dated view and the "Real time" tab, so both name a step the same way.
+  var FUNNEL = [
+    ["first_open", "Opened Wren for the first time"],
+    ["import_started", "Started an import"],
+    ["reel_read:free", "Read a post on a free read"],
+    ["paywall_shown", "Saw a purchase sheet"],
+    ["buy_tapped", "Tapped a buy button"],
+    ["purchased", "Bought"],
+  ];
+  var SIDE = [
+    ["paywall_shown:places", "Sheet: more than 3 places"],
+    ["paywall_shown:combine", "Sheet: adding to an existing guide"],
+    ["paywall_shown:reels", "Sheet: reading a post"],
+    ["purchase_failed", "Purchase cancelled or failed"],
+    ["paywall_dismissed", "Closed the sheet without choosing"],
+    ["saved_free_instead", "Saved the free 3 instead"],
+    ["restore_tapped", "Tapped restore"],
+    ["reel_read:paid", "Read a post on a purchase"],
+    ["guide_saved", "Saved a guide / sent places"],
+  ];
+
+  // ------------------------------------------------------------ the "Real time" tab
+  //
+  // Only what is counted the moment it happens: the app's funnel steps, /get/
+  // link visitors, and people on the website now. Every figure except the last
+  // starts at zero when the tab is opened and counts up while it stays open;
+  // leaving the tab, or reloading, starts again. The server sends running
+  // totals keyed by day; the first answer is kept as the baseline and each
+  // figure is the growth since, key by key, so midnight cannot make one fall.
+
+  var liveBase = null, liveSince = 0, livePrev = {};
+
+  function renderLive(d) {
+    var C = d.counts || {};
+    if (!liveBase) { liveBase = C; liveSince = Date.now(); livePrev = {}; }
+    var grew = {}; // "funnel|<step>|<platform>" or "get|<token>|<device>" -> growth
+    Object.keys(C).forEach(function (k) {
+      var g = (+C[k]) - (+(liveBase[k] || 0));
+      if (g <= 0) return;
+      var p = k.split("|");
+      var key = p[0] + "|" + p[2] + "|" + p[3];
+      grew[key] = (grew[key] || 0) + g;
+    });
+    var next = {};
+    // A count that went up since the last look briefly lights up.
+    function cnt(id, v) {
+      next[id] = v;
+      return h("span", { class: v > (livePrev[id] || 0) ? "bump" : "", text: n(v) });
+    }
+    function step(key) {
+      var out = { ios: 0, android: 0, all: 0 };
+      Object.keys(grew).forEach(function (k) {
+        var p = k.split("|");
+        if (p[0] !== "funnel" || !(p[1] === key || p[1].indexOf(key + ":") === 0)) return;
+        if (p[2] === "ios" || p[2] === "android") out[p[2]] += grew[k];
+        out.all += grew[k];
+      });
+      return out;
+    }
+    var appSteps = 0, tokens = {}, visitors = { iphone: 0, android: 0, other: 0 };
+    Object.keys(grew).forEach(function (k) {
+      var p = k.split("|");
+      if (p[0] === "funnel") appSteps += grew[k];
+      if (p[0] === "get" && p[2] !== "bot") {
+        visitors[p[2]] = (visitors[p[2]] || 0) + grew[k];
+        var t = tokens[p[1]] = tokens[p[1]] || { k: p[1], iphone: 0, android: 0, other: 0 };
+        t[p[2]] = (t[p[2]] || 0) + grew[k];
+      }
+    });
+    var rt = (d.sources || {}).ga4_realtime || {};
+    var mine = { ok: true, configured: true, fetched: d.generated };
+    var mins = Math.floor((Date.now() - liveSince) / 60000);
+    var since = new Date(liveSince).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
+    var parts = [h("p", { class: "notice live-note", text: "Counting since " + since + (mins ? " (" + mins + " min)" : "") +
+      ". Each figure starts at zero when you open this tab and goes up as things happen; leaving the tab starts again. " +
+      "Ad spend runs minutes to hours behind and the stores report daily, so those stay on the other tabs." })];
+
+    parts.push(h("div", { class: "tiles" }, [
+      h("div", { class: "tile" }, [h("div", { class: "tile-label", text: "App steps" }),
+        h("div", { class: "tile-value" }, [cnt("t-app", appSteps)]), h("div", { class: "tile-sub muted", text: "Every funnel event, both platforms" }),
+        h("div", { class: "tile-fresh" }, [badge("funnel", mine)])]),
+      h("div", { class: "tile" }, [h("div", { class: "tile-label", text: "/get/ visitors" }),
+        h("div", { class: "tile-value" }, [cnt("t-get", visitors.iphone + visitors.android + visitors.other)]),
+        h("div", { class: "tile-sub muted", text: n(visitors.iphone) + " iPhone · " + n(visitors.android) + " Android" }),
+        h("div", { class: "tile-fresh" }, [badge("get", mine)])]),
+      tile("On the website now", n(rt.ok && rt.configured !== false ? rt.active : null), "Visitors in the last 30 minutes",
+        "A count of who is there now, so it can fall; only those who accepted cookies", [badge("ga4_realtime", rt)]),
+    ]));
+
+    function stepRows(list) {
+      return list.map(function (f) { var c = step(f[0]); return { id: f[0], k: f[1], ios: c.ios, android: c.android, all: c.all }; });
+    }
+    var cols = [
+      { label: "Step", get: function (r) { return r.k; } },
+      { label: "iPhone", num: true, get: function (r) { return cnt("f-" + r.id + "-ios", r.ios); } },
+      { label: "Android", num: true, get: function (r) { return cnt("f-" + r.id + "-and", r.android); } },
+      { label: "Total", num: true, get: function (r) { return cnt("f-" + r.id + "-all", r.all); } },
+    ];
+    parts.push(section("Purchase funnel, since you opened this tab", "Counts of events, not people.", [
+      table(cols, stepRows(FUNNEL)), h("h3", { text: "Along the way" }), table(cols, stepRows(SIDE)),
+    ], [badge("funnel", mine)]));
+
+    parts.push(section("/get/ campaign links, since you opened this tab", "Checkers and bots are left out.", [
+      table([
+        { label: "Token", get: function (r) { return r.k; } },
+        { label: "iPhone/iPad", num: true, get: function (r) { return cnt("g-" + r.k + "-i", r.iphone); } },
+        { label: "Android", num: true, get: function (r) { return cnt("g-" + r.k + "-a", r.android); } },
+        { label: "Other", num: true, get: function (r) { return cnt("g-" + r.k + "-o", r.other); } },
+      ], entries(tokens, "iphone"), { empty: "No visitors since you opened this tab." }),
+    ], [badge("get", mine)]));
+
+    app.replaceChildren.apply(app, parts);
+    livePrev = next;
+  }
+
   function render(d) {
     var S = d.sources, dates = dateList(d.since, d.until);
     TODAY = d.until;
@@ -337,25 +457,6 @@
     // Purchase funnel: what the app reports at each step, in order. Counts are
     // of events, not people (nothing identifies anyone), so a step can exceed
     // the one before it when someone repeats it.
-    var FUNNEL = [
-      ["first_open", "Opened Wren for the first time"],
-      ["import_started", "Started an import"],
-      ["reel_read:free", "Read a post on a free read"],
-      ["paywall_shown", "Saw a purchase sheet"],
-      ["buy_tapped", "Tapped a buy button"],
-      ["purchased", "Bought"],
-    ];
-    var SIDE = [
-      ["paywall_shown:places", "Sheet: more than 3 places"],
-      ["paywall_shown:combine", "Sheet: adding to an existing guide"],
-      ["paywall_shown:reels", "Sheet: reading a post"],
-      ["purchase_failed", "Purchase cancelled or failed"],
-      ["paywall_dismissed", "Closed the sheet without choosing"],
-      ["saved_free_instead", "Saved the free 3 instead"],
-      ["restore_tapped", "Tapped restore"],
-      ["reel_read:paid", "Read a post on a purchase"],
-      ["guide_saved", "Saved a guide / sent places"],
-    ];
     function stepTotal(key) {
       var st = (fn.steps || {}), out = { ios: 0, android: 0, all: 0 };
       Object.keys(st).forEach(function (k) {
@@ -607,7 +708,30 @@
 
   // ------------------------------------------------------------ loading
 
+  // The "Real time" tab asks every 5 seconds: it reads only this server's own
+  // small files (Google's live count is cached for a minute), so it is cheap.
+  // A hidden browser tab asks once a minute instead, and keeps its baseline.
+  function loadLive() {
+    clearTimeout(timer);
+    fetch("api.php?live=1", { credentials: "same-origin" })
+      .then(function (r) {
+        if (r.status === 401) { location.reload(); throw new Error("signed out"); }
+        return r.json();
+      })
+      .then(function (d) {
+        if (days !== 0) return; // the tab was left while this was in flight
+        renderLive(d);
+        document.getElementById("updated").textContent = "Live · " + new Date().toLocaleTimeString("en-GB");
+        timer = setTimeout(load, document.hidden ? 60000 : 5000);
+      })
+      .catch(function () {
+        document.getElementById("updated").textContent = "Update failed";
+        timer = setTimeout(load, 15000);
+      });
+  }
+
   function load(refresh) {
+    if (days === 0) return loadLive();
     clearTimeout(timer);
     document.getElementById("updated").textContent = "Updating…";
     fetch("api.php?days=" + days + (refresh ? "&refresh=1" : ""), { credentials: "same-origin" })
@@ -616,6 +740,7 @@
         return r.json();
       })
       .then(function (d) {
+        if (days === 0) return; // "Real time" was opened while this was in flight
         lastData = d;
         var partial = render(d);
         document.getElementById("updated").textContent = "Updated " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
@@ -631,6 +756,7 @@
     b.setAttribute("aria-pressed", String(+b.dataset.days === days));
     b.addEventListener("click", function () {
       days = +b.dataset.days;
+      liveBase = null; // opening "Real time", or leaving it, starts its counts again
       try { localStorage.setItem("wren-dash-days", String(days)); } catch (e) { /* ignore */ }
       document.querySelectorAll(".range button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
       load(false);
@@ -645,7 +771,7 @@
   var lastData = null, resizeTimer = null;
   window.addEventListener("resize", function () {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () { if (lastData) render(lastData); }, 200);
+    resizeTimer = setTimeout(function () { if (lastData && days !== 0) render(lastData); }, 200);
   });
   load(false);
 })();

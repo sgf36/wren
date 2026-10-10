@@ -946,3 +946,36 @@ function source_funnel(string $since, string $until): array
     ksort($daily);
     return ['configured' => true, 'steps' => $steps, 'daily' => $daily, 'versions' => $versions];
 }
+
+// Flat running totals for the "Real time" tab, one per day and thing counted:
+//   funnel|<day>|<step[:detail]>|<platform>   and   get|<day>|<token>|<device>
+// Flat and keyed by day so the page can subtract a baseline key by key: a
+// total can then only grow, even when the window moves on at midnight.
+function live_counts(string $since, string $until): array
+{
+    $base = dirname(base_dir());
+    $out = [];
+    $add = function (string $k, $n) use (&$out) { $out[$k] = ($out[$k] ?? 0) + (int) $n; };
+    foreach (array_unique([substr($since, 0, 7), substr($until, 0, 7)]) as $month) {
+        foreach (json_decode((string) @file_get_contents("$base/funnel-counts/$month.json"), true) ?: [] as $day => $rows) {
+            if ($day < $since || $day > $until) {
+                continue;
+            }
+            foreach ($rows as $key => $n) {
+                [$step, $detail, $platform] = array_pad(explode('|', $key), 3, '');
+                $add("funnel|$day|" . ($detail === '' ? $step : "$step:$detail") . "|$platform", $n);
+            }
+        }
+        foreach (json_decode((string) @file_get_contents("$base/get-counts/$month.json"), true) ?: [] as $day => $byToken) {
+            if ($day < $since || $day > $until) {
+                continue;
+            }
+            foreach ($byToken as $token => $byDevice) {
+                foreach ($byDevice as $device => $n) {
+                    $add("get|$day|" . str_replace('|', '/', (string) $token) . "|$device", $n);
+                }
+            }
+        }
+    }
+    return $out;
+}
