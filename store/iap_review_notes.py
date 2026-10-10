@@ -19,10 +19,11 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from submit import call, errs  # noqa: E402
+from submit import call, errs, review_code  # noqa: E402
 
 APP = "6802053382"
-CODE = "7QFG-7FVY-QXP6-2AT6"
+# From Credential Manager, never this file: see REVIEW_CODE_SLOT in submit.py.
+CODE = review_code()
 POST = "https://www.instagram.com/p/DcZzVx4Da6a/"
 
 EVERYTHING = f"""\
