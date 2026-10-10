@@ -252,9 +252,12 @@
     cell = cell || function (id, v) { return n(v); };
     function one(title, first, obj, name, id) {
       var rows = Object.keys(obj || {}).map(function (k) { return { k: k, v: +obj[k] }; }).sort(function (a, b) { return b.v - a.v; });
+      // Share of this table's own total, over every row (not only the 25 shown).
+      var total = rows.reduce(function (t, r) { return t + r.v; }, 0);
       return h("div", {}, [h("h3", { text: title }), table([
         { label: first, get: function (r) { return r.k === "unknown" ? "Unknown" : name(r.k); } },
         { label: "Visitors", num: true, get: function (r) { return cell(id + r.k, r.v); } },
+        { label: "Share", num: true, get: function (r) { var p = total ? 100 * r.v / total : 0; return !total ? "–" : p > 0 && p < 1 ? "<1%" : n(p) + "%"; } },
       ], rows.slice(0, 25), { empty: "None yet." })]);
     }
     return h("div", { class: "grid2" }, [
