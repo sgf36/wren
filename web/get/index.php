@@ -13,10 +13,13 @@
 // and a typo cannot mint an unregistered campaign. An unknown or missing token
 // still redirects, untagged, rather than showing an error to a stranger.
 //
-// No cookie is set. The only thing kept is a daily tally per token and kind of
-// device (added 8 Oct 2026), so a platform's click count can be compared with
-// what the stores report: no IP address, no user agent, nothing per person.
-// See tally() below; read it with `python store/get_redirect.py --counts`.
+// No cookie is set. What is kept is a daily tally per token and kind of device
+// (added 8 Oct 2026), so a platform's click count can be compared with what the
+// stores report, and since 10 Oct 2026 three more daily tallies per token: the
+// app the link was tapped in, the phone's language, and the country. Each is a
+// separate count, never combined per visit, and the IP address is used only for
+// the country lookup and then dropped: no address, no user agent, nothing per
+// person is written. See tally() below; the privacy page says the same.
 
 header('Cache-Control: no-store');
 header('Referrer-Policy: no-referrer');
@@ -82,7 +85,57 @@ function tally(string $token, string $device, string $ua): void
         fflush($fh);
         flock($fh, LOCK_UN);
         fclose($fh);
+        if ($device !== 'bot') {
+            tally_sources($token, $ua);
+        }
     } catch (Throwable $e) {
         // deliberately ignored
     }
+}
+
+// Three separate daily counts per token in <home>/get-dims/YYYY-MM.json: which
+// app the link was opened in (in-app browsers name themselves in the user
+// agent), the phone's language (first entry of Accept-Language) and the country
+// (looked up from the address in <home>/wren-geo/, which is then forgotten).
+// Kept apart on purpose: three totals cannot be joined back into one visit.
+function tally_sources(string $token, string $ua): void
+{
+    $app = match (true) {
+        (bool) preg_match('/musical_ly|TikTok|BytedanceWebview|trill_|ByteLocale/i', $ua) => 'tiktok',
+        (bool) preg_match('/Instagram/i', $ua) => 'instagram',
+        (bool) preg_match('/FBAN\/Messenger|MessengerForiOS|Orca-Android/i', $ua) => 'messenger',
+        (bool) preg_match('/FBAN|FBAV|FB_IAB|FBIOS/i', $ua) => 'facebook',
+        (bool) preg_match('/Snapchat/i', $ua) => 'snapchat',
+        (bool) preg_match('/Pinterest/i', $ua) => 'pinterest',
+        (bool) preg_match('/LinkedInApp/i', $ua) => 'linkedin',
+        (bool) preg_match('/Twitter/i', $ua) => 'x',
+        (bool) preg_match('/ GSA\//', $ua) => 'google app',
+        default => 'browser',
+    };
+    $lang = preg_match('/^\s*([a-z]{2,3})\b/i', (string) ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''), $m) ? strtolower($m[1]) : 'unknown';
+    $country = 'unknown';
+    $geo = dirname($_SERVER['DOCUMENT_ROOT']) . '/wren-geo/geo.php';
+    if (is_file($geo)) {
+        require_once $geo;
+        $country = geo_country((string) ($_SERVER['REMOTE_ADDR'] ?? '')) ?: 'unknown';
+    }
+    $dir = dirname($_SERVER['DOCUMENT_ROOT']) . '/get-dims';
+    if (!is_dir($dir) && !@mkdir($dir, 0700, true)) {
+        return;
+    }
+    $fh = @fopen($dir . '/' . gmdate('Y-m') . '.json', 'c+');
+    if (!$fh || !flock($fh, LOCK_EX)) {
+        return;
+    }
+    $data = json_decode(stream_get_contents($fh), true) ?: [];
+    $day = gmdate('Y-m-d');
+    foreach (['app' => $app, 'lang' => $lang, 'country' => $country] as $dim => $value) {
+        $data[$day][$token][$dim][$value] = ($data[$day][$token][$dim][$value] ?? 0) + 1;
+    }
+    ftruncate($fh, 0);
+    rewind($fh);
+    fwrite($fh, json_encode($data, JSON_UNESCAPED_SLASHES));
+    fflush($fh);
+    flock($fh, LOCK_UN);
+    fclose($fh);
 }

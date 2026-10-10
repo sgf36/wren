@@ -238,6 +238,32 @@
     ["guide_saved", "Saved a guide / sent places"],
   ];
 
+  // Where /get/ visitors opened the link, their country and their language:
+  // three separate tallies kept by web/get/index.php since 10 Oct 2026, bots
+  // left out. cell(id, value) draws a count (the Real time tab lights changes).
+  var APP_NAMES = { tiktok: "TikTok", instagram: "Instagram", facebook: "Facebook", messenger: "Messenger", snapchat: "Snapchat",
+    pinterest: "Pinterest", linkedin: "LinkedIn", x: "X", "google app": "Google app", browser: "A web browser" };
+  var GET_SOURCES_NOTE = "Below: counted since 10 Oct 2026, bots left out. Three separate tallies, so they cannot be combined into one visitor. Country from MaxMind GeoLite2.";
+  var langName = (function () {
+    try { var d = new Intl.DisplayNames(["en-GB"], { type: "language" }); return function (c) { try { return d.of(c) || c; } catch (e) { return c; } }; }
+    catch (e) { return function (c) { return c; }; }
+  })();
+  function getSources(apps, countries, langs, cell) {
+    cell = cell || function (id, v) { return n(v); };
+    function one(title, first, obj, name, id) {
+      var rows = Object.keys(obj || {}).map(function (k) { return { k: k, v: +obj[k] }; }).sort(function (a, b) { return b.v - a.v; });
+      return h("div", {}, [h("h3", { text: title }), table([
+        { label: first, get: function (r) { return r.k === "unknown" ? "Unknown" : name(r.k); } },
+        { label: "Visitors", num: true, get: function (r) { return cell(id + r.k, r.v); } },
+      ], rows.slice(0, 25), { empty: "None yet." })]);
+    }
+    return h("div", { class: "grid2" }, [
+      one("Opened in", "App", apps, function (k) { return APP_NAMES[k] || k; }, "a-"),
+      one("Country", "Country", countries, regionName, "c-"),
+      one("Language", "Language", langs, langName, "l-"),
+    ]);
+  }
+
   // ------------------------------------------------------------ the "Real time" tab
   //
   // Only what is counted the moment it happens: the app's funnel steps, /get/
@@ -276,10 +302,11 @@
       });
       return out;
     }
-    var appSteps = 0, tokens = {}, visitors = { iphone: 0, android: 0, other: 0 };
+    var appSteps = 0, tokens = {}, visitors = { iphone: 0, android: 0, other: 0 }, dims = { app: {}, lang: {}, country: {} };
     Object.keys(grew).forEach(function (k) {
       var p = k.split("|");
       if (p[0] === "funnel") appSteps += grew[k];
+      if (p[0] === "getd" && dims[p[1]]) dims[p[1]][p[2]] = (dims[p[1]][p[2]] || 0) + grew[k];
       if (p[0] === "get" && p[2] !== "bot") {
         visitors[p[2]] = (visitors[p[2]] || 0) + grew[k];
         var t = tokens[p[1]] = tokens[p[1]] || { k: p[1], iphone: 0, android: 0, other: 0 };
@@ -327,6 +354,8 @@
         { label: "Android", num: true, get: function (r) { return cnt("g-" + r.k + "-a", r.android); } },
         { label: "Other", num: true, get: function (r) { return cnt("g-" + r.k + "-o", r.other); } },
       ], entries(tokens, "iphone"), { empty: "No visitors since you opened this tab." }),
+      h("p", { class: "muted note", text: GET_SOURCES_NOTE.replace("Below: counted since 10 Oct 2026, bots", "Below: bots") }),
+      getSources(dims.app, dims.country, dims.lang, cnt),
     ], [badge("get", mine)]));
 
     app.replaceChildren.apply(app, parts);
@@ -690,6 +719,7 @@
         { label: "Other", num: true, get: function (r) { return n(r.other); }, total: totalOf("other") },
         { label: "Bots/checkers", num: true, get: function (r) { return n(r.bot); }, total: totalOf("bot") },
       ], entries(gt.tokens, "iphone"), { total: true }));
+      if (gt.opened_in) getKids.push(h("p", { class: "muted note", text: GET_SOURCES_NOTE }), getSources(gt.opened_in, gt.countries, gt.languages));
     }
     parts.push(section("/get/ campaign links", "TikTok's in-app browser loads links before anyone taps, so read this as device mix, not a click count.", getKids,
       [badge("get", gt), checked(gt)]));
