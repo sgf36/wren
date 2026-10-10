@@ -38,6 +38,33 @@ UNSHIPPABLE = HERE / "unshippable-builds.txt"
 
 _tok = {"v": None, "exp": 0}
 
+# Where the review notes name the complimentary code. The code itself is not in
+# this repository: it is public, and until 10 Oct 2026 the notes carried the
+# real one, so anyone reading GitHub could unlock every paid feature. It lives
+# in Credential Manager and is put in at submission time.
+REVIEW_CODE_SLOT = "{REVIEW_CODE}"
+
+
+def review_code():
+    """The App Review comp code, from Credential Manager -- or stop.
+
+    Stopping is the point: notes sent with the slot unfilled would tell the
+    reviewer to type "{REVIEW_CODE}", and a reviewer who cannot unlock the app
+    rejects it.
+    """
+    try:
+        import keyring
+        code = keyring.get_password("wren-comp-codes", "app-review")
+    except Exception as e:  # no keyring backend is the same as no code
+        code, why = None, f" ({e})"
+    else:
+        why = ""
+    if not code:
+        sys.exit("no App Review code in Credential Manager (service "
+                 f"wren-comp-codes, account app-review){why}; mint one with the "
+                 "comp-codes admin API and store it there")
+    return code
+
 
 def unshippable():
     """Build numbers that must never be attached to an App Store version.
@@ -104,6 +131,7 @@ def main():
 
     notes = json.loads((HERE / "metadata_en_GB.json")
                        .read_text(encoding="utf-8"))["reviewNotes"]
+    notes = notes.replace(REVIEW_CODE_SLOT, review_code())
 
     st, vers = call("GET", f"apps/{APP}/appStoreVersions?limit=1")
     if "data" not in vers:

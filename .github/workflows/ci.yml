@@ -73,6 +73,19 @@ jobs:
           fi
           echo "no key material in tracked files"
 
+      # A complimentary code unlocks every paid feature for whoever types it,
+      # and this repository is public. The App Review one sat in the review
+      # notes until 10 Oct 2026. Real codes come from the Worker's 30-symbol
+      # alphabet and almost always hold a digit; the test fixtures
+      # (AAAA-BBBB-...) and the README's XXXX placeholder hold none.
+      - name: Reject complimentary codes in tracked content
+        run: |
+          if git grep -InP -- '\b(?=[A-Z-]*[2-9])[2-9A-HJKMNP-TV-Z]{4}(?:-[2-9A-HJKMNP-TV-Z]{4}){3}\b' -- . ':(exclude).github/workflows/*'; then
+            echo "::error::a complimentary code appears in tracked files; it belongs in Credential Manager (wren-comp-codes)"
+            exit 1
+          fi
+          echo "no complimentary codes in tracked files"
+
       # CI inserts the real value at build time; the committed one stays empty.
       - name: Keep the TikTok access token out of git
         run: |
