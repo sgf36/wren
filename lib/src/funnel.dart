@@ -25,7 +25,7 @@ import 'dart:io';
 /// The app's version, sent with each event so a change can be judged by the
 /// release that carried it. Kept equal to pubspec.yaml by
 /// test/funnel_test.dart, so it cannot quietly go stale.
-const String appVersion = '2.1.9';
+const String appVersion = '2.1.10';
 
 /// The steps, and the only details each may carry. The server accepts nothing
 /// else, so a typo here is a test failure rather than a new row nobody reads.
@@ -114,8 +114,11 @@ class HttpFunnel extends Funnel {
       final req = await client
           .postUrl(Uri.parse(endpoint))
           .timeout(const Duration(seconds: 5));
-      req.headers.contentType = ContentType.json;
-      req.write(
+      // The length is stated up front because without it dart:io sends the
+      // body chunked, and the web host's firewall (ModSecurity) answers every
+      // chunked POST with a 406 before the counter runs. That silently lost
+      // every step from 2.1.9 (found 10 Oct 2026).
+      final body = utf8.encode(
         jsonEncode({
           'e': step.wire,
           'd': ?detail,
@@ -124,6 +127,9 @@ class HttpFunnel extends Funnel {
           'l': language(),
         }),
       );
+      req.headers.contentType = ContentType.json;
+      req.contentLength = body.length;
+      req.add(body);
       final res = await req.close().timeout(const Duration(seconds: 5));
       await res.drain<void>();
     } finally {

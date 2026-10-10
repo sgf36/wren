@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -18,6 +19,9 @@ class RecordingFunnel extends Funnel {
       steps.add(detail == null ? step.wire : '${step.wire}:$detail');
 }
 
+/// Real sockets, in place of the test binding's fake client.
+class _RealHttp extends HttpOverrides {}
+
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
@@ -37,6 +41,47 @@ void main() {
     for (final step in FunnelStep.values) {
       expect(php, contains("'${step.wire}'"), reason: step.wire);
     }
+  });
+
+  // The web host's firewall answers a chunked POST with a 406 before the
+  // counter runs, which lost every step 2.1.9 sent. A body with a stated
+  // length is the only shape that gets through.
+  test('a step is sent with its length, never chunked', () async {
+    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() => server.close(force: true));
+    final got = server.first.then((req) async {
+      final body = await utf8.decodeStream(req);
+      final result = (
+        length: req.headers.contentLength,
+        chunked: req.headers.chunkedTransferEncoding,
+        body: body,
+      );
+      req.response.statusCode = HttpStatus.noContent;
+      await req.response.close();
+      return result;
+    });
+
+    // flutter_test answers every HttpClient request with a 400 of its own;
+    // this one has to reach the local server to show what goes on the wire.
+    HttpOverrides.runWithHttpOverrides(
+      () => HttpFunnel(
+        endpoint: 'http://127.0.0.1:${server.port}/f/',
+        platform: 'ios',
+        language: () => 'en',
+      ).record(FunnelStep.importStarted, detail: 'reel'),
+      _RealHttp(),
+    );
+
+    final r = await got.timeout(const Duration(seconds: 5));
+    expect(r.chunked, isFalse);
+    expect(r.length, utf8.encode(r.body).length);
+    expect(jsonDecode(r.body), {
+      'e': 'import_started',
+      'd': 'reel',
+      'p': 'ios',
+      'v': appVersion,
+      'l': 'en',
+    });
   });
 
   testWidgets('a paywall that ends in a purchase records every step', (
