@@ -521,6 +521,44 @@
     parts.push(section("Revenue per campaign", "What each ad platform attributes to its campaigns, from the purchase events Wren's Meta and TikTok SDKs report. Platform-reported, so it may overlap and differs from Apple's net proceeds.", rpcKids,
       [badge("meta", meta, "Meta"), badge("tiktok", tt, "TikTok"), appleRpc.length ? badge("apple", apple, "App Store") : null]));
 
+    // Who the ads reached: the platforms' own age and gender breakdowns. Ages are
+    // on TikTok's brackets (Meta's 55-64 and 65+ are merged into 55+ server-side).
+    if ((live(meta) && meta.audience) || (live(tt) && tt.audience)) {
+      var AGES = ["13-17", "18-24", "25-34", "35-44", "45-54", "55+", "unknown"];
+      var GENDERS = ["female", "male", "unknown"];
+      var aud = function (by, keys) {
+        var rows = {};
+        keys.forEach(function (k) { rows[k] = { k: k, mi: 0, mc: 0, ti: 0, tc: 0, spend: 0 }; });
+        [[live(meta) && meta.audience, "m"], [live(tt) && tt.audience, "t"]].forEach(function (x) {
+          (x[0] || []).forEach(function (a) {
+            var r = rows[a[by]]; if (!r) return;
+            r[x[1] + "i"] += +a.impressions; r[x[1] + "c"] += +a.clicks; r.spend += +a.spend;
+          });
+        });
+        var list = keys.map(function (k) { return rows[k]; }).filter(function (r) { return r.mi || r.ti; });
+        var top = Math.max.apply(null, list.map(function (r) { return r.mc + r.tc; }).concat([1]));
+        list.forEach(function (r) { r.w = (r.mc + r.tc) / top; });
+        return list;
+      };
+      var label = { female: "Women", male: "Men", unknown: "Not stated" };
+      var audCols = function (first, name) {
+        return [
+          { label: first, get: function (r) { return name ? name(r.k) : (r.k === "unknown" ? "Not stated" : r.k); } },
+          { label: "", get: function (r) { var bar = h("span", { class: "fbar" }); bar.style.width = Math.round(r.w * 100) + "%"; return bar; } },
+          { label: "Meta seen", num: true, get: function (r) { return n(r.mi); }, total: totalOf("mi") },
+          { label: "Meta clicks", num: true, get: function (r) { return n(r.mc); }, total: totalOf("mc") },
+          { label: "TikTok seen", num: true, get: function (r) { return n(r.ti); }, total: totalOf("ti") },
+          { label: "TikTok clicks", num: true, get: function (r) { return n(r.tc); }, total: totalOf("tc") },
+          { label: "Click rate", num: true, get: function (r) { var i = r.mi + r.ti; return i ? n(100 * (r.mc + r.tc) / i, 2) + "%" : "–"; } },
+          { label: "Spend", num: true, get: function (r) { return gbp(r.spend); }, total: totalOf("spend", gbp) },
+        ];
+      };
+      parts.push(section("Who the ads reached", "Age and gender as Meta and TikTok report them for their own users; Wren never learns either. Bars show each group's share of clicks. Meta's 55–64 and 65+ are merged to match TikTok's 55+.", [
+        h("h3", { text: "By age" }), table(audCols("Age"), aud("age", AGES), { total: true }),
+        h("h3", { text: "By gender" }), table(audCols("Gender", function (k) { return label[k] || k; }), aud("gender", GENDERS), { total: true }),
+      ], [badge("meta", meta, "Meta"), badge("tiktok", tt, "TikTok"), checked(meta)]));
+    }
+
     // Meta
     parts.push(section("Meta (Instagram)", "Spend, impressions and clicks are near real-time; installs arrive 1–3 days late through Apple.", [
       sourceState(meta, "Meta"),

@@ -129,6 +129,10 @@ function source_meta(string $since, string $until): array
         'level' => 'account', 'time_range' => $range, 'breakdowns' => 'country', 'limit' => 500,
         'fields' => $fields,
     ])['data'];
+    $people = meta_get("$act/insights", [
+        'level' => 'account', 'time_range' => $range, 'breakdowns' => 'age,gender', 'limit' => 500,
+        'fields' => 'spend,impressions,inline_link_clicks',
+    ])['data'];
     $account = meta_get($act, ['fields' => 'currency,amount_spent,spend_cap,account_status,disable_reason']);
     // Campaigns that budget per ad set (Asia: one budget per market) carry no
     // campaign budget, so add up their running ad sets' budgets instead.
@@ -186,7 +190,33 @@ function source_meta(string $since, string $until): array
         'adsets' => $adsets,
         'daily' => $days,
         'countries' => $country,
+        'audience' => audience(array_map(fn($r) => [$r['age'] ?? '', $r['gender'] ?? '', num($r['spend'] ?? 0),
+            num($r['impressions'] ?? 0), num($r['inline_link_clicks'] ?? 0)], $people)),
     ];
+}
+
+// Who the ads reached, by age bracket and gender, as the platform reports it
+// (from its own account data; nothing here comes from Wren). Meta splits the
+// over-55s into 55-64 and 65+ where TikTok has one 55+ bracket, so both are
+// put on TikTok's brackets to be compared like with like.
+function audience(array $rows): array
+{
+    $out = [];
+    foreach ($rows as [$age, $gender, $spend, $impressions, $clicks]) {
+        $age = strtoupper((string) $age);
+        $age = match (true) {
+            $age === '' || $age === 'NONE' || $age === 'UNKNOWN' => 'unknown',
+            in_array($age, ['55-64', '65+', 'AGE_55_100'], true) => '55+',
+            default => str_replace('_', '-', preg_replace('/^AGE_/', '', $age)),
+        };
+        $gender = match (strtolower((string) $gender)) { 'female' => 'female', 'male' => 'male', default => 'unknown' };
+        $key = "$age|$gender";
+        $out[$key] ??= ['age' => $age, 'gender' => $gender, 'spend' => 0.0, 'impressions' => 0, 'clicks' => 0];
+        $out[$key]['spend'] += $spend;
+        $out[$key]['impressions'] += (int) $impressions;
+        $out[$key]['clicks'] += (int) $clicks;
+    }
+    return array_values($out);
 }
 
 // ---------------------------------------------------------------- TikTok
@@ -279,7 +309,14 @@ function source_tiktok(string $since, string $until): array
     }
     usort($rows, fn($a, $b) => $b['spend'] <=> $a['spend']);
     ksort($days);
-    return ['configured' => true, 'campaigns' => $rows, 'daily' => $days];
+    $people = tiktok_get('report/integrated/get/', [
+        'advertiser_id' => $adv, 'report_type' => 'AUDIENCE', 'data_level' => 'AUCTION_ADVERTISER',
+        'dimensions' => ['age', 'gender'], 'metrics' => ['spend', 'impressions', 'clicks'],
+        'start_date' => $since, 'end_date' => $until, 'page_size' => 1000,
+    ])['list'] ?? [];
+    return ['configured' => true, 'campaigns' => $rows, 'daily' => $days,
+        'audience' => audience(array_map(fn($r) => [$r['dimensions']['age'] ?? '', $r['dimensions']['gender'] ?? '',
+            num($r['metrics']['spend'] ?? 0), num($r['metrics']['impressions'] ?? 0), num($r['metrics']['clicks'] ?? 0)], $people))];
 }
 
 // ---------------------------------------------------------------- App Store Connect
