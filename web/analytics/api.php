@@ -15,6 +15,23 @@ if (!signed_in()) {
 }
 session_write_close(); // the fetches below are slow; don't hold the session lock
 
+// The "Real time" tab: raw counters from this server's own files, which are
+// the only sources counted the moment things happen. The page keeps the first
+// answer as a baseline and shows growth since, so the figures are "since this
+// tab was opened". Yesterday is included and every key carries its day, so a
+// tab left open across midnight UTC keeps counting instead of dropping to zero.
+if (isset($_GET['live'])) {
+    $out = ['generated' => gmdate('c'),
+        'counts' => live_counts(gmdate('Y-m-d', time() - 86400), gmdate('Y-m-d')), 'sources' => []];
+    try {
+        $out['sources']['ga4_realtime'] = ['ok' => true] + cached('src_ga4_realtime_live', 60, fn() => source_ga4_realtime());
+    } catch (Throwable $e) {
+        $out['sources']['ga4_realtime'] = ['ok' => false, 'error' => substr($e->getMessage(), 0, 300)];
+    }
+    echo json_encode($out, JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR);
+    exit;
+}
+
 set_time_limit(60);
 $days = (int) ($_GET['days'] ?? 14);
 $days = in_array($days, [1, 7, 14, 30], true) ? $days : 14;

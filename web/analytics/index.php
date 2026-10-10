@@ -12,7 +12,7 @@ security_headers();
 header('Content-Type: text/html; charset=utf-8');
 $email = signed_in();
 $csrf = htmlspecialchars(csrf_token());
-$v = '2026101009'; // bump when app.js / app.css change, to beat browser caches
+$v = '2026101010'; // bump when app.js / app.css change, to beat browser caches
 
 if ($email) {
     header("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; "
@@ -34,7 +34,7 @@ if ($email) {
   <div class="brand"><img src="/icon.svg" alt="" width="28" height="28"><h1>Wren adverts</h1></div>
   <div class="controls">
     <div class="range" role="group" aria-label="Date range">
-      <button data-days="1">Today</button><button data-days="7">7 days</button><button data-days="14">14 days</button><button data-days="30">30 days</button>
+      <button data-days="0">Real time</button><button data-days="1">Today</button><button data-days="7">7 days</button><button data-days="14">14 days</button><button data-days="30">30 days</button>
     </div>
     <button id="refresh" title="Fetch fresh figures, bypassing the cache">Refresh</button>
     <span id="updated" class="muted"></span>
