@@ -316,7 +316,55 @@ function source_tiktok(string $since, string $until): array
     ])['list'] ?? [];
     return ['configured' => true, 'campaigns' => $rows, 'daily' => $days,
         'audience' => audience(array_map(fn($r) => [$r['dimensions']['age'] ?? '', $r['dimensions']['gender'] ?? '',
-            num($r['metrics']['spend'] ?? 0), num($r['metrics']['impressions'] ?? 0), num($r['metrics']['clicks'] ?? 0)], $people))];
+            num($r['metrics']['spend'] ?? 0), num($r['metrics']['impressions'] ?? 0), num($r['metrics']['clicks'] ?? 0)], $people)),
+        'adgroup_languages' => tiktok_adgroup_languages($adv, $since, $until)];
+}
+
+// Clicks per ad group by the language the viewer's TikTok app is set to. Added
+// 10 Oct 2026 after it showed most of the "Dutch" ad group's clicks, and a
+// fifth of the UK/IE/PR group's, coming from Russian-language users (likely
+// VPN users who cannot pay on a Russian App Store account): an ad group with
+// no language set reaches whoever TikTok finds in its countries.
+function tiktok_adgroup_languages(string $adv, string $since, string $until): array
+{
+    $report = function (string $type, array $dims, array $metrics) use ($adv, $since, $until): array {
+        $rows = [];
+        for ($page = 1; $page <= 20; $page++) {
+            $d = tiktok_get('report/integrated/get/', ['advertiser_id' => $adv, 'report_type' => $type,
+                'data_level' => 'AUCTION_ADGROUP', 'dimensions' => $dims, 'metrics' => $metrics,
+                'start_date' => $since, 'end_date' => $until, 'page_size' => 1000, 'page' => $page]);
+            $rows = array_merge($rows, $d['list'] ?? []);
+            if ($page >= ($d['page_info']['total_page'] ?? 1)) {
+                break;
+            }
+        }
+        return $rows;
+    };
+    $names = [];
+    foreach ($report('BASIC', ['adgroup_id'], ['adgroup_name', 'spend']) as $r) {
+        $names[$r['dimensions']['adgroup_id']] = $r['metrics']['adgroup_name'] ?? $r['dimensions']['adgroup_id'];
+    }
+    $groups = [];
+    foreach ($report('AUDIENCE', ['adgroup_id', 'language'], ['clicks', 'impressions', 'spend']) as $r) {
+        $id = $r['dimensions']['adgroup_id'];
+        $lang = (string) ($r['dimensions']['language'] ?? '');
+        $lang = ($lang === '' || strtoupper($lang) === 'NONE') ? 'unknown' : $lang;
+        $groups[$id] ??= ['name' => $names[$id] ?? $id, 'clicks' => 0, 'spend' => 0.0, 'languages' => []];
+        $c = (int) num($r['metrics']['clicks'] ?? 0);
+        $s = num($r['metrics']['spend'] ?? 0);
+        $groups[$id]['clicks'] += $c;
+        $groups[$id]['spend'] += $s;
+        if ($c > 0 || $s > 0) {
+            $groups[$id]['languages'][$lang] = ['clicks' => $c, 'spend' => $s];
+        }
+    }
+    $groups = array_values(array_filter($groups, fn($g) => $g['clicks'] > 0 || $g['spend'] > 0));
+    usort($groups, fn($a, $b) => $b['clicks'] <=> $a['clicks']);
+    foreach ($groups as &$g) {
+        uasort($g['languages'], fn($a, $b) => $b['clicks'] <=> $a['clicks']);
+    }
+    unset($g);
+    return $groups;
 }
 
 // ---------------------------------------------------------------- App Store Connect

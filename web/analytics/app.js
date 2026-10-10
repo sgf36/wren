@@ -67,13 +67,15 @@
     ga4_realtime: ["live", "Live", "Visitors in the last 30 minutes, re-read every minute."],
     get: ["live", "Live", "Each tap is counted the moment it happens."],
     funnel: ["live", "Live", "Each step is counted the moment the app reports it (Wren 2.1.9 and later)."],
-    postbacks: ["near", "24–48 h+ late", "Shown the moment Apple sends them, but Apple holds each back 24–48 hours or more, at random."],
-    apple: ["daily", "", "Apple publishes App Store analytics once a day, usually 1–2 days behind."],
-    sales: ["daily", "", "Apple publishes sales once a day, for the previous day."],
-    play: ["daily", "", "Google publishes Play installs once a day, a few days behind."],
-    play_sales: ["daily", "", "Google refreshes the month's Play sales file once a day."],
+    postbacks: ["near", "about installs 1–2 days earlier", "Counted on the day Apple sends them. Apple holds each report back on a timer (24 hours after the app is first opened, plus up to 24 more at random), so every one describes an install from a day or two before it arrives."],
+    // daily sources: [.., .., tooltip, days Apple/Google usually take to publish a day, how to say it]
+    apple: ["daily", "", "Apple publishes App Store analytics once a day, usually 1–2 days behind.", 2, "1–2 days later"],
+    sales: ["daily", "", "Apple publishes sales once a day, for the previous day.", 1, "the next day"],
+    play: ["daily", "", "Google publishes Play installs once a day, a few days behind.", 3, "a few days later"],
+    play_sales: ["daily", "", "Google refreshes the month's Play sales file once a day.", 1, "the next day"],
   };
-  var TODAY = "", hatchCount = 0;
+  var TODAY = "", SINCE = "", hatchCount = 0;
+  function addDays(d, k) { return new Date(Date.parse(d + "T00:00:00Z") + k * 864e5).toISOString().slice(0, 10); }
   function daysBehind(latest) { return Math.round((Date.parse(TODAY + "T00:00:00Z") - Date.parse(latest + "T00:00:00Z")) / 864e5); }
   function badge(key, s, prefix, latestOverride) {
     var f = FRESH[key], kind = f[0], text = f[1], tipText = f[2], who = prefix ? prefix + ": " : "";
@@ -81,7 +83,14 @@
     if (s.waiting) return h("span", { class: "fresh near", title: "Google is applying the Play Console access you granted; this takes up to 24 hours.", text: "◷ " + who + "waiting for Google" });
     if (kind === "daily") {
       var latest = latestOverride || s.latest_date;
-      if (!latest) { kind = "stale"; text = "nothing published for these dates yet"; }
+      // Nothing yet is normal when every day shown is younger than the source's
+      // usual publishing delay ("Today" always is): say when it comes, without
+      // the warning triangle. Older days with nothing are worth a warning.
+      if (!latest) {
+        var normal = f[3] && SINCE && daysBehind(SINCE) < f[3];
+        kind = normal ? "near" : "stale";
+        text = normal ? "not published yet · comes " + f[4] : "nothing published for these dates";
+      }
       else {
         var b = daysBehind(latest);
         text = "to " + shortDate(latest) + " · " + (b <= 0 ? "up to date" : b === 1 ? "1 day behind" : b + " days behind");
@@ -368,6 +377,7 @@
   function render(d) {
     var S = d.sources, dates = dateList(d.since, d.until);
     TODAY = d.until;
+    SINCE = d.since;
     var meta = S.meta || {}, tt = S.tiktok || {}, apple = S.apple || {}, play = S.play || {};
     var gt = S.get || {}, pb = S.postbacks || {}, ga = S.ga4 || {}, rt = S.ga4_realtime || {};
     var sales = S.sales || {}, ps = S.play_sales || {}, fn = S.funnel || {};
@@ -401,8 +411,13 @@
       tile("Google Play installs", n(playInst), "Daily user installs", null, [badge("play", play)]),
       tile("Cost per download", downloadsToCutoff > 0 && spendToCutoff > 0 ? gbp(spendToCutoff / downloadsToCutoff) : "–",
         "Spend ÷ (App Store + Play downloads)", "Both sides stop at the stores' last reported day", [badge("apple", cutSrc, "Stores", cutoff)]),
-      tile("Meta-reported installs", n(live(meta) ? sum(meta.daily, "installs") : null), "iOS 14+ campaigns, modelled by Meta", null, [badge("meta_installs", meta)]),
-      tile("Install reports from Apple", n(won), "SKAdNetwork postbacks, winning only", null, [badge("postbacks", pb)]),
+      tile("Meta-reported installs", n(live(meta) ? sum(meta.daily, "installs") : null), "iOS 14+ campaigns, modelled by Meta",
+        "The last 3 days keep rising as Apple's reports reach Meta, so a low figure for today is not final", [badge("meta_installs", meta)]),
+      // Counted by the day Apple sent them, which is not the day of the install:
+      // name the days the installs most likely happened instead.
+      tile("Install reports received from Apple", n(won), "SKAdNetwork, winning only",
+        "Installs from about " + (SINCE === TODAY ? shortDate(addDays(SINCE, -2)) + "–" + shortDate(addDays(TODAY, -1))
+          : shortDate(addDays(SINCE, -2)) + " to " + shortDate(addDays(TODAY, -1))) + ": Apple sends each one a day or two late", [badge("postbacks", pb)]),
       tile("/get/ visitors", n(people), live(gt) ? n(sum(gt.daily, "iphone")) + " iPhone · " + n(sum(gt.daily, "android")) + " Android" : "", "Includes in-app browser prefetch", [badge("get", gt)]),
       tile("On the website now", n(live(rt) ? rt.active : null), "Visitors in the last 30 minutes", "Only those who accepted cookies", [badge("ga4_realtime", rt)]),
     ]);
@@ -636,6 +651,24 @@
       { label: "Cost/click", num: true, get: function (r) { return r.cpc == null ? "–" : "£" + n(r.cpc, 3); } },
       { label: "Conversions", num: true, get: function (r) { return n(r.conversions); }, total: totalOf("conversions") },
     ], tt.campaigns, { total: true }));
+    // Which languages each ad group's clicks come from (the viewer's TikTok app
+    // language). An ad group with no language set takes whoever TikTok finds in
+    // its countries, which on 10 Oct 2026 meant mostly Russian speakers in "Dutch".
+    if (live(tt) && tt.adgroup_languages && tt.adgroup_languages.length) {
+      var langLabel = function (k) { return k === "unknown" ? "Not stated" : langName(k); };
+      ttKids.push(h("h3", { text: "Clicks by language, per ad group" }), table([
+        { label: "Ad group", get: function (r) { return r.name.replace(/^Wren - (Short Form - Dubbed Audio - |TikTok - )/, ""); } },
+        { label: "Clicks", num: true, get: function (r) { return n(r.clicks); }, total: totalOf("clicks") },
+        { label: "Spend", num: true, get: function (r) { return gbp(r.spend); }, total: totalOf("spend", gbp) },
+        { label: "Languages, by share of clicks", get: function (r) {
+          var langs = Object.keys(r.languages).filter(function (k) { return r.languages[k].clicks > 0; });
+          if (!r.clicks || !langs.length) return "–";
+          var shown = langs.slice(0, 5).map(function (k) { var p = 100 * r.languages[k].clicks / r.clicks; return langLabel(k) + " " + (p < 1 ? "<1" : n(p)) + "%"; });
+          return shown.join(" · ") + (langs.length > 5 ? " · +" + (langs.length - 5) + " more" : "");
+        } },
+      ], tt.adgroup_languages, { total: true }));
+      ttKids.push(h("p", { class: "muted note", text: "The language each viewer's TikTok app is set to. Set an ad group's languages under Demographics → Languages in TikTok Ads Manager; with none set, it reaches every language in its countries." }));
+    }
     parts.push(section("TikTok", "TikTok Promote (boosts made in the TikTok app) is not in TikTok's API, so it is not here.", ttKids,
       [badge("tiktok", tt), checked(tt)]));
 
@@ -738,7 +771,7 @@
       { label: "Window", get: function (r) { return r.sequence == null ? "–" : String(+r.sequence + 1); } },
       { label: "Version", get: function (r) { return r.version; } },
     ], pb.postbacks, { empty: "No install reports from Apple in this range." }));
-    parts.push(section("Install reports from Apple (SKAdNetwork)", "Copies of the postbacks Apple sends ad networks, shown the moment they arrive.", pbKids,
+    parts.push(section("Install reports from Apple (SKAdNetwork)", "Copies of the postbacks Apple sends ad networks, listed by when they arrived. Apple holds each one back on a timer, so a report received today is about an install from yesterday or the day before.", pbKids,
       [badge("postbacks", pb), checked(pb)]));
 
     // GA4
