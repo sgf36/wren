@@ -651,6 +651,24 @@
       { label: "Cost/click", num: true, get: function (r) { return r.cpc == null ? "–" : "£" + n(r.cpc, 3); } },
       { label: "Conversions", num: true, get: function (r) { return n(r.conversions); }, total: totalOf("conversions") },
     ], tt.campaigns, { total: true }));
+    // Which languages each ad group's clicks come from (the viewer's TikTok app
+    // language). An ad group with no language set takes whoever TikTok finds in
+    // its countries, which on 10 Oct 2026 meant mostly Russian speakers in "Dutch".
+    if (live(tt) && tt.adgroup_languages && tt.adgroup_languages.length) {
+      var langLabel = function (k) { return k === "unknown" ? "Not stated" : langName(k); };
+      ttKids.push(h("h3", { text: "Clicks by language, per ad group" }), table([
+        { label: "Ad group", get: function (r) { return r.name.replace(/^Wren - (Short Form - Dubbed Audio - |TikTok - )/, ""); } },
+        { label: "Clicks", num: true, get: function (r) { return n(r.clicks); }, total: totalOf("clicks") },
+        { label: "Spend", num: true, get: function (r) { return gbp(r.spend); }, total: totalOf("spend", gbp) },
+        { label: "Languages, by share of clicks", get: function (r) {
+          var langs = Object.keys(r.languages).filter(function (k) { return r.languages[k].clicks > 0; });
+          if (!r.clicks || !langs.length) return "–";
+          var shown = langs.slice(0, 5).map(function (k) { var p = 100 * r.languages[k].clicks / r.clicks; return langLabel(k) + " " + (p < 1 ? "<1" : n(p)) + "%"; });
+          return shown.join(" · ") + (langs.length > 5 ? " · +" + (langs.length - 5) + " more" : "");
+        } },
+      ], tt.adgroup_languages, { total: true }));
+      ttKids.push(h("p", { class: "muted note", text: "The language each viewer's TikTok app is set to. Set an ad group's languages under Demographics → Languages in TikTok Ads Manager; with none set, it reaches every language in its countries." }));
+    }
     parts.push(section("TikTok", "TikTok Promote (boosts made in the TikTok app) is not in TikTok's API, so it is not here.", ttKids,
       [badge("tiktok", tt), checked(tt)]));
 
