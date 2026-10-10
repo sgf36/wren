@@ -716,7 +716,29 @@ function source_get_taps(string $since, string $until): array
         }
     }
     ksort($daily);
-    return ['configured' => true, 'daily' => $daily, 'tokens' => $tokens];
+    // Since 10 Oct 2026: separate per-day counts of the app the link was opened
+    // in, the phone's language and the country (web/get/index.php, tally_sources).
+    $dims = ['app' => [], 'lang' => [], 'country' => []];
+    foreach (array_unique(array_map(fn($d) => substr($d, 0, 7), days_between($since, $until))) as $month) {
+        foreach (json_decode((string) @file_get_contents(dirname(base_dir()) . "/get-dims/$month.json"), true) ?: [] as $day => $byToken) {
+            if ($day < $since || $day > $until) {
+                continue;
+            }
+            foreach ($byToken as $byDim) {
+                foreach ($dims as $dim => $_) {
+                    foreach ($byDim[$dim] ?? [] as $value => $n) {
+                        $dims[$dim][$value] = ($dims[$dim][$value] ?? 0) + $n;
+                    }
+                }
+            }
+        }
+    }
+    foreach ($dims as &$d) {
+        arsort($d);
+    }
+    unset($d);
+    return ['configured' => true, 'daily' => $daily, 'tokens' => $tokens, 'opened_in' => $dims['app'],
+        'languages' => $dims['lang'], 'countries' => $dims['country']];
 }
 
 // Ad network ids Apple puts in SKAdNetwork postbacks. Meta's n38lu8286q is the
@@ -985,7 +1007,8 @@ function source_funnel(string $since, string $until): array
 }
 
 // Flat running totals for the "Real time" tab, one per day and thing counted:
-//   funnel|<day>|<step[:detail]>|<platform>   and   get|<day>|<token>|<device>
+//   funnel|<day>|<step[:detail]>|<platform>,  get|<day>|<token>|<device>
+//   and getd|<day>|<app|lang|country>|<value>
 // Flat and keyed by day so the page can subtract a baseline key by key: a
 // total can then only grow, even when the window moves on at midnight.
 function live_counts(string $since, string $until): array
@@ -1010,6 +1033,18 @@ function live_counts(string $since, string $until): array
             foreach ($byToken as $token => $byDevice) {
                 foreach ($byDevice as $device => $n) {
                     $add("get|$day|" . str_replace('|', '/', (string) $token) . "|$device", $n);
+                }
+            }
+        }
+        foreach (json_decode((string) @file_get_contents("$base/get-dims/$month.json"), true) ?: [] as $day => $byToken) {
+            if ($day < $since || $day > $until) {
+                continue;
+            }
+            foreach ($byToken as $byDim) {
+                foreach ($byDim as $dim => $values) {
+                    foreach ($values as $value => $n) {
+                        $add("getd|$day|$dim|" . str_replace('|', '/', (string) $value), $n);
+                    }
                 }
             }
         }
