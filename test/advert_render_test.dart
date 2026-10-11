@@ -59,11 +59,12 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wren/main.dart';
 import 'package:wren/src/advert.dart';
+
+import 'render_support.dart';
 
 const _fps = 30;
 
@@ -76,169 +77,6 @@ const _padBottom = 34.0 * _ratio;
 
 final _env = Platform.environment;
 
-Locale _parseLocale(String tag) {
-  final parts = tag.split('-');
-  if (parts.length >= 2 && parts[1].length == 4) {
-    return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
-  }
-  return parts.length >= 2 ? Locale(parts[0], parts[1]) : Locale(parts[0]);
-}
-
-Future<_Cascade> _loadFonts(String configPath) async {
-  final config =
-      jsonDecode(File(configPath).readAsStringSync()) as Map<String, dynamic>;
-  final families = config['families'] as Map<String, dynamic>;
-  final loaded = <String>[];
-  for (final entry in families.entries) {
-    final loader = FontLoader(entry.key);
-    var any = false;
-    for (final path in (entry.value as List).cast<String>()) {
-      final file = File(path);
-      if (!file.existsSync()) continue;
-      final bytes = file.readAsBytesSync();
-      loader.addFont(Future.value(ByteData.view(bytes.buffer)));
-      any = true;
-    }
-    if (!any) {
-      throw StateError(
-        'no file found for font family "${entry.key}" in '
-        '${entry.value} — a missing font renders as boxes, not as an error',
-      );
-    }
-    await loader.load();
-    loaded.add(entry.key);
-  }
-  List<String> names(String key) =>
-      ((config[key] as List?) ?? const []).cast<String>();
-  return _Cascade(
-    loaded,
-    names('serifFallback'),
-    names('sansFallback'),
-    (config['systemFamily'] as String?) ?? 'CupertinoSystemText',
-  );
-}
-
-/// iOS's font cascade, applied where iOS applies it: to each run of text as it
-/// is drawn.
-///
-/// The test engine has no system fallback — a character missing from the
-/// requested family draws as a box, whatever else is registered (measured:
-/// Japanese in a Latin family stayed boxes with a Japanese family loaded
-/// beside it) — and a style with no family draws in its box font whatever
-/// family is registered under any name, including 'FlutterTest' itself.
-///
-/// So before each frame is captured every paragraph on screen is given what
-/// the phone would have used:
-///
-/// - no family → the system sans ([_systemFamily]), as on iOS;
-/// - a fallback chain chosen by that family. Georgia falls back to the
-///   locale's serif script font, everything else to its sans one — the
-///   simulator footage of 2 October shows exactly that split (ja: a Mincho
-///   heading under Georgia, Gothic body text).
-///
-/// Every character drawn is recorded against its chain, and store/render.py
-/// proves each one is in one of the chain's font files. A family that was not
-/// loaded fails here.
-class _Cascade {
-  _Cascade(
-    this.loaded,
-    this.serifFallback,
-    this.sansFallback,
-    this.systemFamily,
-  );
-
-  final List<String> loaded;
-  final List<String> serifFallback;
-  final List<String> sansFallback;
-
-  /// The face text with no family of its own is drawn in: SF on iOS,
-  /// Roboto on Android.
-  final String systemFamily;
-
-  /// Chain ("Georgia>WrenSerif>WrenSans") → every character drawn with it.
-  final glyphs = <String, Set<String>>{};
-
-  List<String> _chainFor(String family) =>
-      family == 'Georgia' ? [...serifFallback, ...sansFallback] : sansFallback;
-
-  InlineSpan _patch(InlineSpan span, String? inherited) {
-    if (span is! TextSpan) return span;
-    final family = span.style?.fontFamily ?? inherited ?? systemFamily;
-    if (!loaded.contains(family)) {
-      throw StateError(
-        'text "${span.text}" asks for font family "$family", '
-        'which was not loaded',
-      );
-    }
-    final chain = _chainFor(family);
-    final text = span.text ?? '';
-    if (text.isNotEmpty) {
-      final key = [family, ...chain].join('>');
-      (glyphs[key] ??= <String>{}).addAll(text.runes.map(String.fromCharCode));
-    }
-    final style = (span.style ?? const TextStyle()).copyWith(
-      fontFamily: family,
-      fontFamilyFallback: chain,
-    );
-    return TextSpan(
-      text: span.text,
-      style: style,
-      children: span.children?.map((c) => _patch(c, family)).toList(),
-      recognizer: span.recognizer,
-      mouseCursor: span.mouseCursor,
-      onEnter: span.onEnter,
-      onExit: span.onExit,
-      semanticsLabel: span.semanticsLabel,
-      locale: span.locale,
-      spellOut: span.spellOut,
-    );
-  }
-
-  /// Patch every paragraph and field, then lay out and paint again so the
-  /// frame about to be captured is the patched one.
-  ///
-  /// In the frame pipeline's own order — pending builds, then layout — and
-  /// repeated until a pass changes nothing, because layout can build new
-  /// paragraphs (a lazy list's children) that the previous pass never saw.
-  void apply() {
-    var changed = 0;
-    void visit(RenderObject object) {
-      if (object is RenderParagraph) {
-        final next = _patch(object.text, null);
-        if (object.text.compareTo(next) != RenderComparison.identical) {
-          object.text = next;
-          changed++;
-        }
-      } else if (object is RenderEditable && object.text != null) {
-        final next = _patch(object.text!, null);
-        if (object.text!.compareTo(next) != RenderComparison.identical) {
-          object.text = next;
-          changed++;
-        }
-      }
-      object.visitChildren(visit);
-    }
-
-    final build = WidgetsBinding.instance.buildOwner!;
-    final root = WidgetsBinding.instance.rootElement!;
-    final pipeline = RendererBinding.instance.rootPipelineOwner;
-    for (var pass = 0; ; pass++) {
-      build.buildScope(root);
-      changed = 0;
-      for (final view in RendererBinding.instance.renderViews) {
-        visit(view);
-      }
-      pipeline.flushLayout();
-      if (changed == 0) break;
-      if (pass == 5) {
-        throw StateError('text kept changing under the font cascade');
-      }
-    }
-    pipeline.flushCompositingBits();
-    pipeline.flushPaint();
-  }
-}
-
 /// Seconds of footage a beat needs: its script, the lead-in the app holds
 /// before the script, and a half-second tail so the last state is seen.
 double beatLength(String beat) {
@@ -250,7 +88,7 @@ void main() {
   final out = _env['WREN_RENDER_OUT'];
 
   testWidgets('render advert beats', (tester) async {
-    final locale = _parseLocale(_env['WREN_RENDER_LOCALE'] ?? 'en-GB');
+    final locale = parseLocale(_env['WREN_RENDER_LOCALE'] ?? 'en-GB');
     final beats = (_env['WREN_RENDER_BEATS'] ?? '')
         .split(',')
         .map((s) => s.trim())
@@ -262,7 +100,7 @@ void main() {
     }
 
     final cascade = (await tester.runAsync(
-      () => _loadFonts(_env['WREN_RENDER_FONTS']!),
+      () => loadRenderFonts(_env['WREN_RENDER_FONTS']!),
     ))!;
     debugPrint(
       'fonts: ${cascade.loaded.join(', ')}; serif fallback '

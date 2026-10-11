@@ -219,6 +219,7 @@ class CapturePage extends StatefulWidget {
     this.initialGuideName,
     this.initialOwned,
     this.initialOverlay = ScreenshotOverlay.none,
+    this.initialStatus,
     this.skipOnboarding = false,
   });
 
@@ -321,6 +322,12 @@ class CapturePage extends StatefulWidget {
   /// same field the cache fills, so the sheet that appears is the one
   /// `offersFor` really produces rather than a picture of one.
   final Set<String>? initialOwned;
+
+  /// The status line to show from the first frame, built from the app's own
+  /// strings. Only for store images that show the moment after an import (the
+  /// summary a post read leaves), which a scene cannot reach without a server.
+  @visibleForTesting
+  final String Function(L l)? initialStatus;
 
   /// Skips the first-launch onboarding sheet. For the advert build, where the
   /// choreography needs a predictable empty state without a bottom sheet
@@ -467,6 +474,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     // below, which runs first. Without this both purchase scenes photographed
     // the same sheet, because both were still "owns nothing" at that moment.
     if (widget.initialOwned != null) _recompose();
+    if (widget.initialStatus != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setState(() => _status = widget.initialStatus!(L.of(context)));
+      });
+    }
 
     // Both feed [_recompose], and a share landing on a cold start can reach
     // the entitlement before either has answered. Kept as a future so the one

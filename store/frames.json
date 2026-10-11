@@ -1,0 +1,21 @@
+{
+  "_about": "Captioned store images (test/store_frame_render_test.dart, store/frames.py). Slides in product-page order: a scene from lib/src/screenshots.dart, or a real-device image. Captions per App Store locale; {price} is the base unlock's price for that locale, from shot_prices.json. Copy approved by Spencer 11 Oct 2026.",
+  "slides": [
+    {"id": "1-from-a-post", "scene": "frame-from-a-post"},
+    {"id": "2-in-apple-maps", "image": "store/frames/maps-guide.png"},
+    {"id": "3-screenshots", "scene": "frame-from-screenshots"},
+    {"id": "4-which-city", "scene": "frame-which-city"},
+    {"id": "5-fix-a-miss", "scene": "03-correct-a-place"},
+    {"id": "6-first-three-free", "scene": "05-places-kept"}
+  ],
+  "captions": {
+    "en-GB": [
+      ["Saw it in a reel? Keep it.", "Share any reel or post to Wren. It reads out every place."],
+      ["Straight into Apple Maps", "One tap turns the list into a guide on your map."],
+      ["Screenshots work too", "Messages, guidebooks, blogs: Wren reads the names."],
+      ["Asks where, once", "Pick the city and every place is found there."],
+      ["Fix a miss in a tap", "Search Apple Maps right from the list."],
+      ["First 3 places free", "Unlock any size of guide once for {price}. No subscription."]
+    ]
+  }
+}
