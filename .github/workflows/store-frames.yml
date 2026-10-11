@@ -1,0 +1,82 @@
+# Captioned App Store images (store/frames.json), rendered on macOS so the text
+# is set in Apple's own fonts. Manual only. Download the artifact and LOOK at
+# every image before any of it reaches App Store Connect: a green run proves
+# the render ran and no character was drawn as a box, not that it looks right.
+#
+#   gh workflow run store-frames.yml -f locales="en-GB de-DE"
+
+name: Store frames
+
+on:
+  workflow_dispatch:
+    inputs:
+      locales:
+        description: 'Space-separated App Store locales (blank = every locale in frames.json)'
+        required: false
+        default: 'en-GB'
+
+env:
+  FLUTTER_VERSION: '3.44.8'
+
+permissions:
+  contents: read
+
+jobs:
+  frames:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Python dependencies
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          # fonttools: render.py prepares Apple's fonts and proves every
+          # character drawn is in one of them.
+          pip install Pillow fonttools
+
+      - name: Render
+        env:
+          LOCALES: ${{ inputs.locales }}
+        run: |
+          source .venv/bin/activate
+          if [ -z "$LOCALES" ]; then
+            LOCALES=$(python3 -c "import json; print(' '.join(json.load(open('store/frames.json'))['captions']))")
+          fi
+          ARGS=""
+          for l in $LOCALES; do ARGS="$ARGS --locale $l"; done
+          python3 -u store/frames.py $ARGS
+
+      - name: Contact sheets
+        if: always()
+        run: |
+          source .venv/bin/activate
+          python3 - <<'EOF'
+          import pathlib
+          from PIL import Image
+          root = pathlib.Path("store/render/frames")
+          for d in sorted(p for p in root.iterdir() if p.is_dir()):
+              ims = [Image.open(p).convert("RGB").resize((430, 932)) for p in sorted(d.glob("*.png"))]
+              if not ims:
+                  continue
+              sheet = Image.new("RGB", (440 * 3 + 10, 942 * ((len(ims) + 2) // 3) + 10), "white")
+              for i, im in enumerate(ims):
+                  sheet.paste(im, (10 + (i % 3) * 440, 10 + (i // 3) * 942))
+              sheet.save(root / f"sheet-{d.name}.png")
+          EOF
+
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: store-frames
+          path: store/render/frames
+          if-no-files-found: warn

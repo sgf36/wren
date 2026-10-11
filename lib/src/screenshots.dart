@@ -256,6 +256,53 @@ Widget? sceneFor(String name) {
         initialOwned: const {unlimitedProductId},
       );
 
+    // The list the moment a shared post has been read: the summary line a real
+    // read leaves ("6 found in London · 2 free posts left"), from the app's
+    // own strings. Guides of any size are owned and post reading is not, which
+    // is a real state, so the free-limit banner does not cover the summary.
+    // For the captioned store frames (store/frames.json), where it is the
+    // first image: sharing a post is what the adverts promise.
+    case 'frame-from-a-post':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        initialPending: [for (var i = 0; i < 6; i++) _place(i)],
+        initialOwned: const {unlimitedProductId},
+        initialStatus: (l) => [
+          l.importSummary(6),
+          l.importSummaryIn('London'),
+          '· ${l.reelsFreeLeft(2)}',
+        ].join(' '),
+      );
+
+    // The same moment after reading screenshots: the summary a screenshot
+    // import leaves, so this frame differs from the post one by what was read,
+    // not only by its caption.
+    case 'frame-from-screenshots':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        initialPending: [for (var i = 0; i < 5; i++) _place(i)],
+        initialOwned: const {unlimitedProductId},
+        initialStatus: (l) =>
+            [l.importSummary(5), l.importSummaryIn('London')].join(' '),
+      );
+
+    // "Where are these places?" over a list with guides of any size owned, so
+    // the free-limit warning (04-which-city's background) is not what the
+    // frame about asking for the city shows behind it.
+    case 'frame-which-city':
+      return CapturePage(
+        store: _SceneStore(),
+        resolver: _SceneResolver(),
+        files: StubFileSource(''),
+        initialPending: [for (var i = 0; i < 5; i++) _place(i)],
+        initialOwned: const {unlimitedProductId},
+        initialOverlay: ScreenshotOverlay.region,
+      );
+
     // The fresh app, empty. Used by the advert to show the first-launch state
     // before any places have been added.
     case 'empty':
@@ -463,6 +510,16 @@ class SceneRequest {
   /// base unlock and wrong for the other two, which is why they are named.
   static String? priceOf(String productId) =>
       _prices[productId] ?? (productId == unlimitedProductId ? _price : null);
+
+  /// Supplies the prices directly, for a render that has no scene file
+  /// (test/store_frame_render_test.dart reads them from shot_prices.json).
+  @visibleForTesting
+  static void usePrices(Map<String, String> prices) {
+    _prices
+      ..clear()
+      ..addAll(prices);
+    _price = prices[unlimitedProductId];
+  }
 
   /// One line for the device log, which shoot.py reads back after each launch.
   String get logLine =>
