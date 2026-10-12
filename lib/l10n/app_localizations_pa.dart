@@ -162,6 +162,9 @@ class LPa extends L {
   String get restorePurchase => 'ਖ਼ਰੀਦ ਬਹਾਲ ਕਰੋ';
 
   @override
+  String get rateWren => 'Wren ਨੂੰ ਰੇਟ ਕਰੋ';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'ਮੁਫ਼ਤ ਹੱਦ $limit ਤੋਂ $over ਵੱਧ। ਤੁਸੀਂ ਅਨਲਾਕ ਕਰ ਸਕਦੇ ਹੋ, ਜਾਂ ਪਹਿਲੀਆਂ $limit ਸੰਭਾਲ ਸਕਦੇ ਹੋ।';
   }

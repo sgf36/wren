@@ -163,6 +163,9 @@ class LSv extends L {
   String get restorePurchase => 'Återskapa köp';
 
   @override
+  String get rateWren => 'Betygsätt Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over över gratisgränsen på $limit. Du kan låsa upp, eller spara de $limit första.';
   }

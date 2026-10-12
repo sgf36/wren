@@ -36,6 +36,7 @@
   "saveFirstInstead": "Simpan {limit} yang pertama saja",
   "restorePrevious": "Pulihkan pembelian sebelumnya",
   "restorePurchase": "Pulihkan pembelian",
+  "rateWren": "Beri nilai Wren",
   "overFreeLimit": "{over} melebihi batas gratis {limit}. Kamu bisa membuka batasnya, atau menyimpan {limit} yang pertama.",
   "findThisPlace": "Cari tempat ini",
   "searchAppleMaps": "Cari di Apple Maps",

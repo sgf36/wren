@@ -36,6 +36,7 @@
   "saveFirstInstead": "Uložiť radšej prvých {limit}",
   "restorePrevious": "Obnoviť skorší nákup",
   "restorePurchase": "Obnoviť nákup",
+  "rateWren": "Ohodnotiť Wren",
   "overFreeLimit": "{over} nad bezplatný limit {limit}. Môžeš odomknúť alebo uložiť prvých {limit}.",
   "findThisPlace": "Nájsť toto miesto",
   "searchAppleMaps": "Hľadať v Mapách Apple",

@@ -160,6 +160,9 @@ class LMr extends L {
   String get restorePurchase => 'खरेदी परत मिळवा';
 
   @override
+  String get rateWren => 'Wren ला रेटिंग द्या';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'मोफत मर्यादा $limit पेक्षा $over जास्त. तुम्ही अनलॉक करू शकता, किंवा पहिली $limit जतन करू शकता.';
   }

@@ -161,6 +161,9 @@ class LDa extends L {
   String get restorePurchase => 'Gendan køb';
 
   @override
+  String get rateWren => 'Bedøm Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over over den gratis grænse på $limit. Du kan låse op eller gemme de første $limit.';
   }

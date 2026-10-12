@@ -161,6 +161,9 @@ class LOr extends L {
   String get restorePurchase => 'କ୍ରୟ ପୁନରୁଦ୍ଧାର କରନ୍ତୁ';
 
   @override
+  String get rateWren => 'Wren କୁ ରେଟିଂ ଦିଅନ୍ତୁ';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'ମାଗଣା ସୀମା $limitଠାରୁ $overଟି ଅଧିକ। ଅନଲକ୍ କରିପାରିବେ, କିମ୍ବା ପ୍ରଥମ $limitଟି ସାଇତିପାରିବେ।';
   }

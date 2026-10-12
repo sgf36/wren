@@ -36,6 +36,7 @@
   "saveFirstInstead": "Bewaar in plaats daarvan de eerste {limit}",
   "restorePrevious": "Eerdere aankoop herstellen",
   "restorePurchase": "Aankoop herstellen",
+  "rateWren": "Wren beoordelen",
   "overFreeLimit": "{over} boven de gratis limiet van {limit}. Je kunt ontgrendelen of de eerste {limit} bewaren.",
   "findThisPlace": "Deze plek zoeken",
   "searchAppleMaps": "Zoeken in Apple Kaarten",

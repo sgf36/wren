@@ -162,6 +162,9 @@ class LEn extends L {
   String get restorePurchase => 'Restore purchase';
 
   @override
+  String get rateWren => 'Rate Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over over the free limit of $limit. You can unlock, or save the first $limit.';
   }

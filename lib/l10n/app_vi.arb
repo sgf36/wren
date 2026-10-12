@@ -36,6 +36,7 @@
   "saveFirstInstead": "Chỉ lưu {limit} địa điểm đầu tiên",
   "restorePrevious": "Khôi phục giao dịch trước đây",
   "restorePurchase": "Khôi phục giao dịch",
+  "rateWren": "Đánh giá Wren",
   "overFreeLimit": "Vượt {over} so với giới hạn miễn phí là {limit}. Bạn có thể mở khoá, hoặc lưu {limit} địa điểm đầu tiên.",
   "findThisPlace": "Tìm địa điểm này",
   "searchAppleMaps": "Tìm trong Apple Maps",

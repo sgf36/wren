@@ -155,6 +155,9 @@ class LZh extends L {
   String get restorePurchase => '恢复购买';
 
   @override
+  String get rateWren => '给 Wren 评分';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '超出免费上限 $limit 个共 $over 个。你可以解锁，也可以只保存前 $limit 个。';
   }
@@ -755,6 +758,9 @@ class LZhHant extends LZh {
 
   @override
   String get restorePurchase => '回復購買項目';
+
+  @override
+  String get rateWren => '為 Wren 評分';
 
   @override
   String overFreeLimit(int over, int limit) {

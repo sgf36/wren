@@ -161,6 +161,9 @@ class LPt extends L {
   String get restorePurchase => 'Restaurar compra';
 
   @override
+  String get rateWren => 'Avaliar o Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over acima do limite gratuito de $limit. Você pode desbloquear ou salvar os $limit primeiros.';
   }
@@ -826,6 +829,9 @@ class LPtPt extends LPt {
 
   @override
   String get restorePurchase => 'Restaurar compra';
+
+  @override
+  String get rateWren => 'Avaliar o Wren';
 
   @override
   String overFreeLimit(int over, int limit) {

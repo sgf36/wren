@@ -163,6 +163,9 @@ class LKn extends L {
   String get restorePurchase => 'ಖರೀದಿಯನ್ನು ಮರಳಿ ಪಡೆಯಿರಿ';
 
   @override
+  String get rateWren => 'Wren ಗೆ ರೇಟಿಂಗ್ ನೀಡಿ';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'ಉಚಿತ ಮಿತಿ $limitಕ್ಕಿಂತ $over ಹೆಚ್ಚು. ಅನ್‌ಲಾಕ್ ಮಾಡಬಹುದು, ಅಥವಾ ಮೊದಲ $limit ಉಳಿಸಬಹುದು.';
   }

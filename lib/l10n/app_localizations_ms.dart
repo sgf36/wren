@@ -161,6 +161,9 @@ class LMs extends L {
   String get restorePurchase => 'Pulihkan pembelian';
 
   @override
+  String get rateWren => 'Nilai Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over melebihi had percuma $limit. Anda boleh membukanya, atau menyimpan $limit yang pertama.';
   }

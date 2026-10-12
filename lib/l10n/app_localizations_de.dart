@@ -162,6 +162,9 @@ class LDe extends L {
   String get restorePurchase => 'Kauf wiederherstellen';
 
   @override
+  String get rateWren => 'Wren bewerten';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over über dem kostenlosen Limit von $limit. Du kannst freischalten oder die ersten $limit sichern.';
   }

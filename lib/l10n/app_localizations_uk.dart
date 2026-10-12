@@ -168,6 +168,9 @@ class LUk extends L {
   String get restorePurchase => 'Відновити покупку';
 
   @override
+  String get rateWren => 'Оцінити Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'На $over більше за безкоштовний ліміт у $limit. Можна розблокувати або зберегти перші $limit.';
   }

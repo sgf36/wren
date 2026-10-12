@@ -162,6 +162,9 @@ class LCa extends L {
   String get restorePurchase => 'Restaurar compra';
 
   @override
+  String get rateWren => 'Valora Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over per damunt del límit gratuït de $limit. Pots desbloquejar o desar els primers $limit.';
   }

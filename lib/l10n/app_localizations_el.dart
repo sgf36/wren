@@ -164,6 +164,9 @@ class LEl extends L {
   String get restorePurchase => 'Επαναφορά αγοράς';
 
   @override
+  String get rateWren => 'Αξιολόγηση του Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over πάνω από το δωρεάν όριο των $limit. Μπορείς να ξεκλειδώσεις ή να αποθηκεύσεις τα πρώτα $limit.';
   }

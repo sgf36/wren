@@ -36,6 +36,7 @@
   "saveFirstInstead": "Bunun yerine ilk {limit} tanesini kaydet",
   "restorePrevious": "Önceki bir satın alımı geri yükle",
   "restorePurchase": "Satın alımı geri yükle",
+  "rateWren": "Wren'i değerlendir",
   "overFreeLimit": "Ücretsiz {limit} sınırının {over} üzerinde. Kilidi açabilir ya da ilk {limit} tanesini kaydedebilirsin.",
   "findThisPlace": "Bu mekânı bul",
   "searchAppleMaps": "Apple Harita'da ara",

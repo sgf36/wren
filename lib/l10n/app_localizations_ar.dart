@@ -168,6 +168,9 @@ class LAr extends L {
   String get restorePurchase => 'استعادة الشراء';
 
   @override
+  String get rateWren => 'قيّم Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over فوق الحد المجاني البالغ $limit. يمكنك الفتح، أو حفظ أول $limit.';
   }

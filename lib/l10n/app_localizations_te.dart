@@ -162,6 +162,9 @@ class LTe extends L {
   String get restorePurchase => 'కొనుగోలును పునరుద్ధరించండి';
 
   @override
+  String get rateWren => 'Wren కు రేటింగ్ ఇవ్వండి';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'ఉచిత పరిమితి $limit కంటే $over ఎక్కువ. అన్‌లాక్ చేయవచ్చు, లేదా మొదటి $limit భద్రపరచవచ్చు.';
   }

@@ -36,6 +36,7 @@
   "saveFirstInstead": "इसके बजाय पहली {limit} सहेजें",
   "restorePrevious": "पहले की खरीद बहाल करें",
   "restorePurchase": "खरीद बहाल करें",
+  "rateWren": "Wren को रेट करें",
   "overFreeLimit": "मुफ़्त सीमा {limit} से {over} ज़्यादा। आप अनलॉक कर सकते हैं, या पहली {limit} सहेज सकते हैं।",
   "findThisPlace": "यह जगह खोजें",
   "searchAppleMaps": "Apple Maps में खोजें",

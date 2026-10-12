@@ -162,6 +162,9 @@ class LHu extends L {
   String get restorePurchase => 'Vásárlás visszaállítása';
 
   @override
+  String get rateWren => 'Wren értékelése';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over darabbal az ingyenes $limit fölött. Feloldhatod, vagy elmentheted az első $limit helyet.';
   }

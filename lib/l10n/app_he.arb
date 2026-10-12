@@ -36,6 +36,7 @@
   "saveFirstInstead": "לשמור במקום זאת את {limit} הראשונים",
   "restorePrevious": "שחזור רכישה קודמת",
   "restorePurchase": "שחזור רכישה",
+  "rateWren": "דירוג Wren",
   "overFreeLimit": "{over} מעל המגבלה החינמית של {limit}. אפשר לפתוח, או לשמור את {limit} הראשונים.",
   "findThisPlace": "מציאת המקום הזה",
   "searchAppleMaps": "חיפוש במפות של Apple",

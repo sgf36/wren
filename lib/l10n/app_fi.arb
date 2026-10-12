@@ -36,6 +36,7 @@
   "saveFirstInstead": "Tallenna sen sijaan {limit} ensimmäistä",
   "restorePrevious": "Palauta aiempi osto",
   "restorePurchase": "Palauta osto",
+  "rateWren": "Arvioi Wren",
   "overFreeLimit": "{over} yli ilmaisen {limit} paikan rajan. Voit avata rajan tai tallentaa {limit} ensimmäistä.",
   "findThisPlace": "Etsi tämä paikka",
   "searchAppleMaps": "Hae Apple Kartoista",

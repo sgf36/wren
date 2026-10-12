@@ -36,6 +36,7 @@
   "saveFirstInstead": "त्याऐवजी पहिली {limit} जतन करा",
   "restorePrevious": "आधीची खरेदी परत मिळवा",
   "restorePurchase": "खरेदी परत मिळवा",
+  "rateWren": "Wren ला रेटिंग द्या",
   "overFreeLimit": "मोफत मर्यादा {limit} पेक्षा {over} जास्त. तुम्ही अनलॉक करू शकता, किंवा पहिली {limit} जतन करू शकता.",
   "findThisPlace": "हे ठिकाण शोधा",
   "searchAppleMaps": "Apple Maps मध्ये शोधा",

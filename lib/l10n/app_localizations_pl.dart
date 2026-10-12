@@ -164,6 +164,9 @@ class LPl extends L {
   String get restorePurchase => 'Przywróć zakup';
 
   @override
+  String get rateWren => 'Oceń Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over ponad darmowy limit $limit. Możesz odblokować albo zapisać pierwsze $limit.';
   }

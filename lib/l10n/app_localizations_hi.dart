@@ -161,6 +161,9 @@ class LHi extends L {
   String get restorePurchase => 'खरीद बहाल करें';
 
   @override
+  String get rateWren => 'Wren को रेट करें';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'मुफ़्त सीमा $limit से $over ज़्यादा। आप अनलॉक कर सकते हैं, या पहली $limit सहेज सकते हैं।';
   }

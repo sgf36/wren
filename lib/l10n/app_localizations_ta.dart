@@ -163,6 +163,9 @@ class LTa extends L {
   String get restorePurchase => 'வாங்குதலை மீட்டெடுக்கவும்';
 
   @override
+  String get rateWren => 'Wren-ஐ மதிப்பிடவும்';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'இலவச வரம்பான $limit-ஐ விட $over அதிகம். திறக்கலாம், அல்லது முதல் $limit சேமிக்கலாம்.';
   }

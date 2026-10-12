@@ -36,6 +36,7 @@
   "saveFirstInstead": "Spara de {limit} första i stället",
   "restorePrevious": "Återskapa ett tidigare köp",
   "restorePurchase": "Återskapa köp",
+  "rateWren": "Betygsätt Wren",
   "overFreeLimit": "{over} över gratisgränsen på {limit}. Du kan låsa upp, eller spara de {limit} första.",
   "findThisPlace": "Hitta den här platsen",
   "searchAppleMaps": "Sök i Apple Kartor",

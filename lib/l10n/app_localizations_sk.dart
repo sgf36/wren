@@ -164,6 +164,9 @@ class LSk extends L {
   String get restorePurchase => 'Obnoviť nákup';
 
   @override
+  String get rateWren => 'Ohodnotiť Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over nad bezplatný limit $limit. Môžeš odomknúť alebo uložiť prvých $limit.';
   }

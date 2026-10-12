@@ -162,6 +162,9 @@ class LMl extends L {
   String get restorePurchase => 'വാങ്ങൽ വീണ്ടെടുക്കുക';
 
   @override
+  String get rateWren => 'Wren-ന് റേറ്റിംഗ് നൽകുക';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'സൗജന്യ പരിധിയായ $limitനെക്കാൾ $over കൂടുതൽ. അൺലോക്ക് ചെയ്യാം, അല്ലെങ്കിൽ ആദ്യ $limit സൂക്ഷിക്കാം.';
   }

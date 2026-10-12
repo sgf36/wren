@@ -157,6 +157,9 @@ class LJa extends L {
   String get restorePurchase => '購入を復元';
 
   @override
+  String get rateWren => 'Wrenを評価';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '無料の上限$limit件を$over件超えています。ロックを解除するか、最初の$limit件を保存できます。';
   }

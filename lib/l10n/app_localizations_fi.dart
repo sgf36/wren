@@ -162,6 +162,9 @@ class LFi extends L {
   String get restorePurchase => 'Palauta osto';
 
   @override
+  String get rateWren => 'Arvioi Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over yli ilmaisen $limit paikan rajan. Voit avata rajan tai tallentaa $limit ensimmäistä.';
   }

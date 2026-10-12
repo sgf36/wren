@@ -36,6 +36,7 @@
   "saveFirstInstead": "Salvează în schimb primele {limit}",
   "restorePrevious": "Restaurează o achiziție anterioară",
   "restorePurchase": "Restaurează achiziția",
+  "rateWren": "Evaluează Wren",
   "overFreeLimit": "{over} peste limita gratuită de {limit}. Poți debloca sau salva primele {limit}.",
   "findThisPlace": "Găsește acest loc",
   "searchAppleMaps": "Caută în Apple Hărți",

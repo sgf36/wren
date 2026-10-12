@@ -161,6 +161,9 @@ class LEs extends L {
   String get restorePurchase => 'Restaurar compra';
 
   @override
+  String get rateWren => 'Valorar Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over por encima del límite gratuito de $limit. Puedes desbloquear o guardar los primeros $limit.';
   }
@@ -827,6 +830,9 @@ class LEsMx extends LEs {
 
   @override
   String get restorePurchase => 'Restaurar compra';
+
+  @override
+  String get rateWren => 'Calificar Wren';
 
   @override
   String overFreeLimit(int over, int limit) {

@@ -164,6 +164,9 @@ class LCs extends L {
   String get restorePurchase => 'Obnovit nákup';
 
   @override
+  String get rateWren => 'Ohodnotit Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over nad bezplatný limit $limit. Můžeš odemknout, nebo uložit prvních $limit.';
   }
