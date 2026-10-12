@@ -57,20 +57,26 @@ def page_version(page_id):
 
 
 def create_page(first_locale):
+    # The local ids must be Apple's own form, "${new-<type>-id}". Short ones
+    # like v_id are accepted by the schema and refused by the server with a
+    # misleading 409 ("missing a required relationship
+    # appCustomProductPageLocalizations"). Found by probing, 12 Oct 2026.
+    v_id = "${new-appCustomProductPageVersion-id}"
+    l_id = "${new-appCustomProductPageLocalization-id}"
     body = {
         "data": {
             "type": "appCustomProductPages",
             "attributes": {"name": NAME},
             "relationships": {
                 "app": {"data": {"type": "apps", "id": APP}},
-                "appCustomProductPageVersions": {"data": [{"type": "appCustomProductPageVersions", "id": "${v}"}]},
+                "appCustomProductPageVersions": {"data": [{"type": "appCustomProductPageVersions", "id": v_id}]},
             },
         },
         "included": [
-            {"type": "appCustomProductPageVersions", "id": "${v}",
+            {"type": "appCustomProductPageVersions", "id": v_id,
              "relationships": {"appCustomProductPageLocalizations": {
-                 "data": [{"type": "appCustomProductPageLocalizations", "id": "${l}"}]}}},
-            {"type": "appCustomProductPageLocalizations", "id": "${l}",
+                 "data": [{"type": "appCustomProductPageLocalizations", "id": l_id}]}}},
+            {"type": "appCustomProductPageLocalizations", "id": l_id,
              "attributes": {"locale": first_locale}},
         ],
     }
@@ -128,6 +134,17 @@ def upload(frames, check, replace):
         page = find_page()
         print("page:", page["id"] if page else "(would be created)", NAME)
         return
+    # A custom page can only use languages the app's own listing has. Others
+    # are skipped and named; their viewers get the page's primary language.
+    st, v = call("GET", f"apps/{APP}/appStoreVersions?filter[appStoreState]=READY_FOR_SALE&limit=1")
+    st, ls = call("GET", f"appStoreVersions/{v['data'][0]['id']}/appStoreVersionLocalizations?limit=200")
+    listed = {l["attributes"]["locale"] for l in ls["data"]}
+    skipped = [l for l in plan if l not in listed]
+    for l in skipped:
+        del plan[l]
+    if skipped:
+        print("not in the app's listing, skipped:", skipped)
+    locales = sorted(plan)
     page = find_page() or create_page(locales[0])
     version, locs = page_version(page["id"])
     state = version["attributes"].get("state")
@@ -137,16 +154,50 @@ def upload(frames, check, replace):
         sset = screenshot_set(loc["id"])
         st, have = call("GET", f"appScreenshotSets/{sset['id']}/appScreenshots?limit=20")
         have = have.get("data", [])
-        if have and not replace:
+        # Only a complete set is left alone: an upload interrupted part-way
+        # (Apple slow to process one image) leaves fewer, and that set is
+        # replaced rather than kept.
+        if len(have) == len(files) and not replace:
             print(f"  {locale}: {len(have)} images already there, left alone")
             continue
         for old in have:
             call("DELETE", f"appScreenshots/{old['id']}")
         for f in files:
             ok, msg = upload_one(sset["id"], f)
-            if not ok:
+            # Apple's processing queue can take longer than upload_one waits
+            # (UPLOAD_COMPLETE, no errors). That is checked once, below, for
+            # the whole page; anything else is a real failure.
+            if not ok and not msg.startswith("still not COMPLETE"):
                 die(f"  {locale} {f.name}: {msg}")
         print(f"  {locale}: {len(files)} uploaded")
+    wait_complete(version["id"])
+
+
+def wait_complete(version_id, minutes=20):
+    """Every image on the page processed by Apple, or a named failure."""
+    import time
+    for _ in range(minutes * 4):
+        pending, failed, total = [], [], 0
+        st, locs = call("GET", f"appCustomProductPageVersions/{version_id}/appCustomProductPageLocalizations?limit=50")
+        for l in locs["data"]:
+            st, sets = call("GET", f"appCustomProductPageLocalizations/{l['id']}/appScreenshotSets")
+            for sset in sets.get("data", []):
+                st, shots = call("GET", f"appScreenshotSets/{sset['id']}/appScreenshots?limit=20")
+                for x in shots.get("data", []):
+                    total += 1
+                    state = x["attributes"].get("assetDeliveryState") or {}
+                    name = f"{l['attributes']['locale']}/{x['attributes']['fileName']}"
+                    if state.get("errors"):
+                        failed.append(name)
+                    elif state.get("state") != "COMPLETE":
+                        pending.append(name)
+        if failed:
+            die(f"Apple rejected: {failed}")
+        if not pending:
+            print(f"all {total} images processed (COMPLETE)")
+            return
+        time.sleep(15)
+    die(f"still processing after {minutes} min: {pending}")
 
 
 def status():
