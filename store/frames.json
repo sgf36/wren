@@ -180,7 +180,7 @@
       ],
       [
         "De første 3 steder gratis",
-        "Lås op for guider i alle størrelser én gang for {price}. Intet abonnement."
+        "Lås op for guider i alle størrelser for {price} én gang – intet abonnement."
       ]
     ],
     "no": [
@@ -263,7 +263,7 @@
     ],
     "fr-FR": [
       [
-        "Vu dans un reel ? Gardez-le.",
+        "Vu dans un reel ? Gardez-le.",
         "Partagez un reel ou une publication avec Wren. Il en extrait chaque lieu."
       ],
       [
@@ -272,7 +272,7 @@
       ],
       [
         "Les captures d’écran aussi",
-        "Messages, guides de voyage, blogs : Wren lit les noms."
+        "Messages, guides de voyage, blogs : Wren lit les noms."
       ],
       [
         "Demande où, une seule fois",

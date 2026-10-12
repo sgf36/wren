@@ -365,8 +365,26 @@ class _Balanced extends StatelessWidget {
         final full = constraints.maxWidth;
         final target = lines(full);
         var width = full;
+        // Never narrower than the longest word: below that, the text still
+        // takes the same number of lines but only by breaking a word in two
+        // (Danish "Skærmbilled / er", 12 Oct 2026).
+        double widest() {
+          var w = 0.0;
+          for (final word in text.split(RegExp(r'\s+'))) {
+            if (word.isEmpty) continue;
+            final painter = TextPainter(
+              text: TextSpan(text: word, style: style),
+              textDirection: direction,
+            )..layout();
+            if (painter.width > w) w = painter.width;
+            painter.dispose();
+          }
+          return w;
+        }
+
         if (target > 1) {
-          var lo = full * 0.35, hi = full;
+          var lo = [full * 0.35, widest() + 1].reduce((a, b) => a > b ? a : b);
+          var hi = full;
           while (hi - lo > 1) {
             final mid = (lo + hi) / 2;
             if (lines(mid) <= target) {
