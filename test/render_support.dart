@@ -93,7 +93,9 @@ class FontCascade {
   /// Chain ("Georgia>WrenSerif>WrenSans") → every character drawn with it.
   final glyphs = <String, Set<String>>{};
 
-  List<String> _chainFor(String family) =>
+  /// The fallback chain text set in [family] is drawn with. Public so a frame
+  /// can measure text in the fonts it will be drawn in.
+  List<String> chainFor(String family) =>
       family == 'Georgia' ? [...serifFallback, ...sansFallback] : sansFallback;
 
   InlineSpan _patch(InlineSpan span, String? inherited) {
@@ -105,7 +107,7 @@ class FontCascade {
         'which was not loaded',
       );
     }
-    final chain = _chainFor(family);
+    final chain = chainFor(family);
     final text = span.text ?? '';
     if (text.isNotEmpty) {
       final key = [family, ...chain].join('>');

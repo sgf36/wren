@@ -180,6 +180,7 @@ void main() {
             cropTop: cropTop,
             rtl: _rtl.contains(locale.languageCode),
             locale: locale,
+            cascade: cascade,
           ),
         ),
       );
@@ -217,6 +218,7 @@ class _Frame extends StatelessWidget {
     required this.cropTop,
     required this.rtl,
     required this.locale,
+    required this.cascade,
   });
 
   final String headline;
@@ -228,6 +230,9 @@ class _Frame extends StatelessWidget {
   final double cropTop;
   final bool rtl;
   final Locale locale;
+
+  /// The fonts the caption is drawn in, so [_Balanced] measures in them.
+  final FontCascade cascade;
 
   static const _windowTop = 236.0;
   static const _windowBottom = 900.0;
@@ -268,23 +273,26 @@ class _Frame extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    _Balanced(
                       headline,
-                      textAlign: TextAlign.center,
                       maxLines: 2,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: Wren.serif,
+                        fontFamilyFallback: cascade.chainFor(Wren.serif),
                         fontSize: 33,
                         height: 1.15,
                         color: Wren.text,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
+                    _Balanced(
                       line,
-                      textAlign: TextAlign.center,
                       maxLines: 3,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        fontFamily: cascade.systemFamily,
+                        fontFamilyFallback: cascade.chainFor(
+                          cascade.systemFamily,
+                        ),
                         fontSize: 17,
                         height: 1.35,
                         color: Wren.muted,
@@ -323,6 +331,64 @@ class _Frame extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Centred text whose lines are evened out: the narrowest width that still
+/// takes the same number of lines, so a caption never ends on one stranded
+/// word ("…a guide on your / map."). Measured in the fonts and fallbacks the
+/// text is drawn in, which is why the style carries both.
+class _Balanced extends StatelessWidget {
+  const _Balanced(this.text, {required this.style, required this.maxLines});
+
+  final String text;
+  final TextStyle style;
+  final int maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    final direction = Directionality.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int lines(double width) {
+          final painter = TextPainter(
+            text: TextSpan(text: text, style: style),
+            textAlign: TextAlign.center,
+            textDirection: direction,
+          )..layout(maxWidth: width);
+          final n = painter.computeLineMetrics().length;
+          painter.dispose();
+          return n;
+        }
+
+        final full = constraints.maxWidth;
+        final target = lines(full);
+        var width = full;
+        if (target > 1) {
+          var lo = full * 0.35, hi = full;
+          while (hi - lo > 1) {
+            final mid = (lo + hi) / 2;
+            if (lines(mid) <= target) {
+              hi = mid;
+            } else {
+              lo = mid;
+            }
+          }
+          width = (hi + 1).clamp(0, full).toDouble();
+        }
+        return Center(
+          child: SizedBox(
+            width: width,
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              maxLines: maxLines,
+              style: style,
+            ),
+          ),
+        );
+      },
     );
   }
 }

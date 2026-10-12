@@ -66,6 +66,16 @@ SHOT_TERRITORIES = [
     ("pt-BR", "BRA", "pt_BR"),
     ("ru", "RUS", "ru_RU"),
     ("id", "IDN", "id_ID"),
+    # Added 12 Oct 2026 for the captioned frames (store/frames.json): the
+    # languages the adverts run in. es-MX is priced on the US storefront
+    # because the Spanish-language adverts run in Puerto Rico, which buys there.
+    ("en-US", "USA", "en_US"),
+    ("es-MX", "USA", "es_US"),
+    ("de-DE", "DEU", "de_DE"),
+    ("nl-NL", "NLD", "nl_NL"),
+    ("sv", "SWE", "sv_SE"),
+    ("da", "DNK", "da_DK"),
+    ("no", "NOR", "nb_NO"),
 ]
 
 
