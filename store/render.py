@@ -98,6 +98,13 @@ FAMILIES = {
             "zh-Hant": ["PingFang TC", "Heiti TC"],
             "ko": ["Apple SD Gothic Neo"],
             "ar": ["SF Arabic", "Geeza Pro"],
+            # Added 12 Oct 2026 for the captioned store frames: iOS's own
+            # faces for these scripts. Without them every Hindi character was
+            # caught by check_glyphs as a box, and Simplified Chinese was set
+            # in the Traditional face, whose forms differ for some characters.
+            "hi": ["Kohinoor Devanagari", "Devanagari Sangam MN"],
+            "bn": ["Kohinoor Bangla", "Bangla Sangam MN"],
+            "zh-Hans": ["PingFang SC", "Heiti SC"],
         },
         "serif": {"ja": ["Hiragino Mincho ProN"]},
     },
@@ -109,6 +116,9 @@ FAMILIES = {
             "zh-Hant": ["Microsoft JhengHei"],
             "ko": ["Malgun Gothic"],
             "ar": ["Segoe UI", "Noto Sans Arabic"],
+            "hi": ["Nirmala UI"],
+            "bn": ["Nirmala UI"],
+            "zh-Hans": ["Microsoft YaHei"],
         },
         "serif": {"ja": ["Yu Mincho", "MS Mincho"]},
     },
@@ -135,6 +145,7 @@ ANDROID_FONTS = {
     "sans": {
         "ja": _GF + "notosansjp/NotoSansJP%5Bwght%5D.ttf",
         "zh-Hant": _GF + "notosanstc/NotoSansTC%5Bwght%5D.ttf",
+        "zh-Hans": _GF + "notosanssc/NotoSansSC%5Bwght%5D.ttf",
         "ko": _GF + "notosanskr/NotoSansKR%5Bwght%5D.ttf",
         # Android's Arabic is Naskh, for sans and serif alike.
         "ar": _GF + "notonaskharabic/NotoNaskhArabic%5Bwght%5D.ttf",
@@ -142,6 +153,7 @@ ANDROID_FONTS = {
     "serif": {
         "ja": _GF + "notoserifjp/NotoSerifJP%5Bwght%5D.ttf",
         "zh-Hant": _GF + "notoseriftc/NotoSerifTC%5Bwght%5D.ttf",
+        "zh-Hans": _GF + "notoserifsc/NotoSerifSC%5Bwght%5D.ttf",
         "ko": _GF + "notoserifkr/NotoSerifKR%5Bwght%5D.ttf",
         "ar": _GF + "notonaskharabic/NotoNaskhArabic%5Bwght%5D.ttf",
     },
@@ -235,7 +247,8 @@ def material_icons():
 def script_of(locale):
     """The fallback key for a locale: its language, or zh-Hant as a whole."""
     if locale.startswith("zh"):
-        return "zh-Hant"
+        # Simplified has its own face; everything else Chinese is Traditional.
+        return "zh-Hans" if "Hans" in locale or locale in ("zh", "zh-CN") else "zh-Hant"
     return locale.split("-")[0]
 
 
@@ -340,6 +353,9 @@ SAMPLES = {
     "zh-Hant": "地方收著讀取",
     "ko": "장소를담아두다",
     "ar": "أماكن محفوظة",
+    "hi": "जगहें सहेजें",
+    "bn": "জায়গা রাখুন",
+    "zh-Hans": "地方收藏读取",
 }
 
 

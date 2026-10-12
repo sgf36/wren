@@ -117,6 +117,15 @@ void main() {
       if (caption.any((c) => c.contains('{price}')) && price == null) {
         fail('$tag: "$id" quotes {price} and shot_prices.json has none');
       }
+      // Some prices end in a full stop ("79,00 kr.", "39.99 ر.س."), so a
+      // caption that puts {price} before one reads "kr.." — Danish and Arabic
+      // both did (12 Oct 2026). Refused here rather than remembered per caption.
+      for (final c in caption) {
+        final filled = c.replaceAll('{price}', price ?? '');
+        if (filled.contains('..')) {
+          fail('$tag: "$id" reads "$filled" — the price ends in a full stop');
+        }
+      }
 
       // Pass one: the screen, as a phone draws it.
       ui.Image screen;
@@ -180,6 +189,7 @@ void main() {
             cropTop: cropTop,
             rtl: _rtl.contains(locale.languageCode),
             locale: locale,
+            cascade: cascade,
           ),
         ),
       );
@@ -217,6 +227,7 @@ class _Frame extends StatelessWidget {
     required this.cropTop,
     required this.rtl,
     required this.locale,
+    required this.cascade,
   });
 
   final String headline;
@@ -228,6 +239,9 @@ class _Frame extends StatelessWidget {
   final double cropTop;
   final bool rtl;
   final Locale locale;
+
+  /// The fonts the caption is drawn in, so [_Balanced] measures in them.
+  final FontCascade cascade;
 
   static const _windowTop = 236.0;
   static const _windowBottom = 900.0;
@@ -242,14 +256,18 @@ class _Frame extends StatelessWidget {
       0.0,
       _windowBottom - _windowTop,
     );
-    return Directionality(
-      textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
-      child: Localizations(
-        locale: locale,
-        delegates: const [
-          DefaultWidgetsLocalizations.delegate,
-          DefaultMaterialLocalizations.delegate,
-        ],
+    // Localizations first and Directionality inside it: Localizations sets
+    // its own Directionality from its (English, left-to-right) delegates, so
+    // the other way round laid the Arabic captions out left to right
+    // (12 Oct 2026).
+    return Localizations(
+      locale: locale,
+      delegates: const [
+        DefaultWidgetsLocalizations.delegate,
+        DefaultMaterialLocalizations.delegate,
+      ],
+      child: Directionality(
+        textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
         child: DecoratedBox(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -268,23 +286,26 @@ class _Frame extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    _Balanced(
                       headline,
-                      textAlign: TextAlign.center,
                       maxLines: 2,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: Wren.serif,
+                        fontFamilyFallback: cascade.chainFor(Wren.serif),
                         fontSize: 33,
                         height: 1.15,
                         color: Wren.text,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
+                    _Balanced(
                       line,
-                      textAlign: TextAlign.center,
                       maxLines: 3,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        fontFamily: cascade.systemFamily,
+                        fontFamilyFallback: cascade.chainFor(
+                          cascade.systemFamily,
+                        ),
                         fontSize: 17,
                         height: 1.35,
                         color: Wren.muted,
@@ -323,6 +344,82 @@ class _Frame extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Centred text whose lines are evened out: the narrowest width that still
+/// takes the same number of lines, so a caption never ends on one stranded
+/// word ("…a guide on your / map."). Measured in the fonts and fallbacks the
+/// text is drawn in, which is why the style carries both.
+class _Balanced extends StatelessWidget {
+  const _Balanced(this.text, {required this.style, required this.maxLines});
+
+  final String text;
+  final TextStyle style;
+  final int maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    final direction = Directionality.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int lines(double width) {
+          final painter = TextPainter(
+            text: TextSpan(text: text, style: style),
+            textAlign: TextAlign.center,
+            textDirection: direction,
+          )..layout(maxWidth: width);
+          final n = painter.computeLineMetrics().length;
+          painter.dispose();
+          return n;
+        }
+
+        final full = constraints.maxWidth;
+        final target = lines(full);
+        var width = full;
+        // Never narrower than the longest word: below that, the text still
+        // takes the same number of lines but only by breaking a word in two
+        // (Danish "Skærmbilled / er", 12 Oct 2026).
+        double widest() {
+          var w = 0.0;
+          for (final word in text.split(RegExp(r'\s+'))) {
+            if (word.isEmpty) continue;
+            final painter = TextPainter(
+              text: TextSpan(text: word, style: style),
+              textDirection: direction,
+            )..layout();
+            if (painter.width > w) w = painter.width;
+            painter.dispose();
+          }
+          return w;
+        }
+
+        if (target > 1) {
+          var lo = [full * 0.35, widest() + 1].reduce((a, b) => a > b ? a : b);
+          var hi = full;
+          while (hi - lo > 1) {
+            final mid = (lo + hi) / 2;
+            if (lines(mid) <= target) {
+              hi = mid;
+            } else {
+              lo = mid;
+            }
+          }
+          width = (hi + 1).clamp(0, full).toDouble();
+        }
+        return Center(
+          child: SizedBox(
+            width: width,
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              maxLines: maxLines,
+              style: style,
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,21 +1,473 @@
 {
   "_about": "Captioned store images (test/store_frame_render_test.dart, store/frames.py). Slides in product-page order: a scene from lib/src/screenshots.dart, or a real-device image. Captions per App Store locale; {price} is the base unlock's price for that locale, from shot_prices.json. Copy approved by Spencer 11 Oct 2026.",
   "slides": [
-    {"id": "1-from-a-post", "scene": "frame-from-a-post"},
-    {"id": "2-in-apple-maps", "image": "store/frames/maps-guide.png"},
-    {"id": "3-screenshots", "scene": "frame-from-screenshots"},
-    {"id": "4-which-city", "scene": "frame-which-city"},
-    {"id": "5-fix-a-miss", "scene": "03-correct-a-place"},
-    {"id": "6-first-three-free", "scene": "05-places-kept"}
+    {
+      "id": "1-from-a-post",
+      "scene": "frame-from-a-post"
+    },
+    {
+      "id": "2-in-apple-maps",
+      "image": "store/frames/maps-guide.png"
+    },
+    {
+      "id": "3-screenshots",
+      "scene": "frame-from-screenshots"
+    },
+    {
+      "id": "4-which-city",
+      "scene": "frame-which-city"
+    },
+    {
+      "id": "5-fix-a-miss",
+      "scene": "03-correct-a-place"
+    },
+    {
+      "id": "6-first-three-free",
+      "scene": "05-places-kept"
+    }
   ],
   "captions": {
     "en-GB": [
-      ["Saw it in a reel? Keep it.", "Share any reel or post to Wren. It reads out every place."],
-      ["Straight into Apple Maps", "One tap turns the list into a guide on your map."],
-      ["Screenshots work too", "Messages, guidebooks, blogs: Wren reads the names."],
-      ["Asks where, once", "Pick the city and every place is found there."],
-      ["Fix a miss in a tap", "Search Apple Maps right from the list."],
-      ["First 3 places free", "Unlock any size of guide once for {price}. No subscription."]
+      [
+        "Saw it in a reel? Keep it.",
+        "Share any reel or post to Wren. It reads out every place."
+      ],
+      [
+        "Straight into Apple Maps",
+        "One tap turns the list into a guide on your map."
+      ],
+      [
+        "Screenshots work too",
+        "Messages, guidebooks, blogs: Wren reads the names."
+      ],
+      [
+        "Asks where, once",
+        "Pick the city and every place is found there."
+      ],
+      [
+        "Fix a miss in a tap",
+        "Search Apple Maps right from the list."
+      ],
+      [
+        "First 3 places free",
+        "Unlock any size of guide once for {price}. No subscription."
+      ]
+    ],
+    "en-US": [
+      [
+        "Saw it in a reel? Keep it.",
+        "Share any reel or post to Wren. It reads out every place."
+      ],
+      [
+        "Straight into Apple Maps",
+        "One tap turns the list into a guide on your map."
+      ],
+      [
+        "Screenshots work too",
+        "Messages, guidebooks, blogs: Wren reads the names."
+      ],
+      [
+        "Asks where, once",
+        "Pick the city and every place is found there."
+      ],
+      [
+        "Fix a miss in a tap",
+        "Search Apple Maps right from the list."
+      ],
+      [
+        "First 3 places free",
+        "Unlock any size of guide once for {price}. No subscription."
+      ]
+    ],
+    "de-DE": [
+      [
+        "In einem Reel gesehen? Behalt es.",
+        "Teile ein Reel oder einen Beitrag mit Wren. Es liest jeden Ort heraus."
+      ],
+      [
+        "Direkt in Apple Karten",
+        "Ein Tippen macht aus der Liste einen Guide auf deiner Karte."
+      ],
+      [
+        "Screenshots gehen auch",
+        "Nachrichten, Reiseführer, Blogs: Wren liest die Namen."
+      ],
+      [
+        "Fragt nur einmal, wo",
+        "Wähl die Stadt, und jeder Ort wird dort gefunden."
+      ],
+      [
+        "Fehler mit einem Tippen beheben",
+        "Such direkt aus der Liste in Apple Karten."
+      ],
+      [
+        "Die ersten 3 Orte gratis",
+        "Guides jeder Größe einmalig für {price} freischalten. Kein Abo."
+      ]
+    ],
+    "nl-NL": [
+      [
+        "In een reel gezien? Bewaar het.",
+        "Deel een reel of post met Wren. Het haalt er elke plek uit."
+      ],
+      [
+        "Meteen in Apple Kaarten",
+        "Eén tik maakt van de lijst een gids op je kaart."
+      ],
+      [
+        "Screenshots kan ook",
+        "Berichten, reisgidsen, blogs: Wren leest de namen."
+      ],
+      [
+        "Vraagt één keer waar",
+        "Kies de stad en elke plek wordt daar gevonden."
+      ],
+      [
+        "Een misser in één tik verhelpen",
+        "Zoek in Apple Kaarten, direct vanuit de lijst."
+      ],
+      [
+        "Eerste 3 plekken gratis",
+        "Gidsen van elke grootte eenmalig ontgrendelen voor {price}. Geen abonnement."
+      ]
+    ],
+    "sv": [
+      [
+        "Såg du det i en reel? Spara det.",
+        "Dela en reel eller ett inlägg med Wren. Den läser ut varje plats."
+      ],
+      [
+        "Direkt till Apple Kartor",
+        "Ett tryck gör listan till en guide på din karta."
+      ],
+      [
+        "Skärmbilder funkar också",
+        "Meddelanden, reseguider, bloggar: Wren läser namnen."
+      ],
+      [
+        "Frågar var, en gång",
+        "Välj staden så hittas varje plats där."
+      ],
+      [
+        "Rätta en miss med ett tryck",
+        "Sök i Apple Kartor direkt från listan."
+      ],
+      [
+        "De första 3 platserna gratis",
+        "Lås upp guider i alla storlekar en gång för {price}. Ingen prenumeration."
+      ]
+    ],
+    "da": [
+      [
+        "Så du det i en reel? Gem det.",
+        "Del en reel eller et opslag med Wren. Den læser hvert sted ud."
+      ],
+      [
+        "Direkte i Apple Kort",
+        "Ét tryk gør listen til en guide på dit kort."
+      ],
+      [
+        "Skærmbilleder virker også",
+        "Beskeder, rejseguider, blogs: Wren læser navnene."
+      ],
+      [
+        "Spørger om hvor, én gang",
+        "Vælg byen, så findes hvert sted der."
+      ],
+      [
+        "Ret en fejl med ét tryk",
+        "Søg i Apple Kort direkte fra listen."
+      ],
+      [
+        "De første 3 steder gratis",
+        "Lås op for guider i alle størrelser for {price} én gang – intet abonnement."
+      ]
+    ],
+    "no": [
+      [
+        "Så du det i en reel? Ta vare på det.",
+        "Del en reel eller et innlegg med Wren. Den leser ut hvert sted."
+      ],
+      [
+        "Rett inn i Apple Kart",
+        "Ett trykk gjør listen til en guide på kartet ditt."
+      ],
+      [
+        "Skjermbilder funker også",
+        "Meldinger, reiseguider, blogger: Wren leser navnene."
+      ],
+      [
+        "Spør om hvor, én gang",
+        "Velg byen, så finnes hvert sted der."
+      ],
+      [
+        "Rett en bom med ett trykk",
+        "Søk i Apple Kart rett fra listen."
+      ],
+      [
+        "De første 3 stedene gratis",
+        "Lås opp guider i alle størrelser én gang for {price}. Ikke abonnement."
+      ]
+    ],
+    "es-ES": [
+      [
+        "¿Lo viste en un reel? Guárdalo.",
+        "Comparte cualquier reel o publicación con Wren. Saca cada lugar."
+      ],
+      [
+        "Directo a Mapas de Apple",
+        "Con un toque, la lista se convierte en una guía en tu mapa."
+      ],
+      [
+        "También con capturas",
+        "Mensajes, guías de viaje, blogs: Wren lee los nombres."
+      ],
+      [
+        "Pregunta dónde, una vez",
+        "Elige la ciudad y cada lugar se busca allí."
+      ],
+      [
+        "Corrige un fallo con un toque",
+        "Busca en Mapas de Apple desde la propia lista."
+      ],
+      [
+        "Los 3 primeros lugares, gratis",
+        "Desbloquea guías de cualquier tamaño una sola vez por {price}. Sin suscripción."
+      ]
+    ],
+    "es-MX": [
+      [
+        "¿Lo viste en un reel? Guárdalo.",
+        "Comparte cualquier reel o publicación con Wren. Encuentra cada lugar."
+      ],
+      [
+        "Directo a Mapas de Apple",
+        "Con un toque, la lista se convierte en una guía en tu mapa."
+      ],
+      [
+        "También con capturas de pantalla",
+        "Mensajes, guías de viaje, blogs: Wren lee los nombres."
+      ],
+      [
+        "Pregunta dónde, una sola vez",
+        "Elige la ciudad y cada lugar se busca ahí."
+      ],
+      [
+        "Corrige un error con un toque",
+        "Busca en Mapas de Apple desde la misma lista."
+      ],
+      [
+        "Los primeros 3 lugares, gratis",
+        "Desbloquea guías de cualquier tamaño una sola vez por {price}. Sin suscripción."
+      ]
+    ],
+    "fr-FR": [
+      [
+        "Vu dans un reel ? Gardez-le.",
+        "Partagez un reel ou une publication avec Wren. Il en extrait chaque lieu."
+      ],
+      [
+        "Directement dans Plans",
+        "Un toucher, et la liste devient un guide sur votre carte."
+      ],
+      [
+        "Les captures d’écran aussi",
+        "Messages, guides de voyage, blogs : Wren lit les noms."
+      ],
+      [
+        "Demande où, une seule fois",
+        "Choisissez la ville, et chaque lieu y est trouvé."
+      ],
+      [
+        "Corrigez une erreur d’un toucher",
+        "Cherchez dans Plans directement depuis la liste."
+      ],
+      [
+        "3 premiers lieux gratuits",
+        "Débloquez les guides de toute taille une fois pour {price}. Sans abonnement."
+      ]
+    ],
+    "pt-BR": [
+      [
+        "Viu num reel? Guarde.",
+        "Compartilhe qualquer reel ou post com o Wren. Ele lê cada lugar."
+      ],
+      [
+        "Direto no Mapas da Apple",
+        "Um toque transforma a lista em um guia no seu mapa."
+      ],
+      [
+        "Capturas de tela também",
+        "Mensagens, guias de viagem, blogs: o Wren lê os nomes."
+      ],
+      [
+        "Pergunta onde, uma vez",
+        "Escolha a cidade e cada lugar é encontrado lá."
+      ],
+      [
+        "Corrija um erro com um toque",
+        "Pesquise no Mapas da Apple direto da lista."
+      ],
+      [
+        "3 primeiros lugares grátis",
+        "Desbloqueie guias de qualquer tamanho uma vez por {price}. Sem assinatura."
+      ]
+    ],
+    "ru": [
+      [
+        "Увидел в рилсе? Сохрани.",
+        "Поделись любым рилсом или постом с Wren — он найдёт каждое место."
+      ],
+      [
+        "Сразу в Apple Карты",
+        "Одно касание — и список становится путеводителем на карте."
+      ],
+      [
+        "И скриншоты тоже",
+        "Сообщения, путеводители, блоги: Wren прочитает названия."
+      ],
+      [
+        "Спросит «где» один раз",
+        "Выбери город — и каждое место найдётся там."
+      ],
+      [
+        "Исправь промах одним касанием",
+        "Ищи в Apple Картах прямо из списка."
+      ],
+      [
+        "Первые 3 места бесплатно",
+        "Путеводители любого размера — разовая покупка за {price}. Без подписки."
+      ]
+    ],
+    "zh-Hans": [
+      [
+        "在 Reel 里看到？存下来。",
+        "把任意 Reel 或帖子分享给 Wren，它会读出每个地点。"
+      ],
+      [
+        "直接存进 Apple 地图",
+        "轻点一下，列表就变成你地图上的指南。"
+      ],
+      [
+        "截图也可以",
+        "信息、旅行指南、博客：Wren 都能读出地名。"
+      ],
+      [
+        "只问一次在哪",
+        "选好城市，每个地点都在那里查找。"
+      ],
+      [
+        "轻点一下改正错漏",
+        "直接在列表里搜索 Apple 地图。"
+      ],
+      [
+        "前 3 个地点免费",
+        "一次性 {price} 解锁任意大小的指南，无需订阅。"
+      ]
+    ],
+    "hi": [
+      [
+        "Reel में देखा? सहेज लीजिए।",
+        "कोई भी Reel या पोस्ट Wren पर शेयर करें। यह हर जगह पढ़ लेता है।"
+      ],
+      [
+        "सीधे Apple Maps में",
+        "एक टैप में सूची आपके नक्शे पर गाइड बन जाती है।"
+      ],
+      [
+        "स्क्रीनशॉट भी चलते हैं",
+        "मैसेज, गाइडबुक, ब्लॉग: Wren नाम पढ़ लेता है।"
+      ],
+      [
+        "कहाँ, बस एक बार पूछता है",
+        "शहर चुनें, और हर जगह वहीं खोजी जाती है।"
+      ],
+      [
+        "एक टैप में गलती सुधारें",
+        "सूची से ही Apple Maps में खोजें।"
+      ],
+      [
+        "पहली 3 जगहें मुफ़्त",
+        "किसी भी आकार की गाइड {price} में एक बार अनलॉक करें। कोई सदस्यता नहीं।"
+      ]
+    ],
+    "ar-SA": [
+      [
+        "رأيته في Reel؟ احتفظ به.",
+        "شارك أي Reel أو منشور مع Wren، وسيستخرج كل مكان فيه."
+      ],
+      [
+        "مباشرة إلى خرائط Apple",
+        "بلمسة واحدة تصبح القائمة دليلاً على خريطتك."
+      ],
+      [
+        "ولقطات الشاشة أيضاً",
+        "الرسائل وكتب السفر والمدونات: يقرأ Wren الأسماء."
+      ],
+      [
+        "يسأل عن المكان مرة واحدة",
+        "اختر المدينة، ويُبحث عن كل مكان فيها."
+      ],
+      [
+        "صحّح الخطأ بلمسة",
+        "ابحث في خرائط Apple مباشرة من القائمة."
+      ],
+      [
+        "أول 3 أماكن مجاناً",
+        "افتح الأدلة بأي حجم مقابل {price} مرة واحدة، بلا اشتراك."
+      ]
+    ],
+    "bn-BD": [
+      [
+        "Reel-এ দেখেছেন? রেখে দিন।",
+        "যেকোনো Reel বা পোস্ট Wren-এ শেয়ার করুন। এটি প্রতিটি জায়গা পড়ে নেয়।"
+      ],
+      [
+        "সরাসরি Apple Maps-এ",
+        "এক ট্যাপে তালিকাটি আপনার ম্যাপে একটি গাইড হয়ে যায়।"
+      ],
+      [
+        "স্ক্রিনশটও চলে",
+        "মেসেজ, গাইডবুক, ব্লগ: Wren নামগুলো পড়ে নেয়।"
+      ],
+      [
+        "কোথায়, তা একবারই জিজ্ঞেস করে",
+        "শহর বেছে নিন, প্রতিটি জায়গা সেখানেই খোঁজা হবে।"
+      ],
+      [
+        "এক ট্যাপে ভুল ঠিক করুন",
+        "তালিকা থেকেই Apple Maps-এ খুঁজুন।"
+      ],
+      [
+        "প্রথম 3টি জায়গা বিনামূল্যে",
+        "যেকোনো আকারের গাইড একবারে {price}-এ আনলক করুন। কোনো সাবস্ক্রিপশন নেই।"
+      ]
+    ],
+    "id": [
+      [
+        "Lihat di reel? Simpan.",
+        "Bagikan reel atau postingan apa pun ke Wren. Ia membaca setiap tempat."
+      ],
+      [
+        "Langsung ke Apple Maps",
+        "Sekali ketuk, daftar jadi panduan di petamu."
+      ],
+      [
+        "Tangkapan layar juga bisa",
+        "Pesan, buku panduan, blog: Wren membaca namanya."
+      ],
+      [
+        "Tanya di mana, sekali saja",
+        "Pilih kotanya, dan setiap tempat dicari di sana."
+      ],
+      [
+        "Perbaiki yang meleset sekali ketuk",
+        "Cari di Apple Maps langsung dari daftar."
+      ],
+      [
+        "3 tempat pertama gratis",
+        "Buka panduan ukuran apa pun sekali bayar {price}. Tanpa langganan."
+      ]
     ]
   }
 }
