@@ -161,6 +161,9 @@ class LId extends L {
   String get restorePurchase => 'Pulihkan pembelian';
 
   @override
+  String get rateWren => 'Beri nilai Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over melebihi batas gratis $limit. Kamu bisa membuka batasnya, atau menyimpan $limit yang pertama.';
   }

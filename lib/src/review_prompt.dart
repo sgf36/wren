@@ -12,9 +12,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Three rules, each of which exists because the obvious implementation gets it
 /// wrong:
 ///
-/// 1. **Never on the first success.** Somebody whose first guide has just
-///    appeared has not yet formed a view; asking then harvests a shrug. The ask
-///    waits for a second publish, by which point the app has been chosen twice.
+/// 1. **On the first success.** It used to wait for a second publish, on
+///    the theory that a first guide has not yet formed a view. Measured on
+///    11 Oct 2026: about 25 iPhone installs a month, few of them publishing
+///    twice, and one rating on the store in eight weeks. Waiting for a second
+///    success meant almost nobody was ever asked. The first guide reaching
+///    Maps is the moment the app has done the one thing it promised, and rule
+///    2 still holds the ask until the user is back from seeing it there.
 ///
 /// 2. **Never while the user is in Maps.** Publishing hands off to Apple Maps
 ///    and backgrounds Wren, so a prompt raised at that moment appears behind
@@ -36,6 +40,12 @@ abstract class ReviewPrompt {
   /// Called when Wren comes back to the foreground. Shows the system prompt if
   /// this device has earned one and has not been asked recently.
   Future<void> maybeAsk();
+
+  /// The menu's "Rate Wren": the store's own write-a-review page, opened
+  /// because the user chose it. Not a prompt and not rationed: Apple allows a
+  /// link like this (5.6.1 forbids custom *prompts*), and it is the one way to
+  /// rate the app that does not depend on Apple deciding to show its prompt.
+  Future<void> openStorePage();
 }
 
 class StoreReviewPrompt implements ReviewPrompt {
@@ -45,8 +55,11 @@ class StoreReviewPrompt implements ReviewPrompt {
   static const _armed = 'review-armed';
   static const _lastAsked = 'review-last-asked-ms';
 
-  /// Publishes before the first ask. Two, not one — see rule 1.
-  static const _minSuccesses = 2;
+  /// Publishes before the first ask — see rule 1.
+  static const _minSuccesses = 1;
+
+  /// Wren's App Store id; Android opens Wren's Play listing from its package.
+  static const _appStoreId = '6802053382';
 
   /// A quiet period of our own, well inside Apple's. Someone who publishes
   /// every day should not meet this prompt every day, and Apple's own limit is
@@ -86,6 +99,10 @@ class StoreReviewPrompt implements ReviewPrompt {
     await prefs.setInt(_lastAsked, DateTime.now().millisecondsSinceEpoch);
     await review.requestReview();
   }
+
+  @override
+  Future<void> openStorePage() =>
+      InAppReview.instance.openStoreListing(appStoreId: _appStoreId);
 }
 
 /// Asks for nothing, ever.
@@ -121,6 +138,9 @@ class NoReviewPrompt implements ReviewPrompt {
 
   @override
   Future<void> maybeAsk() async {}
+
+  @override
+  Future<void> openStorePage() async {}
 }
 
 /// Records what it was asked to do, and shows nothing. For tests, and for any
@@ -129,10 +149,14 @@ class NoReviewPrompt implements ReviewPrompt {
 class FakeReviewPrompt implements ReviewPrompt {
   int successes = 0;
   int asks = 0;
+  int storePageOpens = 0;
 
   @override
   Future<void> recordSuccess() async => successes++;
 
   @override
   Future<void> maybeAsk() async => asks++;
+
+  @override
+  Future<void> openStorePage() async => storePageOpens++;
 }

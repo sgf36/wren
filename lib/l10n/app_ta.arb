@@ -36,6 +36,7 @@
   "saveFirstInstead": "அதற்குப் பதிலாக முதல் {limit} சேமிக்கவும்",
   "restorePrevious": "முந்தைய வாங்குதலை மீட்டெடுக்கவும்",
   "restorePurchase": "வாங்குதலை மீட்டெடுக்கவும்",
+  "rateWren": "Wren-ஐ மதிப்பிடவும்",
   "overFreeLimit": "இலவச வரம்பான {limit}-ஐ விட {over} அதிகம். திறக்கலாம், அல்லது முதல் {limit} சேமிக்கலாம்.",
   "findThisPlace": "இந்த இடத்தைக் கண்டுபிடி",
   "searchAppleMaps": "Apple Maps-இல் தேடு",

@@ -163,6 +163,9 @@ class LRo extends L {
   String get restorePurchase => 'Restaurează achiziția';
 
   @override
+  String get rateWren => 'Evaluează Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over peste limita gratuită de $limit. Poți debloca sau salva primele $limit.';
   }

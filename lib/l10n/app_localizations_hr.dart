@@ -162,6 +162,9 @@ class LHr extends L {
   String get restorePurchase => 'Vrati kupnju';
 
   @override
+  String get rateWren => 'Ocijeni Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over iznad besplatnog ograničenja od $limit. Možeš otključati ili spremiti prvih $limit.';
   }

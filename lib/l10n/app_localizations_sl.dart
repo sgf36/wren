@@ -166,6 +166,9 @@ class LSl extends L {
   String get restorePurchase => 'Obnovi nakup';
 
   @override
+  String get rateWren => 'Oceni Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over nad brezplačno omejitvijo $limit. Lahko odkleneš ali shraniš prvih $limit.';
   }

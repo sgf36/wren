@@ -411,6 +411,12 @@ abstract class L {
   /// **'Restore purchase'**
   String get restorePurchase;
 
+  /// Menu item in the top-right, always shown. Opens the store's own write-a-review page (Apple allows a link the user chooses; a custom review prompt is not allowed). Keep 'Wren' as is: it is the app's name.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Wren'**
+  String get rateWren;
+
   /// Banner when more places are selected than the free allowance.
   ///
   /// In en, this message translates to:

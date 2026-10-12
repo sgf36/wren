@@ -161,6 +161,9 @@ class LBn extends L {
   String get restorePurchase => 'কেনা ফিরিয়ে আনুন';
 
   @override
+  String get rateWren => 'Wren-কে রেটিং দিন';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'বিনামূল্যের সীমা $limit-এর চেয়ে $overটি বেশি। আনলক করতে পারেন, বা প্রথম $limitটি রাখতে পারেন।';
   }

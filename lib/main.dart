@@ -2725,6 +2725,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
               if (v == 'reels') _unlockFromMenu(PaywallReason.reels);
               if (v == 'clear') _clearList();
               if (v == 'export') _sendPlacesElsewhere();
+              if (v == 'rate') _reviewPrompt.openStorePage();
             },
             itemBuilder: (context) => [
               if (_makesGuides && sendable > 0)
@@ -2763,6 +2764,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                     child: Text(l.restorePurchase),
                   ),
               ],
+              // Always here, last. A link the user chooses, not a prompt:
+              // Apple shows its own rating prompt at most three times a year
+              // and reports nothing, so this is the reliable way to rate.
+              PopupMenuItem(value: 'rate', child: Text(l.rateWren)),
             ],
           ),
           const SizedBox(width: 4),

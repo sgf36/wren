@@ -217,6 +217,10 @@
   "@restorePurchase": {
     "description": "Menu item in the top-right."
   },
+  "rateWren": "Rate Wren",
+  "@rateWren": {
+    "description": "Menu item in the top-right, always shown. Opens the store's own write-a-review page (Apple allows a link the user chooses; a custom review prompt is not allowed). Keep 'Wren' as is: it is the app's name."
+  },
   "overFreeLimit": "{over} over the free limit of {limit}. You can unlock, or save the first {limit}.",
   "@overFreeLimit": {
     "description": "Banner when more places are selected than the free allowance.",

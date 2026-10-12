@@ -159,6 +159,9 @@ class LVi extends L {
   String get restorePurchase => 'Khôi phục giao dịch';
 
   @override
+  String get rateWren => 'Đánh giá Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'Vượt $over so với giới hạn miễn phí là $limit. Bạn có thể mở khoá, hoặc lưu $limit địa điểm đầu tiên.';
   }

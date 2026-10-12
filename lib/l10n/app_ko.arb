@@ -36,6 +36,7 @@
   "saveFirstInstead": "대신 처음 {limit}곳만 저장",
   "restorePrevious": "이전 구입 복원",
   "restorePurchase": "구입 복원",
+  "rateWren": "Wren 평가하기",
   "overFreeLimit": "무료 한도 {limit}곳보다 {over}곳 많습니다. 잠금을 해제하거나 처음 {limit}곳만 저장할 수 있습니다.",
   "findThisPlace": "이 장소 찾기",
   "searchAppleMaps": "지도에서 검색",

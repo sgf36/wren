@@ -161,6 +161,9 @@ class LGu extends L {
   String get restorePurchase => 'ખરીદી પુનઃસ્થાપિત કરો';
 
   @override
+  String get rateWren => 'Wren ને રેટ કરો';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'મફત મર્યાદા $limit કરતાં $over વધારે. તમે અનલૉક કરી શકો, અથવા પહેલી $limit સાચવી શકો.';
   }

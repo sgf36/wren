@@ -15,16 +15,14 @@ void main() {
   Future<bool> armed() async =>
       (await SharedPreferences.getInstance()).getBool('review-armed') ?? false;
 
-  test('one success is not enough', () async {
-    const prompt = StoreReviewPrompt();
-    await prompt.recordSuccess();
-    // Somebody whose first guide has just appeared has not formed a view yet.
+  test('nothing is armed before a success', () async {
     expect(await armed(), isFalse);
   });
 
-  test('a second success arms the ask', () async {
+  test('the first success arms the ask', () async {
+    // Since 12 Oct 2026: waiting for a second publish meant almost nobody was
+    // ever asked (one rating in eight weeks). See rule 1 in review_prompt.dart.
     const prompt = StoreReviewPrompt();
-    await prompt.recordSuccess();
     await prompt.recordSuccess();
     expect(await armed(), isTrue);
   });
@@ -34,7 +32,6 @@ void main() {
     // backgrounds Wren, so a prompt raised here would appear behind another app
     // and be spent without being seen.
     const prompt = StoreReviewPrompt();
-    await prompt.recordSuccess();
     await prompt.recordSuccess();
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getInt('review-last-asked-ms'), isNull);

@@ -36,6 +36,7 @@
   "saveFirstInstead": "Stattdessen die ersten {limit} sichern",
   "restorePrevious": "Früheren Kauf wiederherstellen",
   "restorePurchase": "Kauf wiederherstellen",
+  "rateWren": "Wren bewerten",
   "overFreeLimit": "{over} über dem kostenlosen Limit von {limit}. Du kannst freischalten oder die ersten {limit} sichern.",
   "findThisPlace": "Diesen Ort finden",
   "searchAppleMaps": "In Apple Karten suchen",

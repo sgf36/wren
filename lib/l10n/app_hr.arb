@@ -36,6 +36,7 @@
   "saveFirstInstead": "Radije spremi prvih {limit}",
   "restorePrevious": "Vrati prethodnu kupnju",
   "restorePurchase": "Vrati kupnju",
+  "rateWren": "Ocijeni Wren",
   "overFreeLimit": "{over} iznad besplatnog ograničenja od {limit}. Možeš otključati ili spremiti prvih {limit}.",
   "findThisPlace": "Pronađi ovo mjesto",
   "searchAppleMaps": "Traži u Apple Kartama",

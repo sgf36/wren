@@ -162,6 +162,9 @@ class LIt extends L {
   String get restorePurchase => 'Ripristina acquisto';
 
   @override
+  String get rateWren => 'Valuta Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over oltre il limite gratuito di $limit. Puoi sbloccare oppure salvare i primi $limit.';
   }

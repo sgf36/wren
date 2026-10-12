@@ -36,6 +36,7 @@
   "saveFirstInstead": "Сохранить только первые {limit}",
   "restorePrevious": "Восстановить прежнюю покупку",
   "restorePurchase": "Восстановить покупку",
+  "rateWren": "Оценить Wren",
   "overFreeLimit": "На {over} больше бесплатного лимита в {limit}. Можно разблокировать или сохранить первые {limit}.",
   "findThisPlace": "Найти это место",
   "searchAppleMaps": "Искать в Apple Картах",

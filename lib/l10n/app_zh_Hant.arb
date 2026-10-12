@@ -36,6 +36,7 @@
   "saveFirstInstead": "改為儲存前 {limit} 個",
   "restorePrevious": "回復先前的購買項目",
   "restorePurchase": "回復購買項目",
+  "rateWren": "為 Wren 評分",
   "overFreeLimit": "超出免費上限 {limit} 個共 {over} 個。你可以解鎖，也可以只儲存前 {limit} 個。",
   "findThisPlace": "尋找這個地點",
   "searchAppleMaps": "在地圖中搜尋",

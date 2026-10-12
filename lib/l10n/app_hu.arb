@@ -36,6 +36,7 @@
   "saveFirstInstead": "Inkább az első {limit} mentése",
   "restorePrevious": "Korábbi vásárlás visszaállítása",
   "restorePurchase": "Vásárlás visszaállítása",
+  "rateWren": "Wren értékelése",
   "overFreeLimit": "{over} darabbal az ingyenes {limit} fölött. Feloldhatod, vagy elmentheted az első {limit} helyet.",
   "findThisPlace": "Ennek a helynek a megkeresése",
   "searchAppleMaps": "Keresés az Apple Térképekben",

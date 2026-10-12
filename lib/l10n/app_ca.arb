@@ -36,6 +36,7 @@
   "saveFirstInstead": "Desar només els primers {limit}",
   "restorePrevious": "Restaurar una compra anterior",
   "restorePurchase": "Restaurar compra",
+  "rateWren": "Valora Wren",
   "overFreeLimit": "{over} per damunt del límit gratuït de {limit}. Pots desbloquejar o desar els primers {limit}.",
   "findThisPlace": "Buscar aquest lloc",
   "searchAppleMaps": "Buscar a Mapes",

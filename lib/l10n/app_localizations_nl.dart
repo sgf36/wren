@@ -163,6 +163,9 @@ class LNl extends L {
   String get restorePurchase => 'Aankoop herstellen';
 
   @override
+  String get rateWren => 'Wren beoordelen';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over boven de gratis limiet van $limit. Je kunt ontgrendelen of de eerste $limit bewaren.';
   }

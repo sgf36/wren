@@ -36,6 +36,7 @@
   "saveFirstInstead": "బదులుగా మొదటి {limit} భద్రపరచండి",
   "restorePrevious": "గత కొనుగోలును పునరుద్ధరించండి",
   "restorePurchase": "కొనుగోలును పునరుద్ధరించండి",
+  "rateWren": "Wren కు రేటింగ్ ఇవ్వండి",
   "overFreeLimit": "ఉచిత పరిమితి {limit} కంటే {over} ఎక్కువ. అన్‌లాక్ చేయవచ్చు, లేదా మొదటి {limit} భద్రపరచవచ్చు.",
   "findThisPlace": "ఈ ప్రదేశాన్ని కనుగొనండి",
   "searchAppleMaps": "Apple Maps‌లో వెతకండి",

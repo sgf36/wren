@@ -162,6 +162,9 @@ class LUr extends L {
   String get restorePurchase => 'خریداری بحال کریں';
 
   @override
+  String get rateWren => 'Wren کو ریٹ کریں';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'مفت حد $limit سے $over زیادہ۔ آپ ان لاک کر سکتے ہیں، یا پہلی $limit محفوظ کر سکتے ہیں۔';
   }

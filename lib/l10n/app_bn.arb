@@ -36,6 +36,7 @@
   "saveFirstInstead": "বরং প্রথম {limit}টি রাখুন",
   "restorePrevious": "আগের কেনা ফিরিয়ে আনুন",
   "restorePurchase": "কেনা ফিরিয়ে আনুন",
+  "rateWren": "Wren-কে রেটিং দিন",
   "overFreeLimit": "বিনামূল্যের সীমা {limit}-এর চেয়ে {over}টি বেশি। আনলক করতে পারেন, বা প্রথম {limit}টি রাখতে পারেন।",
   "findThisPlace": "এই জায়গাটি খুঁজুন",
   "searchAppleMaps": "Apple Maps-এ খুঁজুন",

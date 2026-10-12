@@ -162,6 +162,9 @@ class LFr extends L {
   String get restorePurchase => 'Restaurer l\'achat';
 
   @override
+  String get rateWren => 'Noter Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over au-delà de la limite gratuite de $limit. Vous pouvez débloquer, ou enregistrer les $limit premiers.';
   }
@@ -831,6 +834,9 @@ class LFrCa extends LFr {
 
   @override
   String get restorePurchase => 'Restaurer l\'achat';
+
+  @override
+  String get rateWren => 'Évaluer Wren';
 
   @override
   String overFreeLimit(int over, int limit) {

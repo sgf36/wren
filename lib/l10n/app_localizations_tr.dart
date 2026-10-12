@@ -160,6 +160,9 @@ class LTr extends L {
   String get restorePurchase => 'Satın alımı geri yükle';
 
   @override
+  String get rateWren => 'Wren\'i değerlendir';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'Ücretsiz $limit sınırının $over üzerinde. Kilidi açabilir ya da ilk $limit tanesini kaydedebilirsin.';
   }

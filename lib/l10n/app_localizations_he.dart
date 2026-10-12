@@ -164,6 +164,9 @@ class LHe extends L {
   String get restorePurchase => 'שחזור רכישה';
 
   @override
+  String get rateWren => 'דירוג Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over מעל המגבלה החינמית של $limit. אפשר לפתוח, או לשמור את $limit הראשונים.';
   }

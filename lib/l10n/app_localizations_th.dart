@@ -159,6 +159,9 @@ class LTh extends L {
   String get restorePurchase => 'กู้คืนการซื้อ';
 
   @override
+  String get rateWren => 'ให้คะแนน Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'เกินขีดจำกัดฟรีที่ $limit ที่อยู่ $over ที่ คุณจะปลดล็อก หรือบันทึกแค่ $limit ที่แรกก็ได้';
   }

@@ -158,6 +158,9 @@ class LKo extends L {
   String get restorePurchase => '구입 복원';
 
   @override
+  String get rateWren => 'Wren 평가하기';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '무료 한도 $limit곳보다 $over곳 많습니다. 잠금을 해제하거나 처음 $limit곳만 저장할 수 있습니다.';
   }

@@ -168,6 +168,9 @@ class LRu extends L {
   String get restorePurchase => 'Восстановить покупку';
 
   @override
+  String get rateWren => 'Оценить Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return 'На $over больше бесплатного лимита в $limit. Можно разблокировать или сохранить первые $limit.';
   }

@@ -161,6 +161,9 @@ class LNo extends L {
   String get restorePurchase => 'Gjenopprett kjøp';
 
   @override
+  String get rateWren => 'Vurder Wren';
+
+  @override
   String overFreeLimit(int over, int limit) {
     return '$over over gratisgrensen på $limit. Du kan låse opp, eller lagre de $limit første.';
   }

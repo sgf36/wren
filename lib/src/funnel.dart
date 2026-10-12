@@ -25,7 +25,7 @@ import 'dart:io';
 /// The app's version, sent with each event so a change can be judged by the
 /// release that carried it. Kept equal to pubspec.yaml by
 /// test/funnel_test.dart, so it cannot quietly go stale.
-const String appVersion = '2.1.10';
+const String appVersion = '2.1.11';
 
 /// The steps, and the only details each may carry. The server accepts nothing
 /// else, so a typo here is a test failure rather than a new row nobody reads.
