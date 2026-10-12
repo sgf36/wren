@@ -117,6 +117,15 @@ void main() {
       if (caption.any((c) => c.contains('{price}')) && price == null) {
         fail('$tag: "$id" quotes {price} and shot_prices.json has none');
       }
+      // Some prices end in a full stop ("79,00 kr.", "39.99 ر.س."), so a
+      // caption that puts {price} before one reads "kr.." — Danish and Arabic
+      // both did (12 Oct 2026). Refused here rather than remembered per caption.
+      for (final c in caption) {
+        final filled = c.replaceAll('{price}', price ?? '');
+        if (filled.contains('..')) {
+          fail('$tag: "$id" reads "$filled" — the price ends in a full stop');
+        }
+      }
 
       // Pass one: the screen, as a phone draws it.
       ui.Image screen;
@@ -247,14 +256,18 @@ class _Frame extends StatelessWidget {
       0.0,
       _windowBottom - _windowTop,
     );
-    return Directionality(
-      textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
-      child: Localizations(
-        locale: locale,
-        delegates: const [
-          DefaultWidgetsLocalizations.delegate,
-          DefaultMaterialLocalizations.delegate,
-        ],
+    // Localizations first and Directionality inside it: Localizations sets
+    // its own Directionality from its (English, left-to-right) delegates, so
+    // the other way round laid the Arabic captions out left to right
+    // (12 Oct 2026).
+    return Localizations(
+      locale: locale,
+      delegates: const [
+        DefaultWidgetsLocalizations.delegate,
+        DefaultMaterialLocalizations.delegate,
+      ],
+      child: Directionality(
+        textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
         child: DecoratedBox(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
