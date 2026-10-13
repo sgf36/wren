@@ -34,6 +34,8 @@ HOST = "https://box5192.bluehost.com:2083"
 USER = "spencgh6"
 REMOTE = "/home2/spencgh6/wren.spencerfields.com"
 URL = "https://wren.spencerfields.com/get/"
+# Must match $PRODUCT_PAGE in web/get/index.php (store/custom_page.py made it).
+PRODUCT_PAGE = "0aa40015-73b9-4ade-a945-f0ce0634959a"
 UA_BROWSER = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0 Safari/537.36"
 UA_IPHONE = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148"
 UA_ANDROID = "Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 Chrome/128.0 Mobile Safari/537.36"
@@ -89,11 +91,13 @@ def deploy(tokens):
 def test(tokens):
     tok = "tt-paid-app-install"
     expect = [
-        (UA_IPHONE, tok, "https://apps.apple.com/app/apple-store/id6802053382?pt=129201947&ct=%s&mt=8" % tok),
+        (UA_IPHONE, tok, "https://apps.apple.com/app/apple-store/id6802053382?pt=129201947&ct=%s&ppid=%s&mt=8"
+                         % (tok, PRODUCT_PAGE)),
         (UA_ANDROID, tok, "https://play.google.com/store/apps/details?id=com.spencerfields.littlebird"
                           "&utm_source=%s&utm_medium=%s&utm_campaign=%s" % (tokens[tok]["source"], tokens[tok]["medium"], tok)),
         (UA_BROWSER, tok, "https://wren.spencerfields.com/"),
-        (UA_IPHONE, "not-a-token", "https://apps.apple.com/app/apple-store/id6802053382?pt=129201947&mt=8"),
+        (UA_IPHONE, "not-a-token", "https://apps.apple.com/app/apple-store/id6802053382?pt=129201947&ppid=%s&mt=8"
+                                   % PRODUCT_PAGE),
         (UA_ANDROID, "", "https://play.google.com/store/apps/details?id=com.spencerfields.littlebird"),
     ]
     bad = 0
