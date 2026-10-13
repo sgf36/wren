@@ -132,6 +132,13 @@ def main():
     notes = json.loads((HERE / "metadata_en_GB.json")
                        .read_text(encoding="utf-8"))["reviewNotes"]
     notes = notes.replace(REVIEW_CODE_SLOT, review_code())
+    # Checked before anything is attached or submitted. On 13 Oct 2026 the
+    # notes were 4,263 characters: Apple refused the review detail (409) only
+    # after the build was attached, and 2.1.11 went to review with 2.1.10's
+    # notes. Apple's limit counts the filled-in code.
+    if len(notes) > 4000:
+        sys.exit(f"review notes are {len(notes)} characters; Apple's limit "
+                 "is 4000. Shorten store/metadata_en_GB.json first.")
 
     st, vers = call("GET", f"apps/{APP}/appStoreVersions?limit=1")
     if "data" not in vers:
