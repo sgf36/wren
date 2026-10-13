@@ -25,6 +25,11 @@ header('Cache-Control: no-store');
 header('Referrer-Policy: no-referrer');
 
 $APP_STORE = 'https://apps.apple.com/app/apple-store/id6802053382';
+// The Custom Product Page (captioned images that lead with what the adverts
+// promise), approved 13 Oct 2026; created by store/custom_page.py. It takes
+// the place of the default page for anyone arriving by this link, and App
+// Analytics still attributes by ct alongside it.
+$PRODUCT_PAGE = '0aa40015-73b9-4ade-a945-f0ce0634959a';
 $PROVIDER = '129201947';
 $PLAY = 'https://play.google.com/store/apps/details?id=com.spencerfields.littlebird';
 $HOME = 'https://wren.spencerfields.com/';
@@ -40,7 +45,7 @@ $isApple = (bool) preg_match('/iPhone|iPad|iPod/i', $ua);
 $isAndroid = (bool) preg_match('/Android/i', $ua);
 
 if ($isApple) {
-    $to = $APP_STORE . '?pt=' . $PROVIDER . ($known ? '&ct=' . rawurlencode($c) : '') . '&mt=8';
+    $to = $APP_STORE . '?pt=' . $PROVIDER . ($known ? '&ct=' . rawurlencode($c) : '') . '&ppid=' . $PRODUCT_PAGE . '&mt=8';
 } elseif ($isAndroid) {
     $to = $PLAY . ($known ? '&' . http_build_query([
         'utm_source' => $known['source'],
