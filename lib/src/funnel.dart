@@ -36,6 +36,23 @@ enum FunnelStep {
   /// An import began: detail is the source.
   importStarted('import_started'),
 
+  /// An import finished: found (rows were added to the list), none (it was
+  /// read or looked up and nothing came of it, including failures) or
+  /// cancelled (backed out before anything was read).
+  ///
+  /// Added in 2.1.12 because October's counts showed about a hundred imports
+  /// started and about eleven guides saved, with nothing to say which step in
+  /// between lost the rest.
+  importEnded('import_ended'),
+
+  /// "Make a guide" (maps) or "Send places" (elsewhere) was tapped with
+  /// something on the list to send.
+  publishTapped('publish_tapped'),
+
+  /// A question on the way to Maps was declined: detail is which one (the
+  /// guide name, splitting a large guide, replacing an existing one).
+  publishAbandoned('publish_abandoned'),
+
   /// A post was read: detail is free or paid.
   reelRead('reel_read'),
 

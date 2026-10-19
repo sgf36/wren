@@ -19,6 +19,9 @@ header('X-Robots-Tag: noindex, nofollow');
 const STEPS = [
     'first_open' => [],
     'import_started' => ['screenshots', 'file', 'guide', 'reel'],
+    'import_ended' => ['found', 'none', 'cancelled'],
+    'publish_tapped' => ['maps', 'elsewhere'],
+    'publish_abandoned' => ['name', 'split', 'republish'],
     'reel_read' => ['free', 'paid'],
     'paywall_shown' => ['places', 'combine', 'reels'],
     'buy_tapped' => ['unlimited', 'everything', 'reels_upgrade'],

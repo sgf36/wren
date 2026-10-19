@@ -230,12 +230,19 @@
   var FUNNEL = [
     ["first_open", "Opened Wren for the first time"],
     ["import_started", "Started an import"],
-    ["reel_read:free", "Read a post on a free read"],
+    ["import_ended:found", "Import put places on the list"],
+    ["publish_tapped", "Tapped Make a guide / Send places"],
     ["paywall_shown", "Saw a purchase sheet"],
     ["buy_tapped", "Tapped a buy button"],
     ["purchased", "Bought"],
   ];
   var SIDE = [
+    ["import_ended:none", "Import found nothing, or failed (2.1.12+)"],
+    ["import_ended:cancelled", "Import backed out of before reading (2.1.12+)"],
+    ["reel_read:free", "Read a post on a free read"],
+    ["publish_abandoned:name", "Declined to name the guide"],
+    ["publish_abandoned:split", "Declined splitting a large guide"],
+    ["publish_abandoned:republish", "Declined replacing an existing guide"],
     ["paywall_shown:places", "Sheet: more than 3 places"],
     ["paywall_shown:combine", "Sheet: adding to an existing guide"],
     ["paywall_shown:reels", "Sheet: reading a post"],
