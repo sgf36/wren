@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wren/main.dart';
@@ -108,6 +109,7 @@ void main() {
     expect(
       funnel.steps,
       containsAllInOrder([
+        'publish_tapped:maps',
         'paywall_shown:places',
         'buy_tapped:unlimited',
         'purchased:unlimited',
@@ -157,5 +159,40 @@ void main() {
       find.textContaining('up to $freePlaceLimit per guide'),
       findsOneWidget,
     );
+  });
+
+  // The three endings are told apart by what the user is left with, so each is
+  // driven through the link box, the one import a test can reach without a
+  // picker or a network.
+  Future<RecordingFunnel> linkImport(WidgetTester tester, String? text) async {
+    final funnel = RecordingFunnel();
+    await tester.pumpWidget(app(CapturePage(funnel: funnel)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.link));
+    await tester.pumpAndSettle();
+    if (text == null) {
+      await tester.tap(find.text('Cancel'));
+    } else {
+      await tester.enterText(find.byType(TextField), text);
+      await tester.tap(find.text('Read it'));
+    }
+    await tester.pumpAndSettle();
+    return funnel;
+  }
+
+  testWidgets('an import backed out of is counted as cancelled', (
+    tester,
+  ) async {
+    final funnel = await linkImport(tester, null);
+    expect(funnel.steps, ['import_started:guide', 'import_ended:cancelled']);
+  });
+
+  testWidgets('an import that reads nothing is counted as none', (
+    tester,
+  ) async {
+    final funnel = await linkImport(tester, 'not a link at all');
+    expect(funnel.steps, ['import_started:guide', 'import_ended:none']);
   });
 }

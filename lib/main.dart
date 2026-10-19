@@ -698,6 +698,36 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// Confirming beats guessing here. A wrong region is the expensive failure —
   /// it drags every lookup toward the wrong city and each result comes back
   /// looking perfectly valid — and the caption is not always there to read.
+  /// Counts an import's start and how it ended, around whichever route ran.
+  ///
+  /// Judged from what the user is left with rather than from each of the
+  /// dozen places an import can return: rows added is "found"; a new status
+  /// line with nothing added is "none" (nothing read, nothing matched, a
+  /// failure, or a post read stopped at the purchase sheet, which
+  /// paywall_dismissed counts on its own); neither is "cancelled". Recording it at
+  /// every return instead would be a rule each new return had to remember.
+  ///
+  /// A route that hands over to another (a picture chosen as a file, a post
+  /// link pasted into the guide box) counts in both, as import_started always
+  /// has, so the two stay comparable.
+  Future<void> _counted(String source, Future<void> Function() run) async {
+    _funnel.record(FunnelStep.importStarted, detail: source);
+    final rows = _pending.length;
+    final status = _status;
+    try {
+      await run();
+    } finally {
+      _funnel.record(
+        FunnelStep.importEnded,
+        detail: _pending.length > rows
+            ? 'found'
+            : (_status == null || identical(_status, status))
+            ? 'cancelled'
+            : 'none',
+      );
+    }
+  }
+
   Future<Region?> _confirmRegion(String? detected) async {
     final l = L.of(context);
     final controller = TextEditingController(text: detected ?? '');
@@ -817,8 +847,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// again what they just shared. Everything after the choosing is identical,
   /// deliberately: the reading, ranking and city-confirmation are the part that
   /// took the longest to get right and there is no second copy of it.
-  Future<void> _importScreenshots({List<String>? paths}) async {
-    _funnel.record(FunnelStep.importStarted, detail: 'screenshots');
+  Future<void> _importScreenshots({List<String>? paths}) =>
+      _counted('screenshots', () => _readScreenshots(paths: paths));
+
+  Future<void> _readScreenshots({List<String>? paths}) async {
     final l = L.of(context);
     setState(() {
       _busy = true;
@@ -1148,9 +1180,11 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   ///
   /// Every call costs real money, so nothing is sent until the entitlement is
   /// held and the link is one the feature can read.
-  Future<void> _importReel(String link) async {
+  Future<void> _importReel(String link) =>
+      _counted('reel', () => _readReelLink(link));
+
+  Future<void> _readReelLink(String link) async {
     final l = L.of(context);
-    _funnel.record(FunnelStep.importStarted, detail: 'reel');
     // A share can arrive before the first frame has finished, which is before
     // either source of entitlement has been read from disk. Raising the paywall
     // at somebody who has paid is the failure this avoids, and it is the
@@ -1381,8 +1415,10 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// [shared] arrives from the iOS share sheet, where the user has already
   /// chosen the guide — so the paste dialog is skipped rather than asking them to
   /// hand over something they just handed over.
-  Future<void> _importGuide({String? shared}) async {
-    _funnel.record(FunnelStep.importStarted, detail: 'guide');
+  Future<void> _importGuide({String? shared}) =>
+      _counted('guide', () => _readGuideLink(shared: shared));
+
+  Future<void> _readGuideLink({String? shared}) async {
     final l = L.of(context);
     final controller = TextEditingController();
     final pasted =
@@ -1668,8 +1704,9 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   /// coordinate is worth having anyway: it aims each search individually, which
   /// is better than the one region a batch of screenshots shares, and it is why
   /// a file of places spread across three cities imports correctly.
-  Future<void> _importFile() async {
-    _funnel.record(FunnelStep.importStarted, detail: 'file');
+  Future<void> _importFile() => _counted('file', _readFile);
+
+  Future<void> _readFile() async {
     final l = L.of(context);
     setState(() {
       _busy = true;
@@ -2304,6 +2341,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
       for (final p in _pending.where((p) => p.exportable)) p.forExport,
     ].whereType<ExportPlace>().toList();
     if (places.isEmpty) return;
+    _funnel.record(FunnelStep.publishTapped, detail: 'elsewhere');
 
     // The same gate publishing uses, so the two platforms cannot drift.
     switch (_entitlement.check(places.length)) {
@@ -2472,6 +2510,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
 
     var keep = _pending.where((p) => p.publishable).toList();
     if (keep.isEmpty) return;
+    _funnel.record(FunnelStep.publishTapped, detail: 'maps');
 
     // Places carried over from an existing guide are not counted against the
     // size cap — the cap limits what Wren found, and counting them would make
@@ -2532,19 +2571,28 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
     if (places.length == 1 && carried == 0) {
       url = buildPlaceLink(places.single.id);
     } else {
-      if (carried > 0 && !await _confirmRepublish(places.length)) return;
+      if (carried > 0 && !await _confirmRepublish(places.length)) {
+        _funnel.record(FunnelStep.publishAbandoned, detail: 'republish');
+        return;
+      }
       if (!mounted) return;
       // Offered the old guide's name, since the combined guide is meant to
       // replace it. Still editable — the trip may have outgrown the name.
       final name = await _askGuideName(places.length, initial: _guideName);
-      if (name == null) return;
+      if (name == null) {
+        _funnel.record(FunnelStep.publishAbandoned, detail: 'name');
+        return;
+      }
 
       final links = buildGuideLinks(name, places);
       if (links.length > 1) {
         // This used to be `.first`, which published the first fifty places and
         // threw the rest away without a word. An 82-place guide imported from
         // Apple Maps would have lost thirty-two of them.
-        if (!await _confirmSplit(links.length, places.length)) return;
+        if (!await _confirmSplit(links.length, places.length)) {
+          _funnel.record(FunnelStep.publishAbandoned, detail: 'split');
+          return;
+        }
         if (!mounted) return;
       }
       _queued
