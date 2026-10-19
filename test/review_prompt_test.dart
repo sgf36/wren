@@ -84,4 +84,35 @@ void main() {
     expect(fake.successes, 1);
     expect(fake.asks, 1);
   });
+
+  test('the second success does not arm; the third does', () async {
+    // Rule 4: a second ask, once the user has sent a third guide.
+    const prompt = StoreReviewPrompt();
+    await prompt.recordSuccess();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('review-armed', false); // as if asked on resume
+    await prompt.recordSuccess();
+    expect(await armed(), isFalse);
+    await prompt.recordSuccess();
+    expect(await armed(), isTrue);
+  });
+
+  test('the second ask needs days, not months, after the first', () {
+    const day = 86400 * 1000;
+    final now = DateTime(2026, 10, 19).millisecondsSinceEpoch;
+    bool quiet(int daysAgo, int asks) => StoreReviewPrompt.quiet(
+      lastAskedMs: now - daysAgo * day,
+      asks: asks,
+      nowMs: now,
+    );
+    expect(quiet(1, 1), isTrue, reason: 'same sitting as the first ask');
+    expect(quiet(4, 1), isFalse, reason: 'second ask, a few days on');
+    expect(quiet(4, 2), isTrue, reason: 'after the second, the long quiet');
+    expect(quiet(121, 2), isFalse);
+    expect(
+      StoreReviewPrompt.quiet(lastAskedMs: 0, asks: 0, nowMs: now),
+      isFalse,
+      reason: 'never asked',
+    );
+  });
 }

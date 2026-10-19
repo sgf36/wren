@@ -25,6 +25,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///    another app and is spent without ever being seen. [recordSuccess] only
 ///    arms it; [maybeAsk] fires on the next return to Wren.
 ///
+/// 4. **Once more, at the third success.** Added 19 Oct 2026, on Spencer's
+///    call: someone who has sent a third guide has shown the app is useful to
+///    them, which is the likeliest moment of all to get a rating. It needs only
+///    a few days' gap from the first ask rather than the full quiet period;
+///    after that second ask the quiet period applies as before. Apple's own
+///    limit still caps what is actually shown.
+///
 /// 3. **Never mid-split.** A guide over the size cap is handed over one link at
 ///    a time, and the job is not done until the last one. Asking between them
 ///    interrupts a task the user is in the middle of.
@@ -54,9 +61,17 @@ class StoreReviewPrompt implements ReviewPrompt {
   static const _successes = 'review-successful-publishes';
   static const _armed = 'review-armed';
   static const _lastAsked = 'review-last-asked-ms';
+  static const _asks = 'review-asks';
 
   /// Publishes before the first ask — see rule 1.
   static const _minSuccesses = 1;
+
+  /// Publishes before the second ask — see rule 4.
+  static const _secondAskAt = 3;
+
+  /// The gap the second ask needs after the first: enough that it is not the
+  /// same sitting, far short of [_quietDays].
+  static const _secondAskDays = 3;
 
   /// Wren's App Store id; Android opens Wren's Play listing from its package.
   static const _appStoreId = '6802053382';
@@ -66,12 +81,25 @@ class StoreReviewPrompt implements ReviewPrompt {
   /// invisible to us, so declining to ask is the only lever there is.
   static const _quietDays = 120;
 
+  /// Whether an ask now would fall inside the gap the previous one earned:
+  /// a few days after the first ask, [_quietDays] after any later one.
+  @visibleForTesting
+  static bool quiet({required int lastAskedMs, required int asks, int? nowMs}) {
+    if (lastAskedMs == 0) return false;
+    final days = asks == 1 ? _secondAskDays : _quietDays;
+    final since =
+        (nowMs ?? DateTime.now().millisecondsSinceEpoch) - lastAskedMs;
+    return since < days * 86400 * 1000;
+  }
+
   @override
   Future<void> recordSuccess() async {
     final prefs = await SharedPreferences.getInstance();
     final count = (prefs.getInt(_successes) ?? 0) + 1;
     await prefs.setInt(_successes, count);
-    if (count >= _minSuccesses) await prefs.setBool(_armed, true);
+    if (count == _minSuccesses || count >= _secondAskAt) {
+      await prefs.setBool(_armed, true);
+    }
   }
 
   @override
@@ -80,8 +108,10 @@ class StoreReviewPrompt implements ReviewPrompt {
     if (!(prefs.getBool(_armed) ?? false)) return;
 
     final last = prefs.getInt(_lastAsked) ?? 0;
-    final since = DateTime.now().millisecondsSinceEpoch - last;
-    if (last != 0 && since < _quietDays * 86400 * 1000) {
+    // Devices asked before the count existed (2.1.11) have a date and no
+    // count; they have been asked exactly once.
+    final asked = prefs.getInt(_asks) ?? (last == 0 ? 0 : 1);
+    if (quiet(lastAskedMs: last, asks: asked)) {
       // Still in the quiet period. Disarm rather than leave it pending, or the
       // ask lands the instant the period ends, months after the publish that
       // earned it and with no connection to anything the user just did.
@@ -97,6 +127,7 @@ class StoreReviewPrompt implements ReviewPrompt {
     final review = InAppReview.instance;
     if (!await review.isAvailable()) return;
     await prefs.setInt(_lastAsked, DateTime.now().millisecondsSinceEpoch);
+    await prefs.setInt(_asks, asked + 1);
     await review.requestReview();
   }
 
