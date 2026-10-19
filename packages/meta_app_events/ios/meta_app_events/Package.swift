@@ -26,7 +26,7 @@ let package = Package(
     .library(name: "meta-app-events", targets: ["meta_app_events"])
   ],
   dependencies: [
-    .package(url: "https://github.com/facebook/facebook-ios-sdk", exact: "18.1.1"),
+    .package(url: "https://github.com/facebook/facebook-ios-sdk", exact: "19.0.0"),
     .package(url: "https://github.com/tiktok/tiktok-business-ios-sdk", exact: "1.7.2"),
   ],
   targets: [
