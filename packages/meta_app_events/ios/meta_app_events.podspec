@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files     = 'meta_app_events/Sources/meta_app_events/**/*.swift'
   s.dependency 'Flutter'
-  s.dependency 'FBSDKCoreKit', '18.1.1'
+  s.dependency 'FBSDKCoreKit', '19.0.0'
   s.dependency 'TikTokBusinessSDK', '1.7.2'
   s.platform         = :ios, '15.0'
   s.swift_version    = '5.0'
